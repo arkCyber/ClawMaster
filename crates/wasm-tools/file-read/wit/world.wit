@@ -1,0 +1,62 @@
+package clawmaster:file-read@0.1.0;
+
+/// File reading tool for Moltis AI agents.
+///
+/// This tool provides secure file reading capabilities with path validation
+/// and size limits to prevent resource exhaustion.
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All file operations return Result types
+/// DO-178C §11.10: Resource management - File size limits enforced
+world file-read {
+    /// Read file contents.
+    ///
+    /// # Arguments
+    /// * `path` - File path to read (relative or absolute)
+    ///
+    /// # Returns
+    /// * `Ok(contents)` - File contents as string
+    /// * `Err(message)` - Error message if read fails
+    ///
+    /// # Security
+    /// - Path traversal attacks prevented
+    /// - Symbolic links validated
+    /// - File size limited to 10MB
+    /// - Binary files rejected
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All errors are properly propagated
+    /// DO-178C §6.3.4: Deterministic behavior guaranteed
+    export read-file: func(path: string) -> result<string, string>;
+    
+    /// Read file with size limit.
+    ///
+    /// # Arguments
+    /// * `path` - File path to read
+    /// * `max-size` - Maximum file size in bytes
+    ///
+    /// # Returns
+    /// * `Ok(contents)` - File contents as string
+    /// * `Err(message)` - Error message if read fails or size exceeded
+    export read-file-limited: func(path: string, max-size: u64) -> result<string, string>;
+    
+    /// Check if file exists.
+    ///
+    /// # Arguments
+    /// * `path` - File path to check
+    ///
+    /// # Returns
+    /// * `true` if file exists and is readable
+    /// * `false` otherwise
+    export file-exists: func(path: string) -> bool;
+    
+    /// Get file size.
+    ///
+    /// # Arguments
+    /// * `path` - File path
+    ///
+    /// # Returns
+    /// * `Ok(size)` - File size in bytes
+    /// * `Err(message)` - Error message if stat fails
+    export file-size: func(path: string) -> result<u64, string>;
+}

@@ -61,7 +61,7 @@ static ASSET_SOURCE: LazyLock<AssetSource> = LazyLock::new(|| {
     }
 
     // 3. External share directory
-    if let Some(share) = moltis_config::share_dir() {
+    if let Some(share) = clawmaster_config::share_dir() {
         let web_dir = share.join("web");
         if web_dir.is_dir() {
             info!(

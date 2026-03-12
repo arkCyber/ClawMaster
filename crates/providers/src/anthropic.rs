@@ -4,7 +4,7 @@ use {async_trait::async_trait, futures::StreamExt, secrecy::ExposeSecret, tokio_
 
 use tracing::{debug, trace, warn};
 
-use moltis_agents::model::{
+use clawmaster_agents::model::{
     ChatMessage, CompletionResponse, ContentPart, LlmProvider, StreamEvent, ToolCall, Usage,
     UserContent,
 };
@@ -17,7 +17,7 @@ pub struct AnthropicProvider {
     /// Optional alias for metrics differentiation (e.g., "anthropic-work", "anthropic-2").
     alias: Option<String>,
     /// Optional reasoning effort level for extended thinking.
-    reasoning_effort: Option<moltis_agents::model::ReasoningEffort>,
+    reasoning_effort: Option<clawmaster_agents::model::ReasoningEffort>,
 }
 
 impl AnthropicProvider {
@@ -52,7 +52,7 @@ impl AnthropicProvider {
     /// Apply `thinking` configuration to an Anthropic request body based on
     /// the configured reasoning effort.
     fn apply_thinking(&self, body: &mut serde_json::Value) {
-        use moltis_agents::model::ReasoningEffort;
+        use clawmaster_agents::model::ReasoningEffort;
         let Some(effort) = self.reasoning_effort else {
             return;
         };
@@ -210,13 +210,13 @@ impl LlmProvider for AnthropicProvider {
         self.alias.as_deref().unwrap_or("anthropic")
     }
 
-    fn reasoning_effort(&self) -> Option<moltis_agents::model::ReasoningEffort> {
+    fn reasoning_effort(&self) -> Option<clawmaster_agents::model::ReasoningEffort> {
         self.reasoning_effort
     }
 
     fn with_reasoning_effort(
         self: std::sync::Arc<Self>,
-        effort: moltis_agents::model::ReasoningEffort,
+        effort: clawmaster_agents::model::ReasoningEffort,
     ) -> Option<std::sync::Arc<dyn LlmProvider>> {
         Some(std::sync::Arc::new(Self {
             api_key: self.api_key.clone(),
@@ -577,7 +577,7 @@ mod tests {
             base_url: "https://api.anthropic.com".into(),
             client: crate::shared_http_client(),
             alias: None,
-            reasoning_effort: Some(moltis_agents::model::ReasoningEffort::High),
+            reasoning_effort: Some(clawmaster_agents::model::ReasoningEffort::High),
         };
         let mut body =
             serde_json::json!({ "model": "claude-opus-4-5-20251101", "max_tokens": 4096 });
@@ -609,7 +609,7 @@ mod tests {
             base_url: "https://api.anthropic.com".into(),
             client: crate::shared_http_client(),
             alias: None,
-            reasoning_effort: Some(moltis_agents::model::ReasoningEffort::Low),
+            reasoning_effort: Some(clawmaster_agents::model::ReasoningEffort::Low),
         };
         let mut body = serde_json::json!({ "model": "test", "max_tokens": 4096 });
         provider.apply_thinking(&mut body);
@@ -630,11 +630,11 @@ mod tests {
         assert!(provider.reasoning_effort().is_none());
 
         let with_effort = provider
-            .with_reasoning_effort(moltis_agents::model::ReasoningEffort::High)
+            .with_reasoning_effort(clawmaster_agents::model::ReasoningEffort::High)
             .expect("anthropic supports reasoning_effort");
         assert_eq!(
             with_effort.reasoning_effort(),
-            Some(moltis_agents::model::ReasoningEffort::High)
+            Some(clawmaster_agents::model::ReasoningEffort::High)
         );
         assert_eq!(with_effort.id(), "claude-opus-4-5-20251101");
     }

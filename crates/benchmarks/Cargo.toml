@@ -6,10 +6,10 @@ repository.workspace = true
 version.workspace    = true
 
 [dependencies]
-moltis-agents    = { workspace = true }
-moltis-config    = { workspace = true }
-moltis-providers = { workspace = true }
-moltis-sessions  = { workspace = true }
+clawmaster-agents    = { workspace = true }
+clawmaster-config    = { workspace = true }
+clawmaster-providers = { workspace = true }
+clawmaster-sessions  = { workspace = true }
 serde_json       = { workspace = true }
 tempfile         = { workspace = true }
 toml             = { workspace = true }

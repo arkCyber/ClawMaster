@@ -130,11 +130,11 @@ Concrete types fill the start/done context (e.g. `SandboxBuildStart` has
 
 ### Variants kept as `serde_json::Value`
 
-- `Channel` — `ChannelEvent` is in `moltis_channels` crate, already serialized
+- `Channel` — `ChannelEvent` is in `clawmaster_channels` crate, already serialized
 - `UpdateAvailable` — opaque update check result
 - `LogsEntry` — opaque log entry
-- `CronJob*` — cron job objects from `moltis_cron`
-- `McpStatus` — array of server status objects from `moltis_mcp`
+- `CronJob*` — cron job objects from `clawmaster_cron`
+- `McpStatus` — array of server status objects from `clawmaster_mcp`
 
 These can be typed later when those crates export shared types.
 
@@ -261,13 +261,13 @@ tuple per variant, asserting exact JSON equality.
 
 ```bash
 # Compile check after each file migration
-cargo check -p moltis-gateway
+cargo check -p clawmaster-gateway
 
 # Run gateway unit tests
-cargo test -p moltis-gateway
+cargo test -p clawmaster-gateway
 
 # Run session-specific tests
-cargo test -p moltis-gateway -- session
+cargo test -p clawmaster-gateway -- session
 
 # Format check
 cargo +nightly-2025-11-30 fmt --all -- --check

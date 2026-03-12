@@ -1,5 +1,5 @@
 [build]
-image = 'ghcr.io/moltis-org/moltis:0.10.18'
+image = 'ghcr.io/clawmaster-org/clawmaster:0.10.18'
 
 [env]
 MOLTIS_BEHIND_PROXY    = 'true'
@@ -13,7 +13,7 @@ app = '--bind 0.0.0.0 --port 8080 --no-tls'
 
 [[mounts]]
 destination = '/data'
-source      = 'moltis_data'
+source      = 'clawmaster_data'
 
 [http_service]
 auto_start_machines  = true

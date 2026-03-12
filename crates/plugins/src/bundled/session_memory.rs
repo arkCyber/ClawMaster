@@ -8,11 +8,11 @@ use {
 };
 
 use {
-    moltis_common::{
+    clawmaster_common::{
         Result,
         hooks::{HookAction, HookEvent, HookHandler, HookPayload},
     },
-    moltis_sessions::store::SessionStore,
+    clawmaster_sessions::store::SessionStore,
 };
 
 /// Format current UTC date as YYYY-MM-DD.

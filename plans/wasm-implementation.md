@@ -17,10 +17,10 @@ The work is split into 12 sequential steps, each a single PR-sized chunk.
 **Goal:** Define the WIT contracts, add workspace deps, set up host `bindgen!`.
 
 **Files to create:**
-- `wit/moltis-tool.wit` — `types` interface (`tool-value` variant, `tool-result`,
+- `wit/clawmaster-tool.wit` — `types` interface (`tool-value` variant, `tool-result`,
   `tool-error`) + `pure-tool` world (exports: `execute`, `parameters-schema`, `name`,
   `description`)
-- `wit/moltis-http.wit` — `outgoing-handler` interface (`http-request`,
+- `wit/clawmaster-http.wit` — `outgoing-handler` interface (`http-request`,
   `http-response`, `http-error`, `handle` func) + `http-tool` world (imports handler,
   exports tool functions)
 - `crates/tools/src/wasm_component.rs` — `wasmtime::component::bindgen!` for both
@@ -141,7 +141,7 @@ test structured error return; verify `ToolSource::Wasm` in `list_schemas()`.
 - `Cargo.toml` (root) — add `crates/wasm-tools/calc` to workspace members
 - `rust-toolchain.toml` — add `targets = ["wasm32-wasip2"]`
 - `justfile` — add `wasm-tools` recipe:
-  `cargo build --target wasm32-wasip2 -p moltis-wasm-calc --release`
+  `cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc --release`
 - `crates/gateway/src/server.rs` — register `WasmToolRunner` wrapping calc (initially
   as `"calc_wasm"` alongside native `"calc"` for side-by-side comparison)
 
@@ -156,7 +156,7 @@ exhaustion on pathological input; verify identical JSON schema.
 
 ## Step 6: Host HTTP Capability + SSRF Extraction
 
-**Goal:** Implement host side of `moltis:http/outgoing-handler`. Centralize SSRF
+**Goal:** Implement host side of `clawmaster:http/outgoing-handler`. Centralize SSRF
 in a shared module.
 
 **Files to create:**
@@ -209,7 +209,7 @@ test SSRF flows through host.
 only declared capabilities.
 
 **Files to create:**
-- `wit/moltis-fs.wit` — `filesystem` interface (`read-file`, `write-file`, `list-dir`,
+- `wit/clawmaster-fs.wit` — `filesystem` interface (`read-file`, `write-file`, `list-dir`,
   `file-exists`) scoped to sandbox root; `fs-tool` world
 - `crates/tools/src/wasm_capabilities.rs` — `WasmCapability` enum (`Pure`, `Http`,
   `Filesystem`, `KeyValueStore`); `WasmToolManifest` (name, world, capabilities, fuel,
@@ -275,7 +275,7 @@ variant switching; per-session override works.
 **Goal:** Per-tool typed returns. Host marshals to JSON for LLM.
 
 **Files to modify:**
-- `wit/moltis-tool.wit` — per-tool result types: `calc-result { result: f64,
+- `wit/clawmaster-tool.wit` — per-tool result types: `calc-result { result: f64,
   normalized-expr: string }`, `fetch-result { url, content-type, content, truncated,
   original-length }`, `search-result`, etc.
 - Guest crates — return typed structs instead of JSON strings

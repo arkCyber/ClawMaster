@@ -7,7 +7,7 @@ use {
     chrono::{Local, TimeZone, Utc},
 };
 
-use moltis_gateway::share_store::{ShareSnapshot, ShareVisibility, SharedMessageRole};
+use clawmaster_gateway::share_store::{ShareSnapshot, ShareVisibility, SharedMessageRole};
 
 // ---------------------------------------------------------------------------
 // Public entry points
@@ -20,7 +20,7 @@ use moltis_gateway::share_store::{ShareSnapshot, ShareVisibility, SharedMessageR
 /// SVG for this share (e.g. `/share/{id}/og-image.svg`).
 pub fn render_share_html(
     snapshot: &ShareSnapshot,
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
     share_id: &str,
     visibility: ShareVisibility,
     view_count: u64,
@@ -66,7 +66,7 @@ pub fn render_share_html(
 /// Render the OG social-image SVG for a share.
 pub fn render_share_og_svg(
     snapshot: &ShareSnapshot,
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
 ) -> String {
     build_share_social_image_svg(snapshot, identity)
 }
@@ -127,10 +127,10 @@ pub(crate) struct ShareMeta {
 // Helper functions
 // ---------------------------------------------------------------------------
 
-pub(crate) fn identity_name(identity: &moltis_config::ResolvedIdentity) -> &str {
+pub(crate) fn identity_name(identity: &clawmaster_config::ResolvedIdentity) -> &str {
     let name = identity.name.trim();
     if name.is_empty() {
-        "moltis"
+        "clawmaster"
     } else {
         name
     }
@@ -167,7 +167,7 @@ fn first_share_message_preview(snapshot: &ShareSnapshot) -> String {
 }
 
 pub(crate) fn build_session_share_meta(
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
     snapshot: &ShareSnapshot,
 ) -> ShareMeta {
     let agent_name = identity_name(identity);
@@ -202,7 +202,7 @@ pub(crate) fn human_share_time(ts_ms: u64) -> String {
         .unwrap_or_else(|| "1970-01-01 00:00".to_string())
 }
 
-fn share_user_label(identity: &moltis_config::ResolvedIdentity) -> String {
+fn share_user_label(identity: &clawmaster_config::ResolvedIdentity) -> String {
     identity
         .user_name
         .as_deref()
@@ -212,7 +212,7 @@ fn share_user_label(identity: &moltis_config::ResolvedIdentity) -> String {
         .to_string()
 }
 
-fn share_assistant_label(identity: &moltis_config::ResolvedIdentity) -> String {
+fn share_assistant_label(identity: &clawmaster_config::ResolvedIdentity) -> String {
     let name = identity_name(identity);
     match identity
         .emoji
@@ -233,13 +233,13 @@ fn image_dimensions_from_data_url(data_url: &str) -> Option<(u32, u32)> {
     let bytes = base64::engine::general_purpose::STANDARD
         .decode(body.trim())
         .ok()?;
-    let metadata = moltis_media::image_ops::get_image_metadata(&bytes).ok()?;
+    let metadata = clawmaster_media::image_ops::get_image_metadata(&bytes).ok()?;
     Some((metadata.width, metadata.height))
 }
 
 pub(crate) fn map_share_message_views(
     snapshot: &ShareSnapshot,
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
 ) -> Vec<ShareMessageView> {
     let user_label = share_user_label(identity);
     let assistant_label = share_assistant_label(identity);
@@ -454,7 +454,7 @@ fn wrap_share_social_line(text: &str, max_chars: usize) -> Vec<String> {
 
 fn build_share_social_text_lines(
     snapshot: &ShareSnapshot,
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
     max_chars: usize,
     max_lines: usize,
 ) -> Vec<String> {
@@ -499,7 +499,7 @@ fn build_share_social_text_lines(
 
 fn build_share_social_image_svg(
     snapshot: &ShareSnapshot,
-    identity: &moltis_config::ResolvedIdentity,
+    identity: &clawmaster_config::ResolvedIdentity,
 ) -> String {
     const MAX_CHARS_PER_LINE: usize = 64;
     const MAX_LINES: usize = 6;
@@ -576,11 +576,11 @@ fn build_share_social_image_svg(
 mod tests {
     use {
         super::*,
-        moltis_gateway::share_store::{SharedMessage, SharedMessageRole},
+        clawmaster_gateway::share_store::{SharedMessage, SharedMessageRole},
     };
 
-    fn default_identity() -> moltis_config::ResolvedIdentity {
-        moltis_config::ResolvedIdentity {
+    fn default_identity() -> clawmaster_config::ResolvedIdentity {
+        clawmaster_config::ResolvedIdentity {
             name: "Moltis".to_owned(),
             user_name: Some("Tester".to_owned()),
             emoji: Some("\u{1F916}".to_owned()),
@@ -729,7 +729,7 @@ mod tests {
 
     #[test]
     fn map_share_message_views_skips_system_and_notice() {
-        let identity = moltis_config::ResolvedIdentity {
+        let identity = clawmaster_config::ResolvedIdentity {
             name: "Moltis".to_owned(),
             user_name: Some("Fabien".to_owned()),
             emoji: Some("\u{1F916}".to_owned()),
@@ -753,7 +753,7 @@ mod tests {
 
     #[test]
     fn share_labels_use_identity_user_and_emoji() {
-        let identity = moltis_config::ResolvedIdentity {
+        let identity = clawmaster_config::ResolvedIdentity {
             name: "Moltis".to_owned(),
             emoji: Some("\u{1F916}".to_owned()),
             user_name: Some("Fabien".to_owned()),
@@ -765,19 +765,19 @@ mod tests {
 
     #[test]
     fn share_labels_fallback_when_identity_fields_missing() {
-        let identity = moltis_config::ResolvedIdentity {
+        let identity = clawmaster_config::ResolvedIdentity {
             name: "   ".to_owned(),
             user_name: Some("   ".to_owned()),
             emoji: Some("   ".to_owned()),
             ..Default::default()
         };
         assert_eq!(share_user_label(&identity), "User");
-        assert_eq!(share_assistant_label(&identity), "moltis");
+        assert_eq!(share_assistant_label(&identity), "clawmaster");
     }
 
     #[test]
     fn share_social_image_svg_uses_session_content_and_escapes() {
-        let identity = moltis_config::ResolvedIdentity {
+        let identity = clawmaster_config::ResolvedIdentity {
             name: "Moltis".to_owned(),
             user_name: Some("Fabien".to_owned()),
             emoji: Some("\u{1F916}".to_owned()),
@@ -808,7 +808,7 @@ mod tests {
 
     #[test]
     fn map_share_message_views_includes_tool_result_media_and_links() {
-        use moltis_gateway::share_store::{SharedImageAsset, SharedImageSet, SharedMapLinks};
+        use clawmaster_gateway::share_store::{SharedImageAsset, SharedImageSet, SharedMapLinks};
 
         let identity = default_identity();
         let snapshot = ShareSnapshot {

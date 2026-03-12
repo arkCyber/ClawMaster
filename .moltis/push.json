@@ -1,0 +1,7 @@
+{
+  "vapid": {
+    "public_key": "BASsfweouJPqEGq-EH9G5e3MNeiUoelR-jqfly6hZr7Py2IoledpjepqChKp_Od5kjEfHZPVnQg9ovH_qGofQII",
+    "private_key_pem": "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgd8uF7kefD0yyFCib\neNTavA9kNTXJZqNeMIRUDwPItE+hRANCAAQErH8HqLiT6hBqvhB/RuXtzDXolKHp\nUfo6n5cuoWa+z8tiKJXnaY3qagoSqfzneZIxHx2T1Z0IPaLx/6hqH0CC\n-----END PRIVATE KEY-----\n"
+  },
+  "subscriptions": []
+}

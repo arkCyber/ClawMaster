@@ -4,7 +4,7 @@
 @_exported import ApolloAPI
 @_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-extension MoltisAPI {
+extension ClawMasterAPI {
   struct FetchModelsQuery: GraphQLQuery {
     static let operationName: String = "FetchModels"
     static let operationDocument: ApolloAPI.OperationDocument = .init(
@@ -14,11 +14,11 @@ extension MoltisAPI {
 
     public init() {}
 
-    struct Data: MoltisAPI.SelectionSet {
+    struct Data: ClawMasterAPI.SelectionSet {
       let __data: DataDict
       init(_dataDict: DataDict) { __data = _dataDict }
 
-      static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.QueryRoot }
+      static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.QueryRoot }
       static var __selections: [ApolloAPI.Selection] { [
         .field("models", Models.self),
       ] }
@@ -32,11 +32,11 @@ extension MoltisAPI {
       /// Models
       ///
       /// Parent Type: `ModelQuery`
-      struct Models: MoltisAPI.SelectionSet {
+      struct Models: ClawMasterAPI.SelectionSet {
         let __data: DataDict
         init(_dataDict: DataDict) { __data = _dataDict }
 
-        static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.ModelQuery }
+        static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.ModelQuery }
         static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("list", [List].self),
@@ -51,11 +51,11 @@ extension MoltisAPI {
         /// Models.List
         ///
         /// Parent Type: `ModelInfo`
-        struct List: MoltisAPI.SelectionSet {
+        struct List: ClawMasterAPI.SelectionSet {
           let __data: DataDict
           init(_dataDict: DataDict) { __data = _dataDict }
 
-          static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.ModelInfo }
+          static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.ModelInfo }
           static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("id", String?.self),

@@ -77,7 +77,7 @@ binary_is_stale() {
 BINARY="${MOLTIS_BINARY:-}"
 if [ -z "${BINARY}" ]; then
 	# Pick the newest local build so tests don't accidentally run stale binaries.
-	for candidate in target/debug/moltis target/release/moltis; do
+	for candidate in target/debug/clawmaster target/release/clawmaster; do
 		if [ -x "${candidate}" ] && { [ -z "${BINARY}" ] || [ "${candidate}" -nt "${BINARY}" ]; }; then
 			BINARY="${candidate}"
 		fi
@@ -92,5 +92,5 @@ fi
 if [ -n "${BINARY}" ]; then
 	exec "${BINARY}" --no-tls --bind 127.0.0.1 --port "${PORT}"
 else
-	exec cargo +nightly-2025-11-30 run --bin moltis -- --no-tls --bind 127.0.0.1 --port "${PORT}"
+	exec cargo +nightly-2025-11-30 run --bin clawmaster -- --no-tls --bind 127.0.0.1 --port "${PORT}"
 fi

@@ -194,9 +194,9 @@ jobs:
           ./scripts/download-tailwindcss-cli.sh tailwindcss-linux-x64
           cd crates/web/ui && TAILWINDCSS=../../../tailwindcss-linux-x64 ./build.sh
 
-      - name: Build moltis binary
+      - name: Build clawmaster binary
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
-        run: cargo build --bin moltis
+        run: cargo build --bin clawmaster
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
@@ -311,8 +311,8 @@ jobs:
 
       - name: Build WASM components
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         env:
@@ -327,7 +327,7 @@ jobs:
       - name: Build .deb package
         env:
           BUILD_TARGET: ${{ matrix.target }}
-        run: cargo deb -p moltis --no-build --target "$BUILD_TARGET"
+        run: cargo deb -p clawmaster --no-build --target "$BUILD_TARGET"
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
@@ -340,7 +340,7 @@ jobs:
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ matrix.arch }}.deb
+          name: clawmaster-${{ matrix.arch }}.deb
           path: |
             target/${{ matrix.target }}/debian/*.deb
             target/${{ matrix.target }}/debian/*.sha256
@@ -427,8 +427,8 @@ jobs:
 
       - name: Build WASM components
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         env:
@@ -451,7 +451,7 @@ jobs:
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ matrix.arch }}.rpm
+          name: clawmaster-${{ matrix.arch }}.rpm
           path: |
             target/${{ matrix.target }}/generate-rpm/*.rpm
             target/${{ matrix.target }}/generate-rpm/*.sha256
@@ -504,8 +504,8 @@ jobs:
 
       - name: Build WASM components
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         env:
@@ -529,37 +529,37 @@ jobs:
           MATRIX_ARCH: ${{ matrix.arch }}
         run: |
           PKG_DIR="pkg-root"
-          mkdir -p "$PKG_DIR/usr/bin" "$PKG_DIR/usr/share/moltis/web" "$PKG_DIR/usr/share/moltis/wasm"
-          cp "target/$BUILD_TARGET/release/moltis" "$PKG_DIR/usr/bin/moltis"
-          chmod 755 "$PKG_DIR/usr/bin/moltis"
-          cp -R crates/web/src/assets/. "$PKG_DIR/usr/share/moltis/web/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" "$PKG_DIR/usr/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" "$PKG_DIR/usr/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" "$PKG_DIR/usr/share/moltis/wasm/"
+          mkdir -p "$PKG_DIR/usr/bin" "$PKG_DIR/usr/share/clawmaster/web" "$PKG_DIR/usr/share/clawmaster/wasm"
+          cp "target/$BUILD_TARGET/release/clawmaster" "$PKG_DIR/usr/bin/clawmaster"
+          chmod 755 "$PKG_DIR/usr/bin/clawmaster"
+          cp -R crates/web/src/assets/. "$PKG_DIR/usr/share/clawmaster/web/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" "$PKG_DIR/usr/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" "$PKG_DIR/usr/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" "$PKG_DIR/usr/share/clawmaster/wasm/"
 
           cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-          pkgname = moltis
+          pkgname = clawmaster
           pkgver = ${VERSION}-1
           pkgdesc = Personal AI gateway inspired by OpenClaw
-          url = https://www.moltis.org/
+          url = https://www.clawmaster.org/
           arch = $MATRIX_ARCH
           license = MIT
           PKGINFO
 
           cd "$PKG_DIR"
-          fakeroot -- tar --zstd -cf "../moltis-${VERSION}-1-${MATRIX_ARCH}.pkg.tar.zst" .PKGINFO usr/
+          fakeroot -- tar --zstd -cf "../clawmaster-${VERSION}-1-${MATRIX_ARCH}.pkg.tar.zst" .PKGINFO usr/
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-${{ steps.version.outputs.version }}-1-${{ matrix.arch }}.pkg.tar.zst
+          files: clawmaster-${{ steps.version.outputs.version }}-1-${{ matrix.arch }}.pkg.tar.zst
 
       - name: Upload .pkg.tar.zst artifact
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ matrix.arch }}.pkg.tar.zst
+          name: clawmaster-${{ matrix.arch }}.pkg.tar.zst
           path: |
             *.pkg.tar.zst
             *.pkg.tar.zst.sha256
@@ -611,8 +611,8 @@ jobs:
 
       - name: Build WASM components
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         env:
@@ -641,56 +641,56 @@ jobs:
           chmod +x appimagetool
 
           # Build AppDir structure
-          APP_DIR="moltis.AppDir"
-          mkdir -p "$APP_DIR/usr/bin" "$APP_DIR/usr/share/moltis/web" "$APP_DIR/usr/share/moltis/wasm"
-          cp "target/$BUILD_TARGET/release/moltis" "$APP_DIR/usr/bin/moltis"
-          chmod 755 "$APP_DIR/usr/bin/moltis"
-          cp -R crates/web/src/assets/. "$APP_DIR/usr/share/moltis/web/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" "$APP_DIR/usr/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" "$APP_DIR/usr/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" "$APP_DIR/usr/share/moltis/wasm/"
+          APP_DIR="clawmaster.AppDir"
+          mkdir -p "$APP_DIR/usr/bin" "$APP_DIR/usr/share/clawmaster/web" "$APP_DIR/usr/share/clawmaster/wasm"
+          cp "target/$BUILD_TARGET/release/clawmaster" "$APP_DIR/usr/bin/clawmaster"
+          chmod 755 "$APP_DIR/usr/bin/clawmaster"
+          cp -R crates/web/src/assets/. "$APP_DIR/usr/share/clawmaster/web/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" "$APP_DIR/usr/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" "$APP_DIR/usr/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" "$APP_DIR/usr/share/clawmaster/wasm/"
 
           # Create .desktop file
-          cat > "$APP_DIR/moltis.desktop" <<DESKTOP
+          cat > "$APP_DIR/clawmaster.desktop" <<DESKTOP
           [Desktop Entry]
           Type=Application
           Name=Moltis
-          Exec=moltis
-          Icon=moltis
+          Exec=clawmaster
+          Icon=clawmaster
           Categories=Network;
           Terminal=true
           DESKTOP
 
           # Create minimal icon
-          cat > "$APP_DIR/moltis.svg" <<SVG
+          cat > "$APP_DIR/clawmaster.svg" <<SVG
           <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#333"/><text x="128" y="140" font-size="120" text-anchor="middle" fill="white">M</text></svg>
           SVG
-          ln -s moltis.svg "$APP_DIR/.DirIcon"
+          ln -s clawmaster.svg "$APP_DIR/.DirIcon"
 
           # Create AppRun
           cat > "$APP_DIR/AppRun" <<'APPRUN'
           #!/bin/sh
           SELF=$(readlink -f "$0")
           HERE=${SELF%/*}
-          export MOLTIS_SHARE_DIR="$HERE/usr/share/moltis"
-          exec "$HERE/usr/bin/moltis" "$@"
+          export MOLTIS_SHARE_DIR="$HERE/usr/share/clawmaster"
+          exec "$HERE/usr/bin/clawmaster" "$@"
           APPRUN
           chmod +x "$APP_DIR/AppRun"
 
           # Package - use --appimage-extract-and-run to avoid FUSE requirement in CI
-          ARCH="$MATRIX_ARCH" ./appimagetool --appimage-extract-and-run "$APP_DIR" "moltis-${VERSION}-${MATRIX_ARCH}.AppImage"
+          ARCH="$MATRIX_ARCH" ./appimagetool --appimage-extract-and-run "$APP_DIR" "clawmaster-${VERSION}-${MATRIX_ARCH}.AppImage"
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-${{ steps.version.outputs.version }}-${{ matrix.arch }}.AppImage
+          files: clawmaster-${{ steps.version.outputs.version }}-${{ matrix.arch }}.AppImage
 
       - name: Upload AppImage artifact
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ matrix.arch }}.AppImage
+          name: clawmaster-${{ matrix.arch }}.AppImage
           path: |
             *.AppImage
             *.AppImage.sha256
@@ -744,7 +744,7 @@ jobs:
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis.snap
+          name: clawmaster.snap
           path: |
             ${{ steps.build-snap.outputs.snap }}
             ${{ steps.build-snap.outputs.snap }}.sha256
@@ -802,8 +802,8 @@ jobs:
 
       - name: Build WASM components
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         env:
@@ -825,26 +825,26 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           BUILD_TARGET: ${{ matrix.target }}
         run: |
-          PKG_DIR="moltis-package"
-          mkdir -p "$PKG_DIR/share/moltis/web" "$PKG_DIR/share/moltis/wasm"
-          cp "target/$BUILD_TARGET/release/moltis" "$PKG_DIR/moltis"
-          cp -R crates/web/src/assets/. "$PKG_DIR/share/moltis/web/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" "$PKG_DIR/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" "$PKG_DIR/share/moltis/wasm/"
-          cp "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" "$PKG_DIR/share/moltis/wasm/"
-          tar czf "moltis-${VERSION}-${BUILD_TARGET}.tar.gz" -C "$PKG_DIR" moltis share
+          PKG_DIR="clawmaster-package"
+          mkdir -p "$PKG_DIR/share/clawmaster/web" "$PKG_DIR/share/clawmaster/wasm"
+          cp "target/$BUILD_TARGET/release/clawmaster" "$PKG_DIR/clawmaster"
+          cp -R crates/web/src/assets/. "$PKG_DIR/share/clawmaster/web/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" "$PKG_DIR/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" "$PKG_DIR/share/clawmaster/wasm/"
+          cp "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" "$PKG_DIR/share/clawmaster/wasm/"
+          tar czf "clawmaster-${VERSION}-${BUILD_TARGET}.tar.gz" -C "$PKG_DIR" clawmaster share
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-${{ steps.version.outputs.version }}-${{ matrix.target }}.tar.gz
+          files: clawmaster-${{ steps.version.outputs.version }}-${{ matrix.target }}.tar.gz
 
       - name: Upload binary artifact
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ matrix.target }}
+          name: clawmaster-${{ matrix.target }}
           path: |
             *.tar.gz
             *.tar.gz.sha256
@@ -918,19 +918,19 @@ jobs:
             echo "expected app bundle not found at $APP_PATH" >&2
             exit 1
           fi
-          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "moltis-${VERSION}-macos.app.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "clawmaster-${VERSION}-macos.app.zip"
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-${{ steps.version.outputs.version }}-macos.app.zip
+          files: clawmaster-${{ steps.version.outputs.version }}-macos.app.zip
 
       - name: Upload macOS app artifact
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-macos-app
+          name: clawmaster-macos-app
           path: |
             *.app.zip
             *.app.zip.sha256
@@ -983,8 +983,8 @@ jobs:
       - name: Build WASM components
         shell: bash
         run: |
-          cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-          cargo run -p moltis-wasm-precompile --release
+          cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+          cargo run -p clawmaster-wasm-precompile --release
 
       - name: Build release binary
         shell: bash
@@ -1006,19 +1006,19 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          cp "target/$BUILD_TARGET/release/moltis.exe" "moltis-${VERSION}-${BUILD_TARGET}.exe"
+          cp "target/$BUILD_TARGET/release/clawmaster.exe" "clawmaster-${VERSION}-${BUILD_TARGET}.exe"
 
       - name: Sign with Sigstore and generate checksums
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-${{ steps.version.outputs.version }}-${{ env.BUILD_TARGET }}.exe
+          files: clawmaster-${{ steps.version.outputs.version }}-${{ env.BUILD_TARGET }}.exe
 
       - name: Upload .exe artifact
         if: ${{ env.RELEASE_DRY_RUN != 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: moltis-${{ env.BUILD_TARGET }}.exe
+          name: clawmaster-${{ env.BUILD_TARGET }}.exe
           path: |
             *.exe
             *.exe.sha256
@@ -1291,13 +1291,13 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: artifacts
-          pattern: moltis-*
+          pattern: clawmaster-*
 
       - name: Download snap artifact
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: moltis.snap
-          path: artifacts/moltis.snap
+          name: clawmaster.snap
+          path: artifacts/clawmaster.snap
 
       - name: Collect all release files
         run: |
@@ -1341,27 +1341,27 @@ jobs:
 
       - name: Generate SBOM (CycloneDX and SPDX)
         run: |
-          cargo sbom --output-format cyclone_dx_json_1_4 > moltis-sbom.cdx.json
-          cargo sbom --output-format spdx_json_2_3 > moltis-sbom.spdx.json
+          cargo sbom --output-format cyclone_dx_json_1_4 > clawmaster-sbom.cdx.json
+          cargo sbom --output-format spdx_json_2_3 > clawmaster-sbom.spdx.json
 
       - name: Sign SBOMs with Sigstore and generate checksums
         uses: ./.github/actions/sign-artifacts
         with:
-          files: moltis-sbom.cdx.json moltis-sbom.spdx.json
+          files: clawmaster-sbom.cdx.json clawmaster-sbom.spdx.json
           skip-sha512: 'true'
 
       - name: Upload SBOM to release
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2
         with:
           files: |
-            moltis-sbom.cdx.json
-            moltis-sbom.cdx.json.sha256
-            moltis-sbom.cdx.json.sig
-            moltis-sbom.cdx.json.crt
-            moltis-sbom.spdx.json
-            moltis-sbom.spdx.json.sha256
-            moltis-sbom.spdx.json.sig
-            moltis-sbom.spdx.json.crt
+            clawmaster-sbom.cdx.json
+            clawmaster-sbom.cdx.json.sha256
+            clawmaster-sbom.cdx.json.sig
+            clawmaster-sbom.cdx.json.crt
+            clawmaster-sbom.spdx.json
+            clawmaster-sbom.spdx.json.sha256
+            clawmaster-sbom.spdx.json.sig
+            clawmaster-sbom.spdx.json.crt
 
   update-homebrew-tap:
     needs:
@@ -1398,7 +1398,7 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
           for target in aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
-            ASSET="moltis-${VERSION}-${target}.tar.gz"
+            ASSET="clawmaster-${VERSION}-${target}.tar.gz"
             URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET}"
             curl --silent --show-error --fail --location "$URL" -o "$ASSET"
             SHA=$(sha256sum "$ASSET" | cut -d' ' -f1)
@@ -1411,48 +1411,48 @@ jobs:
         if: steps.token_check.outputs.has_token == 'true'
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          repository: moltis-org/homebrew-tap
+          repository: clawmaster-org/homebrew-tap
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           persist-credentials: true
 
       - name: Update formula
         if: steps.token_check.outputs.has_token == 'true'
         run: |
-          cat > Formula/moltis.rb <<RUBY
+          cat > Formula/clawmaster.rb <<RUBY
           class Moltis < Formula
             desc "Personal AI gateway - one binary, multiple LLM providers"
-            homepage "https://www.moltis.org/"
+            homepage "https://www.clawmaster.org/"
             license "MIT"
             version "${VERSION}"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-aarch64-apple-darwin.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-aarch64-apple-darwin.tar.gz"
                 sha256 "${SHA_aarch64_apple_darwin}"
               else
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-x86_64-apple-darwin.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-x86_64-apple-darwin.tar.gz"
                 sha256 "${SHA_x86_64_apple_darwin}"
               end
             end
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-aarch64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-aarch64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_aarch64_unknown_linux_gnu}"
               else
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-x86_64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-x86_64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_x86_64_unknown_linux_gnu}"
               end
             end
 
             def install
-              libexec.install "moltis"
-              share.install "share/moltis"
-              (bin/"moltis").write_env_script libexec/"moltis", MOLTIS_SHARE_DIR: share/"moltis"
+              libexec.install "clawmaster"
+              share.install "share/clawmaster"
+              (bin/"clawmaster").write_env_script libexec/"clawmaster", MOLTIS_SHARE_DIR: share/"clawmaster"
             end
 
             test do
-              assert_match "moltis", shell_output("#{bin}/moltis --version")
+              assert_match "clawmaster", shell_output("#{bin}/clawmaster --version")
             end
           end
           RUBY
@@ -1462,12 +1462,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/moltis.rb
+          git add Formula/clawmaster.rb
           if git diff --cached --quiet; then
             echo "No Homebrew formula changes to commit"
             exit 0
           fi
-          git commit -m "moltis ${VERSION}"
+          git commit -m "clawmaster ${VERSION}"
           git push
 
   update-deploy-tags:
@@ -1496,14 +1496,14 @@ jobs:
           sed -i "s/tag: \"[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\"/tag: \"${VERSION}\"/" .do/deploy.template.yaml
 
           # Render
-          sed -i "s|ghcr.io/moltis-org/moltis:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|ghcr.io/moltis-org/moltis:${VERSION}|" render.yaml
+          sed -i "s|ghcr.io/clawmaster-org/clawmaster:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|ghcr.io/clawmaster-org/clawmaster:${VERSION}|" render.yaml
 
           # Fly.io
-          sed -i "s|ghcr.io/moltis-org/moltis:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|ghcr.io/moltis-org/moltis:${VERSION}|" fly.toml
+          sed -i "s|ghcr.io/clawmaster-org/clawmaster:[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|ghcr.io/clawmaster-org/clawmaster:${VERSION}|" fly.toml
 
           # Website releases.json
           jq --arg v "$VERSION" \
-            '.stable.version = $v | .stable.release_url = "https://github.com/moltis-org/moltis/releases/tag/v" + $v' \
+            '.stable.version = $v | .stable.release_url = "https://github.com/clawmaster-org/clawmaster/releases/tag/v" + $v' \
             website/releases.json > website/releases.json.tmp \
             && mv website/releases.json.tmp website/releases.json
 

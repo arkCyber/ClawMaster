@@ -10,6 +10,7 @@ default-members = [
   "crates/canvas",
   "crates/channels",
   "crates/chat",
+  # "crates/clawhub",  # Optional: GitHub integration (requires sqlx offline mode setup)
   "crates/cli",
   "crates/common",
   "crates/config",
@@ -63,6 +64,7 @@ members = [
   "crates/canvas",
   "crates/channels",
   "crates/chat",
+  "crates/clawhub",
   "crates/cli",
   "crates/common",
   "crates/config",
@@ -117,7 +119,7 @@ unwrap_used = "deny"
 [workspace.package]
 edition      = "2024"
 license      = "MIT"
-repository   = "https://github.com/moltis-org/moltis"
+repository   = "https://github.com/arkCyber/ClawMaster"
 rust-version = "1.91"
 version      = "0.10.18"
 
@@ -221,6 +223,8 @@ webauthn-rs       = "0.5"
 webauthn-rs-proto = "0.5"
 # Web / HTTP utilities
 dashmap     = "6"
+headers     = "0.4"
+hex         = "0.4"
 hostname    = "0.4"
 http        = "1"
 hyper       = { features = ["client", "http1", "http2", "server"], version = "1" }
@@ -287,52 +291,52 @@ tower-service = "0.3"
 zeroize       = { features = ["derive"], version = "1" }
 
 # Workspace crates
-moltis                 = { path = "crates/cli" }
-moltis-agents          = { path = "crates/agents" }
-moltis-auth            = { path = "crates/auth" }
-moltis-auto-reply      = { path = "crates/auto-reply" }
-moltis-browser         = { path = "crates/browser" }
-moltis-caldav          = { path = "crates/caldav" }
-moltis-canvas          = { path = "crates/canvas" }
-moltis-channels        = { path = "crates/channels" }
-moltis-chat            = { path = "crates/chat" }
-moltis-common          = { path = "crates/common" }
-moltis-config          = { path = "crates/config" }
-moltis-cron            = { path = "crates/cron" }
-moltis-discord         = { path = "crates/discord" }
-moltis-gateway         = { default-features = false, path = "crates/gateway" }
-moltis-graphql         = { path = "crates/graphql" }
-moltis-mcp             = { path = "crates/mcp" }
-moltis-media           = { path = "crates/media" }
-moltis-memory          = { path = "crates/memory" }
-moltis-metrics         = { path = "crates/metrics" }
-moltis-msteams         = { path = "crates/msteams" }
-moltis-network-filter  = { default-features = false, path = "crates/network-filter" }
-moltis-node-host       = { path = "crates/node-host" }
-moltis-oauth           = { path = "crates/oauth" }
-moltis-onboarding      = { path = "crates/onboarding" }
-moltis-openclaw-import = { path = "crates/openclaw-import" }
-moltis-plugins         = { path = "crates/plugins" }
-moltis-projects        = { path = "crates/projects" }
-moltis-protocol        = { path = "crates/protocol" }
-moltis-provider-setup  = { path = "crates/provider-setup" }
-moltis-providers       = { features = ["provider-github-copilot", "provider-kimi-code", "provider-openai-codex"], path = "crates/providers" }
-moltis-qmd             = { path = "crates/qmd" }
-moltis-routing         = { path = "crates/routing" }
-moltis-schema-export   = { path = "crates/schema-export" }
-moltis-service-traits  = { path = "crates/service-traits" }
-moltis-sessions        = { path = "crates/sessions" }
-moltis-skills          = { path = "crates/skills" }
-moltis-slack           = { path = "crates/slack" }
-moltis-swift-bridge    = { path = "crates/swift-bridge" }
-moltis-tailscale       = { path = "crates/tailscale" }
-moltis-telegram        = { path = "crates/telegram" }
-moltis-tls             = { path = "crates/tls" }
-moltis-tools           = { path = "crates/tools" }
-moltis-vault           = { path = "crates/vault" }
-moltis-voice           = { path = "crates/voice" }
-moltis-web             = { default-features = false, path = "crates/web" }
-moltis-whatsapp        = { path = "crates/whatsapp" }
+clawmaster                 = { path = "crates/cli" }
+clawmaster-agents          = { path = "crates/agents" }
+clawmaster-auth            = { path = "crates/auth" }
+clawmaster-auto-reply      = { path = "crates/auto-reply" }
+clawmaster-browser         = { path = "crates/browser" }
+clawmaster-caldav          = { path = "crates/caldav" }
+clawmaster-canvas          = { path = "crates/canvas" }
+clawmaster-channels        = { path = "crates/channels" }
+clawmaster-chat            = { path = "crates/chat" }
+clawmaster-common          = { path = "crates/common" }
+clawmaster-config          = { path = "crates/config" }
+clawmaster-cron            = { path = "crates/cron" }
+clawmaster-discord         = { path = "crates/discord" }
+clawmaster-gateway         = { default-features = false, path = "crates/gateway" }
+clawmaster-graphql         = { path = "crates/graphql" }
+clawmaster-mcp             = { path = "crates/mcp" }
+clawmaster-media           = { path = "crates/media" }
+clawmaster-memory          = { path = "crates/memory" }
+clawmaster-metrics         = { path = "crates/metrics" }
+clawmaster-msteams         = { path = "crates/msteams" }
+clawmaster-network-filter  = { default-features = false, path = "crates/network-filter" }
+clawmaster-node-host       = { path = "crates/node-host" }
+clawmaster-oauth           = { path = "crates/oauth" }
+clawmaster-onboarding      = { path = "crates/onboarding" }
+clawmaster-openclaw-import = { path = "crates/openclaw-import" }
+clawmaster-plugins         = { path = "crates/plugins" }
+clawmaster-projects        = { path = "crates/projects" }
+clawmaster-protocol        = { path = "crates/protocol" }
+clawmaster-provider-setup  = { path = "crates/provider-setup" }
+clawmaster-providers       = { features = ["provider-github-copilot", "provider-kimi-code", "provider-openai-codex"], path = "crates/providers" }
+clawmaster-qmd             = { path = "crates/qmd" }
+clawmaster-routing         = { path = "crates/routing" }
+clawmaster-schema-export   = { path = "crates/schema-export" }
+clawmaster-service-traits  = { path = "crates/service-traits" }
+clawmaster-sessions        = { path = "crates/sessions" }
+clawmaster-skills          = { path = "crates/skills" }
+clawmaster-slack           = { path = "crates/slack" }
+clawmaster-swift-bridge    = { path = "crates/swift-bridge" }
+clawmaster-tailscale       = { path = "crates/tailscale" }
+clawmaster-telegram        = { path = "crates/telegram" }
+clawmaster-tls             = { path = "crates/tls" }
+clawmaster-tools           = { path = "crates/tools" }
+clawmaster-vault           = { path = "crates/vault" }
+clawmaster-voice           = { path = "crates/voice" }
+clawmaster-web             = { default-features = false, path = "crates/web" }
+clawmaster-whatsapp        = { path = "crates/whatsapp" }
 
 [profile.release]
 codegen-units = 1

@@ -18,7 +18,7 @@ final class ModelStore: ObservableObject {
     var currentSessionKey: String = "main"
 
     private weak var connectionStore: ConnectionStore?
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "models")
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "models")
     private let selectedModelKey = "selected_model_id"
 
     init(connectionStore: ConnectionStore) {

@@ -1,0 +1,22 @@
+package clawmaster:path-ops@0.1.0;
+
+/// Path operations tool for Moltis AI agents.
+world path-ops {
+    /// Join path components.
+    export join: func(parts: list<string>) -> string;
+    
+    /// Get basename (filename).
+    export basename: func(path: string) -> string;
+    
+    /// Get dirname (directory).
+    export dirname: func(path: string) -> string;
+    
+    /// Get file extension.
+    export extension: func(path: string) -> string;
+    
+    /// Normalize path.
+    export normalize: func(path: string) -> string;
+    
+    /// Check if path is absolute.
+    export is-absolute: func(path: string) -> bool;
+}

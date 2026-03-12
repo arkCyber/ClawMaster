@@ -4,7 +4,7 @@ import os
 
 // MARK: - WebSocket client
 
-actor MoltisWSClient {
+actor ClawMasterWSClient {
     typealias EventHandler = @Sendable (String, ChatEventPayload) -> Void
     typealias StateHandler = @Sendable (State) -> Void
 
@@ -16,7 +16,7 @@ actor MoltisWSClient {
         case error(String)
     }
 
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "ws")
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "ws")
 
     private var webSocketTask: URLSessionWebSocketTask?
     private var session: URLSession?
@@ -79,7 +79,7 @@ actor MoltisWSClient {
         self.session = session
 
         var request = URLRequest(url: server.wsURL)
-        request.timeoutInterval = TimeInterval(MoltisProtocol.handshakeTimeoutMs) / 1000.0
+        request.timeoutInterval = TimeInterval(ClawMasterProtocol.handshakeTimeoutMs) / 1000.0
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
 
         let task = session.webSocketTask(with: request)
@@ -99,8 +99,8 @@ actor MoltisWSClient {
 
         // Send connect handshake
         let connectParams = ConnectParams(
-            minProtocol: MoltisProtocol.version,
-            maxProtocol: MoltisProtocol.version,
+            minProtocol: ClawMasterProtocol.version,
+            maxProtocol: ClawMasterProtocol.version,
             client: .init(
                 id: "ios",
                 displayName: deviceName,

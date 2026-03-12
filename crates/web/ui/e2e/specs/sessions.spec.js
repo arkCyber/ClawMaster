@@ -423,7 +423,7 @@ test.describe("Session management", () => {
 		await page.waitForURL((url) => url.pathname === sharePath && !url.searchParams.has("k"), { timeout: 10_000 });
 
 		await expect(page.locator("main")).toBeVisible();
-		await expect(page.locator("a[href='https://www.moltis.org']")).toBeVisible();
+		await expect(page.locator("a[href='https://www.clawmaster.org']")).toBeVisible();
 		const shareFooter = page.locator(".share-page-footer");
 		await expect(shareFooter).toContainText("Get your AI assistant at");
 		await expect(shareFooter.locator("strong")).toHaveCount(0);
@@ -456,7 +456,7 @@ test.describe("Session management", () => {
 			.poll(
 				() =>
 					page.evaluate(() => {
-						const store = window.__moltis_stores?.sessionStore;
+						const store = window.__clawmaster_stores?.sessionStore;
 						const main = store?.getByKey?.("main");
 						if (!main) return null;
 						return {
@@ -557,7 +557,7 @@ test.describe("Session management", () => {
 			.poll(
 				() =>
 					page.evaluate(() => {
-						const store = window.__moltis_stores?.sessionStore;
+						const store = window.__clawmaster_stores?.sessionStore;
 						const session = store?.activeSession?.value;
 						if (!session) return false;
 						session.forkPoint = 5;
@@ -597,7 +597,7 @@ test.describe("Session management", () => {
 			.poll(
 				() =>
 					page.evaluate(() => {
-						const store = window.__moltis_stores?.sessionStore;
+						const store = window.__clawmaster_stores?.sessionStore;
 						const session = store?.activeSession?.value;
 						if (!session) return false;
 						session.forkPoint = 3;

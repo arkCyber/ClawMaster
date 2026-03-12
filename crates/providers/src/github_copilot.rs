@@ -11,7 +11,7 @@ use std::{collections::HashSet, pin::Pin, sync::mpsc, time::Duration};
 use {
     async_trait::async_trait,
     futures::StreamExt,
-    moltis_oauth::{OAuthTokens, TokenStore},
+    clawmaster_oauth::{OAuthTokens, TokenStore},
     secrecy::{ExposeSecret, Secret},
     tokio_stream::Stream,
     tracing::{debug, trace, warn},
@@ -22,7 +22,7 @@ use {
         SseLineResult, StreamingToolState, finalize_stream, parse_openai_compat_usage_from_payload,
         parse_tool_calls, process_openai_sse_line, to_openai_tools,
     },
-    moltis_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent},
+    clawmaster_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent},
 };
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -146,7 +146,7 @@ impl GitHubCopilotProvider {
 }
 
 fn home_token_store_if_different() -> Option<TokenStore> {
-    let home = moltis_config::user_global_config_dir_if_different()?;
+    let home = clawmaster_config::user_global_config_dir_if_different()?;
     Some(TokenStore::with_path(home.join("oauth_tokens.json")))
 }
 
@@ -224,7 +224,7 @@ async fn fetch_valid_copilot_token(
         .header("Accept", "application/json")
         .header(
             "User-Agent",
-            "moltis/0.1.0 (GitHub Copilot compatible client)",
+            "clawmaster/0.1.0 (GitHub Copilot compatible client)",
         )
         .send()
         .await?;

@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct MoltisApp: App {
+struct ClawMasterApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     @StateObject private var authManager = AuthManager()

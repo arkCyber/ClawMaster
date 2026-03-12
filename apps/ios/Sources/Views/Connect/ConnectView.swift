@@ -112,7 +112,7 @@ struct ConnectView: View {
                             Text("2. In Safari, allow the profile download.")
                             Text("3. Open Settings > General > VPN & Device Management, then install the downloaded profile.")
                             Text("4. Open Settings > General > About > Certificate Trust Settings.")
-                            Text("5. Enable full trust for Moltis Local CA, then return and tap Check Connection.")
+                            Text("5. Enable full trust for ClawMaster Local CA, then return and tap Check Connection.")
                         }
                     }
                 }
@@ -296,11 +296,11 @@ struct ConnectView: View {
                 }
                 if graphQLEnabled == false {
                     showError(
-                        message: "GraphQL is disabled on this server. Enable it in Moltis (Settings > GraphQL), then check connection again."
+                        message: "GraphQL is disabled on this server. Enable it in ClawMaster (Settings > GraphQL), then check connection again."
                     )
                 } else if status.setupRequired || !status.setupComplete {
                     showError(
-                        message: "Server auth is not fully configured for remote access. On the Moltis host, complete authentication setup (password or passkey), then try again from iOS."
+                        message: "Server auth is not fully configured for remote access. On the ClawMaster host, complete authentication setup (password or passkey), then try again from iOS."
                     )
                 } else if status.authDisabled {
                     // No auth needed — connect directly with empty key
@@ -315,7 +315,7 @@ struct ConnectView: View {
             }
         } catch {
             if isCertificateTrustError(error) {
-                showError(message: "TLS certificate is not trusted yet. Download and trust the Moltis Local CA for this server.")
+                showError(message: "TLS certificate is not trusted yet. Download and trust the ClawMaster Local CA for this server.")
                 await refreshNearbyServerTrustStates(force: true)
                 return
             }

@@ -1,15 +1,15 @@
 [package]
 edition.workspace = true
-name              = "moltis-channels"
+name              = "clawmaster-channels"
 version.workspace = true
 
 [dependencies]
 async-trait    = { workspace = true }
 bytes          = { workspace = true }
 http           = { workspace = true }
-moltis-common  = { workspace = true }
-moltis-config  = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-common  = { workspace = true }
+clawmaster-config  = { workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 rand           = { workspace = true }
 serde          = { workspace = true }
 serde_json     = { workspace = true }
@@ -19,7 +19,7 @@ tracing        = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [lints]
 workspace = true

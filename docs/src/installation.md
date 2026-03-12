@@ -1,13 +1,13 @@
 # Installation
 
-Moltis is distributed as a single self-contained binary. Choose the installation method that works best for your setup.
+ClawMaster is distributed as a single self-contained binary. Choose the installation method that works best for your setup.
 
 ## Quick Install (Recommended)
 
 The fastest way to get started on macOS or Linux:
 
 ```bash
-curl -fsSL https://www.moltis.org/install.sh | sh
+curl -fsSL https://www.clawmaster.org/install.sh | sh
 ```
 
 This downloads the latest release for your platform and installs it to `~/.local/bin`.
@@ -17,7 +17,7 @@ This downloads the latest release for your platform and installs it to `~/.local
 ### Homebrew (macOS / Linux)
 
 ```bash
-brew install moltis-org/tap/moltis
+brew install clawmaster-org/tap/clawmaster
 ```
 
 ## Linux Packages
@@ -26,47 +26,47 @@ brew install moltis-org/tap/moltis
 
 ```bash
 # Download the latest .deb package
-curl -LO https://github.com/moltis-org/moltis/releases/latest/download/moltis_amd64.deb
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/latest/download/clawmaster_amd64.deb
 
 # Install
-sudo dpkg -i moltis_amd64.deb
+sudo dpkg -i clawmaster_amd64.deb
 ```
 
 ### Fedora / RHEL (.rpm)
 
 ```bash
 # Download the latest .rpm package
-curl -LO https://github.com/moltis-org/moltis/releases/latest/download/moltis.x86_64.rpm
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/latest/download/clawmaster.x86_64.rpm
 
 # Install
-sudo rpm -i moltis.x86_64.rpm
+sudo rpm -i clawmaster.x86_64.rpm
 ```
 
 ### Arch Linux (.pkg.tar.zst)
 
 ```bash
 # Download the latest package
-curl -LO https://github.com/moltis-org/moltis/releases/latest/download/moltis.pkg.tar.zst
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/latest/download/clawmaster.pkg.tar.zst
 
 # Install
-sudo pacman -U moltis.pkg.tar.zst
+sudo pacman -U clawmaster.pkg.tar.zst
 ```
 
 ### Snap
 
 ```bash
-sudo snap install moltis
+sudo snap install clawmaster
 ```
 
 ### AppImage
 
 ```bash
 # Download
-curl -LO https://github.com/moltis-org/moltis/releases/latest/download/moltis.AppImage
-chmod +x moltis.AppImage
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/latest/download/clawmaster.AppImage
+chmod +x clawmaster.AppImage
 
 # Run
-./moltis.AppImage
+./clawmaster.AppImage
 ```
 
 ## Docker
@@ -74,10 +74,10 @@ chmod +x moltis.AppImage
 Multi-architecture images (amd64/arm64) are published to GitHub Container Registry:
 
 ```bash
-docker pull ghcr.io/moltis-org/moltis:latest
+docker pull ghcr.io/clawmaster-org/clawmaster:latest
 ```
 
-See [Docker Deployment](docker.md) for full instructions on running Moltis in a container.
+See [Docker Deployment](docker.md) for full instructions on running ClawMaster in a container.
 
 ## Build from Source
 
@@ -91,8 +91,8 @@ See [Docker Deployment](docker.md) for full instructions on running Moltis in a 
 ### Clone and Build
 
 ```bash
-git clone https://github.com/moltis-org/moltis.git
-cd moltis
+git clone https://github.com/clawmaster-org/clawmaster.git
+cd clawmaster
 just build-css           # Build Tailwind CSS for the web UI
 just build-release       # Build in release mode
 ```
@@ -103,20 +103,20 @@ For a full release build including WASM sandbox tools:
 just build-release-with-wasm
 ```
 
-The binary will be at `target/release/moltis`.
+The binary will be at `target/release/clawmaster`.
 
 ### Install via Cargo
 
 ```bash
-cargo install moltis --git https://github.com/moltis-org/moltis
+cargo install clawmaster --git https://github.com/clawmaster-org/clawmaster
 ```
 
 ## First Run
 
-After installation, start Moltis:
+After installation, start ClawMaster:
 
 ```bash
-moltis
+clawmaster
 ```
 
 On first launch:
@@ -126,17 +126,17 @@ On first launch:
 3. Start chatting!
 
 ```admonish tip
-Moltis picks a random available port on first install to avoid conflicts. The port is saved in your config and reused on subsequent runs.
+ClawMaster picks a random available port on first install to avoid conflicts. The port is saved in your config and reused on subsequent runs.
 ```
 
 ```admonish note
-Authentication is only required when accessing Moltis from a non-localhost address (e.g., over the network). When this happens, a one-time setup code is printed to the terminal for initial authentication setup.
+Authentication is only required when accessing ClawMaster from a non-localhost address (e.g., over the network). When this happens, a one-time setup code is printed to the terminal for initial authentication setup.
 ```
 
 ## Verify Installation
 
 ```bash
-moltis --version
+clawmaster --version
 ```
 
 ## Updating
@@ -144,13 +144,13 @@ moltis --version
 ### Homebrew
 
 ```bash
-brew upgrade moltis
+brew upgrade clawmaster
 ```
 
 ### From Source
 
 ```bash
-cd moltis
+cd clawmaster
 git pull
 just build-css
 just build-release
@@ -161,19 +161,19 @@ just build-release
 ### Homebrew
 
 ```bash
-brew uninstall moltis
+brew uninstall clawmaster
 ```
 
 ### Remove Data
 
-Moltis stores data in two directories:
+ClawMaster stores data in two directories:
 
 ```bash
 # Configuration
-rm -rf ~/.config/moltis
+rm -rf ~/.config/clawmaster
 
 # Data (sessions, databases, memory)
-rm -rf ~/.moltis
+rm -rf ~/.clawmaster
 ```
 
 ```admonish warning

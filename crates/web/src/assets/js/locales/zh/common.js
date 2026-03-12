@@ -2,8 +2,17 @@
 // Shared actions, status labels, and navigation items.
 
 export default {
+	nav: {
+		settings: "设置",
+		sessions: "会话",
+		cron: "定时任务",
+		signOut: "退出登录",
+	},
 	actions: {
 		save: "保存",
+		searchSessions: "搜索会话…",
+		newSession: "新建会话",
+		allSessions: "所有会话",
 		saving: "保存中\u2026",
 		saved: "已保存",
 		cancel: "取消",
@@ -61,7 +70,7 @@ export default {
 		signOut: "退出登录",
 	},
 	banners: {
-		authDisabled: "身份验证已禁用。任何具有网络访问权限的人都可以控制 moltis 和您的计算机。",
+		authDisabled: "身份验证已禁用。任何具有网络访问权限的人都可以控制 clawmaster 和您的计算机。",
 		setupAuthentication: "设置身份验证",
 		updateAvailable: "有可用更新",
 		viewRelease: "查看版本",
@@ -115,8 +124,30 @@ export default {
 		unsupported: "不支持",
 	},
 	modals: {
-		addProvider: "添加供应商",
+		addProvider: "添加提供商",
 		addChannel: "添加频道",
 		manageProjects: "管理项目",
+	},
+	chat: {
+		inputPlaceholder: "输入消息或使用 / 命令",
+		sendButton: "发送",
+		stopButton: "停止",
+		attachFile: "附加文件",
+		newChat: "新建聊天",
+	},
+	theme: {
+		light: "亮色主题",
+		system: "系统主题",
+		dark: "暗色主题",
+	},
+	menu: {
+		openMenu: "打开菜单",
+	},
+	errors: {
+		networkError: "网络错误，请重试。",
+		authError: "认证失败",
+		permissionDenied: "权限被拒绝",
+		unknownError: "发生未知错误",
+		noResults: "无结果",
 	},
 };

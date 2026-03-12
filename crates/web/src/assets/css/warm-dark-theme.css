@@ -1,0 +1,237 @@
+/* ══ Warm Dark Theme Enhancement ══ */
+/* 暗模式暖色调优化 - 完整版 */
+
+/* 只为暗模式定义暖色调 */
+[data-theme="dark"] {
+  /* === 核心背景色 - 温暖的深棕色系 === */
+  --bg: #1c1814;  /* 主背景：深棕色，带有微弱的橙色调 */
+  --bg-elevated: #252118;  /* 提升背景：稍亮的暖棕色 */
+  --bg-hover: #2d2820;  /* 悬停背景：更亮的暖棕色 */
+  --surface: #221e1a;  /* 表面：暖棕色卡片/面板 */
+  --surface2: #2a251f;  /* 次表面：稍亮暖棕色 */
+  
+  /* === 文本颜色 - 温暖的米黄/奶油色系 === */
+  --text: #ebe6dd;  /* 主文本：温暖的米白色 */
+  --text-strong: #f7f2e9;  /* 强调文本：更亮的奶油白 */
+  --muted: #a79b88;  /* 次要文本：暖灰米色 */
+  
+  /* === 边框颜色 - 温暖的棕色系 === */
+  --border: #3d362e;  /* 主边框：暖棕色 */
+  --border-strong: #4d453a;  /* 强调边框：更亮的暖棕色 */
+  
+  /* === 强调色 - 温暖的琥珀/金色系 === */
+  --accent: #fbbf24;  /* 主强调：温暖的金黄色 */
+  --accent-hover: #f59e0b;  /* 悬停强调：深一点的琥珀色 */
+  --accent-dim: #d97706;  /* 暗化强调：深琥珀色 */
+  --accent-subtle: #fbbf2420;  /* 淡化强调：透明金色背景 */
+  
+  /* === 消息气泡 - 温暖色调 === */
+  --user-bg: #2d2820;  /* 用户消息：暖棕色背景 */
+  --user-border: #3d362e;  /* 用户消息：暖棕色边框 */
+  --assistant-bg: #252118;  /* AI消息：稍深暖棕色 */
+  --assistant-border: #3d362e;  /* AI消息：暖棕色边框 */
+  
+  /* === 状态颜色 - 保持可读性同时偏暖 === */
+  --error: #f87171;  /* 错误：温暖的红色 */
+  --warn: #fbbf24;  /* 警告：温暖的金黄色 */
+  --ok: #34d399;  /* 成功：温暖的翠绿色 */
+  
+  /* === 阴影 - 深色但不过冷 === */
+  --shadow-sm: 0 1px 2px rgba(10, 8, 6, 0.4);
+  --shadow-md: 0 4px 12px rgba(10, 8, 6, 0.45);
+  --shadow-lg: 0 12px 28px rgba(10, 8, 6, 0.5);
+}
+
+/* === 整体页面暖色调 === */
+[data-theme="dark"] body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* === 代码块暖色调整 === */
+[data-theme="dark"] pre,
+[data-theme="dark"] code {
+  background-color: #2a251f;
+  border: 1px solid #3d362e;
+  color: #f7f2e9;
+}
+
+/* === 输入框暖色调整 === */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: #252118;
+  border: 1px solid #3d362e;
+  color: var(--text);
+}
+
+[data-theme="dark"] input:hover,
+[data-theme="dark"] textarea:hover,
+[data-theme="dark"] select:hover {
+  border-color: #4d453a;
+  background-color: #2a251f;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+  border-color: var(--accent);
+  background-color: #2a251f;
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  outline: none;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #6d6555;
+}
+
+/* === 按钮暖色调整 === */
+[data-theme="dark"] button {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] button:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+[data-theme="dark"] button:active:not(:disabled) {
+  background-color: #2a251f;
+  transform: translateY(1px);
+}
+
+[data-theme="dark"] button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* === 主要操作按钮（强调色） === */
+[data-theme="dark"] .provider-btn,
+[data-theme="dark"] .send-btn,
+[data-theme="dark"] button.primary {
+  background-color: var(--accent);
+  color: #1c1814;
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+[data-theme="dark"] .provider-btn:hover:not(:disabled),
+[data-theme="dark"] .send-btn:hover:not(:disabled),
+[data-theme="dark"] button.primary:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* === 次要按钮 === */
+[data-theme="dark"] .provider-btn-secondary,
+[data-theme="dark"] button.secondary {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+[data-theme="dark"] .provider-btn-secondary:hover:not(:disabled),
+[data-theme="dark"] button.secondary:hover:not(:disabled) {
+  background-color: var(--surface);
+  border-color: var(--border-strong);
+}
+
+/* === 危险操作按钮 === */
+[data-theme="dark"] .provider-btn-danger,
+[data-theme="dark"] button.danger {
+  background-color: var(--error);
+  color: #fff;
+  border-color: var(--error);
+}
+
+[data-theme="dark"] .provider-btn-danger:hover:not(:disabled),
+[data-theme="dark"] button.danger:hover:not(:disabled) {
+  background-color: #dc2626;
+  border-color: #dc2626;
+}
+
+/* === 卡片和面板 === */
+[data-theme="dark"] .card,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .provider-item,
+[data-theme="dark"] .session-item {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .provider-item:hover,
+[data-theme="dark"] .session-item:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+/* === 模态框/对话框 === */
+[data-theme="dark"] .modal,
+[data-theme="dark"] .dialog,
+[data-theme="dark"] .provider-modal {
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+/* === 下拉菜单 === */
+[data-theme="dark"] .dropdown,
+[data-theme="dark"] .menu,
+[data-theme="dark"] select option {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* === 提示框/Toast === */
+[data-theme="dark"] .toast,
+[data-theme="dark"] .notification {
+  background-color: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+}
+
+/* === 分隔线 === */
+[data-theme="dark"] hr,
+[data-theme="dark"] .divider {
+  border-color: var(--border);
+}
+
+/* === 链接 === */
+[data-theme="dark"] a {
+  color: var(--accent);
+}
+
+[data-theme="dark"] a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* === 滚动条暖色调整 === */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: #4d453a;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background-color: #5d534a;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background-color: #221e1a;
+}
+
+/* === 选择文本 === */
+[data-theme="dark"] ::selection {
+  background-color: var(--accent-subtle);
+  color: var(--text-strong);
+}

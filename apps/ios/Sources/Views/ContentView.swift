@@ -65,7 +65,7 @@ struct ContentView: View {
         case .error(let message):
             return ("Connection error", message, .red)
         case .disconnected:
-            return ("Disconnected", "Reconnect from Settings or restart Moltis.", .secondary)
+            return ("Disconnected", "Reconnect from Settings or restart ClawMaster.", .secondary)
         case .connected:
             return ("Connected", "Connected to server.", .green)
         }

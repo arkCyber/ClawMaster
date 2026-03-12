@@ -198,7 +198,7 @@ mod tests {
     fn import_new_memory_file() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis");
+        let dest = tmp.path().join("clawmaster");
 
         std::fs::create_dir_all(home.join("workspace")).unwrap();
         std::fs::write(
@@ -220,7 +220,7 @@ mod tests {
     fn import_merges_existing_memory() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis");
+        let dest = tmp.path().join("clawmaster");
 
         std::fs::create_dir_all(home.join("workspace")).unwrap();
         std::fs::write(home.join("workspace").join("MEMORY.md"), "# From OpenClaw").unwrap();
@@ -242,7 +242,7 @@ mod tests {
     fn import_idempotent_memory() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis");
+        let dest = tmp.path().join("clawmaster");
 
         std::fs::create_dir_all(home.join("workspace")).unwrap();
         std::fs::write(home.join("workspace").join("MEMORY.md"), "stuff").unwrap();
@@ -266,7 +266,7 @@ mod tests {
     fn import_daily_logs() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis");
+        let dest = tmp.path().join("clawmaster");
 
         let daily = home.join("workspace").join("memory");
         std::fs::create_dir_all(&daily).unwrap();
@@ -288,7 +288,7 @@ mod tests {
     fn import_all_markdown_memory_files() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis");
+        let dest = tmp.path().join("clawmaster");
 
         let mem_dir = home.join("workspace").join("memory");
         std::fs::create_dir_all(&mem_dir).unwrap();

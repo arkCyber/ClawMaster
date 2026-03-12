@@ -4,7 +4,7 @@
 @_exported import ApolloAPI
 @_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-extension MoltisAPI {
+extension ClawMasterAPI {
   struct FetchStatusQuery: GraphQLQuery {
     static let operationName: String = "FetchStatus"
     static let operationDocument: ApolloAPI.OperationDocument = .init(
@@ -14,11 +14,11 @@ extension MoltisAPI {
 
     public init() {}
 
-    struct Data: MoltisAPI.SelectionSet {
+    struct Data: ClawMasterAPI.SelectionSet {
       let __data: DataDict
       init(_dataDict: DataDict) { __data = _dataDict }
 
-      static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.QueryRoot }
+      static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.QueryRoot }
       static var __selections: [ApolloAPI.Selection] { [
         .field("status", Status.self),
       ] }
@@ -32,11 +32,11 @@ extension MoltisAPI {
       /// Status
       ///
       /// Parent Type: `StatusInfo`
-      struct Status: MoltisAPI.SelectionSet {
+      struct Status: ClawMasterAPI.SelectionSet {
         let __data: DataDict
         init(_dataDict: DataDict) { __data = _dataDict }
 
-        static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.StatusInfo }
+        static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.StatusInfo }
         static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("hostname", String?.self),

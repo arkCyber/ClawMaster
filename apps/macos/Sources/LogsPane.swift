@@ -141,7 +141,7 @@ struct LogsPane: View {
 
     private func rowBackground(_ level: LogLevel) -> Color {
         switch level {
-        case .error: return MoltisTheme.error.opacity(0.06)
+        case .error: return ClawMasterTheme.error.opacity(0.06)
         case .warn: return Color.orange.opacity(0.04)
         default: return .clear
         }
@@ -153,7 +153,7 @@ struct LogsPane: View {
         let panel = NSSavePanel()
         let jsonlType = UTType(filenameExtension: "jsonl") ?? .json
         panel.allowedContentTypes = [jsonlType]
-        panel.nameFieldStringValue = "moltis-logs.jsonl"
+        panel.nameFieldStringValue = "clawmaster-logs.jsonl"
         panel.begin { response in
             guard response == .OK, let url = panel.url else { return }
             let content = logStore.exportJSONL()

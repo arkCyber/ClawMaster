@@ -1,17 +1,17 @@
 [package]
 edition.workspace = true
-name              = "moltis-whatsapp"
+name              = "clawmaster-whatsapp"
 version.workspace = true
 
 [dependencies]
 async-trait     = { workspace = true }
 base64          = { workspace = true }
 dashmap         = { workspace = true }
-moltis-channels = { workspace = true }
-moltis-common   = { workspace = true }
-moltis-config   = { workspace = true }
-moltis-media    = { workspace = true }
-moltis-metrics  = { optional = true, workspace = true }
+clawmaster-channels = { workspace = true }
+clawmaster-common   = { workspace = true }
+clawmaster-config   = { workspace = true }
+clawmaster-media    = { workspace = true }
+clawmaster-metrics  = { optional = true, workspace = true }
 postcard        = { workspace = true }
 rand            = { workspace = true }
 serde           = { workspace = true }
@@ -31,7 +31,7 @@ whatsapp-rust-ureq-http-client = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dev-dependencies]
 tempfile = { workspace = true }

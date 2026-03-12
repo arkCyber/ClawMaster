@@ -2,11 +2,11 @@
 
 Date: 2026-02-16  
 Status: Draft for later implementation  
-Scope: Web UI terminal renderer for `Settings > Terminal` in Moltis
+Scope: Web UI terminal renderer for `Settings > Terminal` in ClawMaster
 
 ## Goal
 
-Evaluate whether Moltis should embed Ghostty-based WASM terminal rendering in the web UI, while keeping Moltis as a single binary that serves bundled assets.
+Evaluate whether ClawMaster should embed Ghostty-based WASM terminal rendering in the web UI, while keeping ClawMaster as a single binary that serves bundled assets.
 
 ## What Was Researched
 
@@ -31,11 +31,11 @@ Evaluate whether Moltis should embed Ghostty-based WASM terminal rendering in th
 Short answer: feasible, but should be feature-gated first.
 
 Rationale:
-- Technical integration is straightforward if we keep Moltis backend transport unchanged and only swap renderer in the browser.
+- Technical integration is straightforward if we keep ClawMaster backend transport unchanged and only swap renderer in the browser.
 - The binary size increase is noticeable but acceptable for desktop/server distribution.
 - Main risk is supply chain and maintenance because `ghostty-web` currently depends on a Ghostty patch.
 
-## Architecture Fit for Moltis
+## Architecture Fit for ClawMaster
 
 Recommended boundary:
 

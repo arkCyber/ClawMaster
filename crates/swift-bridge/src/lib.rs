@@ -9,22 +9,22 @@ use std::{
 };
 
 use {
-    moltis_agents::model::{
+    clawmaster_agents::model::{
         ChatMessage as AgentChatMessage, LlmProvider, StreamEvent, Usage, UserContent,
     },
-    moltis_config::validate::Severity,
-    moltis_provider_setup::{
+    clawmaster_config::validate::Severity,
+    clawmaster_provider_setup::{
         KeyStore, config_with_saved_keys, detect_auto_provider_sources_with_overrides,
         known_providers,
     },
-    moltis_providers::ProviderRegistry,
-    moltis_sessions::{
+    clawmaster_providers::ProviderRegistry,
+    clawmaster_sessions::{
         message::PersistedMessage,
         metadata::{SessionEntry, SqliteSessionMetadata},
         session_events::{SessionEvent, SessionEventBus},
         store::SessionStore,
     },
-    moltis_tools::image_cache::ImageBuilder,
+    clawmaster_tools::image_cache::ImageBuilder,
     secrecy::{ExposeSecret, Secret},
     serde::{Deserialize, Serialize},
     tokio_stream::StreamExt,
@@ -37,7 +37,7 @@ struct BridgeState {
     registry: RwLock<ProviderRegistry>,
     session_store: SessionStore,
     session_metadata: SqliteSessionMetadata,
-    credential_store: Arc<moltis_gateway::auth::CredentialStore>,
+    credential_store: Arc<clawmaster_gateway::auth::CredentialStore>,
     sandbox_default_image_override: RwLock<Option<String>>,
 }
 
@@ -60,7 +60,7 @@ impl BridgeState {
         let registry = build_registry();
 
         // Initialize persistent session storage (JSONL message files).
-        let data_dir = moltis_config::data_dir();
+        let data_dir = clawmaster_config::data_dir();
         let sessions_dir = data_dir.join("sessions");
         if let Err(e) = std::fs::create_dir_all(&sessions_dir) {
             emit_log(
@@ -73,7 +73,7 @@ impl BridgeState {
 
         // Open the shared SQLite database (same moltis.db used by the gateway).
         // WAL mode + synchronous=NORMAL avoids multi-second write contention.
-        let db_path = data_dir.join("moltis.db");
+        let db_path = data_dir.join("clawmaster.db");
         let db_pool = runtime.block_on(async {
             use {
                 sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqliteSynchronous},
@@ -89,13 +89,13 @@ impl BridgeState {
                 .unwrap_or_else(|e| panic!("failed to open moltis.db: {e}"));
             // Run migrations so the sessions table exists even if the gateway
             // hasn't been started yet. Order: projects first (FK dependency).
-            if let Err(e) = moltis_projects::run_migrations(&pool).await {
+            if let Err(e) = clawmaster_projects::run_migrations(&pool).await {
                 emit_log("WARN", "bridge", &format!("projects migration: {e}"));
             }
-            if let Err(e) = moltis_sessions::run_migrations(&pool).await {
+            if let Err(e) = clawmaster_sessions::run_migrations(&pool).await {
                 emit_log("WARN", "bridge", &format!("sessions migration: {e}"));
             }
-            if let Err(e) = moltis_gateway::run_migrations(&pool).await {
+            if let Err(e) = clawmaster_gateway::run_migrations(&pool).await {
                 emit_log("WARN", "bridge", &format!("gateway migration: {e}"));
             }
             pool
@@ -105,11 +105,11 @@ impl BridgeState {
         let credential_store = runtime.block_on(async {
             // Keep vault metadata up to date so env var encryption status works
             // even when the full gateway server is not running.
-            if let Err(e) = moltis_gateway::auth::moltis_vault::run_migrations(&db_pool).await {
+            if let Err(e) = clawmaster_gateway::auth::clawmaster_vault::run_migrations(&db_pool).await {
                 emit_log("WARN", "bridge", &format!("vault migration: {e}"));
             }
 
-            let vault = match moltis_gateway::auth::moltis_vault::Vault::new(db_pool.clone()).await
+            let vault = match clawmaster_gateway::auth::clawmaster_vault::Vault::new(db_pool.clone()).await
             {
                 Ok(vault) => Some(Arc::new(vault)),
                 Err(e) => {
@@ -118,9 +118,9 @@ impl BridgeState {
                 },
             };
 
-            match moltis_gateway::auth::CredentialStore::with_vault(
+            match clawmaster_gateway::auth::CredentialStore::with_vault(
                 db_pool.clone(),
-                &moltis_config::discover_and_load().auth,
+                &clawmaster_config::discover_and_load().auth,
                 vault,
             )
             .await
@@ -148,7 +148,7 @@ fn init_swift_bridge_test_dirs() {
 
     TEST_DIRS_INIT.get_or_init(|| {
         let base = std::env::temp_dir().join(format!(
-            "moltis-swift-bridge-tests-{}-{}",
+            "clawmaster-swift-bridge-tests-{}-{}",
             std::process::id(),
             uuid::Uuid::new_v4().simple()
         ));
@@ -162,13 +162,13 @@ fn init_swift_bridge_test_dirs() {
             panic!("failed to create swift-bridge test data dir: {error}");
         }
 
-        moltis_config::set_config_dir(config_dir);
-        moltis_config::set_data_dir(data_dir);
+        clawmaster_config::set_config_dir(config_dir);
+        clawmaster_config::set_data_dir(data_dir);
     });
 }
 
 fn build_registry() -> ProviderRegistry {
-    let config = moltis_config::discover_and_load();
+    let config = clawmaster_config::discover_and_load();
     let env_overrides = config.env.clone();
     let key_store = KeyStore::new();
     let effective = config_with_saved_keys(&config.providers, &key_store, &[]);
@@ -192,7 +192,7 @@ struct HttpdHandle {
     addr: SocketAddr,
     /// Gateway state — used for abort/peek FFI calls and kept alive while
     /// the server is running.
-    state: std::sync::Arc<moltis_gateway::state::GatewayState>,
+    state: std::sync::Arc<clawmaster_gateway::state::GatewayState>,
 }
 
 /// Global server handle — `None` when stopped, `Some` when running.
@@ -338,12 +338,12 @@ struct BridgeNetworkAuditEvent {
 }
 
 #[allow(unsafe_code)]
-fn emit_network_audit(entry: &moltis_network_filter::NetworkAuditEntry) {
+fn emit_network_audit(entry: &clawmaster_network_filter::NetworkAuditEntry) {
     if let Some(callback) = NETWORK_AUDIT_CALLBACK.get() {
         let source = match &entry.approval_source {
-            Some(moltis_network_filter::ApprovalSource::Config) => "config",
-            Some(moltis_network_filter::ApprovalSource::Session) => "session",
-            Some(moltis_network_filter::ApprovalSource::UserPrompt) => "user",
+            Some(clawmaster_network_filter::ApprovalSource::Config) => "config",
+            Some(clawmaster_network_filter::ApprovalSource::Session) => "session",
+            Some(clawmaster_network_filter::ApprovalSource::UserPrompt) => "user",
             None => "unknown",
         };
         let payload = BridgeNetworkAuditEvent {
@@ -407,7 +407,7 @@ struct ValidationSummary {
 #[derive(Debug, Serialize)]
 struct VersionResponse {
     bridge_version: &'static str,
-    moltis_version: &'static str,
+    clawmaster_version: &'static str,
     config_dir: String,
 }
 
@@ -579,7 +579,7 @@ struct DeleteEnvVarRequest {
 
 #[derive(Debug, Serialize)]
 struct ListEnvVarsResponse {
-    env_vars: Vec<moltis_gateway::auth::EnvVarEntry>,
+    env_vars: Vec<clawmaster_gateway::auth::EnvVarEntry>,
     vault_status: String,
 }
 
@@ -666,7 +666,7 @@ struct AuthPasswordChangeResponse {
 
 #[derive(Debug, Serialize)]
 struct AuthPasskeysResponse {
-    passkeys: Vec<moltis_gateway::auth::PasskeyEntry>,
+    passkeys: Vec<clawmaster_gateway::auth::PasskeyEntry>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -819,7 +819,7 @@ struct SandboxContainerNameRequest {
 
 #[derive(Debug, Serialize)]
 struct SandboxContainersResponse {
-    containers: Vec<moltis_tools::sandbox::RunningContainer>,
+    containers: Vec<clawmaster_tools::sandbox::RunningContainer>,
 }
 
 #[derive(Debug, Serialize)]
@@ -830,7 +830,7 @@ struct SandboxCleanContainersResponse {
 
 #[derive(Debug, Serialize)]
 struct SandboxDiskUsageResponse {
-    usage: moltis_tools::sandbox::ContainerDiskUsage,
+    usage: clawmaster_tools::sandbox::ContainerDiskUsage,
 }
 
 // ── Encoding helpers ───────────────────────────────────────────────────────
@@ -917,7 +917,7 @@ fn format_bytes(bytes: u64) -> String {
 
 fn build_validation_summary(config_toml: Option<&str>) -> Option<ValidationSummary> {
     let config_toml = config_toml?;
-    let result = moltis_config::validate::validate_toml_str(config_toml);
+    let result = clawmaster_config::validate::validate_toml_str(config_toml);
 
     Some(ValidationSummary {
         errors: result.count(Severity::Error),
@@ -928,14 +928,14 @@ fn build_validation_summary(config_toml: Option<&str>) -> Option<ValidationSumma
 }
 
 fn config_dir_string() -> String {
-    match moltis_config::config_dir() {
+    match clawmaster_config::config_dir() {
         Some(path) => path.display().to_string(),
         None => "unavailable".to_owned(),
     }
 }
 
 fn data_dir_string() -> String {
-    moltis_config::data_dir().display().to_string()
+    clawmaster_config::data_dir().display().to_string()
 }
 
 fn vault_status_string() -> String {
@@ -948,7 +948,7 @@ fn vault_status_string() -> String {
     }
 }
 
-fn sandbox_effective_default_image(config: &moltis_config::MoltisConfig) -> String {
+fn sandbox_effective_default_image(config: &clawmaster_config::MoltisConfig) -> String {
     if let Some(value) = BRIDGE
         .sandbox_default_image_override
         .read()
@@ -963,16 +963,16 @@ fn sandbox_effective_default_image(config: &moltis_config::MoltisConfig) -> Stri
         .sandbox
         .image
         .clone()
-        .unwrap_or_else(|| moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_owned())
+        .unwrap_or_else(|| clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_owned())
 }
 
-fn sandbox_backend_name(config: &moltis_config::MoltisConfig) -> String {
-    let runtime_cfg = moltis_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
-    let backend = moltis_tools::sandbox::create_sandbox(runtime_cfg);
+fn sandbox_backend_name(config: &clawmaster_config::MoltisConfig) -> String {
+    let runtime_cfg = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+    let backend = clawmaster_tools::sandbox::create_sandbox(runtime_cfg);
     backend.backend_name().to_owned()
 }
 
-fn sandbox_status_from_config(config: &moltis_config::MoltisConfig) -> SandboxStatusResponse {
+fn sandbox_status_from_config(config: &clawmaster_config::MoltisConfig) -> SandboxStatusResponse {
     SandboxStatusResponse {
         backend: sandbox_backend_name(config),
         os: std::env::consts::OS.to_owned(),
@@ -980,30 +980,30 @@ fn sandbox_status_from_config(config: &moltis_config::MoltisConfig) -> SandboxSt
     }
 }
 
-fn sandbox_container_prefix(config: &moltis_config::MoltisConfig) -> String {
-    let runtime_cfg = moltis_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+fn sandbox_container_prefix(config: &clawmaster_config::MoltisConfig) -> String {
+    let runtime_cfg = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
     runtime_cfg
         .container_prefix
-        .unwrap_or_else(|| "moltis-sandbox".to_owned())
+        .unwrap_or_else(|| "clawmaster-sandbox".to_owned())
 }
 
 fn sandbox_shared_home_config_from_config(
-    config: &moltis_config::MoltisConfig,
+    config: &clawmaster_config::MoltisConfig,
 ) -> SandboxSharedHomeConfigResponse {
-    let runtime_cfg = moltis_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+    let runtime_cfg = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
     let mode = match config.tools.exec.sandbox.home_persistence {
-        moltis_config::schema::HomePersistenceConfig::Off => "off",
-        moltis_config::schema::HomePersistenceConfig::Session => "session",
-        moltis_config::schema::HomePersistenceConfig::Shared => "shared",
+        clawmaster_config::schema::HomePersistenceConfig::Off => "off",
+        clawmaster_config::schema::HomePersistenceConfig::Session => "session",
+        clawmaster_config::schema::HomePersistenceConfig::Shared => "shared",
     };
 
     SandboxSharedHomeConfigResponse {
         enabled: matches!(
             config.tools.exec.sandbox.home_persistence,
-            moltis_config::schema::HomePersistenceConfig::Shared
+            clawmaster_config::schema::HomePersistenceConfig::Shared
         ),
         mode: mode.to_owned(),
-        path: moltis_tools::sandbox::shared_home_dir_path(&runtime_cfg)
+        path: clawmaster_tools::sandbox::shared_home_dir_path(&runtime_cfg)
             .display()
             .to_string(),
         configured_path: config.tools.exec.sandbox.shared_home_dir.clone(),
@@ -1127,7 +1127,7 @@ fn build_chat_response(request: ChatRequest) -> String {
         model,
         provider: provider_name,
         config_dir: config_dir_string(),
-        default_soul: moltis_config::DEFAULT_SOUL.to_owned(),
+        default_soul: clawmaster_config::DEFAULT_SOUL.to_owned(),
         validation,
         input_tokens,
         output_tokens,
@@ -1208,13 +1208,13 @@ impl StreamCallbackCtx {
 ///   event (done or error).
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn moltis_chat_stream(
+pub unsafe extern "C" fn clawmaster_chat_stream(
     request_json: *const c_char,
     callback: StreamCallback,
     user_data: *mut c_void,
 ) {
-    record_call("moltis_chat_stream");
-    trace_call("moltis_chat_stream");
+    record_call("clawmaster_chat_stream");
+    trace_call("clawmaster_chat_stream");
 
     // Helper to send an error event before `ctx` is constructed.
     let send_error = |msg: String| {
@@ -1233,7 +1233,7 @@ pub unsafe extern "C" fn moltis_chat_stream(
     let raw = match read_c_string(request_json) {
         Ok(value) => value,
         Err(message) => {
-            record_error("moltis_chat_stream", "null_pointer_or_invalid_utf8");
+            record_error("clawmaster_chat_stream", "null_pointer_or_invalid_utf8");
             send_error(message);
             return;
         },
@@ -1242,7 +1242,7 @@ pub unsafe extern "C" fn moltis_chat_stream(
     let request = match serde_json::from_str::<ChatRequest>(&raw) {
         Ok(request) => request,
         Err(error) => {
-            record_error("moltis_chat_stream", "invalid_json");
+            record_error("clawmaster_chat_stream", "invalid_json");
             send_error(error.to_string());
             return;
         },
@@ -1339,7 +1339,7 @@ pub unsafe extern "C" fn moltis_chat_stream(
 
 #[cfg(feature = "metrics")]
 fn record_call(function: &'static str) {
-    metrics::counter!("moltis_swift_bridge_calls_total", "function" => function).increment(1);
+    metrics::counter!("clawmaster_swift_bridge_calls_total", "function" => function).increment(1);
 }
 
 #[cfg(not(feature = "metrics"))]
@@ -1348,7 +1348,7 @@ fn record_call(_function: &'static str) {}
 #[cfg(feature = "metrics")]
 fn record_error(function: &'static str, code: &'static str) {
     metrics::counter!(
-        "moltis_swift_bridge_errors_total",
+        "clawmaster_swift_bridge_errors_total",
         "function" => function,
         "code" => code
     )
@@ -1360,7 +1360,7 @@ fn record_error(_function: &'static str, _code: &'static str) {}
 
 #[cfg(feature = "tracing")]
 fn trace_call(function: &'static str) {
-    tracing::debug!(target: "moltis_swift_bridge", function, "ffi call");
+    tracing::debug!(target: "clawmaster_swift_bridge", function, "ffi call");
 }
 
 #[cfg(not(feature = "tracing"))]
@@ -1370,15 +1370,15 @@ fn trace_call(_function: &'static str) {}
 
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_version() -> *mut c_char {
-    record_call("moltis_version");
-    trace_call("moltis_version");
+pub extern "C" fn clawmaster_version() -> *mut c_char {
+    record_call("clawmaster_version");
+    trace_call("clawmaster_version");
 
     with_ffi_boundary(|| {
-        emit_log("DEBUG", "bridge", "moltis_version called");
+        emit_log("DEBUG", "bridge", "clawmaster_version called");
         let response = VersionResponse {
             bridge_version: env!("CARGO_PKG_VERSION"),
-            moltis_version: env!("CARGO_PKG_VERSION"),
+            clawmaster_version: env!("CARGO_PKG_VERSION"),
             config_dir: config_dir_string(),
         };
         emit_log(
@@ -1395,25 +1395,25 @@ pub extern "C" fn moltis_version() -> *mut c_char {
 
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_get_identity() -> *mut c_char {
-    record_call("moltis_get_identity");
-    trace_call("moltis_get_identity");
+pub extern "C" fn clawmaster_get_identity() -> *mut c_char {
+    record_call("clawmaster_get_identity");
+    trace_call("clawmaster_get_identity");
 
     with_ffi_boundary(|| {
-        let resolved = moltis_config::resolve_identity();
-        emit_log("DEBUG", "bridge", "moltis_get_identity called");
+        let resolved = clawmaster_config::resolve_identity();
+        emit_log("DEBUG", "bridge", "clawmaster_get_identity called");
         encode_json(&resolved)
     })
 }
 
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_chat_json(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_chat_json");
-    trace_call("moltis_chat_json");
+pub extern "C" fn clawmaster_chat_json(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_chat_json");
+    trace_call("clawmaster_chat_json");
 
     with_ffi_boundary(|| {
-        let request = match parse_ffi_request::<ChatRequest>("moltis_chat_json", request_json) {
+        let request = match parse_ffi_request::<ChatRequest>("clawmaster_chat_json", request_json) {
             Ok(request) => request,
             Err(e) => return e,
         };
@@ -1425,9 +1425,9 @@ pub extern "C" fn moltis_chat_json(request_json: *const c_char) -> *mut c_char {
 /// Returns JSON array of all known providers.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_known_providers() -> *mut c_char {
-    record_call("moltis_known_providers");
-    trace_call("moltis_known_providers");
+pub extern "C" fn clawmaster_known_providers() -> *mut c_char {
+    record_call("clawmaster_known_providers");
+    trace_call("clawmaster_known_providers");
 
     with_ffi_boundary(|| {
         emit_log("DEBUG", "bridge", "Loading known providers");
@@ -1455,13 +1455,13 @@ pub extern "C" fn moltis_known_providers() -> *mut c_char {
 /// Returns JSON array of auto-detected provider sources.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_detect_providers() -> *mut c_char {
-    record_call("moltis_detect_providers");
-    trace_call("moltis_detect_providers");
+pub extern "C" fn clawmaster_detect_providers() -> *mut c_char {
+    record_call("clawmaster_detect_providers");
+    trace_call("clawmaster_detect_providers");
 
     with_ffi_boundary(|| {
         emit_log("DEBUG", "bridge", "Detecting provider sources");
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let sources =
             detect_auto_provider_sources_with_overrides(&config.providers, None, &config.env);
         let bridge_sources: Vec<BridgeDetectedSource> = sources
@@ -1484,13 +1484,13 @@ pub extern "C" fn moltis_detect_providers() -> *mut c_char {
 /// Saves provider configuration (API key, base URL, models).
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_save_provider_config(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_save_provider_config");
-    trace_call("moltis_save_provider_config");
+pub extern "C" fn clawmaster_save_provider_config(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_save_provider_config");
+    trace_call("clawmaster_save_provider_config");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SaveProviderRequest>(
-            "moltis_save_provider_config",
+            "clawmaster_save_provider_config",
             request_json,
         ) {
             Ok(request) => request,
@@ -1521,9 +1521,9 @@ pub extern "C" fn moltis_save_provider_config(request_json: *const c_char) -> *m
 /// Lists all discovered models from the current provider registry.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_list_models() -> *mut c_char {
-    record_call("moltis_list_models");
-    trace_call("moltis_list_models");
+pub extern "C" fn clawmaster_list_models() -> *mut c_char {
+    record_call("clawmaster_list_models");
+    trace_call("clawmaster_list_models");
 
     with_ffi_boundary(|| {
         emit_log("DEBUG", "bridge", "Listing models from registry");
@@ -1546,9 +1546,9 @@ pub extern "C" fn moltis_list_models() -> *mut c_char {
 /// Rebuilds the global provider registry from saved config + env.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_refresh_registry() -> *mut c_char {
-    record_call("moltis_refresh_registry");
-    trace_call("moltis_refresh_registry");
+pub extern "C" fn clawmaster_refresh_registry() -> *mut c_char {
+    record_call("clawmaster_refresh_registry");
+    trace_call("clawmaster_refresh_registry");
 
     with_ffi_boundary(|| {
         emit_log("INFO", "bridge", "Refreshing provider registry");
@@ -1565,10 +1565,10 @@ pub extern "C" fn moltis_refresh_registry() -> *mut c_char {
 /// # Safety
 ///
 /// `ptr` must either be null or a pointer previously returned by one of the
-/// `moltis_*` FFI functions from this crate. Passing any other pointer, or
+/// `clawmaster_*` FFI functions from this crate. Passing any other pointer, or
 /// freeing the same pointer more than once, is undefined behavior.
-pub unsafe extern "C" fn moltis_free_string(ptr: *mut c_char) {
-    record_call("moltis_free_string");
+pub unsafe extern "C" fn clawmaster_free_string(ptr: *mut c_char) {
+    record_call("clawmaster_free_string");
 
     if ptr.is_null() {
         return;
@@ -1587,7 +1587,7 @@ pub unsafe extern "C" fn moltis_free_string(ptr: *mut c_char) {
 /// the lifetime of the process.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn moltis_set_log_callback(callback: LogCallback) {
+pub unsafe extern "C" fn clawmaster_set_log_callback(callback: LogCallback) {
     let _ = LOG_CALLBACK.set(callback);
     emit_log("INFO", "bridge", "Log callback registered");
 }
@@ -1603,7 +1603,7 @@ pub unsafe extern "C" fn moltis_set_log_callback(callback: LogCallback) {
 /// the lifetime of the process.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn moltis_set_session_event_callback(callback: SessionEventCallback) {
+pub unsafe extern "C" fn clawmaster_set_session_event_callback(callback: SessionEventCallback) {
     if SESSION_EVENT_CALLBACK.set(callback).is_ok() {
         // Spawn a background task that subscribes to session events and
         // invokes the callback for each one.
@@ -1643,7 +1643,7 @@ pub unsafe extern "C" fn moltis_set_session_event_callback(callback: SessionEven
 /// the lifetime of the process.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn moltis_set_network_audit_callback(callback: NetworkAuditCallback) {
+pub unsafe extern "C" fn clawmaster_set_network_audit_callback(callback: NetworkAuditCallback) {
     let _ = NETWORK_AUDIT_CALLBACK.set(callback);
     emit_log("INFO", "bridge", "Network audit callback registered");
 }
@@ -1653,9 +1653,9 @@ pub unsafe extern "C" fn moltis_set_network_audit_callback(callback: NetworkAudi
 /// If already running, returns the current status without restarting.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_start_httpd(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_start_httpd");
-    trace_call("moltis_start_httpd");
+pub extern "C" fn clawmaster_start_httpd(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_start_httpd");
+    trace_call("clawmaster_start_httpd");
 
     with_ffi_boundary(|| {
         let request: StartHttpdRequest = if request_json.is_null() {
@@ -1703,14 +1703,14 @@ pub extern "C" fn moltis_start_httpd(request_json: *const c_char) -> *mut c_char
         let prepared =
             match BRIDGE
                 .runtime
-                .block_on(moltis_gateway::server::prepare_gateway_embedded(
+                .block_on(clawmaster_gateway::server::prepare_gateway_embedded(
                     &request.host,
                     request.port,
                     true, // no_tls — the macOS app manages its own TLS if needed
                     None, // log_buffer
                     request.config_dir.map(std::path::PathBuf::from),
                     request.data_dir.map(std::path::PathBuf::from),
-                    Some(moltis_web::web_routes), // full web UI
+                    Some(clawmaster_web::web_routes), // full web UI
                     BRIDGE.session_metadata.event_bus().cloned(), // share bus with gateway
                 )) {
                 Ok(p) => p,
@@ -1797,9 +1797,9 @@ pub extern "C" fn moltis_start_httpd(request_json: *const c_char) -> *mut c_char
 /// Stops the embedded HTTP server. Returns `{"running": false}`.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_stop_httpd() -> *mut c_char {
-    record_call("moltis_stop_httpd");
-    trace_call("moltis_stop_httpd");
+pub extern "C" fn clawmaster_stop_httpd() -> *mut c_char {
+    record_call("clawmaster_stop_httpd");
+    trace_call("clawmaster_stop_httpd");
 
     with_ffi_boundary(|| {
         let mut guard = HTTPD.lock().unwrap_or_else(|e| e.into_inner());
@@ -1827,9 +1827,9 @@ pub extern "C" fn moltis_stop_httpd() -> *mut c_char {
 /// Returns the current httpd server status.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_httpd_status() -> *mut c_char {
-    record_call("moltis_httpd_status");
-    trace_call("moltis_httpd_status");
+pub extern "C" fn clawmaster_httpd_status() -> *mut c_char {
+    record_call("clawmaster_httpd_status");
+    trace_call("clawmaster_httpd_status");
 
     with_ffi_boundary(|| {
         let guard = HTTPD.lock().unwrap_or_else(|e| e.into_inner());
@@ -1849,12 +1849,12 @@ pub extern "C" fn moltis_httpd_status() -> *mut c_char {
 // ── Abort / Peek FFI ────────────────────────────────────────────────────
 
 /// Abort the active generation for a session. Requires the gateway to be
-/// running (via `moltis_start_httpd`). Returns JSON with `{"aborted": bool}`.
+/// running (via `clawmaster_start_httpd`). Returns JSON with `{"aborted": bool}`.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_abort_session(session_key: *const c_char) -> *mut c_char {
-    record_call("moltis_abort_session");
-    trace_call("moltis_abort_session");
+pub extern "C" fn clawmaster_abort_session(session_key: *const c_char) -> *mut c_char {
+    record_call("clawmaster_abort_session");
+    trace_call("clawmaster_abort_session");
 
     with_ffi_boundary(|| {
         let key = match read_c_string(session_key) {
@@ -1883,9 +1883,9 @@ pub extern "C" fn moltis_abort_session(session_key: *const c_char) -> *mut c_cha
 /// running. Returns JSON with `{"active": bool, ...}`.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_peek_session(session_key: *const c_char) -> *mut c_char {
-    record_call("moltis_peek_session");
-    trace_call("moltis_peek_session");
+pub extern "C" fn clawmaster_peek_session(session_key: *const c_char) -> *mut c_char {
+    record_call("clawmaster_peek_session");
+    trace_call("clawmaster_peek_session");
 
     with_ffi_boundary(|| {
         let key = match read_c_string(session_key) {
@@ -1915,9 +1915,9 @@ pub extern "C" fn moltis_peek_session(session_key: *const c_char) -> *mut c_char
 /// Returns JSON array of all session entries (sorted by created_at ASC, matching web UI).
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_list_sessions() -> *mut c_char {
-    record_call("moltis_list_sessions");
-    trace_call("moltis_list_sessions");
+pub extern "C" fn clawmaster_list_sessions() -> *mut c_char {
+    record_call("clawmaster_list_sessions");
+    trace_call("clawmaster_list_sessions");
 
     with_ffi_boundary(|| {
         let all = BRIDGE.runtime.block_on(BRIDGE.session_metadata.list());
@@ -1935,13 +1935,13 @@ pub extern "C" fn moltis_list_sessions() -> *mut c_char {
 /// If the session doesn't exist yet, it will be created.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_switch_session(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_switch_session");
-    trace_call("moltis_switch_session");
+pub extern "C" fn clawmaster_switch_session(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_switch_session");
+    trace_call("clawmaster_switch_session");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SwitchSessionRequest>(
-            "moltis_switch_session",
+            "clawmaster_switch_session",
             request_json,
         ) {
             Ok(r) => r,
@@ -2005,9 +2005,9 @@ pub extern "C" fn moltis_switch_session(request_json: *const c_char) -> *mut c_c
 /// Creates a new session with an optional label. Returns the entry.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_create_session(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_create_session");
-    trace_call("moltis_create_session");
+pub extern "C" fn clawmaster_create_session(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_create_session");
+    trace_call("clawmaster_create_session");
 
     with_ffi_boundary(|| {
         let request: CreateSessionRequest = if request_json.is_null() {
@@ -2047,16 +2047,16 @@ pub extern "C" fn moltis_create_session(request_json: *const c_char) -> *mut c_c
 ///
 /// # Safety
 ///
-/// Same requirements as `moltis_chat_stream`.
+/// Same requirements as `clawmaster_chat_stream`.
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn moltis_session_chat_stream(
+pub unsafe extern "C" fn clawmaster_session_chat_stream(
     request_json: *const c_char,
     callback: StreamCallback,
     user_data: *mut c_void,
 ) {
-    record_call("moltis_session_chat_stream");
-    trace_call("moltis_session_chat_stream");
+    record_call("clawmaster_session_chat_stream");
+    trace_call("clawmaster_session_chat_stream");
 
     let send_error = |msg: String| {
         let event = BridgeStreamEvent::Error { message: msg };
@@ -2227,13 +2227,13 @@ pub unsafe extern "C" fn moltis_session_chat_stream(
 /// Returns the full `MoltisConfig` as JSON together with `config_dir` and
 /// `data_dir` paths. Swift uses this to populate all settings panels.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_get_config() -> *mut c_char {
-    record_call("moltis_get_config");
-    trace_call("moltis_get_config");
+pub extern "C" fn clawmaster_get_config() -> *mut c_char {
+    record_call("clawmaster_get_config");
+    trace_call("clawmaster_get_config");
 
     with_ffi_boundary(|| {
-        emit_log("DEBUG", "bridge", "moltis_get_config called");
-        let config = moltis_config::discover_and_load();
+        emit_log("DEBUG", "bridge", "clawmaster_get_config called");
+        let config = clawmaster_config::discover_and_load();
         let config_value = match serde_json::to_value(&config) {
             Ok(v) => v,
             Err(e) => return encode_error("serialization_error", &e.to_string()),
@@ -2251,13 +2251,13 @@ pub extern "C" fn moltis_get_config() -> *mut c_char {
 /// Accepts a full `MoltisConfig` JSON and saves it via `save_config()`.
 /// The TOML writer preserves existing comments in the config file.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_save_config(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_save_config");
-    trace_call("moltis_save_config");
+pub extern "C" fn clawmaster_save_config(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_save_config");
+    trace_call("clawmaster_save_config");
 
     with_ffi_boundary(|| {
-        let config = match parse_ffi_request::<moltis_config::MoltisConfig>(
-            "moltis_save_config",
+        let config = match parse_ffi_request::<clawmaster_config::MoltisConfig>(
+            "clawmaster_save_config",
             request_json,
         ) {
             Ok(c) => c,
@@ -2265,7 +2265,7 @@ pub extern "C" fn moltis_save_config(request_json: *const c_char) -> *mut c_char
         };
 
         emit_log("INFO", "bridge.config", "Saving full config from settings");
-        match moltis_config::save_config(&config) {
+        match clawmaster_config::save_config(&config) {
             Ok(path) => {
                 emit_log(
                     "INFO",
@@ -2284,14 +2284,14 @@ pub extern "C" fn moltis_save_config(request_json: *const c_char) -> *mut c_char
 
 /// Returns memory status (counts + db size) for the settings panel.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_memory_status() -> *mut c_char {
-    record_call("moltis_memory_status");
-    trace_call("moltis_memory_status");
+pub extern "C" fn clawmaster_memory_status() -> *mut c_char {
+    record_call("clawmaster_memory_status");
+    trace_call("clawmaster_memory_status");
 
     with_ffi_boundary(|| {
         use {sqlx::sqlite::SqliteConnectOptions, std::str::FromStr};
 
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let embedding_model = config
             .memory
             .model
@@ -2299,7 +2299,7 @@ pub extern "C" fn moltis_memory_status() -> *mut c_char {
             .unwrap_or_else(|| "none".to_owned());
         let has_embeddings = !config.memory.disable_rag;
 
-        let db_path = moltis_config::data_dir().join("memory.db");
+        let db_path = clawmaster_config::data_dir().join("memory.db");
         let db_size = std::fs::metadata(&db_path).map(|m| m.len()).unwrap_or(0);
 
         if !db_path.exists() {
@@ -2407,12 +2407,12 @@ pub extern "C" fn moltis_memory_status() -> *mut c_char {
 
 /// Returns memory configuration fields used by the settings panel.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_memory_config_get() -> *mut c_char {
-    record_call("moltis_memory_config_get");
-    trace_call("moltis_memory_config_get");
+pub extern "C" fn clawmaster_memory_config_get() -> *mut c_char {
+    record_call("clawmaster_memory_config_get");
+    trace_call("clawmaster_memory_config_get");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let memory = config.memory;
         let response = MemoryConfigResponse {
             backend: memory.backend.unwrap_or_else(|| "builtin".to_owned()),
@@ -2428,20 +2428,20 @@ pub extern "C" fn moltis_memory_config_get() -> *mut c_char {
 
 /// Updates memory configuration fields used by the settings panel.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_memory_config_update(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_memory_config_update");
-    trace_call("moltis_memory_config_update");
+pub extern "C" fn clawmaster_memory_config_update(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_memory_config_update");
+    trace_call("clawmaster_memory_config_update");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<MemoryConfigUpdateRequest>(
-            "moltis_memory_config_update",
+            "clawmaster_memory_config_update",
             request_json,
         ) {
             Ok(request) => request,
             Err(e) => return e,
         };
 
-        let current = moltis_config::discover_and_load().memory;
+        let current = clawmaster_config::discover_and_load().memory;
         let backend = request
             .backend
             .unwrap_or_else(|| current.backend.unwrap_or_else(|| "builtin".to_owned()));
@@ -2455,7 +2455,7 @@ pub extern "C" fn moltis_memory_config_update(request_json: *const c_char) -> *m
         let backend_value = backend.clone();
         let citations_value = citations.clone();
 
-        if let Err(error) = moltis_config::update_config(|cfg| {
+        if let Err(error) = clawmaster_config::update_config(|cfg| {
             cfg.memory.backend = Some(backend_value.clone());
             cfg.memory.citations = Some(citations_value.clone());
             cfg.memory.llm_reranking = llm_reranking;
@@ -2465,7 +2465,7 @@ pub extern "C" fn moltis_memory_config_update(request_json: *const c_char) -> *m
             cfg.memory.session_export = session_export;
             disable_rag = cfg.memory.disable_rag;
         }) {
-            record_error("moltis_memory_config_update", "save_failed");
+            record_error("clawmaster_memory_config_update", "save_failed");
             return encode_error("save_failed", &error.to_string());
         }
 
@@ -2483,9 +2483,9 @@ pub extern "C" fn moltis_memory_config_update(request_json: *const c_char) -> *m
 
 /// Returns QMD availability (binary detection + optional version).
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_memory_qmd_status() -> *mut c_char {
-    record_call("moltis_memory_qmd_status");
-    trace_call("moltis_memory_qmd_status");
+pub extern "C" fn clawmaster_memory_qmd_status() -> *mut c_char {
+    record_call("clawmaster_memory_qmd_status");
+    trace_call("clawmaster_memory_qmd_status");
 
     with_ffi_boundary(|| {
         if !cfg!(feature = "qmd") {
@@ -2498,7 +2498,7 @@ pub extern "C" fn moltis_memory_qmd_status() -> *mut c_char {
             return encode_json(&response);
         }
 
-        let command = moltis_config::discover_and_load()
+        let command = clawmaster_config::discover_and_load()
             .memory
             .qmd
             .command
@@ -2551,31 +2551,31 @@ pub extern "C" fn moltis_memory_qmd_status() -> *mut c_char {
 
 /// Returns the soul text from `SOUL.md`.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_get_soul() -> *mut c_char {
-    record_call("moltis_get_soul");
-    trace_call("moltis_get_soul");
+pub extern "C" fn clawmaster_get_soul() -> *mut c_char {
+    record_call("clawmaster_get_soul");
+    trace_call("clawmaster_get_soul");
 
     with_ffi_boundary(|| {
-        emit_log("DEBUG", "bridge", "moltis_get_soul called");
-        let soul = moltis_config::load_soul_for_agent("main");
+        emit_log("DEBUG", "bridge", "clawmaster_get_soul called");
+        let soul = clawmaster_config::load_soul_for_agent("main");
         encode_json(&GetSoulResponse { soul })
     })
 }
 
 /// Saves soul text to `SOUL.md`. Pass `{"soul": null}` to clear.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_save_soul(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_save_soul");
-    trace_call("moltis_save_soul");
+pub extern "C" fn clawmaster_save_soul(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_save_soul");
+    trace_call("clawmaster_save_soul");
 
     with_ffi_boundary(|| {
-        let request = match parse_ffi_request::<SaveSoulRequest>("moltis_save_soul", request_json) {
+        let request = match parse_ffi_request::<SaveSoulRequest>("clawmaster_save_soul", request_json) {
             Ok(r) => r,
             Err(e) => return e,
         };
 
         emit_log("INFO", "bridge.config", "Saving soul from settings");
-        match moltis_config::save_soul_for_agent("main", request.soul.as_deref()) {
+        match clawmaster_config::save_soul_for_agent("main", request.soul.as_deref()) {
             Ok(path) => {
                 emit_log(
                     "INFO",
@@ -2594,25 +2594,25 @@ pub extern "C" fn moltis_save_soul(request_json: *const c_char) -> *mut c_char {
 
 /// Saves identity (name, emoji, theme) to `IDENTITY.md`.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_save_identity(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_save_identity");
-    trace_call("moltis_save_identity");
+pub extern "C" fn clawmaster_save_identity(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_save_identity");
+    trace_call("clawmaster_save_identity");
 
     with_ffi_boundary(|| {
         let request =
-            match parse_ffi_request::<SaveIdentityRequest>("moltis_save_identity", request_json) {
+            match parse_ffi_request::<SaveIdentityRequest>("clawmaster_save_identity", request_json) {
                 Ok(r) => r,
                 Err(e) => return e,
             };
 
-        let identity = moltis_config::AgentIdentity {
+        let identity = clawmaster_config::AgentIdentity {
             name: request.name,
             emoji: request.emoji,
             theme: request.theme,
         };
 
         emit_log("INFO", "bridge.config", "Saving identity from settings");
-        match moltis_config::save_identity_for_agent("main", &identity) {
+        match clawmaster_config::save_identity_for_agent("main", &identity) {
             Ok(path) => {
                 emit_log(
                     "INFO",
@@ -2635,26 +2635,26 @@ pub extern "C" fn moltis_save_identity(request_json: *const c_char) -> *mut c_ch
 
 /// Saves user profile (name) to `USER.md`.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_save_user_profile(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_save_user_profile");
-    trace_call("moltis_save_user_profile");
+pub extern "C" fn clawmaster_save_user_profile(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_save_user_profile");
+    trace_call("clawmaster_save_user_profile");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SaveUserProfileRequest>(
-            "moltis_save_user_profile",
+            "clawmaster_save_user_profile",
             request_json,
         ) {
             Ok(r) => r,
             Err(e) => return e,
         };
 
-        let user = moltis_config::UserProfile {
+        let user = clawmaster_config::UserProfile {
             name: request.name,
             ..Default::default()
         };
 
         emit_log("INFO", "bridge.config", "Saving user profile from settings");
-        match moltis_config::save_user(&user) {
+        match clawmaster_config::save_user(&user) {
             Ok(path) => {
                 emit_log(
                     "INFO",
@@ -2678,9 +2678,9 @@ pub extern "C" fn moltis_save_user_profile(request_json: *const c_char) -> *mut 
 /// Returns runtime environment variables from the credential store.
 /// Values are never returned, only metadata (id/key/timestamps/encrypted).
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_list_env_vars() -> *mut c_char {
-    record_call("moltis_list_env_vars");
-    trace_call("moltis_list_env_vars");
+pub extern "C" fn clawmaster_list_env_vars() -> *mut c_char {
+    record_call("clawmaster_list_env_vars");
+    trace_call("clawmaster_list_env_vars");
 
     with_ffi_boundary(|| {
         let env_vars = match BRIDGE
@@ -2689,7 +2689,7 @@ pub extern "C" fn moltis_list_env_vars() -> *mut c_char {
         {
             Ok(vars) => vars,
             Err(e) => {
-                record_error("moltis_list_env_vars", "ENV_LIST_FAILED");
+                record_error("clawmaster_list_env_vars", "ENV_LIST_FAILED");
                 return encode_error("ENV_LIST_FAILED", &e.to_string());
             },
         };
@@ -2704,24 +2704,24 @@ pub extern "C" fn moltis_list_env_vars() -> *mut c_char {
 /// Set (upsert) an environment variable in the credential store.
 /// Uses vault encryption automatically when the vault is unsealed.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_set_env_var(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_set_env_var");
-    trace_call("moltis_set_env_var");
+pub extern "C" fn clawmaster_set_env_var(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_set_env_var");
+    trace_call("clawmaster_set_env_var");
 
     with_ffi_boundary(|| {
         let request =
-            match parse_ffi_request::<SetEnvVarRequest>("moltis_set_env_var", request_json) {
+            match parse_ffi_request::<SetEnvVarRequest>("clawmaster_set_env_var", request_json) {
                 Ok(r) => r,
                 Err(e) => return e,
             };
 
         let key = request.key.trim();
         if key.is_empty() {
-            record_error("moltis_set_env_var", "ENV_KEY_REQUIRED");
+            record_error("clawmaster_set_env_var", "ENV_KEY_REQUIRED");
             return encode_error("ENV_KEY_REQUIRED", "key is required");
         }
         if !key.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            record_error("moltis_set_env_var", "ENV_KEY_INVALID");
+            record_error("clawmaster_set_env_var", "ENV_KEY_INVALID");
             return encode_error(
                 "ENV_KEY_INVALID",
                 "key must contain only letters, digits, and underscores",
@@ -2734,7 +2734,7 @@ pub extern "C" fn moltis_set_env_var(request_json: *const c_char) -> *mut c_char
         {
             Ok(_) => encode_json(&OkResponse { ok: true }),
             Err(e) => {
-                record_error("moltis_set_env_var", "ENV_SET_FAILED");
+                record_error("clawmaster_set_env_var", "ENV_SET_FAILED");
                 encode_error("ENV_SET_FAILED", &e.to_string())
             },
         }
@@ -2743,13 +2743,13 @@ pub extern "C" fn moltis_set_env_var(request_json: *const c_char) -> *mut c_char
 
 /// Delete an environment variable by ID.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_delete_env_var(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_delete_env_var");
-    trace_call("moltis_delete_env_var");
+pub extern "C" fn clawmaster_delete_env_var(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_delete_env_var");
+    trace_call("clawmaster_delete_env_var");
 
     with_ffi_boundary(|| {
         let request =
-            match parse_ffi_request::<DeleteEnvVarRequest>("moltis_delete_env_var", request_json) {
+            match parse_ffi_request::<DeleteEnvVarRequest>("clawmaster_delete_env_var", request_json) {
                 Ok(r) => r,
                 Err(e) => return e,
             };
@@ -2760,7 +2760,7 @@ pub extern "C" fn moltis_delete_env_var(request_json: *const c_char) -> *mut c_c
         {
             Ok(_) => encode_json(&OkResponse { ok: true }),
             Err(e) => {
-                record_error("moltis_delete_env_var", "ENV_DELETE_FAILED");
+                record_error("clawmaster_delete_env_var", "ENV_DELETE_FAILED");
                 encode_error("ENV_DELETE_FAILED", &e.to_string())
             },
         }
@@ -2769,9 +2769,9 @@ pub extern "C" fn moltis_delete_env_var(request_json: *const c_char) -> *mut c_c
 
 /// Returns authentication status for the HTTP server.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_status() -> *mut c_char {
-    record_call("moltis_auth_status");
-    trace_call("moltis_auth_status");
+pub extern "C" fn clawmaster_auth_status() -> *mut c_char {
+    record_call("clawmaster_auth_status");
+    trace_call("clawmaster_auth_status");
 
     with_ffi_boundary(|| {
         let has_password = match BRIDGE
@@ -2780,7 +2780,7 @@ pub extern "C" fn moltis_auth_status() -> *mut c_char {
         {
             Ok(value) => value,
             Err(error) => {
-                record_error("moltis_auth_status", "AUTH_STATUS_FAILED");
+                record_error("clawmaster_auth_status", "AUTH_STATUS_FAILED");
                 return encode_error("AUTH_STATUS_FAILED", &error.to_string());
             },
         };
@@ -2791,7 +2791,7 @@ pub extern "C" fn moltis_auth_status() -> *mut c_char {
         {
             Ok(value) => value,
             Err(error) => {
-                record_error("moltis_auth_status", "AUTH_STATUS_FAILED");
+                record_error("clawmaster_auth_status", "AUTH_STATUS_FAILED");
                 return encode_error("AUTH_STATUS_FAILED", &error.to_string());
             },
         };
@@ -2811,13 +2811,13 @@ pub extern "C" fn moltis_auth_status() -> *mut c_char {
 /// - `{"new_password":"..."}` to set the first password.
 /// - `{"current_password":"...","new_password":"..."}` to rotate.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_auth_password_change");
-    trace_call("moltis_auth_password_change");
+pub extern "C" fn clawmaster_auth_password_change(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_auth_password_change");
+    trace_call("clawmaster_auth_password_change");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<AuthPasswordChangeRequest>(
-            "moltis_auth_password_change",
+            "clawmaster_auth_password_change",
             request_json,
         ) {
             Ok(r) => r,
@@ -2825,7 +2825,7 @@ pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *m
         };
 
         if request.new_password.expose_secret().len() < 8 {
-            record_error("moltis_auth_password_change", "AUTH_PASSWORD_TOO_SHORT");
+            record_error("clawmaster_auth_password_change", "AUTH_PASSWORD_TOO_SHORT");
             return encode_error(
                 "AUTH_PASSWORD_TOO_SHORT",
                 "new password must be at least 8 characters",
@@ -2838,7 +2838,7 @@ pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *m
         {
             Ok(value) => value,
             Err(error) => {
-                record_error("moltis_auth_password_change", "AUTH_STATUS_FAILED");
+                record_error("clawmaster_auth_password_change", "AUTH_STATUS_FAILED");
                 return encode_error("AUTH_STATUS_FAILED", &error.to_string());
             },
         };
@@ -2861,12 +2861,12 @@ pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *m
                 let message = error.to_string();
                 if message.contains("incorrect") {
                     record_error(
-                        "moltis_auth_password_change",
+                        "clawmaster_auth_password_change",
                         "AUTH_INVALID_CURRENT_PASSWORD",
                     );
                     return encode_error("AUTH_INVALID_CURRENT_PASSWORD", &message);
                 }
-                record_error("moltis_auth_password_change", "AUTH_PASSWORD_CHANGE_FAILED");
+                record_error("clawmaster_auth_password_change", "AUTH_PASSWORD_CHANGE_FAILED");
                 return encode_error("AUTH_PASSWORD_CHANGE_FAILED", &message);
             }
 
@@ -2885,14 +2885,14 @@ pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *m
             .runtime
             .block_on(BRIDGE.credential_store.add_password(new_password))
         {
-            record_error("moltis_auth_password_change", "AUTH_PASSWORD_SET_FAILED");
+            record_error("clawmaster_auth_password_change", "AUTH_PASSWORD_SET_FAILED");
             return encode_error("AUTH_PASSWORD_SET_FAILED", &error.to_string());
         } else if let Some(vault) = BRIDGE.credential_store.vault() {
             match BRIDGE.runtime.block_on(vault.initialize(new_password)) {
                 Ok(key) => {
                     recovery_key = Some(key.phrase().to_owned());
                 },
-                Err(moltis_gateway::auth::moltis_vault::VaultError::AlreadyInitialized) => {
+                Err(clawmaster_gateway::auth::clawmaster_vault::VaultError::AlreadyInitialized) => {
                     if let Err(error) = BRIDGE.runtime.block_on(vault.unseal(new_password)) {
                         emit_log(
                             "WARN",
@@ -2920,15 +2920,15 @@ pub extern "C" fn moltis_auth_password_change(request_json: *const c_char) -> *m
 
 /// Removes all authentication credentials (passwords, passkeys, sessions, API keys).
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_reset() -> *mut c_char {
-    record_call("moltis_auth_reset");
-    trace_call("moltis_auth_reset");
+pub extern "C" fn clawmaster_auth_reset() -> *mut c_char {
+    record_call("clawmaster_auth_reset");
+    trace_call("clawmaster_auth_reset");
 
     with_ffi_boundary(
         || match BRIDGE.runtime.block_on(BRIDGE.credential_store.reset_all()) {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("moltis_auth_reset", "AUTH_RESET_FAILED");
+                record_error("clawmaster_auth_reset", "AUTH_RESET_FAILED");
                 encode_error("AUTH_RESET_FAILED", &error.to_string())
             },
         },
@@ -2937,9 +2937,9 @@ pub extern "C" fn moltis_auth_reset() -> *mut c_char {
 
 /// Lists all registered passkeys.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_list_passkeys() -> *mut c_char {
-    record_call("moltis_auth_list_passkeys");
-    trace_call("moltis_auth_list_passkeys");
+pub extern "C" fn clawmaster_auth_list_passkeys() -> *mut c_char {
+    record_call("clawmaster_auth_list_passkeys");
+    trace_call("clawmaster_auth_list_passkeys");
 
     with_ffi_boundary(|| {
         let passkeys = match BRIDGE
@@ -2948,7 +2948,7 @@ pub extern "C" fn moltis_auth_list_passkeys() -> *mut c_char {
         {
             Ok(entries) => entries,
             Err(error) => {
-                record_error("moltis_auth_list_passkeys", "AUTH_PASSKEY_LIST_FAILED");
+                record_error("clawmaster_auth_list_passkeys", "AUTH_PASSKEY_LIST_FAILED");
                 return encode_error("AUTH_PASSKEY_LIST_FAILED", &error.to_string());
             },
         };
@@ -2959,13 +2959,13 @@ pub extern "C" fn moltis_auth_list_passkeys() -> *mut c_char {
 
 /// Removes a passkey by database ID.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_remove_passkey(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_auth_remove_passkey");
-    trace_call("moltis_auth_remove_passkey");
+pub extern "C" fn clawmaster_auth_remove_passkey(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_auth_remove_passkey");
+    trace_call("clawmaster_auth_remove_passkey");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<AuthPasskeyIdRequest>(
-            "moltis_auth_remove_passkey",
+            "clawmaster_auth_remove_passkey",
             request_json,
         ) {
             Ok(r) => r,
@@ -2978,7 +2978,7 @@ pub extern "C" fn moltis_auth_remove_passkey(request_json: *const c_char) -> *mu
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("moltis_auth_remove_passkey", "AUTH_PASSKEY_REMOVE_FAILED");
+                record_error("clawmaster_auth_remove_passkey", "AUTH_PASSKEY_REMOVE_FAILED");
                 encode_error("AUTH_PASSKEY_REMOVE_FAILED", &error.to_string())
             },
         }
@@ -2987,13 +2987,13 @@ pub extern "C" fn moltis_auth_remove_passkey(request_json: *const c_char) -> *mu
 
 /// Renames a passkey.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_auth_rename_passkey(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_auth_rename_passkey");
-    trace_call("moltis_auth_rename_passkey");
+pub extern "C" fn clawmaster_auth_rename_passkey(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_auth_rename_passkey");
+    trace_call("clawmaster_auth_rename_passkey");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<AuthPasskeyRenameRequest>(
-            "moltis_auth_rename_passkey",
+            "clawmaster_auth_rename_passkey",
             request_json,
         ) {
             Ok(r) => r,
@@ -3002,7 +3002,7 @@ pub extern "C" fn moltis_auth_rename_passkey(request_json: *const c_char) -> *mu
 
         let name = request.name.trim();
         if name.is_empty() {
-            record_error("moltis_auth_rename_passkey", "AUTH_PASSKEY_NAME_REQUIRED");
+            record_error("clawmaster_auth_rename_passkey", "AUTH_PASSKEY_NAME_REQUIRED");
             return encode_error("AUTH_PASSKEY_NAME_REQUIRED", "name cannot be empty");
         }
 
@@ -3012,7 +3012,7 @@ pub extern "C" fn moltis_auth_rename_passkey(request_json: *const c_char) -> *mu
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("moltis_auth_rename_passkey", "AUTH_PASSKEY_RENAME_FAILED");
+                record_error("clawmaster_auth_rename_passkey", "AUTH_PASSKEY_RENAME_FAILED");
                 encode_error("AUTH_PASSKEY_RENAME_FAILED", &error.to_string())
             },
         }
@@ -3021,28 +3021,28 @@ pub extern "C" fn moltis_auth_rename_passkey(request_json: *const c_char) -> *mu
 
 /// Returns sandbox runtime status used by Settings > Sandboxes.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_status() -> *mut c_char {
-    record_call("moltis_sandbox_status");
-    trace_call("moltis_sandbox_status");
+pub extern "C" fn clawmaster_sandbox_status() -> *mut c_char {
+    record_call("clawmaster_sandbox_status");
+    trace_call("clawmaster_sandbox_status");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         encode_json(&sandbox_status_from_config(&config))
     })
 }
 
 /// Returns cached tool and sandbox images.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_list_images() -> *mut c_char {
-    record_call("moltis_sandbox_list_images");
-    trace_call("moltis_sandbox_list_images");
+pub extern "C" fn clawmaster_sandbox_list_images() -> *mut c_char {
+    record_call("clawmaster_sandbox_list_images");
+    trace_call("clawmaster_sandbox_list_images");
 
     with_ffi_boundary(|| {
-        let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+        let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
         let (cached, sandbox) = BRIDGE.runtime.block_on(async {
             tokio::join!(
                 builder.list_cached(),
-                moltis_tools::sandbox::list_sandbox_images()
+                clawmaster_tools::sandbox::list_sandbox_images()
             )
         });
 
@@ -3072,13 +3072,13 @@ pub extern "C" fn moltis_sandbox_list_images() -> *mut c_char {
 
 /// Deletes one cached image by tag.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_delete_image(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_delete_image");
-    trace_call("moltis_sandbox_delete_image");
+pub extern "C" fn clawmaster_sandbox_delete_image(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_delete_image");
+    trace_call("clawmaster_sandbox_delete_image");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxDeleteImageRequest>(
-            "moltis_sandbox_delete_image",
+            "clawmaster_sandbox_delete_image",
             request_json,
         ) {
             Ok(r) => r,
@@ -3087,19 +3087,19 @@ pub extern "C" fn moltis_sandbox_delete_image(request_json: *const c_char) -> *m
 
         let tag = request.tag.trim();
         if tag.is_empty() {
-            record_error("moltis_sandbox_delete_image", "IMAGE_TAG_REQUIRED");
+            record_error("clawmaster_sandbox_delete_image", "IMAGE_TAG_REQUIRED");
             return encode_error("IMAGE_TAG_REQUIRED", "tag is required");
         }
 
         let result = BRIDGE.runtime.block_on(async {
             if tag.contains("-sandbox:") {
-                moltis_tools::sandbox::remove_sandbox_image(tag).await
+                clawmaster_tools::sandbox::remove_sandbox_image(tag).await
             } else {
-                let builder = moltis_tools::image_cache::DockerImageBuilder::new();
-                let full_tag = if tag.starts_with("moltis-cache/") {
+                let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
+                let full_tag = if tag.starts_with("clawmaster-cache/") {
                     tag.to_owned()
                 } else {
-                    format!("moltis-cache/{tag}")
+                    format!("clawmaster-cache/{tag}")
                 };
                 builder.remove_cached(&full_tag).await
             }
@@ -3108,7 +3108,7 @@ pub extern "C" fn moltis_sandbox_delete_image(request_json: *const c_char) -> *m
         match result {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("moltis_sandbox_delete_image", IMAGE_CACHE_DELETE_FAILED);
+                record_error("clawmaster_sandbox_delete_image", IMAGE_CACHE_DELETE_FAILED);
                 encode_error(IMAGE_CACHE_DELETE_FAILED, &error.to_string())
             },
         }
@@ -3117,16 +3117,16 @@ pub extern "C" fn moltis_sandbox_delete_image(request_json: *const c_char) -> *m
 
 /// Removes all cached tool and sandbox images.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_prune_images() -> *mut c_char {
-    record_call("moltis_sandbox_prune_images");
-    trace_call("moltis_sandbox_prune_images");
+pub extern "C" fn clawmaster_sandbox_prune_images() -> *mut c_char {
+    record_call("clawmaster_sandbox_prune_images");
+    trace_call("clawmaster_sandbox_prune_images");
 
     with_ffi_boundary(|| {
-        let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+        let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
         let (tool_result, sandbox_result) = BRIDGE.runtime.block_on(async {
             tokio::join!(
                 builder.prune_all(),
-                moltis_tools::sandbox::clean_sandbox_images()
+                clawmaster_tools::sandbox::clean_sandbox_images()
             )
         });
 
@@ -3140,7 +3140,7 @@ pub extern "C" fn moltis_sandbox_prune_images() -> *mut c_char {
 
         if let (Err(e1), Err(e2)) = (&tool_result, &sandbox_result) {
             let message = format!("tool images: {e1}; sandbox images: {e2}");
-            record_error("moltis_sandbox_prune_images", IMAGE_CACHE_PRUNE_FAILED);
+            record_error("clawmaster_sandbox_prune_images", IMAGE_CACHE_PRUNE_FAILED);
             return encode_error(IMAGE_CACHE_PRUNE_FAILED, &message);
         }
 
@@ -3150,13 +3150,13 @@ pub extern "C" fn moltis_sandbox_prune_images() -> *mut c_char {
 
 /// Checks package presence in a base Docker image.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_check_packages(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_check_packages");
-    trace_call("moltis_sandbox_check_packages");
+pub extern "C" fn clawmaster_sandbox_check_packages(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_check_packages");
+    trace_call("clawmaster_sandbox_check_packages");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxCheckPackagesRequest>(
-            "moltis_sandbox_check_packages",
+            "clawmaster_sandbox_check_packages",
             request_json,
         ) {
             Ok(r) => r,
@@ -3184,7 +3184,7 @@ pub extern "C" fn moltis_sandbox_check_packages(request_json: *const c_char) -> 
         }
 
         if !is_valid_image_ref(&base) {
-            record_error("moltis_sandbox_check_packages", SANDBOX_BASE_IMAGE_INVALID);
+            record_error("clawmaster_sandbox_check_packages", SANDBOX_BASE_IMAGE_INVALID);
             return encode_error(
                 SANDBOX_BASE_IMAGE_INVALID,
                 "base image contains invalid characters",
@@ -3193,7 +3193,7 @@ pub extern "C" fn moltis_sandbox_check_packages(request_json: *const c_char) -> 
 
         if let Some(bad) = packages.iter().find(|p| !is_valid_package_name(p)) {
             record_error(
-                "moltis_sandbox_check_packages",
+                "clawmaster_sandbox_check_packages",
                 SANDBOX_PACKAGE_NAME_INVALID,
             );
             return encode_error(
@@ -3235,7 +3235,7 @@ pub extern "C" fn moltis_sandbox_check_packages(request_json: *const c_char) -> 
             },
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_check_packages",
+                    "clawmaster_sandbox_check_packages",
                     SANDBOX_CHECK_PACKAGES_FAILED,
                 );
                 encode_error(SANDBOX_CHECK_PACKAGES_FAILED, &error.to_string())
@@ -3246,13 +3246,13 @@ pub extern "C" fn moltis_sandbox_check_packages(request_json: *const c_char) -> 
 
 /// Builds a sandbox image from base image + apt package list.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_build_image(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_build_image");
-    trace_call("moltis_sandbox_build_image");
+pub extern "C" fn clawmaster_sandbox_build_image(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_build_image");
+    trace_call("clawmaster_sandbox_build_image");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxBuildImageRequest>(
-            "moltis_sandbox_build_image",
+            "clawmaster_sandbox_build_image",
             request_json,
         ) {
             Ok(r) => r,
@@ -3261,7 +3261,7 @@ pub extern "C" fn moltis_sandbox_build_image(request_json: *const c_char) -> *mu
 
         let name = request.name.trim();
         if name.is_empty() {
-            record_error("moltis_sandbox_build_image", SANDBOX_IMAGE_NAME_REQUIRED);
+            record_error("clawmaster_sandbox_build_image", SANDBOX_IMAGE_NAME_REQUIRED);
             return encode_error(SANDBOX_IMAGE_NAME_REQUIRED, "name is required");
         }
 
@@ -3269,7 +3269,7 @@ pub extern "C" fn moltis_sandbox_build_image(request_json: *const c_char) -> *mu
             .chars()
             .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
         {
-            record_error("moltis_sandbox_build_image", SANDBOX_IMAGE_NAME_INVALID);
+            record_error("clawmaster_sandbox_build_image", SANDBOX_IMAGE_NAME_INVALID);
             return encode_error(
                 SANDBOX_IMAGE_NAME_INVALID,
                 "name must be alphanumeric, dash, or underscore",
@@ -3291,7 +3291,7 @@ pub extern "C" fn moltis_sandbox_build_image(request_json: *const c_char) -> *mu
             .collect();
 
         if !is_valid_image_ref(&base) {
-            record_error("moltis_sandbox_build_image", SANDBOX_BASE_IMAGE_INVALID);
+            record_error("clawmaster_sandbox_build_image", SANDBOX_BASE_IMAGE_INVALID);
             return encode_error(
                 SANDBOX_BASE_IMAGE_INVALID,
                 "base image contains invalid characters",
@@ -3300,14 +3300,14 @@ pub extern "C" fn moltis_sandbox_build_image(request_json: *const c_char) -> *mu
 
         if packages.is_empty() {
             record_error(
-                "moltis_sandbox_build_image",
+                "clawmaster_sandbox_build_image",
                 SANDBOX_IMAGE_PACKAGES_REQUIRED,
             );
             return encode_error(SANDBOX_IMAGE_PACKAGES_REQUIRED, "packages list is empty");
         }
 
         if let Some(bad) = packages.iter().find(|p| !is_valid_package_name(p)) {
-            record_error("moltis_sandbox_build_image", SANDBOX_PACKAGE_NAME_INVALID);
+            record_error("clawmaster_sandbox_build_image", SANDBOX_PACKAGE_NAME_INVALID);
             return encode_error(
                 SANDBOX_PACKAGE_NAME_INVALID,
                 &format!("invalid package name: {bad}"),
@@ -3323,9 +3323,9 @@ ENV HOME=/home/sandbox\n\
 WORKDIR /home/sandbox\n"
         );
 
-        let tmp_dir = std::env::temp_dir().join(format!("moltis-build-{}", uuid::Uuid::new_v4()));
+        let tmp_dir = std::env::temp_dir().join(format!("clawmaster-build-{}", uuid::Uuid::new_v4()));
         if let Err(error) = std::fs::create_dir_all(&tmp_dir) {
-            record_error("moltis_sandbox_build_image", SANDBOX_TMP_DIR_CREATE_FAILED);
+            record_error("clawmaster_sandbox_build_image", SANDBOX_TMP_DIR_CREATE_FAILED);
             return encode_error(SANDBOX_TMP_DIR_CREATE_FAILED, &error.to_string());
         }
 
@@ -3333,13 +3333,13 @@ WORKDIR /home/sandbox\n"
         if let Err(error) = std::fs::write(&dockerfile_path, &dockerfile_contents) {
             let _ = std::fs::remove_dir_all(&tmp_dir);
             record_error(
-                "moltis_sandbox_build_image",
+                "clawmaster_sandbox_build_image",
                 SANDBOX_DOCKERFILE_WRITE_FAILED,
             );
             return encode_error(SANDBOX_DOCKERFILE_WRITE_FAILED, &error.to_string());
         }
 
-        let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+        let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
         let result =
             BRIDGE
                 .runtime
@@ -3349,7 +3349,7 @@ WORKDIR /home/sandbox\n"
         match result {
             Ok(tag) => encode_json(&SandboxBuildImageResponse { tag }),
             Err(error) => {
-                record_error("moltis_sandbox_build_image", SANDBOX_IMAGE_BUILD_FAILED);
+                record_error("clawmaster_sandbox_build_image", SANDBOX_IMAGE_BUILD_FAILED);
                 encode_error(SANDBOX_IMAGE_BUILD_FAILED, &error.to_string())
             },
         }
@@ -3358,12 +3358,12 @@ WORKDIR /home/sandbox\n"
 
 /// Returns the effective default sandbox image.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_get_default_image() -> *mut c_char {
-    record_call("moltis_sandbox_get_default_image");
-    trace_call("moltis_sandbox_get_default_image");
+pub extern "C" fn clawmaster_sandbox_get_default_image() -> *mut c_char {
+    record_call("clawmaster_sandbox_get_default_image");
+    trace_call("clawmaster_sandbox_get_default_image");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let image = sandbox_effective_default_image(&config);
         encode_json(&SandboxDefaultImageResponse { image })
     })
@@ -3371,23 +3371,23 @@ pub extern "C" fn moltis_sandbox_get_default_image() -> *mut c_char {
 
 /// Sets a runtime default sandbox image override.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_set_default_image(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_set_default_image");
-    trace_call("moltis_sandbox_set_default_image");
+pub extern "C" fn clawmaster_sandbox_set_default_image(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_set_default_image");
+    trace_call("clawmaster_sandbox_set_default_image");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxSetDefaultImageRequest>(
-            "moltis_sandbox_set_default_image",
+            "clawmaster_sandbox_set_default_image",
             request_json,
         ) {
             Ok(r) => r,
             Err(e) => return e,
         };
 
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         if sandbox_backend_name(&config) == "none" {
             record_error(
-                "moltis_sandbox_set_default_image",
+                "clawmaster_sandbox_set_default_image",
                 SANDBOX_BACKEND_UNAVAILABLE,
             );
             return encode_error(SANDBOX_BACKEND_UNAVAILABLE, "no sandbox backend available");
@@ -3412,12 +3412,12 @@ pub extern "C" fn moltis_sandbox_set_default_image(request_json: *const c_char) 
 
 /// Returns shared `/home/sandbox` persistence config.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_get_shared_home() -> *mut c_char {
-    record_call("moltis_sandbox_get_shared_home");
-    trace_call("moltis_sandbox_get_shared_home");
+pub extern "C" fn clawmaster_sandbox_get_shared_home() -> *mut c_char {
+    record_call("clawmaster_sandbox_get_shared_home");
+    trace_call("clawmaster_sandbox_get_shared_home");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let response = sandbox_shared_home_config_from_config(&config);
         encode_json(&response)
     })
@@ -3425,13 +3425,13 @@ pub extern "C" fn moltis_sandbox_get_shared_home() -> *mut c_char {
 
 /// Updates shared `/home/sandbox` persistence config.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_set_shared_home(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_set_shared_home");
-    trace_call("moltis_sandbox_set_shared_home");
+pub extern "C" fn clawmaster_sandbox_set_shared_home(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_set_shared_home");
+    trace_call("clawmaster_sandbox_set_shared_home");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxSharedHomeUpdateRequest>(
-            "moltis_sandbox_set_shared_home",
+            "clawmaster_sandbox_set_shared_home",
             request_json,
         ) {
             Ok(r) => r,
@@ -3445,23 +3445,23 @@ pub extern "C" fn moltis_sandbox_set_shared_home(request_json: *const c_char) ->
             .filter(|value| !value.is_empty())
             .map(ToOwned::to_owned);
 
-        let update_result = moltis_config::update_config(|cfg| {
+        let update_result = clawmaster_config::update_config(|cfg| {
             cfg.tools.exec.sandbox.shared_home_dir = path.clone();
             if request.enabled {
                 cfg.tools.exec.sandbox.home_persistence =
-                    moltis_config::schema::HomePersistenceConfig::Shared;
+                    clawmaster_config::schema::HomePersistenceConfig::Shared;
             } else if matches!(
                 cfg.tools.exec.sandbox.home_persistence,
-                moltis_config::schema::HomePersistenceConfig::Shared
+                clawmaster_config::schema::HomePersistenceConfig::Shared
             ) {
                 cfg.tools.exec.sandbox.home_persistence =
-                    moltis_config::schema::HomePersistenceConfig::Off;
+                    clawmaster_config::schema::HomePersistenceConfig::Off;
             }
         });
 
         match update_result {
             Ok(saved_path) => {
-                let config = moltis_config::discover_and_load();
+                let config = clawmaster_config::discover_and_load();
                 let response = SandboxSharedHomeSaveResponse {
                     ok: true,
                     restart_required: true,
@@ -3472,7 +3472,7 @@ pub extern "C" fn moltis_sandbox_set_shared_home(request_json: *const c_char) ->
             },
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_set_shared_home",
+                    "clawmaster_sandbox_set_shared_home",
                     SANDBOX_SHARED_HOME_SAVE_FAILED,
                 );
                 encode_error(SANDBOX_SHARED_HOME_SAVE_FAILED, &error.to_string())
@@ -3483,21 +3483,21 @@ pub extern "C" fn moltis_sandbox_set_shared_home(request_json: *const c_char) ->
 
 /// Returns running containers for the configured sandbox prefix.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_list_containers() -> *mut c_char {
-    record_call("moltis_sandbox_list_containers");
-    trace_call("moltis_sandbox_list_containers");
+pub extern "C" fn clawmaster_sandbox_list_containers() -> *mut c_char {
+    record_call("clawmaster_sandbox_list_containers");
+    trace_call("clawmaster_sandbox_list_containers");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let prefix = sandbox_container_prefix(&config);
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::list_running_containers(&prefix))
+            .block_on(clawmaster_tools::sandbox::list_running_containers(&prefix))
         {
             Ok(containers) => encode_json(&SandboxContainersResponse { containers }),
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_list_containers",
+                    "clawmaster_sandbox_list_containers",
                     SANDBOX_CONTAINERS_LIST_FAILED,
                 );
                 encode_error(SANDBOX_CONTAINERS_LIST_FAILED, &error.to_string())
@@ -3508,13 +3508,13 @@ pub extern "C" fn moltis_sandbox_list_containers() -> *mut c_char {
 
 /// Stops one sandbox container.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_stop_container(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_stop_container");
-    trace_call("moltis_sandbox_stop_container");
+pub extern "C" fn clawmaster_sandbox_stop_container(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_stop_container");
+    trace_call("clawmaster_sandbox_stop_container");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxContainerNameRequest>(
-            "moltis_sandbox_stop_container",
+            "clawmaster_sandbox_stop_container",
             request_json,
         ) {
             Ok(r) => r,
@@ -3524,17 +3524,17 @@ pub extern "C" fn moltis_sandbox_stop_container(request_json: *const c_char) -> 
         let name = request.name.trim();
         if name.is_empty() {
             record_error(
-                "moltis_sandbox_stop_container",
+                "clawmaster_sandbox_stop_container",
                 "SANDBOX_CONTAINER_NAME_REQUIRED",
             );
             return encode_error("SANDBOX_CONTAINER_NAME_REQUIRED", "name is required");
         }
 
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let prefix = sandbox_container_prefix(&config);
         if !name.starts_with(&prefix) {
             record_error(
-                "moltis_sandbox_stop_container",
+                "clawmaster_sandbox_stop_container",
                 SANDBOX_CONTAINER_PREFIX_MISMATCH,
             );
             return encode_error(
@@ -3545,12 +3545,12 @@ pub extern "C" fn moltis_sandbox_stop_container(request_json: *const c_char) -> 
 
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::stop_container(name))
+            .block_on(clawmaster_tools::sandbox::stop_container(name))
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_stop_container",
+                    "clawmaster_sandbox_stop_container",
                     SANDBOX_CONTAINER_STOP_FAILED,
                 );
                 encode_error(SANDBOX_CONTAINER_STOP_FAILED, &error.to_string())
@@ -3561,13 +3561,13 @@ pub extern "C" fn moltis_sandbox_stop_container(request_json: *const c_char) -> 
 
 /// Removes one sandbox container.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_remove_container(request_json: *const c_char) -> *mut c_char {
-    record_call("moltis_sandbox_remove_container");
-    trace_call("moltis_sandbox_remove_container");
+pub extern "C" fn clawmaster_sandbox_remove_container(request_json: *const c_char) -> *mut c_char {
+    record_call("clawmaster_sandbox_remove_container");
+    trace_call("clawmaster_sandbox_remove_container");
 
     with_ffi_boundary(|| {
         let request = match parse_ffi_request::<SandboxContainerNameRequest>(
-            "moltis_sandbox_remove_container",
+            "clawmaster_sandbox_remove_container",
             request_json,
         ) {
             Ok(r) => r,
@@ -3577,17 +3577,17 @@ pub extern "C" fn moltis_sandbox_remove_container(request_json: *const c_char) -
         let name = request.name.trim();
         if name.is_empty() {
             record_error(
-                "moltis_sandbox_remove_container",
+                "clawmaster_sandbox_remove_container",
                 "SANDBOX_CONTAINER_NAME_REQUIRED",
             );
             return encode_error("SANDBOX_CONTAINER_NAME_REQUIRED", "name is required");
         }
 
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let prefix = sandbox_container_prefix(&config);
         if !name.starts_with(&prefix) {
             record_error(
-                "moltis_sandbox_remove_container",
+                "clawmaster_sandbox_remove_container",
                 SANDBOX_CONTAINER_PREFIX_MISMATCH,
             );
             return encode_error(
@@ -3598,12 +3598,12 @@ pub extern "C" fn moltis_sandbox_remove_container(request_json: *const c_char) -
 
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::remove_container(name))
+            .block_on(clawmaster_tools::sandbox::remove_container(name))
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_remove_container",
+                    "clawmaster_sandbox_remove_container",
                     SANDBOX_CONTAINER_REMOVE_FAILED,
                 );
                 encode_error(SANDBOX_CONTAINER_REMOVE_FAILED, &error.to_string())
@@ -3614,21 +3614,21 @@ pub extern "C" fn moltis_sandbox_remove_container(request_json: *const c_char) -
 
 /// Stops and removes all sandbox containers.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_clean_containers() -> *mut c_char {
-    record_call("moltis_sandbox_clean_containers");
-    trace_call("moltis_sandbox_clean_containers");
+pub extern "C" fn clawmaster_sandbox_clean_containers() -> *mut c_char {
+    record_call("clawmaster_sandbox_clean_containers");
+    trace_call("clawmaster_sandbox_clean_containers");
 
     with_ffi_boundary(|| {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let prefix = sandbox_container_prefix(&config);
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::clean_all_containers(&prefix))
+            .block_on(clawmaster_tools::sandbox::clean_all_containers(&prefix))
         {
             Ok(removed) => encode_json(&SandboxCleanContainersResponse { ok: true, removed }),
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_clean_containers",
+                    "clawmaster_sandbox_clean_containers",
                     SANDBOX_CONTAINERS_CLEAN_FAILED,
                 );
                 encode_error(SANDBOX_CONTAINERS_CLEAN_FAILED, &error.to_string())
@@ -3639,18 +3639,18 @@ pub extern "C" fn moltis_sandbox_clean_containers() -> *mut c_char {
 
 /// Returns container runtime disk usage.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_disk_usage() -> *mut c_char {
-    record_call("moltis_sandbox_disk_usage");
-    trace_call("moltis_sandbox_disk_usage");
+pub extern "C" fn clawmaster_sandbox_disk_usage() -> *mut c_char {
+    record_call("clawmaster_sandbox_disk_usage");
+    trace_call("clawmaster_sandbox_disk_usage");
 
     with_ffi_boundary(|| {
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::container_disk_usage())
+            .block_on(clawmaster_tools::sandbox::container_disk_usage())
         {
             Ok(usage) => encode_json(&SandboxDiskUsageResponse { usage }),
             Err(error) => {
-                record_error("moltis_sandbox_disk_usage", SANDBOX_DISK_USAGE_FAILED);
+                record_error("clawmaster_sandbox_disk_usage", SANDBOX_DISK_USAGE_FAILED);
                 encode_error(SANDBOX_DISK_USAGE_FAILED, &error.to_string())
             },
         }
@@ -3659,19 +3659,19 @@ pub extern "C" fn moltis_sandbox_disk_usage() -> *mut c_char {
 
 /// Restarts the container daemon.
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_sandbox_restart_daemon() -> *mut c_char {
-    record_call("moltis_sandbox_restart_daemon");
-    trace_call("moltis_sandbox_restart_daemon");
+pub extern "C" fn clawmaster_sandbox_restart_daemon() -> *mut c_char {
+    record_call("clawmaster_sandbox_restart_daemon");
+    trace_call("clawmaster_sandbox_restart_daemon");
 
     with_ffi_boundary(|| {
         match BRIDGE
             .runtime
-            .block_on(moltis_tools::sandbox::restart_container_daemon())
+            .block_on(clawmaster_tools::sandbox::restart_container_daemon())
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
                 record_error(
-                    "moltis_sandbox_restart_daemon",
+                    "clawmaster_sandbox_restart_daemon",
                     SANDBOX_DAEMON_RESTART_FAILED,
                 );
                 encode_error(SANDBOX_DAEMON_RESTART_FAILED, &error.to_string())
@@ -3682,9 +3682,9 @@ pub extern "C" fn moltis_sandbox_restart_daemon() -> *mut c_char {
 
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
-pub extern "C" fn moltis_shutdown() {
-    record_call("moltis_shutdown");
-    trace_call("moltis_shutdown");
+pub extern "C" fn clawmaster_shutdown() {
+    record_call("clawmaster_shutdown");
+    trace_call("clawmaster_shutdown");
     emit_log("INFO", "bridge", "Shutdown requested");
 
     // Stop the HTTP server if it is running.
@@ -3728,7 +3728,7 @@ mod tests {
 
     #[test]
     fn version_returns_expected_payload() {
-        let payload = json_from_ptr(moltis_version());
+        let payload = json_from_ptr(clawmaster_version());
 
         let version = payload
             .get("bridge_version")
@@ -3745,7 +3745,7 @@ mod tests {
 
     #[test]
     fn chat_returns_error_for_null_pointer() {
-        let payload = json_from_ptr(moltis_chat_json(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_chat_json(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -3764,7 +3764,7 @@ mod tests {
             Err(error) => panic!("failed to build c string for test request: {error}"),
         };
 
-        let payload = json_from_ptr(moltis_chat_json(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_chat_json(c_request.as_ptr()));
 
         // Chat response should have a reply (either from LLM or fallback)
         assert!(
@@ -3782,7 +3782,7 @@ mod tests {
 
     #[test]
     fn known_providers_returns_array() {
-        let payload = json_from_ptr(moltis_known_providers());
+        let payload = json_from_ptr(clawmaster_known_providers());
 
         let providers = payload.as_array();
         assert!(
@@ -3801,7 +3801,7 @@ mod tests {
 
     #[test]
     fn detect_providers_returns_array() {
-        let payload = json_from_ptr(moltis_detect_providers());
+        let payload = json_from_ptr(clawmaster_detect_providers());
 
         // Should always return a JSON array (possibly empty)
         assert!(
@@ -3812,7 +3812,7 @@ mod tests {
 
     #[test]
     fn save_provider_config_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_save_provider_config(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_save_provider_config(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -3824,7 +3824,7 @@ mod tests {
 
     #[test]
     fn list_models_returns_array() {
-        let payload = json_from_ptr(moltis_list_models());
+        let payload = json_from_ptr(clawmaster_list_models());
 
         assert!(
             payload.as_array().is_some(),
@@ -3834,7 +3834,7 @@ mod tests {
 
     #[test]
     fn refresh_registry_returns_ok() {
-        let payload = json_from_ptr(moltis_refresh_registry());
+        let payload = json_from_ptr(clawmaster_refresh_registry());
 
         let ok = payload.get("ok").and_then(Value::as_bool).unwrap_or(false);
         assert!(ok, "refresh_registry should return ok: true");
@@ -3844,7 +3844,7 @@ mod tests {
     fn free_string_tolerates_null_pointer() {
         // SAFETY: null pointers are explicitly accepted and treated as no-op.
         unsafe {
-            moltis_free_string(std::ptr::null_mut());
+            clawmaster_free_string(std::ptr::null_mut());
         }
     }
 
@@ -3870,7 +3870,7 @@ mod tests {
 
         // SAFETY: null request_json triggers synchronous error callback.
         unsafe {
-            moltis_chat_stream(std::ptr::null(), test_callback, user_data);
+            clawmaster_chat_stream(std::ptr::null(), test_callback, user_data);
         }
 
         // Reclaim the Arc.
@@ -3894,7 +3894,7 @@ mod tests {
         let request = r#"{"host":"127.0.0.1","port":0}"#;
         let c_request = CString::new(request).unwrap_or_else(|e| panic!("{e}"));
 
-        let payload = json_from_ptr(moltis_start_httpd(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_start_httpd(c_request.as_ptr()));
         assert_eq!(
             payload.get("running").and_then(Value::as_bool),
             Some(true),
@@ -3906,15 +3906,15 @@ mod tests {
         );
 
         // Status should confirm running.
-        let status = json_from_ptr(moltis_httpd_status());
+        let status = json_from_ptr(clawmaster_httpd_status());
         assert_eq!(status.get("running").and_then(Value::as_bool), Some(true),);
 
         // Stop.
-        let stopped = json_from_ptr(moltis_stop_httpd());
+        let stopped = json_from_ptr(clawmaster_stop_httpd());
         assert_eq!(stopped.get("running").and_then(Value::as_bool), Some(false),);
 
         // Status after stop.
-        let status2 = json_from_ptr(moltis_httpd_status());
+        let status2 = json_from_ptr(clawmaster_httpd_status());
         assert_eq!(status2.get("running").and_then(Value::as_bool), Some(false),);
     }
 
@@ -3922,7 +3922,7 @@ mod tests {
     #[serial_test::serial]
     fn httpd_stop_when_not_running() {
         // Stop without start should still return running: false.
-        let payload = json_from_ptr(moltis_stop_httpd());
+        let payload = json_from_ptr(clawmaster_stop_httpd());
         assert_eq!(payload.get("running").and_then(Value::as_bool), Some(false),);
     }
 
@@ -3968,7 +3968,7 @@ mod tests {
 
         // SAFETY: valid C string, valid callback, valid user_data.
         unsafe {
-            moltis_chat_stream(c_request.as_ptr(), test_callback, user_data);
+            clawmaster_chat_stream(c_request.as_ptr(), test_callback, user_data);
         }
 
         let events = unsafe { Arc::from_raw(user_data as *const Mutex<Vec<String>>) };
@@ -3989,7 +3989,7 @@ mod tests {
 
     #[test]
     fn list_sessions_returns_array() {
-        let payload = json_from_ptr(moltis_list_sessions());
+        let payload = json_from_ptr(clawmaster_list_sessions());
         assert!(
             payload.as_array().is_some(),
             "list_sessions should return a JSON array"
@@ -4001,7 +4001,7 @@ mod tests {
         // Create a session with a label.
         let request = r#"{"label":"Test Session"}"#;
         let c_request = CString::new(request).unwrap_or_else(|e| panic!("{e}"));
-        let payload = json_from_ptr(moltis_create_session(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_create_session(c_request.as_ptr()));
 
         let key = payload
             .get("key")
@@ -4019,7 +4019,7 @@ mod tests {
         // Switch to the created session.
         let switch_request = serde_json::json!({"key": key}).to_string();
         let c_switch = CString::new(switch_request).unwrap_or_else(|e| panic!("{e}"));
-        let history = json_from_ptr(moltis_switch_session(c_switch.as_ptr()));
+        let history = json_from_ptr(clawmaster_switch_session(c_switch.as_ptr()));
 
         assert!(history.get("entry").is_some(), "switch should return entry");
         assert!(
@@ -4030,7 +4030,7 @@ mod tests {
 
     #[test]
     fn create_session_with_null_uses_defaults() {
-        let payload = json_from_ptr(moltis_create_session(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_create_session(std::ptr::null()));
 
         let key = payload
             .get("key")
@@ -4050,7 +4050,7 @@ mod tests {
 
     #[test]
     fn get_config_returns_config_and_paths() {
-        let payload = json_from_ptr(moltis_get_config());
+        let payload = json_from_ptr(clawmaster_get_config());
 
         assert!(
             payload.get("config").is_some(),
@@ -4075,7 +4075,7 @@ mod tests {
 
     #[test]
     fn save_config_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_save_config(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_save_config(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4088,7 +4088,7 @@ mod tests {
     #[test]
     fn save_config_returns_error_for_invalid_json() {
         let bad = CString::new("not valid json").unwrap_or_else(|e| panic!("{e}"));
-        let payload = json_from_ptr(moltis_save_config(bad.as_ptr()));
+        let payload = json_from_ptr(clawmaster_save_config(bad.as_ptr()));
 
         let code = payload
             .get("error")
@@ -4100,7 +4100,7 @@ mod tests {
 
     #[test]
     fn memory_status_returns_expected_fields() {
-        let payload = json_from_ptr(moltis_memory_status());
+        let payload = json_from_ptr(clawmaster_memory_status());
 
         assert!(
             payload.get("available").and_then(Value::as_bool).is_some(),
@@ -4128,7 +4128,7 @@ mod tests {
 
     #[test]
     fn memory_config_get_returns_expected_fields() {
-        let payload = json_from_ptr(moltis_memory_config_get());
+        let payload = json_from_ptr(clawmaster_memory_config_get());
 
         assert!(
             payload.get("backend").and_then(Value::as_str).is_some(),
@@ -4156,7 +4156,7 @@ mod tests {
 
     #[test]
     fn memory_config_update_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_memory_config_update(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_memory_config_update(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4176,7 +4176,7 @@ mod tests {
         })
         .to_string();
         let c_request = CString::new(request).unwrap_or_else(|e| panic!("{e}"));
-        let payload = json_from_ptr(moltis_memory_config_update(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_memory_config_update(c_request.as_ptr()));
 
         assert_eq!(
             payload.get("backend").and_then(Value::as_str),
@@ -4190,7 +4190,7 @@ mod tests {
 
     #[test]
     fn memory_qmd_status_returns_expected_fields() {
-        let payload = json_from_ptr(moltis_memory_qmd_status());
+        let payload = json_from_ptr(clawmaster_memory_qmd_status());
 
         assert!(
             payload
@@ -4207,7 +4207,7 @@ mod tests {
 
     #[test]
     fn get_soul_returns_soul_field() {
-        let payload = json_from_ptr(moltis_get_soul());
+        let payload = json_from_ptr(clawmaster_get_soul());
 
         // soul field should exist (may be null or a string)
         assert!(
@@ -4218,7 +4218,7 @@ mod tests {
 
     #[test]
     fn save_soul_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_save_soul(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_save_soul(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4230,7 +4230,7 @@ mod tests {
 
     #[test]
     fn save_identity_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_save_identity(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_save_identity(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4242,7 +4242,7 @@ mod tests {
 
     #[test]
     fn save_user_profile_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_save_user_profile(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_save_user_profile(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4254,7 +4254,7 @@ mod tests {
 
     #[test]
     fn list_env_vars_returns_env_vars_and_vault_status() {
-        let payload = json_from_ptr(moltis_list_env_vars());
+        let payload = json_from_ptr(clawmaster_list_env_vars());
 
         assert!(
             payload.get("env_vars").and_then(Value::as_array).is_some(),
@@ -4271,7 +4271,7 @@ mod tests {
 
     #[test]
     fn set_env_var_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_set_env_var(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_set_env_var(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4285,7 +4285,7 @@ mod tests {
     fn set_env_var_rejects_invalid_key() {
         let request = r#"{"key":"BAD-KEY","value":"secret"}"#;
         let c_request = CString::new(request).unwrap_or_else(|e| panic!("{e}"));
-        let payload = json_from_ptr(moltis_set_env_var(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_set_env_var(c_request.as_ptr()));
 
         let code = payload
             .get("error")
@@ -4297,7 +4297,7 @@ mod tests {
 
     #[test]
     fn delete_env_var_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_delete_env_var(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_delete_env_var(std::ptr::null()));
 
         let code = payload
             .get("error")
@@ -4316,10 +4316,10 @@ mod tests {
         })
         .to_string();
         let c_set_request = CString::new(set_request).unwrap_or_else(|e| panic!("{e}"));
-        let set_payload = json_from_ptr(moltis_set_env_var(c_set_request.as_ptr()));
+        let set_payload = json_from_ptr(clawmaster_set_env_var(c_set_request.as_ptr()));
         assert_eq!(set_payload.get("ok").and_then(Value::as_bool), Some(true));
 
-        let list_payload = json_from_ptr(moltis_list_env_vars());
+        let list_payload = json_from_ptr(clawmaster_list_env_vars());
         let env_vars = list_payload
             .get("env_vars")
             .and_then(Value::as_array)
@@ -4335,7 +4335,7 @@ mod tests {
 
         let delete_request = serde_json::json!({ "id": id }).to_string();
         let c_delete_request = CString::new(delete_request).unwrap_or_else(|e| panic!("{e}"));
-        let delete_payload = json_from_ptr(moltis_delete_env_var(c_delete_request.as_ptr()));
+        let delete_payload = json_from_ptr(clawmaster_delete_env_var(c_delete_request.as_ptr()));
         assert_eq!(
             delete_payload.get("ok").and_then(Value::as_bool),
             Some(true)
@@ -4344,7 +4344,7 @@ mod tests {
 
     #[test]
     fn auth_status_returns_expected_fields() {
-        let payload = json_from_ptr(moltis_auth_status());
+        let payload = json_from_ptr(clawmaster_auth_status());
 
         assert!(
             payload
@@ -4378,7 +4378,7 @@ mod tests {
 
     #[test]
     fn auth_list_passkeys_returns_array() {
-        let payload = json_from_ptr(moltis_auth_list_passkeys());
+        let payload = json_from_ptr(clawmaster_auth_list_passkeys());
         assert!(
             payload.get("passkeys").and_then(Value::as_array).is_some(),
             "auth_list_passkeys should return passkeys"
@@ -4389,7 +4389,7 @@ mod tests {
     fn auth_password_change_rejects_short_password() {
         let request = r#"{"new_password":"short"}"#;
         let c_request = CString::new(request).unwrap_or_else(|e| panic!("{e}"));
-        let payload = json_from_ptr(moltis_auth_password_change(c_request.as_ptr()));
+        let payload = json_from_ptr(clawmaster_auth_password_change(c_request.as_ptr()));
 
         let code = payload
             .get("error")
@@ -4401,7 +4401,7 @@ mod tests {
 
     #[test]
     fn auth_remove_passkey_returns_error_for_null() {
-        let payload = json_from_ptr(moltis_auth_remove_passkey(std::ptr::null()));
+        let payload = json_from_ptr(clawmaster_auth_remove_passkey(std::ptr::null()));
 
         let code = payload
             .get("error")

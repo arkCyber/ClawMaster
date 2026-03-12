@@ -13,15 +13,15 @@ use {
 };
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         ChannelAttachment, ChannelEvent, ChannelMessageKind, ChannelMessageMeta, ChannelOutbound,
         ChannelReplyTarget, ChannelType, message_log::MessageLogEntry,
     },
-    moltis_common::types::ChatType,
+    clawmaster_common::types::ChatType,
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, histogram, telegram as tg_metrics};
+use clawmaster_metrics::{counter, histogram, telegram as tg_metrics};
 
 use crate::{
     access::{self, AccessDenied},
@@ -319,7 +319,7 @@ pub async fn handle_message_direct(
                 );
 
                 // Optimize image for LLM consumption (resize if needed, compress)
-                let (final_data, media_type) = match moltis_media::image_ops::optimize_for_llm(
+                let (final_data, media_type) = match clawmaster_media::image_ops::optimize_for_llm(
                     &image_data,
                     None,
                 ) {
@@ -695,7 +695,7 @@ async fn handle_otp_flow(
     sender_name: Option<&str>,
     text: Option<&str>,
     msg: &Message,
-    event_sink: Option<&dyn moltis_channels::ChannelEventSink>,
+    event_sink: Option<&dyn clawmaster_channels::ChannelEventSink>,
 ) {
     let chat_id = msg.chat.id;
 
@@ -1615,7 +1615,7 @@ mod tests {
     use {
         async_trait::async_trait,
         axum::{Json, Router, body::Bytes, extract::State, http::Uri, routing::post},
-        moltis_channels::{
+        clawmaster_channels::{
             ChannelEvent, ChannelEventSink, ChannelMessageMeta, ChannelReplyTarget,
             Error as ChannelError, Result, gating::DmPolicy,
         },

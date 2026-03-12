@@ -1,11 +1,11 @@
 use {async_trait::async_trait, secrecy::ExposeSecret, tracing::debug};
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         Error as ChannelError, Result as ChannelResult,
         plugin::{ChannelOutbound, ChannelStreamOutbound, StreamEvent, StreamReceiver},
     },
-    moltis_common::types::ReplyPayload,
+    clawmaster_common::types::ReplyPayload,
 };
 
 use crate::{auth::get_access_token, config::MsTeamsAccountConfig, state::AccountStateMap};
@@ -86,9 +86,9 @@ impl MsTeamsOutbound {
         }
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::counter!(
-            moltis_metrics::channels::MESSAGES_SENT_TOTAL,
-            moltis_metrics::labels::CHANNEL => "msteams"
+        clawmaster_metrics::counter!(
+            clawmaster_metrics::channels::MESSAGES_SENT_TOTAL,
+            clawmaster_metrics::labels::CHANNEL => "msteams"
         )
         .increment(1);
 

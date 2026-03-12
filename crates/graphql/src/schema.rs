@@ -3,7 +3,7 @@
 use std::sync::Arc;
 
 use {
-    async_graphql::Schema, moltis_service_traits::Services, serde_json::Value,
+    async_graphql::Schema, clawmaster_service_traits::Services, serde_json::Value,
     tokio::sync::broadcast,
 };
 

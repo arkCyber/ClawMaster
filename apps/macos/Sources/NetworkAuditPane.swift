@@ -145,7 +145,7 @@ struct NetworkAuditPane: View {
 
     private func rowBackground(_ entry: NetworkAuditEntry) -> Color {
         if entry.isDenied {
-            return MoltisTheme.error.opacity(0.06)
+            return ClawMasterTheme.error.opacity(0.06)
         }
         return .clear
     }

@@ -310,7 +310,7 @@ function saveSharedHomeConfig() {
 		})
 		.then((data) => {
 			applySharedHomeConfig(data?.config || {});
-			sharedHomeMsg.value = "Saved. Restart Moltis to apply shared folder changes.";
+			sharedHomeMsg.value = "Saved. Restart ClawMaster to apply shared folder changes.";
 			if (sandboxInfo.value) {
 				sandboxInfo.value = {
 					...sandboxInfo.value,
@@ -493,7 +493,7 @@ function backendRecommendation(info) {
 	if (os === "macos" && backend === "docker") {
 		return {
 			level: "info",
-			text: "Apple Container provides stronger VM-level isolation on macOS 26+. Install it for automatic use (moltis prefers it over Docker). Run: brew install container",
+			text: "Apple Container provides stronger VM-level isolation on macOS 26+. Install it for automatic use (ClawMaster prefers it over Docker). Run: brew install container",
 		};
 	}
 
@@ -713,7 +713,7 @@ function ImagesPage() {
         </button>
       </div>
       <p class="text-sm text-[var(--muted)] leading-relaxed max-w-form" style="margin:0;">
-        Container images cached by moltis for sandbox execution. You can delete individual images or prune all. Build custom images from a base with apt packages.
+        Container images cached by ClawMaster for sandbox execution. You can delete individual images or prune all. Build custom images from a base with apt packages.
         ${sandboxInfo.value?.backend === "apple-container" && html`<br /><br />Apple Container provides VM-isolated execution but does not support building images. Docker (or OrbStack) is required alongside Apple Container to build and cache custom images. Sandboxed commands run via Apple Container; image builds use Docker.`}
       </p>
 

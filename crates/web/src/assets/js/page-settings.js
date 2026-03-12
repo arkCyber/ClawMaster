@@ -296,7 +296,7 @@ var DEFAULT_SOUL =
 function IdentitySection() {
 	var id = identity.value;
 	var isNew = !(id && (id.name || id.user_name));
-	var storedLocale = localStorage.getItem("moltis-locale");
+	var storedLocale = localStorage.getItem("clawmaster-locale");
 
 	var [name, setName] = useState(id?.name || "");
 	var [emoji, setEmoji] = useState(id?.emoji || "");
@@ -468,7 +468,7 @@ function IdentitySection() {
 		setLocale(nextLanguage)
 			.then(() => {
 				if (uiLanguage === "auto") {
-					localStorage.removeItem("moltis-locale");
+					localStorage.removeItem("clawmaster-locale");
 				}
 				setLanguageSaving(false);
 				setLanguageSaved(true);
@@ -875,15 +875,15 @@ function SecuritySection() {
 	});
 
 	function notifyAuthStatusChanged() {
-		window.dispatchEvent(new CustomEvent("moltis:auth-status-changed"));
+		window.dispatchEvent(new CustomEvent("clawmaster:auth-status-changed"));
 	}
 
 	function deferNextPasswordChangedRedirect() {
-		window.__moltisSuppressNextPasswordChangedRedirect = true;
+		window.__clawmasterSuppressNextPasswordChangedRedirect = true;
 	}
 
 	function clearPasswordChangedRedirectDeferral() {
-		window.__moltisSuppressNextPasswordChangedRedirect = false;
+		window.__clawmasterSuppressNextPasswordChangedRedirect = false;
 	}
 
 	// A credential added while localhost-bypass is active can immediately make the
@@ -1239,7 +1239,7 @@ function SecuritySection() {
 			<div style="max-width:600px;padding:12px 16px;border-radius:6px;border:1px solid var(--error);background:color-mix(in srgb, var(--error) 5%, transparent);">
 				<strong style="color:var(--error);">Authentication is disabled</strong>
 				<p class="text-xs text-[var(--muted)]" style="margin:8px 0 0;">
-					Anyone with network access can control moltis and your computer. Set up a password to protect your instance.
+					Anyone with network access can control clawmaster and your computer. Set up a password to protect your instance.
 				</p>
 				<button type="button" class="provider-btn" style="margin-top:10px;"
 					onClick=${() => {
@@ -1258,7 +1258,7 @@ function SecuritySection() {
 					<strong style="color:var(--error);">Authentication is disabled</strong>
 					<p class="text-xs text-[var(--muted)]" style="margin:8px 0 0;">
 						Localhost-only access is safe, but localhost bypass is active. Until you add a password or passkey, this browser has full access and Sign out has no effect.
-						Add credentials below to require login on localhost and before exposing Moltis to your network.
+						Add credentials below to require login on localhost and before exposing ClawMaster to your network.
 					</p>
 				</div>`
 				: null
@@ -1269,7 +1269,7 @@ function SecuritySection() {
 				? html`<div class="alert-info-text max-w-form">
 					<span class="alert-label-info">Note: </span>
 					Localhost bypass is active. Until you add a password or passkey, this browser has full access and Sign out has no effect.
-					Add credentials to require login on localhost and before exposing Moltis to your network.
+					Add credentials to require login on localhost and before exposing ClawMaster to your network.
 				</div>`
 				: null
 		}
@@ -1403,7 +1403,7 @@ function SecuritySection() {
 		<div style="max-width:600px;border-top:1px solid var(--border);padding-top:16px;">
 			<h3 class="text-sm font-medium text-[var(--text-strong)]" style="margin-bottom:4px;">API Keys</h3>
 			<p class="text-xs text-[var(--muted)] leading-relaxed" style="margin:0 0 12px;">
-				API keys authenticate external tools and scripts connecting to moltis over the WebSocket protocol. Pass the key as the <code style="font-family:var(--font-mono);font-size:.75rem;">api_key</code> field in the <code style="font-family:var(--font-mono);font-size:.75rem;">auth</code> object of the <code style="font-family:var(--font-mono);font-size:.75rem;">connect</code> handshake.
+				API keys authenticate external tools and scripts connecting to clawmaster over the WebSocket protocol. Pass the key as the <code style="font-family:var(--font-mono);font-size:.75rem;">api_key</code> field in the <code style="font-family:var(--font-mono);font-size:.75rem;">auth</code> object of the <code style="font-family:var(--font-mono);font-size:.75rem;">connect</code> handshake.
 			</p>
 			${
 				akLoading
@@ -1504,7 +1504,7 @@ function SecuritySection() {
 				<strong class="text-sm" style="color:var(--text-strong);">Remove all authentication</strong>
 				<p class="text-xs text-[var(--muted)]" style="margin:6px 0 0;">
 					If you know what you're doing, you can fully disable authentication.
-					Anyone with network access will be able to access moltis and your computer.
+					Anyone with network access will be able to access clawmaster and your computer.
 					This removes your password, all passkeys, all API keys, and all sessions.
 				</p>
 				${
@@ -2046,7 +2046,7 @@ function ConfigSection() {
 				// Network error or other fetch failure
 				var errMsg = fetchErr.message || "Network error";
 				if (errMsg.includes("pattern")) {
-					errMsg = "Failed to connect to server. Please check if moltis is running.";
+					errMsg = "Failed to connect to server. Please check if clawmaster is running.";
 				}
 				setErr(errMsg);
 				setConfigLoading(false);
@@ -2129,7 +2129,7 @@ function ConfigSection() {
 
 	function onRestart() {
 		setRestarting(true);
-		setMsg("Restarting moltis...");
+		setMsg("Restarting clawmaster...");
 		setErr(null);
 		rerender();
 
@@ -2173,7 +2173,7 @@ function ConfigSection() {
 						setTimeout(check, 1000);
 					} else {
 						setRestarting(false);
-						setErr("Server did not come back up. Check if moltis is running.");
+						setErr("Server did not come back up. Check if clawmaster is running.");
 						rerender();
 					}
 				})
@@ -2182,7 +2182,7 @@ function ConfigSection() {
 						setTimeout(check, 1000);
 					} else {
 						setRestarting(false);
-						setErr("Server did not come back up. Check if moltis is running.");
+						setErr("Server did not come back up. Check if clawmaster is running.");
 						rerender();
 					}
 				});
@@ -2250,9 +2250,9 @@ function ConfigSection() {
 	return html`<div class="flex-1 flex flex-col min-w-0 p-4 gap-4 overflow-y-auto">
 		<h2 class="text-lg font-medium text-[var(--text-strong)]">Configuration</h2>
 		<p class="text-xs text-[var(--muted)] leading-relaxed" style="max-width:700px;margin:0;">
-			Edit the full moltis configuration. This includes server, tools, LLM providers, auth, and all other settings.
+			Edit the full clawmaster configuration. This includes server, tools, LLM providers, auth, and all other settings.
 			Test your changes before saving. Changes require a restart to take effect.${" "}
-			<a href="https://docs.moltis.org/configuration.html" target="_blank" rel="noopener"
+			<a href="https://docs.clawmaster.org/configuration.html" target="_blank" rel="noopener"
 				style="color:var(--accent);text-decoration:underline;">View documentation \u2197</a>
 		</p>
 		${
@@ -2721,7 +2721,7 @@ function VoiceSection() {
 			try {
 				var id = gon.get("identity");
 				var user = id?.user_name || "friend";
-				var bot = id?.name || "Moltis";
+				var bot = id?.name || "ClawMaster";
 				var ttsText = await fetchPhrase("settings", user, bot);
 				var res = await testTts(ttsText, providerId);
 				if (res?.ok && res.payload?.audio) {
@@ -3609,7 +3609,7 @@ function MemorySection() {
 						? null
 						: html`
 					<div class="text-xs text-[var(--error)]" style="margin-top:8px;">
-						QMD feature is not enabled. Rebuild moltis with <code style="font-family:var(--font-mono);font-size:.7rem;">--features qmd</code>
+						QMD feature is not enabled. Rebuild clawmaster with <code style="font-family:var(--font-mono);font-size:.7rem;">--features qmd</code>
 					</div>
 				`
 				}
@@ -3869,7 +3869,7 @@ function NotificationsSection() {
 					Installation required
 				</p>
 				<p class="text-xs text-[var(--muted)]" style="margin:8px 0 0;">
-					On Safari, push notifications are only available for installed apps. Add moltis to your Dock using <strong>File → Add to Dock</strong> (or Share → Add to Dock on iOS), then open it from there.
+					On Safari, push notifications are only available for installed apps. Add clawmaster to your Dock using <strong>File → Add to Dock</strong> (or Share → Add to Dock on iOS), then open it from there.
 				</p>
 			</div>
 		`

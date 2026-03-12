@@ -58,8 +58,8 @@ These events run hooks in parallel for performance. They cannot modify or block.
 | `MessageSent` | After response is delivered |
 | `SessionStart` | When a new session begins |
 | `SessionEnd` | When a session ends |
-| `GatewayStart` | When Moltis starts |
-| `GatewayStop` | When Moltis shuts down |
+| `GatewayStart` | When ClawMaster starts |
+| `GatewayStop` | When ClawMaster shuts down |
 | `Command` | When a slash command is used |
 
 ## Prompt Injection Filtering
@@ -160,7 +160,7 @@ exit 0
 ### 1. Create the Hook Directory
 
 ```bash
-mkdir -p ~/.moltis/hooks/my-hook
+mkdir -p ~/.clawmaster/hooks/my-hook
 ```
 
 ### 2. Create HOOK.md
@@ -206,7 +206,7 @@ exit 0
 ### 4. Make it Executable
 
 ```bash
-chmod +x ~/.moltis/hooks/my-hook/handler.sh
+chmod +x ~/.clawmaster/hooks/my-hook/handler.sh
 ```
 
 ## Shell Hook Protocol
@@ -275,12 +275,12 @@ exit 0
 
 Hooks are discovered from `HOOK.md` files in these locations (priority order):
 
-1. **Project-local**: `<workspace>/.moltis/hooks/<name>/HOOK.md`
-2. **User-global**: `~/.moltis/hooks/<name>/HOOK.md`
+1. **Project-local**: `<workspace>/.clawmaster/hooks/<name>/HOOK.md`
+2. **User-global**: `~/.clawmaster/hooks/<name>/HOOK.md`
 
 Project-local hooks take precedence over global hooks with the same name.
 
-## Configuration in moltis.toml
+## Configuration in clawmaster.toml
 
 You can also define hooks directly in the config file:
 
@@ -332,21 +332,21 @@ This prevents a broken hook from blocking all operations.
 
 ```bash
 # List all discovered hooks
-moltis hooks list
+clawmaster hooks list
 
 # List only eligible hooks (requirements met)
-moltis hooks list --eligible
+clawmaster hooks list --eligible
 
 # Output as JSON
-moltis hooks list --json
+clawmaster hooks list --json
 
 # Show details for a specific hook
-moltis hooks info my-hook
+clawmaster hooks info my-hook
 ```
 
 ## Bundled Hooks
 
-Moltis includes several built-in hooks:
+ClawMaster includes several built-in hooks:
 
 ### boot-md
 
@@ -357,7 +357,7 @@ Reads `BOOT.md` from the workspace on `GatewayStart` and injects it into the age
 
 ## Workspace Context Files
 
-Moltis supports several workspace markdown files in `data_dir`.
+ClawMaster supports several workspace markdown files in `data_dir`.
 
 ### TOOLS.md
 
@@ -372,7 +372,7 @@ If `TOOLS.md` is empty or missing, it is not injected.
 
 ### AGENTS.md (workspace)
 
-Moltis also supports a workspace-level `AGENTS.md` in `data_dir`.
+ClawMaster also supports a workspace-level `AGENTS.md` in `data_dir`.
 
 This is separate from project `AGENTS.md`/`CLAUDE.md` discovery. Use workspace
 `AGENTS.md` for global instructions that should apply across projects in this workspace.
@@ -405,8 +405,8 @@ cargo install dcg
 Copy the bundled hook example to your hooks directory:
 
 ```bash
-cp -r examples/hooks/dcg-guard ~/.moltis/hooks/dcg-guard
-chmod +x ~/.moltis/hooks/dcg-guard/handler.sh
+cp -r examples/hooks/dcg-guard ~/.clawmaster/hooks/dcg-guard
+chmod +x ~/.clawmaster/hooks/dcg-guard/handler.sh
 ```
 
 The hook subscribes to `BeforeToolCall`, extracts exec commands, pipes them

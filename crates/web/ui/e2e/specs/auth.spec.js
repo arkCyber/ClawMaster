@@ -353,7 +353,7 @@ test.describe("Authentication", () => {
 
 		await page.evaluate(() => {
 			window.__e2eAuthStatus.hasPasskeyCredential = true;
-			window.dispatchEvent(new CustomEvent("moltis:auth-status-changed"));
+			window.dispatchEvent(new CustomEvent("clawmaster:auth-status-changed"));
 		});
 
 		await expect(logoutBtn).toBeVisible();
@@ -367,7 +367,7 @@ test.describe("Authentication", () => {
 
 		const expected = await page.evaluate(() => {
 			var id = window.__MOLTIS__?.identity;
-			var name = (id?.name ? String(id.name).trim() : "") || "moltis";
+			var name = (id?.name ? String(id.name).trim() : "") || "clawmaster";
 			var emoji = (id?.emoji ? String(id.emoji) : "").trim();
 			return {
 				title: name,
@@ -468,7 +468,7 @@ test.describe("Login page", () => {
 
 		const expected = await page.evaluate(() => {
 			var id = window.__MOLTIS__?.identity;
-			var name = (id?.name ? String(id.name).trim() : "") || "moltis";
+			var name = (id?.name ? String(id.name).trim() : "") || "clawmaster";
 			var emoji = (id?.emoji ? String(id.emoji) : "").trim();
 			return {
 				title: name,

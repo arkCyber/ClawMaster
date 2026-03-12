@@ -11,7 +11,7 @@ use {async_trait::async_trait, serde_json::Value, tracing::debug};
 // Re-export types from the trusted-network crate so existing gateway code
 // doesn't need to add a direct dependency when the feature is on.
 #[cfg(feature = "trusted-network")]
-pub use moltis_network_filter::{
+pub use clawmaster_network_filter::{
     FilterOutcome, NetworkAuditEntry, NetworkProtocol,
     buffer::{NetworkAuditBuffer, NetworkAuditFilter, NetworkAuditStats},
 };

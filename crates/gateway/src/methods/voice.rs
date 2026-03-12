@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use moltis_config::VoiceSttProvider;
+use clawmaster_config::VoiceSttProvider;
 
 /// Check if Python 3.10+ is available.
 pub(super) async fn check_python_version() -> serde_json::Value {
@@ -341,7 +341,7 @@ pub(super) struct VoiceProvidersResponse {
 
 /// Detect all available voice providers with their availability status.
 pub(super) async fn detect_voice_providers(
-    config: &moltis_config::MoltisConfig,
+    config: &clawmaster_config::MoltisConfig,
 ) -> serde_json::Value {
     use secrecy::ExposeSecret;
 
@@ -682,7 +682,7 @@ fn filter_listed_voice_providers(
 
 fn enrich_voice_provider(
     mut provider: VoiceProviderInfo,
-    config: &moltis_config::MoltisConfig,
+    config: &clawmaster_config::MoltisConfig,
 ) -> VoiceProviderInfo {
     let (capabilities, settings, summary) = match provider.id {
         VoiceProviderId::OpenaiTts => (
@@ -810,7 +810,7 @@ struct ElevenLabsModel {
 }
 
 pub(super) async fn fetch_elevenlabs_catalog(
-    config: &moltis_config::MoltisConfig,
+    config: &clawmaster_config::MoltisConfig,
 ) -> serde_json::Value {
     use secrecy::ExposeSecret;
 
@@ -942,7 +942,7 @@ fn key_source(in_config: bool, in_env: bool, in_llm_provider: bool) -> Option<&'
 }
 
 pub(super) fn apply_voice_provider_settings(
-    cfg: &mut moltis_config::MoltisConfig,
+    cfg: &mut clawmaster_config::MoltisConfig,
     provider: &str,
     params: &serde_json::Value,
 ) {
@@ -1059,7 +1059,7 @@ pub(super) fn toggle_voice_provider(
     enabled: bool,
     provider_type: &str,
 ) -> Result<(), anyhow::Error> {
-    moltis_config::update_config(|cfg| {
+    clawmaster_config::update_config(|cfg| {
         match provider_type {
             "tts" => {
                 if enabled {
@@ -1177,7 +1177,7 @@ mod tests {
 
     #[tokio::test]
     async fn detect_voice_providers_marks_selected_stt_provider_when_some() {
-        let mut config = moltis_config::MoltisConfig::default();
+        let mut config = clawmaster_config::MoltisConfig::default();
         config.voice.stt.enabled = true;
         config.voice.stt.provider = Some(VoiceSttProvider::Whisper);
         config.voice.stt.whisper.api_key = Some(Secret::new("test-whisper-key".to_string()));
@@ -1195,7 +1195,7 @@ mod tests {
 
     #[tokio::test]
     async fn detect_voice_providers_does_not_mark_stt_provider_when_none() {
-        let mut config = moltis_config::MoltisConfig::default();
+        let mut config = clawmaster_config::MoltisConfig::default();
         config.voice.stt.enabled = true;
         config.voice.stt.provider = None;
         config.voice.stt.whisper.api_key = Some(Secret::new("test-whisper-key".to_string()));

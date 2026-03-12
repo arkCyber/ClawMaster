@@ -18,7 +18,7 @@ use {
 };
 
 #[cfg(feature = "voice")]
-use moltis_voice::{
+use clawmaster_voice::{
     AudioFormat, CoquiTts, DeepgramStt, ElevenLabsStt, ElevenLabsTts, GoogleStt, GoogleTts,
     GroqStt, MistralStt, OpenAiTts, PiperTts, SherpaOnnxStt, SttProvider, SttProviderId,
     SynthesizeRequest, TranscribeRequest, TtsConfig, TtsProvider, TtsProviderId, VoxtralLocalStt,
@@ -30,22 +30,22 @@ use crate::services::TtsService;
 
 #[cfg(feature = "voice")]
 trait IntoVoiceSttProvider {
-    fn into_voice_stt_provider(self) -> moltis_config::VoiceSttProvider;
+    fn into_voice_stt_provider(self) -> clawmaster_config::VoiceSttProvider;
 }
 
 #[cfg(feature = "voice")]
 impl IntoVoiceSttProvider for SttProviderId {
-    fn into_voice_stt_provider(self) -> moltis_config::VoiceSttProvider {
+    fn into_voice_stt_provider(self) -> clawmaster_config::VoiceSttProvider {
         match self {
-            SttProviderId::Whisper => moltis_config::VoiceSttProvider::Whisper,
-            SttProviderId::Groq => moltis_config::VoiceSttProvider::Groq,
-            SttProviderId::Deepgram => moltis_config::VoiceSttProvider::Deepgram,
-            SttProviderId::Google => moltis_config::VoiceSttProvider::Google,
-            SttProviderId::Mistral => moltis_config::VoiceSttProvider::Mistral,
-            SttProviderId::VoxtralLocal => moltis_config::VoiceSttProvider::VoxtralLocal,
-            SttProviderId::WhisperCli => moltis_config::VoiceSttProvider::WhisperCli,
-            SttProviderId::SherpaOnnx => moltis_config::VoiceSttProvider::SherpaOnnx,
-            SttProviderId::ElevenLabs => moltis_config::VoiceSttProvider::ElevenLabs,
+            SttProviderId::Whisper => clawmaster_config::VoiceSttProvider::Whisper,
+            SttProviderId::Groq => clawmaster_config::VoiceSttProvider::Groq,
+            SttProviderId::Deepgram => clawmaster_config::VoiceSttProvider::Deepgram,
+            SttProviderId::Google => clawmaster_config::VoiceSttProvider::Google,
+            SttProviderId::Mistral => clawmaster_config::VoiceSttProvider::Mistral,
+            SttProviderId::VoxtralLocal => clawmaster_config::VoiceSttProvider::VoxtralLocal,
+            SttProviderId::WhisperCli => clawmaster_config::VoiceSttProvider::WhisperCli,
+            SttProviderId::SherpaOnnx => clawmaster_config::VoiceSttProvider::SherpaOnnx,
+            SttProviderId::ElevenLabs => clawmaster_config::VoiceSttProvider::ElevenLabs,
         }
     }
 }
@@ -55,7 +55,7 @@ impl IntoVoiceSttProvider for SttProviderId {
 #[cfg(feature = "voice")]
 fn resolve_openai_key(
     voice_key: Option<&Secret<String>>,
-    cfg: &moltis_config::MoltisConfig,
+    cfg: &clawmaster_config::MoltisConfig,
 ) -> Option<Secret<String>> {
     voice_key
         .cloned()
@@ -97,40 +97,40 @@ impl LiveTtsService {
 
     /// Load fresh TTS config from disk.
     fn load_config() -> TtsConfig {
-        let cfg = moltis_config::discover_and_load();
+        let cfg = clawmaster_config::discover_and_load();
         TtsConfig {
             enabled: cfg.voice.tts.enabled,
             provider: cfg.voice.tts.provider.clone(),
-            auto: moltis_voice::TtsAutoMode::Off,
+            auto: clawmaster_voice::TtsAutoMode::Off,
             max_text_length: 8000,
-            elevenlabs: moltis_voice::ElevenLabsConfig {
+            elevenlabs: clawmaster_voice::ElevenLabsConfig {
                 api_key: cfg.voice.tts.elevenlabs.api_key.clone(),
                 voice_id: cfg.voice.tts.elevenlabs.voice_id.clone(),
                 model: cfg.voice.tts.elevenlabs.model.clone(),
                 stability: None,
                 similarity_boost: None,
             },
-            openai: moltis_voice::OpenAiTtsConfig {
+            openai: clawmaster_voice::OpenAiTtsConfig {
                 api_key: resolve_openai_key(cfg.voice.tts.openai.api_key.as_ref(), &cfg),
                 voice: cfg.voice.tts.openai.voice.clone(),
                 model: cfg.voice.tts.openai.model.clone(),
                 speed: None,
             },
-            google: moltis_voice::GoogleTtsConfig {
+            google: clawmaster_voice::GoogleTtsConfig {
                 api_key: cfg.voice.tts.google.api_key.clone(),
                 voice: cfg.voice.tts.google.voice.clone(),
                 language_code: cfg.voice.tts.google.language_code.clone(),
                 speaking_rate: cfg.voice.tts.google.speaking_rate,
                 pitch: cfg.voice.tts.google.pitch,
             },
-            piper: moltis_voice::PiperTtsConfig {
+            piper: clawmaster_voice::PiperTtsConfig {
                 binary_path: cfg.voice.tts.piper.binary_path.clone(),
                 model_path: cfg.voice.tts.piper.model_path.clone(),
                 config_path: None,
                 speaker_id: None,
                 length_scale: None,
             },
-            coqui: moltis_voice::CoquiTtsConfig {
+            coqui: clawmaster_voice::CoquiTtsConfig {
                 endpoint: cfg.voice.tts.coqui.endpoint.clone(),
                 model: cfg.voice.tts.coqui.model.clone(),
                 speaker: None,
@@ -262,7 +262,7 @@ impl TtsService for LiveTtsService {
         }
 
         // Update config file
-        moltis_config::update_config(|cfg| {
+        clawmaster_config::update_config(|cfg| {
             cfg.voice.tts.provider = provider_id.to_string();
             cfg.voice.tts.enabled = true;
         })
@@ -277,7 +277,7 @@ impl TtsService for LiveTtsService {
     }
 
     async fn disable(&self) -> ServiceResult {
-        moltis_config::update_config(|cfg| {
+        clawmaster_config::update_config(|cfg| {
             cfg.voice.tts.enabled = false;
         })
         .map_err(|e| format!("failed to update config: {}", e))?;
@@ -395,7 +395,7 @@ impl TtsService for LiveTtsService {
             return Err(format!("provider '{}' not configured", provider_id).into());
         }
 
-        moltis_config::update_config(|cfg| {
+        clawmaster_config::update_config(|cfg| {
             cfg.voice.tts.provider = provider_id.to_string();
         })
         .map_err(|e| format!("failed to update config: {}", e))?;
@@ -514,7 +514,7 @@ impl LiveSttService {
 
     /// Load fresh STT config from disk and create provider on demand.
     fn create_provider(provider_id: SttProviderId) -> Option<Box<dyn SttProvider + Send + Sync>> {
-        let cfg = moltis_config::discover_and_load();
+        let cfg = clawmaster_config::discover_and_load();
         match provider_id {
             SttProviderId::Whisper => {
                 let key = resolve_openai_key(cfg.voice.stt.whisper.api_key.as_ref(), &cfg);
@@ -599,7 +599,7 @@ impl LiveSttService {
 
     /// List all providers with their configuration status (reads fresh config).
     fn list_providers() -> Vec<(SttProviderId, bool)> {
-        let cfg = moltis_config::discover_and_load();
+        let cfg = clawmaster_config::discover_and_load();
         vec![
             (
                 SttProviderId::Whisper,
@@ -636,7 +636,7 @@ impl LiveSttService {
 
     /// Resolve the active provider: explicit config value, or first configured.
     fn resolve_provider(
-        config_provider: Option<moltis_config::VoiceSttProvider>,
+        config_provider: Option<clawmaster_config::VoiceSttProvider>,
     ) -> Option<SttProviderId> {
         if let Some(p) = config_provider {
             return SttProviderId::parse(p.as_str());
@@ -653,7 +653,7 @@ impl LiveSttService {
 #[async_trait]
 impl SttService for LiveSttService {
     async fn status(&self) -> ServiceResult {
-        let cfg = moltis_config::discover_and_load();
+        let cfg = clawmaster_config::discover_and_load();
         let providers = Self::list_providers();
         let any_configured = providers.iter().any(|(_, configured)| *configured);
         let resolved = Self::resolve_provider(cfg.voice.stt.provider);
@@ -713,7 +713,7 @@ impl SttService for LiveSttService {
         language: Option<&str>,
         prompt: Option<&str>,
     ) -> ServiceResult {
-        let cfg = moltis_config::discover_and_load();
+        let cfg = clawmaster_config::discover_and_load();
 
         let provider_id = match provider {
             Some(s) => {
@@ -762,7 +762,7 @@ impl SttService for LiveSttService {
         }
 
         // Update config file
-        moltis_config::update_config(|cfg| {
+        clawmaster_config::update_config(|cfg| {
             cfg.voice.stt.provider = Some(provider_id.into_voice_stt_provider());
         })
         .map_err(|e| format!("failed to update config: {}", e))?;
@@ -782,12 +782,12 @@ mod tests {
 
     #[test]
     fn test_resolve_openai_key_prefers_voice_key_over_llm_provider_key() {
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.providers.providers.insert(
             "openai".to_string(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(Secret::new("llm-openai-key".to_string())),
-                ..moltis_config::schema::ProviderEntry::default()
+                ..clawmaster_config::schema::ProviderEntry::default()
             },
         );
 
@@ -802,12 +802,12 @@ mod tests {
             return;
         }
 
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.providers.providers.insert(
             "openai".to_string(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(Secret::new("llm-openai-key".to_string())),
-                ..moltis_config::schema::ProviderEntry::default()
+                ..clawmaster_config::schema::ProviderEntry::default()
             },
         );
 
@@ -829,7 +829,7 @@ mod tests {
     #[test]
     fn test_live_stt_resolve_provider_handles_explicit_and_auto_selection() {
         assert_eq!(
-            LiveSttService::resolve_provider(Some(moltis_config::VoiceSttProvider::Whisper)),
+            LiveSttService::resolve_provider(Some(clawmaster_config::VoiceSttProvider::Whisper)),
             Some(SttProviderId::Whisper)
         );
         assert!(LiveSttService::resolve_provider(None).is_some());

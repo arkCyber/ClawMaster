@@ -3,11 +3,11 @@
 **Status:** Planned  
 **Priority:** High  
 **Date:** 2026-02-27  
-**Scope:** Provide secure remote access for iOS companion clients to Moltis instances behind NAT/firewalls, using Moltis-operated relay servers.
+**Scope:** Provide secure remote access for iOS companion clients to ClawMaster instances behind NAT/firewalls, using ClawMaster-operated relay servers.
 
 ## Goal
 
-Enable users to connect from iOS to their self-hosted Moltis securely, even when the home server is not directly reachable due to NAT/firewall restrictions, without requiring users to expose inbound ports.
+Enable users to connect from iOS to their self-hosted ClawMaster securely, even when the home server is not directly reachable due to NAT/firewall restrictions, without requiring users to expose inbound ports.
 
 ## Non-Goals (v1)
 
@@ -24,8 +24,8 @@ Enable users to connect from iOS to their self-hosted Moltis securely, even when
 
 ## Security Objectives
 
-1. End-to-end confidentiality of user payloads between iOS client and home Moltis server.
-2. Strong mutual authentication between paired iOS device and target Moltis instance.
+1. End-to-end confidentiality of user payloads between iOS client and home ClawMaster server.
+2. Strong mutual authentication between paired iOS device and target ClawMaster instance.
 3. Replay resistance, short-lived session credentials, and fast revocation.
 4. Relay compromise should not expose decrypted application data.
 5. TLS everywhere, with sane certificate rotation and pinning strategy.
@@ -56,11 +56,11 @@ Enable users to connect from iOS to their self-hosted Moltis securely, even when
 
 2. **Relay Data Plane (`relay-edge`)**
    - Public `wss://` endpoint on 443.
-   - Maintains long-lived outbound tunnel from home Moltis connector.
+   - Maintains long-lived outbound tunnel from home ClawMaster connector.
    - Accepts iOS client tunnels and routes to target instance tunnel.
    - Does authenticated rendezvous and byte forwarding only.
 
-3. **Home Connector (inside `moltis-gateway`)**
+3. **Home Connector (inside `clawmaster-gateway`)**
    - Maintains outbound relay session.
    - Reconnects with backoff and jitter.
    - Exposes tunnel stream to gateway RPC layer.
@@ -73,7 +73,7 @@ Enable users to connect from iOS to their self-hosted Moltis securely, even when
 ### Transport Layers
 
 1. **Outer transport:** TLS 1.3 + WebSocket (`wss`) between each endpoint and relay.
-2. **Inner transport:** End-to-end encrypted Moltis RPC stream between iOS and home gateway.
+2. **Inner transport:** End-to-end encrypted ClawMaster RPC stream between iOS and home gateway.
 
 Inference: this preserves compatibility with current WebSocket-first architecture while minimizing trust in relay operators.
 
@@ -83,7 +83,7 @@ Inference: this preserves compatibility with current WebSocket-first architectur
 
 1. iOS generates device keypair (stored in Keychain/Secure Enclave where possible).
 2. Pairing request includes device public key and metadata.
-3. Operator approves pairing from authenticated Moltis UI/API.
+3. Operator approves pairing from authenticated ClawMaster UI/API.
 4. Gateway stores device identity and scoped permissions in persistent storage.
 
 ### Persistent Records

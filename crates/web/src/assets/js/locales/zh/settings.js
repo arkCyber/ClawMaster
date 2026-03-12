@@ -84,12 +84,12 @@ export default {
 	security: {
 		title: "安全",
 		authDisabled: "身份验证已禁用",
-		authDisabledWarning: "任何具有网络访问权限的人都可以控制 moltis 和您的计算机。请设置密码来保护您的实例。",
+		authDisabledWarning: "任何具有网络访问权限的人都可以控制 clawmaster 和您的计算机。请设置密码来保护您的实例。",
 		setupAuth: "设置身份验证",
 		localhostBypassWarning:
-			"仅限本地访问是安全的，但本地绕过已生效。在添加密码或通行密钥之前，此浏览器拥有完全访问权限，退出登录无效。请在下方添加凭据以在本地要求登录，并在将 Moltis 暴露到网络之前完成设置。",
+			"仅限本地访问是安全的，但本地绕过已生效。在添加密码或通行密钥之前，此浏览器拥有完全访问权限，退出登录无效。请在下方添加凭据以在本地要求登录，并在将 ClawMaster 暴露到网络之前完成设置。",
 		localhostBypassNote:
-			"本地绕过已生效。在添加密码或通行密钥之前，此浏览器拥有完全访问权限，退出登录无效。请添加凭据以在本地要求登录，并在将 Moltis 暴露到网络之前完成设置。",
+			"本地绕过已生效。在添加密码或通行密钥之前，此浏览器拥有完全访问权限，退出登录无效。请添加凭据以在本地要求登录，并在将 ClawMaster 暴露到网络之前完成设置。",
 		note: "注意：",
 		changePassword: "修改密码",
 		setPasswordTitle: "设置密码",
@@ -119,7 +119,7 @@ export default {
 		// API keys
 		apiKeys: "API 密钥",
 		apiKeysDescription:
-			"API 密钥用于验证通过 WebSocket 协议连接到 moltis 的外部工具和脚本。在连接握手的 auth 对象中将密钥作为 api_key 字段传递。",
+			"API 密钥用于验证通过 WebSocket 协议连接到 clawmaster 的外部工具和脚本。在连接握手的 auth 对象中将密钥作为 api_key 字段传递。",
 		apiKeyCopyWarning: "请立即复制此密钥，之后将不再显示。",
 		fullAccess: "完全访问",
 		revoke: "撤销",
@@ -140,7 +140,7 @@ export default {
 		dangerZone: "危险操作",
 		removeAllAuth: "移除所有身份验证",
 		removeAllAuthWarning:
-			"如果你清楚自己在做什么，可以完全禁用身份验证。任何具有网络访问权限的人都将能够访问 moltis 和你的计算机。此操作将移除你的密码、所有通行密钥、所有 API 密钥和所有会话。",
+			"如果你清楚自己在做什么，可以完全禁用身份验证。任何具有网络访问权限的人都将能够访问 clawmaster 和你的计算机。此操作将移除你的密码、所有通行密钥、所有 API 密钥和所有会话。",
 		removeAllAuthConfirm: "确定吗？此操作无法撤销。",
 		removing: "移除中\u2026",
 		yesRemoveAllAuth: "是的，移除所有身份验证",
@@ -150,7 +150,7 @@ export default {
 	config: {
 		title: "配置",
 		description:
-			"编辑完整的 moltis 配置。包括服务器、工具、LLM 供应商、身份验证和所有其他设置。保存前请先测试更改。更改需要重启才能生效。",
+			"编辑完整的 clawmaster 配置。包括服务器、工具、LLM 供应商、身份验证和所有其他设置。保存前请先测试更改。更改需要重启才能生效。",
 		viewDocs: "查看文档 \u2197",
 		fileLabel: "文件：",
 		warnings: "警告：",
@@ -166,12 +166,12 @@ export default {
 		configValid: "配置有效。",
 		configInvalid: "配置无效",
 		configSaved: "配置已保存。需要重启才能使更改生效。",
-		restartingMoltis: "正在重启 moltis...",
-		serverNotBack: "服务器未恢复运行。请检查 moltis 是否正在运行。",
+		restartingClawMaster: "正在重启 clawmaster...",
+		serverNotBack: "服务器未恢复运行。请检查 clawmaster 是否正在运行。",
 		autoReloadHint: "服务器恢复后页面将自动重新加载。",
 		resetConfirm: "用默认模板替换当前配置？\n\n这将显示所有可用选项及文档。除非先复制当前值，否则将丢失。",
 		templateLoaded: "已加载包含所有选项的默认模板。检查后保存即可。",
-		failedToConnect: "连接服务器失败。请检查 moltis 是否正在运行。",
+		failedToConnect: "连接服务器失败。请检查 clawmaster 是否正在运行。",
 		invalidJsonResponse: "服务器返回无效的 JSON 响应",
 		failedToLoadTemplate: "加载模板失败",
 		tipLabel: "提示：",
@@ -268,7 +268,7 @@ export default {
 		mostUsers: "大多数用户",
 		powerUsers: "高级用户",
 		builtInRecommended: "内置（推荐）",
-		qmdNotEnabled: "QMD 功能未启用。请使用 --features qmd 重新编译 moltis",
+		qmdNotEnabled: "QMD 功能未启用。请使用 --features qmd 重新编译 clawmaster",
 		qmdStatus: "QMD 状态",
 		qmdInstalled: "\u2713 QMD 已安装",
 		qmdNotInstalled: "\u2717 QMD 未安装或未在 PATH 中找到",
@@ -302,7 +302,7 @@ export default {
 		toggling: "\u2026",
 		installRequired: "需要安装",
 		installRequiredSafari:
-			"在 Safari 中，推送通知仅对已安装的应用可用。通过 文件 \u2192 添加到 Dock（或在 iOS 上通过 分享 \u2192 添加到主屏幕）将 moltis 添加到 Dock，然后从那里打开。",
+			"在 Safari 中，推送通知仅对已安装的应用可用。通过 文件 \u2192 添加到 Dock（或在 iOS 上通过 分享 \u2192 添加到主屏幕）将 clawmaster 添加到 Dock，然后从那里打开。",
 		notificationsBlocked: "通知已被阻止",
 		blockedExplanation: "你之前阻止了此站点的通知。要启用它们，你需要更新浏览器的站点设置并允许此来源的通知。",
 		subscribedDevices: "已订阅设备 ({{count}})",

@@ -145,7 +145,7 @@ export default {
 	downloadingModel: "正在下载 {{modelName}}\u2026",
 	downloadProgressWithTotal: "{{downloaded}} / {{total}} MB",
 	downloadProgressNoTotal: "{{downloaded}} MB",
-	connectedToGateway: "已连接到 moltis 网关 v{{version}}，时间 {{time}}",
+	connectedToGateway: "已连接到 clawmaster 网关 v{{version}}，时间 {{time}}",
 	statusHandshakeFailed: "握手失败",
 	handshakeFailed: "握手失败：{{reason}}",
 	statusDisconnectedReconnecting: "已断开 \u2014 重新连接中\u2026",

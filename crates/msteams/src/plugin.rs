@@ -9,7 +9,7 @@ use {
     tracing::{info, warn},
 };
 
-use moltis_channels::{
+use clawmaster_channels::{
     ChannelConfigView, ChannelEvent, ChannelEventSink, Error as ChannelError,
     Result as ChannelResult,
     gating::{DmPolicy, GroupPolicy, MentionMode, is_allowed},
@@ -332,9 +332,9 @@ impl MsTeamsPlugin {
         }
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::counter!(
-            moltis_metrics::channels::MESSAGES_RECEIVED_TOTAL,
-            moltis_metrics::labels::CHANNEL => "msteams"
+        clawmaster_metrics::counter!(
+            clawmaster_metrics::channels::MESSAGES_RECEIVED_TOTAL,
+            clawmaster_metrics::labels::CHANNEL => "msteams"
         )
         .increment(1);
 
@@ -466,7 +466,7 @@ impl ChannelPlugin for MsTeamsPlugin {
     fn channel_webhook_verifier(
         &self,
         account_id: &str,
-    ) -> Option<Box<dyn moltis_channels::channel_webhook_middleware::ChannelWebhookVerifier>> {
+    ) -> Option<Box<dyn clawmaster_channels::channel_webhook_middleware::ChannelWebhookVerifier>> {
         let accounts = self.accounts.read().unwrap_or_else(|e| e.into_inner());
         let state = accounts.get(account_id)?;
         Some(Box::new(
@@ -512,7 +512,7 @@ impl ChannelStatus for MsTeamsPlugin {
 mod tests {
     use {
         super::*,
-        moltis_channels::{InboundMode, plugin::ChannelType},
+        clawmaster_channels::{InboundMode, plugin::ChannelType},
     };
 
     #[test]

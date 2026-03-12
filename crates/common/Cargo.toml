@@ -1,12 +1,12 @@
 [package]
 edition.workspace = true
-name              = "moltis-common"
+name              = "clawmaster-common"
 version.workspace = true
 
 [dependencies]
 async-trait    = { workspace = true }
 futures        = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 serde          = { workspace = true }
 serde_json     = { workspace = true }
 thiserror      = { workspace = true }
@@ -16,7 +16,7 @@ uuid           = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [lints]
 workspace = true

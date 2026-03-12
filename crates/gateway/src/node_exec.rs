@@ -87,7 +87,7 @@ pub async fn exec_on_node(
 
     // Build and send the invoke request.
     let invoke_id = uuid::Uuid::new_v4().to_string();
-    let invoke_event = moltis_protocol::EventFrame::new(
+    let invoke_event = clawmaster_protocol::EventFrame::new(
         "node.invoke.request",
         serde_json::json!({
             "invokeId": invoke_id,
@@ -154,7 +154,7 @@ pub async fn query_node_providers(
     };
 
     let invoke_id = uuid::Uuid::new_v4().to_string();
-    let invoke_event = moltis_protocol::EventFrame::new(
+    let invoke_event = clawmaster_protocol::EventFrame::new(
         "node.invoke.request",
         serde_json::json!({
             "invokeId": invoke_id,
@@ -304,7 +304,7 @@ fn parse_exec_result(value: &serde_json::Value) -> anyhow::Result<NodeExecResult
     })
 }
 
-/// Bridge that implements [`moltis_tools::exec::NodeExecProvider`] by
+/// Bridge that implements [`clawmaster_tools::exec::NodeExecProvider`] by
 /// delegating to [`exec_on_node`] / [`resolve_node_id`] with a shared
 /// `GatewayState`.
 pub struct GatewayNodeExecProvider {
@@ -318,7 +318,7 @@ impl GatewayNodeExecProvider {
 }
 
 #[async_trait]
-impl moltis_tools::exec::NodeExecProvider for GatewayNodeExecProvider {
+impl clawmaster_tools::exec::NodeExecProvider for GatewayNodeExecProvider {
     async fn exec_on_node(
         &self,
         node_id: &str,
@@ -326,9 +326,9 @@ impl moltis_tools::exec::NodeExecProvider for GatewayNodeExecProvider {
         timeout_secs: u64,
         cwd: Option<&str>,
         env: Option<&HashMap<String, String>>,
-    ) -> anyhow::Result<moltis_tools::exec::ExecResult> {
+    ) -> anyhow::Result<clawmaster_tools::exec::ExecResult> {
         let result = exec_on_node(&self.state, node_id, command, timeout_secs, cwd, env).await?;
-        Ok(moltis_tools::exec::ExecResult {
+        Ok(clawmaster_tools::exec::ExecResult {
             stdout: result.stdout,
             stderr: result.stderr,
             exit_code: result.exit_code,
@@ -343,8 +343,8 @@ impl moltis_tools::exec::NodeExecProvider for GatewayNodeExecProvider {
 // ── Node info provider ──────────────────────────────────────────────────────
 
 /// Convert a `NodeSession` into a serializable `NodeInfo`.
-fn node_to_info(n: &crate::nodes::NodeSession) -> moltis_tools::nodes::NodeInfo {
-    moltis_tools::nodes::NodeInfo {
+fn node_to_info(n: &crate::nodes::NodeSession) -> clawmaster_tools::nodes::NodeInfo {
+    clawmaster_tools::nodes::NodeInfo {
         node_id: n.node_id.clone(),
         display_name: n.display_name.clone(),
         platform: n.platform.clone(),
@@ -366,7 +366,7 @@ fn node_to_info(n: &crate::nodes::NodeSession) -> moltis_tools::nodes::NodeInfo 
         providers: n
             .providers
             .iter()
-            .map(|p| moltis_tools::nodes::NodeProviderInfo {
+            .map(|p| clawmaster_tools::nodes::NodeProviderInfo {
                 provider: p.provider.clone(),
                 models: p.models.clone(),
             })
@@ -374,7 +374,7 @@ fn node_to_info(n: &crate::nodes::NodeSession) -> moltis_tools::nodes::NodeInfo 
     }
 }
 
-/// Bridge that implements [`moltis_tools::nodes::NodeInfoProvider`] by
+/// Bridge that implements [`clawmaster_tools::nodes::NodeInfoProvider`] by
 /// reading from the `NodeRegistry` and session metadata in `GatewayState`.
 pub struct GatewayNodeInfoProvider {
     state: Arc<GatewayState>,
@@ -387,13 +387,13 @@ impl GatewayNodeInfoProvider {
 }
 
 #[async_trait]
-impl moltis_tools::nodes::NodeInfoProvider for GatewayNodeInfoProvider {
-    async fn list_nodes(&self) -> Vec<moltis_tools::nodes::NodeInfo> {
+impl clawmaster_tools::nodes::NodeInfoProvider for GatewayNodeInfoProvider {
+    async fn list_nodes(&self) -> Vec<clawmaster_tools::nodes::NodeInfo> {
         let inner = self.state.inner.read().await;
         inner.nodes.list().iter().map(|n| node_to_info(n)).collect()
     }
 
-    async fn describe_node(&self, node_ref: &str) -> Option<moltis_tools::nodes::NodeInfo> {
+    async fn describe_node(&self, node_ref: &str) -> Option<clawmaster_tools::nodes::NodeInfo> {
         let resolved = resolve_node_id(&self.state, node_ref).await?;
         let inner = self.state.inner.read().await;
         inner.nodes.get(&resolved).map(node_to_info)

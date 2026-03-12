@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "moltis-wasm-web-fetch"
+name              = "clawmaster-wasm-web-fetch"
 version.workspace = true
 
 [lib]

@@ -1,6 +1,6 @@
 # Browser Automation
 
-Moltis provides full browser automation via Chrome DevTools Protocol (CDP),
+ClawMaster provides full browser automation via Chrome DevTools Protocol (CDP),
 enabling agents to interact with JavaScript-heavy websites, fill forms,
 click buttons, and capture screenshots.
 
@@ -42,7 +42,7 @@ faster and more lightweight.
 
 ## Configuration
 
-Browser automation is **enabled by default**. To customize, add to your `moltis.toml`:
+Browser automation is **enabled by default**. To customize, add to your `clawmaster.toml`:
 
 ```toml
 [tools.browser]
@@ -67,8 +67,8 @@ navigation_timeout_ms = 30000  # Page load timeout
 sandbox_image = "browserless/chrome"  # Container image for sandboxed sessions
 # allowed_domains = ["example.com", "*.trusted.org"]  # Restrict navigation
 
-# Container connectivity (for Moltis-in-Docker setups)
-# container_host = "127.0.0.1"  # Default; change when Moltis runs inside Docker
+# Container connectivity (for ClawMaster-in-Docker setups)
+# container_host = "127.0.0.1"  # Default; change when ClawMaster runs inside Docker
 ```
 
 ### Memory-Based Pool Limits
@@ -158,7 +158,7 @@ Supported values: `auto`, `chrome`, `chromium`, `edge`, `brave`, `opera`,
 `vivaldi`, `arc`.
 
 `auto` (default) picks the first detected installed browser. If none are
-installed, Moltis will attempt a best-effort auto-install, then retry
+installed, ClawMaster will attempt a best-effort auto-install, then retry
 detection.
 
 ### Workflow Example
@@ -266,12 +266,12 @@ When the `metrics` feature is enabled, the browser module records:
 
 | Metric | Description |
 |--------|-------------|
-| `moltis_browser_instances_active` | Currently running browsers |
-| `moltis_browser_instances_created_total` | Total browsers launched |
-| `moltis_browser_instances_destroyed_total` | Total browsers closed |
-| `moltis_browser_screenshots_total` | Screenshots taken |
-| `moltis_browser_navigation_duration_seconds` | Page load time histogram |
-| `moltis_browser_errors_total` | Errors by type |
+| `clawmaster_browser_instances_active` | Currently running browsers |
+| `clawmaster_browser_instances_created_total` | Total browsers launched |
+| `clawmaster_browser_instances_destroyed_total` | Total browsers closed |
+| `clawmaster_browser_screenshots_total` | Screenshots taken |
+| `clawmaster_browser_navigation_duration_seconds` | Page load time histogram |
+| `clawmaster_browser_errors_total` | Errors by type |
 
 ## Sandbox Mode
 
@@ -305,14 +305,14 @@ Requirements:
 - The container image is pulled automatically on first use
 - Session sandbox mode must be enabled (`[tools.exec.sandbox] mode = "all"`)
 
-### Moltis Inside Docker (Sibling Containers)
+### ClawMaster Inside Docker (Sibling Containers)
 
-When Moltis itself runs inside a Docker container, the browser container is
-launched as a sibling via the host's Docker socket. By default Moltis connects
-to the browser at `127.0.0.1`, which points to the Moltis container's own
+When ClawMaster itself runs inside a Docker container, the browser container is
+launched as a sibling via the host's Docker socket. By default ClawMaster connects
+to the browser at `127.0.0.1`, which points to the ClawMaster container's own
 loopback — not the host where the browser port is mapped.
 
-Set `container_host` so Moltis can reach the browser container through the
+Set `container_host` so ClawMaster can reach the browser container through the
 host's port mapping:
 
 ```toml
@@ -323,7 +323,7 @@ container_host = "host.docker.internal"   # macOS / Windows Docker Desktop
 
 On Linux, `host.docker.internal` is not available by default. Use the Docker
 bridge gateway IP (typically `172.17.0.1`) or add `--add-host=host.docker.internal:host-gateway`
-to the Moltis container's `docker run` command.
+to the ClawMaster container's `docker run` command.
 
 ### Exec Tool Scripts
 
@@ -380,7 +380,7 @@ malicious sites could attempt to inject instructions.
 
 ## Browser Detection
 
-Moltis automatically detects installed Chromium-based browsers in the following order:
+ClawMaster automatically detects installed Chromium-based browsers in the following order:
 
 1. **Custom path** from `chrome_path` config
 2. **CHROME environment variable**
@@ -389,7 +389,7 @@ Moltis automatically detects installed Chromium-based browsers in the following 
    - Windows: `C:\Program Files\Google\Chrome\Application\chrome.exe`, etc.
 4. **PATH executables** (fallback): `chrome`, `chromium`, `msedge`, `brave`, etc.
 
-If no browser is found, Moltis displays platform-specific installation instructions.
+If no browser is found, ClawMaster displays platform-specific installation instructions.
 
 ### Supported Browsers
 
@@ -428,7 +428,7 @@ When using the Telegram channel, screenshots are automatically sent to the chat:
 ## Handling Model Errors
 
 Some models (particularly Claude via GitHub Copilot) occasionally send malformed
-tool calls with missing required fields. Moltis handles this gracefully:
+tool calls with missing required fields. ClawMaster handles this gracefully:
 
 - **Default action**: If `url` is provided but `action` is missing, defaults to
   `navigate`

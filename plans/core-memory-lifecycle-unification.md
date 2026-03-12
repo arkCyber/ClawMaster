@@ -66,7 +66,7 @@ Implementation can live initially in `crates/gateway/src/chat.rs` with extractio
 | `/new` `/reset` snapshot | `session-memory` hook | core session/command path |
 | pre-compaction durable write | core | core (unchanged, refactored) |
 | post-compaction summary write | core | core (unchanged, refactored) |
-| near-context ongoing flush | partial/none in Moltis runtime path | core threshold-based turn hook |
+| near-context ongoing flush | partial/none in ClawMaster runtime path | core threshold-based turn hook |
 
 ## Implementation Plan
 

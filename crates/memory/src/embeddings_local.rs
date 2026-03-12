@@ -103,7 +103,7 @@ impl LocalGgufEmbeddingProvider {
 
     /// Default cache directory: `~/.moltis/models/`.
     pub fn default_cache_dir() -> PathBuf {
-        directories::ProjectDirs::from("", "", "moltis")
+        directories::ProjectDirs::from("", "", "clawmaster")
             .map(|d: directories::ProjectDirs| d.data_dir().join("models"))
             .unwrap_or_else(|| PathBuf::from(".moltis/models"))
     }

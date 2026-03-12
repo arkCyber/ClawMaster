@@ -6,7 +6,7 @@
 //! This module re-exports everything from that crate and adds gateway-specific implementations.
 
 // Re-export all trait definitions and simple noops from service-traits.
-pub use moltis_service_traits::*;
+pub use clawmaster_service_traits::*;
 
 use {
     async_trait::async_trait,
@@ -15,7 +15,7 @@ use {
 };
 
 fn security_audit(event: &str, details: Value) {
-    let dir = moltis_config::data_dir().join("logs");
+    let dir = clawmaster_config::data_dir().join("logs");
     let path = dir.join("security-audit.jsonl");
     let now_ms = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -194,8 +194,8 @@ impl SkillsService for NoopSkillsService {
             .and_then(|v| v.as_str())
             .ok_or_else(|| "missing 'source' parameter (owner/repo format)".to_string())?;
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        let skills = moltis_skills::install::install_skill(source, &install_dir)
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        let skills = clawmaster_skills::install::install_skill(source, &install_dir)
             .await
             .map_err(ServiceError::message)?;
         let installed: Vec<_> = skills
@@ -223,7 +223,7 @@ impl SkillsService for NoopSkillsService {
     }
 
     async fn list(&self) -> ServiceResult {
-        use moltis_skills::{
+        use clawmaster_skills::{
             discover::{FsSkillDiscoverer, SkillDiscoverer},
             requirements::check_requirements,
         };
@@ -236,8 +236,8 @@ impl SkillsService for NoopSkillsService {
                 let elig = check_requirements(s);
                 let protected = matches!(
                     s.source,
-                    Some(moltis_skills::types::SkillSource::Personal)
-                        | Some(moltis_skills::types::SkillSource::Project)
+                    Some(clawmaster_skills::types::SkillSource::Personal)
+                        | Some(clawmaster_skills::types::SkillSource::Project)
                 ) && is_protected_discovered_skill(&s.name);
                 serde_json::json!({
                     "name": s.name,
@@ -263,8 +263,8 @@ impl SkillsService for NoopSkillsService {
             .ok_or_else(|| "missing 'source' parameter".to_string())?;
 
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        moltis_skills::install::remove_repo(source, &install_dir)
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        clawmaster_skills::install::remove_repo(source, &install_dir)
             .await
             .map_err(ServiceError::message)?;
 
@@ -275,10 +275,10 @@ impl SkillsService for NoopSkillsService {
 
     async fn repos_list(&self) -> ServiceResult {
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        let manifest_path = moltis_skills::manifest::ManifestStore::default_path()
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
             .map_err(ServiceError::message)?;
-        let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
         let mut manifest = store.load().map_err(ServiceError::message)?;
         let (drift_changed, drifted_sources) =
             detect_and_mark_repo_drift(&mut manifest, &install_dir);
@@ -292,9 +292,9 @@ impl SkillsService for NoopSkillsService {
             .map(|repo| {
                 let enabled = repo.skills.iter().filter(|s| s.enabled).count();
                 // Re-detect format for repos that predate the formats module
-                let format = if repo.format == moltis_skills::formats::PluginFormat::Skill {
+                let format = if repo.format == clawmaster_skills::formats::PluginFormat::Skill {
                     let repo_dir = install_dir.join(&repo.repo_name);
-                    moltis_skills::formats::detect_format(&repo_dir)
+                    clawmaster_skills::formats::detect_format(&repo_dir)
                 } else {
                     repo.format
                 };
@@ -322,7 +322,7 @@ impl SkillsService for NoopSkillsService {
                 if manifest.repos.iter().any(|r| r.repo_name == repo_name) {
                     continue;
                 }
-                let format = moltis_skills::formats::detect_format(&path);
+                let format = clawmaster_skills::formats::detect_format(&path);
                 repos.push(serde_json::json!({
                     "source": format!("orphan:{repo_name}"),
                     "repo_name": repo_name,
@@ -341,13 +341,13 @@ impl SkillsService for NoopSkillsService {
     }
 
     async fn repos_list_full(&self) -> ServiceResult {
-        use moltis_skills::requirements::check_requirements;
+        use clawmaster_skills::requirements::check_requirements;
 
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        let manifest_path = moltis_skills::manifest::ManifestStore::default_path()
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
             .map_err(ServiceError::message)?;
-        let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
         let mut manifest = store.load().map_err(ServiceError::message)?;
         let (drift_changed, drifted_sources) =
             detect_and_mark_repo_drift(&mut manifest, &install_dir);
@@ -361,16 +361,16 @@ impl SkillsService for NoopSkillsService {
             .map(|repo| {
                 let repo_dir = install_dir.join(&repo.repo_name);
                 // Re-detect format for repos that predate the formats module
-                let format = if repo.format == moltis_skills::formats::PluginFormat::Skill {
-                    moltis_skills::formats::detect_format(&repo_dir)
+                let format = if repo.format == clawmaster_skills::formats::PluginFormat::Skill {
+                    clawmaster_skills::formats::detect_format(&repo_dir)
                 } else {
                     repo.format
                 };
 
                 // For non-SKILL.md formats, scan with adapter to get enriched metadata.
                 let adapter_entries = match format {
-                    moltis_skills::formats::PluginFormat::Skill => None,
-                    _ => moltis_skills::formats::scan_with_adapter(&repo_dir, format)
+                    clawmaster_skills::formats::PluginFormat::Skill => None,
+                    _ => clawmaster_skills::formats::scan_with_adapter(&repo_dir, format)
                         .and_then(|r| r.ok()),
                 };
 
@@ -396,10 +396,10 @@ impl SkillsService for NoopSkillsService {
                             // SKILL.md format: parse from disk.
                             let skill_dir = install_dir.join(&s.relative_path);
                             let skill_md = skill_dir.join("SKILL.md");
-                            let meta_json = moltis_skills::parse::read_meta_json(&skill_dir);
+                            let meta_json = clawmaster_skills::parse::read_meta_json(&skill_dir);
                             let (description, display_name, elig) =
                                 if let Ok(content) = std::fs::read_to_string(&skill_md) {
-                                    if let Ok(meta) = moltis_skills::parse::parse_metadata(
+                                    if let Ok(meta) = clawmaster_skills::parse::parse_metadata(
                                         &content, &skill_dir,
                                     ) {
                                         let e = check_requirements(&meta);
@@ -464,7 +464,7 @@ impl SkillsService for NoopSkillsService {
                 if manifest.repos.iter().any(|r| r.repo_name == repo_name) {
                     continue;
                 }
-                let format = moltis_skills::formats::detect_format(&path);
+                let format = clawmaster_skills::formats::detect_format(&path);
                 repos.push(serde_json::json!({
                     "source": format!("orphan:{repo_name}"),
                     "repo_name": repo_name,
@@ -489,7 +489,7 @@ impl SkillsService for NoopSkillsService {
 
         if let Some(repo_name) = source.strip_prefix("orphan:") {
             let install_dir =
-                moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
+                clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
             let dir = install_dir.join(repo_name);
             if dir.exists() {
                 std::fs::remove_dir_all(&dir).map_err(ServiceError::message)?;
@@ -502,8 +502,8 @@ impl SkillsService for NoopSkillsService {
         }
 
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        moltis_skills::install::remove_repo(source, &install_dir)
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        clawmaster_skills::install::remove_repo(source, &install_dir)
             .await
             .map_err(ServiceError::message)?;
 
@@ -516,9 +516,9 @@ impl SkillsService for NoopSkillsService {
     }
 
     async fn emergency_disable(&self) -> ServiceResult {
-        let manifest_path = moltis_skills::manifest::ManifestStore::default_path()
+        let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
             .map_err(ServiceError::message)?;
-        let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
         let mut manifest = store.load().map_err(ServiceError::message)?;
 
         let mut disabled = 0_u64;
@@ -560,7 +560,7 @@ impl SkillsService for NoopSkillsService {
     }
 
     async fn skill_detail(&self, params: Value) -> ServiceResult {
-        use moltis_skills::requirements::check_requirements;
+        use clawmaster_skills::requirements::check_requirements;
 
         let source = params
             .get("source")
@@ -577,10 +577,10 @@ impl SkillsService for NoopSkillsService {
         }
 
         let install_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
-        let manifest_path = moltis_skills::manifest::ManifestStore::default_path()
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
             .map_err(ServiceError::message)?;
-        let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
         let mut manifest = store.load().map_err(ServiceError::message)?;
         let (drift_changed, drifted_sources) =
             detect_and_mark_repo_drift(&mut manifest, &install_dir);
@@ -608,15 +608,15 @@ impl SkillsService for NoopSkillsService {
 
         // Route by format: SKILL.md repos parse the file; others use format adapters.
         match repo.format {
-            moltis_skills::formats::PluginFormat::Skill => {
+            clawmaster_skills::formats::PluginFormat::Skill => {
                 let skill_dir = install_dir.join(&skill_state.relative_path);
                 let skill_md = skill_dir.join("SKILL.md");
                 let raw = std::fs::read_to_string(&skill_md)
                     .map_err(|e| format!("failed to read SKILL.md: {e}"))?;
-                let content = moltis_skills::parse::parse_skill(&raw, &skill_dir)
+                let content = clawmaster_skills::parse::parse_skill(&raw, &skill_dir)
                     .map_err(|e| format!("failed to parse SKILL.md: {e}"))?;
                 let elig = check_requirements(&content.metadata);
-                let meta_json = moltis_skills::parse::read_meta_json(&skill_dir);
+                let meta_json = clawmaster_skills::parse::read_meta_json(&skill_dir);
                 let display_name = meta_json.as_ref().and_then(|m| m.display_name.clone());
                 let author = meta_json.as_ref().and_then(|m| m.owner.clone());
                 let version = meta_json
@@ -670,7 +670,7 @@ impl SkillsService for NoopSkillsService {
             },
             format => {
                 // Non-SKILL.md format: use adapter to scan for skill body + metadata.
-                let entries = moltis_skills::formats::scan_with_adapter(&repo_dir, format)
+                let entries = clawmaster_skills::formats::scan_with_adapter(&repo_dir, format)
                     .ok_or_else(|| format!("no adapter for format '{format}'"))?
                     .map_err(|e| format!("scan error: {e}"))?;
                 let entry = entries
@@ -718,11 +718,11 @@ impl SkillsService for NoopSkillsService {
 
     async fn install_dep(&self, params: Value) -> ServiceResult {
         use {
-            moltis_skills::{
+            clawmaster_skills::{
                 discover::{FsSkillDiscoverer, SkillDiscoverer},
                 requirements::{check_requirements, install_command_preview, run_install},
             },
-            moltis_tools::approval::{
+            clawmaster_tools::approval::{
                 ApprovalAction, ApprovalManager, ApprovalMode, SecurityLevel,
             },
         };
@@ -786,7 +786,7 @@ impl SkillsService for NoopSkillsService {
             .into());
         }
 
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         if config.tools.exec.sandbox.mode == "off" && !allow_host_install {
             return Err("dependency install blocked because sandbox mode is off. Enable sandbox or re-run with allow_host_install=true and confirm=true".into());
         }
@@ -841,7 +841,7 @@ impl SkillsService for NoopSkillsService {
 
     async fn security_status(&self) -> ServiceResult {
         let installed_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
         let mcp_scan_available = command_available("mcp-scan").await;
         let uvx_available = command_available("uvx").await;
         Ok(serde_json::json!({
@@ -855,7 +855,7 @@ impl SkillsService for NoopSkillsService {
 
     async fn security_scan(&self) -> ServiceResult {
         let installed_dir =
-            moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
+            clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
         if !installed_dir.exists() {
             return Ok(serde_json::json!({
                 "ok": true,
@@ -895,7 +895,7 @@ fn local_repo_head_sha(repo_dir: &Path) -> Option<String> {
 }
 
 fn detect_and_mark_repo_drift(
-    manifest: &mut moltis_skills::types::SkillsManifest,
+    manifest: &mut clawmaster_skills::types::SkillsManifest,
     install_dir: &Path,
 ) -> (bool, HashSet<String>) {
     let mut changed = false;
@@ -945,14 +945,14 @@ fn delete_discovered_skill(source_type: &str, params: &Value) -> ServiceResult {
         );
     }
 
-    if !moltis_skills::parse::validate_name(skill_name) {
+    if !clawmaster_skills::parse::validate_name(skill_name) {
         return Err(format!("invalid skill name '{skill_name}'").into());
     }
 
     let search_dir = if source_type == "personal" {
-        moltis_config::data_dir().join("skills")
+        clawmaster_config::data_dir().join("skills")
     } else {
-        moltis_config::data_dir().join(".moltis/skills")
+        clawmaster_config::data_dir().join(".moltis/skills")
     };
 
     let skill_dir = search_dir.join(skill_name);
@@ -976,13 +976,13 @@ fn delete_discovered_skill(source_type: &str, params: &Value) -> ServiceResult {
 
 /// Load skill detail for a personal or project skill by name.
 fn skill_detail_discovered(source_type: &str, skill_name: &str) -> ServiceResult {
-    use moltis_skills::requirements::check_requirements;
+    use clawmaster_skills::requirements::check_requirements;
 
     // Build search paths for the requested source type.
     let search_dir = if source_type == "personal" {
-        moltis_config::data_dir().join("skills")
+        clawmaster_config::data_dir().join("skills")
     } else {
-        moltis_config::data_dir().join(".moltis/skills")
+        clawmaster_config::data_dir().join(".moltis/skills")
     };
 
     let skill_dir = search_dir.join(skill_name);
@@ -990,7 +990,7 @@ fn skill_detail_discovered(source_type: &str, skill_name: &str) -> ServiceResult
     let raw = std::fs::read_to_string(&skill_md)
         .map_err(|e| format!("failed to read SKILL.md for '{skill_name}': {e}"))?;
 
-    let content = moltis_skills::parse::parse_skill(&raw, &skill_dir)
+    let content = clawmaster_skills::parse::parse_skill(&raw, &skill_dir)
         .map_err(|e| format!("failed to parse SKILL.md: {e}"))?;
 
     let elig = check_requirements(&content.metadata);
@@ -1027,12 +1027,12 @@ fn toggle_skill(params: &Value, enabled: bool) -> ServiceResult {
         .ok_or_else(|| "missing 'skill' parameter".to_string())?;
 
     let manifest_path =
-        moltis_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
-    let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        clawmaster_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
+    let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
     let mut manifest = store.load().map_err(ServiceError::message)?;
 
     let install_dir =
-        moltis_skills::install::default_install_dir().map_err(ServiceError::message)?;
+        clawmaster_skills::install::default_install_dir().map_err(ServiceError::message)?;
     let (drift_changed, drifted_sources) = detect_and_mark_repo_drift(&mut manifest, &install_dir);
     if drift_changed {
         store.save(&manifest).map_err(ServiceError::message)?;
@@ -1087,8 +1087,8 @@ fn set_skill_trusted(params: &Value, trusted: bool) -> ServiceResult {
         .ok_or_else(|| "missing 'skill' parameter".to_string())?;
 
     let manifest_path =
-        moltis_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
-    let store = moltis_skills::manifest::ManifestStore::new(manifest_path);
+        clawmaster_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
+    let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
     let mut manifest = store.load().map_err(ServiceError::message)?;
 
     if !manifest.set_skill_trusted(source, skill_name, trusted) {
@@ -1115,13 +1115,13 @@ fn set_skill_trusted(params: &Value, trusted: bool) -> ServiceResult {
 
 /// Real browser service using BrowserManager.
 pub struct RealBrowserService {
-    config: moltis_browser::BrowserConfig,
-    manager: tokio::sync::OnceCell<Arc<moltis_browser::BrowserManager>>,
+    config: clawmaster_browser::BrowserConfig,
+    manager: tokio::sync::OnceCell<Arc<clawmaster_browser::BrowserManager>>,
 }
 
 impl RealBrowserService {
-    pub fn new(config: &moltis_config::schema::BrowserConfig, container_prefix: String) -> Self {
-        let mut browser_config = moltis_browser::BrowserConfig::from(config);
+    pub fn new(config: &clawmaster_config::schema::BrowserConfig, container_prefix: String) -> Self {
+        let mut browser_config = clawmaster_browser::BrowserConfig::from(config);
         browser_config.container_prefix = container_prefix;
         Self {
             config: browser_config,
@@ -1130,7 +1130,7 @@ impl RealBrowserService {
     }
 
     pub fn from_config(
-        config: &moltis_config::schema::MoltisConfig,
+        config: &clawmaster_config::schema::MoltisConfig,
         container_prefix: String,
     ) -> Option<Self> {
         if !config.tools.browser.enabled {
@@ -1139,7 +1139,7 @@ impl RealBrowserService {
         Some(Self::new(&config.tools.browser, container_prefix))
     }
 
-    async fn manager(&self) -> Arc<moltis_browser::BrowserManager> {
+    async fn manager(&self) -> Arc<clawmaster_browser::BrowserManager> {
         Arc::clone(
             self.manager
                 .get_or_init(|| async {
@@ -1147,8 +1147,8 @@ impl RealBrowserService {
                     match tokio::task::spawn_blocking(move || {
                         // Browser detection and stale-container cleanup can block;
                         // run these off the async runtime worker threads.
-                        moltis_browser::detect::check_and_warn(config.chrome_path.as_deref());
-                        Arc::new(moltis_browser::BrowserManager::new(config))
+                        clawmaster_browser::detect::check_and_warn(config.chrome_path.as_deref());
+                        Arc::new(clawmaster_browser::BrowserManager::new(config))
                     })
                     .await
                     {
@@ -1159,8 +1159,8 @@ impl RealBrowserService {
                                 "browser warmup worker failed, falling back to inline initialization"
                             );
                             let config = self.config.clone();
-                            moltis_browser::detect::check_and_warn(config.chrome_path.as_deref());
-                            Arc::new(moltis_browser::BrowserManager::new(config))
+                            clawmaster_browser::detect::check_and_warn(config.chrome_path.as_deref());
+                            Arc::new(clawmaster_browser::BrowserManager::new(config))
                         },
                     }
                 })
@@ -1168,7 +1168,7 @@ impl RealBrowserService {
         )
     }
 
-    fn manager_if_initialized(&self) -> Option<Arc<moltis_browser::BrowserManager>> {
+    fn manager_if_initialized(&self) -> Option<Arc<clawmaster_browser::BrowserManager>> {
         self.manager.get().map(Arc::clone)
     }
 }
@@ -1176,7 +1176,7 @@ impl RealBrowserService {
 #[async_trait]
 impl BrowserService for RealBrowserService {
     async fn request(&self, params: Value) -> ServiceResult {
-        let request: moltis_browser::BrowserRequest =
+        let request: clawmaster_browser::BrowserRequest =
             serde_json::from_value(params).map_err(|e| format!("invalid request: {e}"))?;
 
         let manager = self.manager().await;
@@ -1241,21 +1241,21 @@ pub struct GatewayServices {
     pub local_llm: Arc<dyn LocalLlmService>,
     pub network_audit: Arc<dyn crate::network_audit::NetworkAuditService>,
     /// Optional channel registry for direct plugin access (thread context, etc.).
-    pub channel_registry: Option<Arc<moltis_channels::ChannelRegistry>>,
+    pub channel_registry: Option<Arc<clawmaster_channels::ChannelRegistry>>,
     /// Optional channel outbound for sending replies back to channels.
-    channel_outbound: Option<Arc<dyn moltis_channels::ChannelOutbound>>,
+    channel_outbound: Option<Arc<dyn clawmaster_channels::ChannelOutbound>>,
     /// Optional channel stream outbound for edit-in-place channel streaming.
-    channel_stream_outbound: Option<Arc<dyn moltis_channels::ChannelStreamOutbound>>,
+    channel_stream_outbound: Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>>,
     /// Optional session metadata for cross-service access (e.g. channel binding).
-    pub session_metadata: Option<Arc<moltis_sessions::metadata::SqliteSessionMetadata>>,
+    pub session_metadata: Option<Arc<clawmaster_sessions::metadata::SqliteSessionMetadata>>,
     /// Optional session store for message-index lookups (e.g. deduplication).
-    pub session_store: Option<Arc<moltis_sessions::store::SessionStore>>,
+    pub session_store: Option<Arc<clawmaster_sessions::store::SessionStore>>,
     /// Optional session share store for immutable snapshot links.
     pub session_share_store: Option<Arc<crate::share_store::ShareStore>>,
     /// Optional agent persona store for multi-agent support.
     pub agent_persona_store: Option<Arc<crate::agent_persona::AgentPersonaStore>>,
     /// Shared agents config (presets) for spawn_agent and RPC sync.
-    pub agents_config: Option<Arc<tokio::sync::RwLock<moltis_config::AgentsConfig>>>,
+    pub agents_config: Option<Arc<tokio::sync::RwLock<clawmaster_config::AgentsConfig>>>,
 }
 
 impl GatewayServices {
@@ -1281,7 +1281,7 @@ impl GatewayServices {
 
     pub fn with_channel_registry(
         mut self,
-        registry: Arc<moltis_channels::ChannelRegistry>,
+        registry: Arc<clawmaster_channels::ChannelRegistry>,
     ) -> Self {
         self.channel_registry = Some(registry);
         self
@@ -1289,7 +1289,7 @@ impl GatewayServices {
 
     pub fn with_channel_outbound(
         mut self,
-        outbound: Arc<dyn moltis_channels::ChannelOutbound>,
+        outbound: Arc<dyn clawmaster_channels::ChannelOutbound>,
     ) -> Self {
         self.channel_outbound = Some(outbound);
         self
@@ -1297,19 +1297,19 @@ impl GatewayServices {
 
     pub fn with_channel_stream_outbound(
         mut self,
-        outbound: Arc<dyn moltis_channels::ChannelStreamOutbound>,
+        outbound: Arc<dyn clawmaster_channels::ChannelStreamOutbound>,
     ) -> Self {
         self.channel_stream_outbound = Some(outbound);
         self
     }
 
-    pub fn channel_outbound_arc(&self) -> Option<Arc<dyn moltis_channels::ChannelOutbound>> {
+    pub fn channel_outbound_arc(&self) -> Option<Arc<dyn clawmaster_channels::ChannelOutbound>> {
         self.channel_outbound.clone()
     }
 
     pub fn channel_stream_outbound_arc(
         &self,
-    ) -> Option<Arc<dyn moltis_channels::ChannelStreamOutbound>> {
+    ) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>> {
         self.channel_stream_outbound.clone()
     }
 
@@ -1375,13 +1375,13 @@ impl GatewayServices {
 
     pub fn with_session_metadata(
         mut self,
-        meta: Arc<moltis_sessions::metadata::SqliteSessionMetadata>,
+        meta: Arc<clawmaster_sessions::metadata::SqliteSessionMetadata>,
     ) -> Self {
         self.session_metadata = Some(meta);
         self
     }
 
-    pub fn with_session_store(mut self, store: Arc<moltis_sessions::store::SessionStore>) -> Self {
+    pub fn with_session_store(mut self, store: Arc<clawmaster_sessions::store::SessionStore>) -> Self {
         self.session_store = Some(store);
         self
     }
@@ -1401,7 +1401,7 @@ impl GatewayServices {
 
     pub fn with_agents_config(
         mut self,
-        agents_config: Arc<tokio::sync::RwLock<moltis_config::AgentsConfig>>,
+        agents_config: Arc<tokio::sync::RwLock<clawmaster_config::AgentsConfig>>,
     ) -> Self {
         self.agents_config = Some(agents_config);
         self

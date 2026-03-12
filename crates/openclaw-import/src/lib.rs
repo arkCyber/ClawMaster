@@ -147,7 +147,7 @@ pub fn import(
     let agent_id_mapping: std::collections::HashMap<String, String> = imported_agents
         .agents
         .iter()
-        .map(|a| (a.openclaw_id.clone(), a.moltis_id.clone()))
+        .map(|a| (a.openclaw_id.clone(), a.clawmaster_id.clone()))
         .collect();
     report.imported_agents = Some(imported_agents.clone());
 
@@ -214,11 +214,11 @@ pub fn import(
             if let Some(ref source_ws) = agent.source_workspace
                 && (source_ws.join("MEMORY.md").is_file() || source_ws.join("memory").is_dir())
             {
-                let agent_data_dir = data_dir.join("agents").join(&agent.moltis_id);
+                let agent_data_dir = data_dir.join("agents").join(&agent.clawmaster_id);
                 let agent_report = memory::import_agent_memory(source_ws, &agent_data_dir);
                 if agent_report.items_imported > 0 {
                     debug!(
-                        agent = %agent.moltis_id,
+                        agent = %agent.clawmaster_id,
                         imported = agent_report.items_imported,
                         "imported per-agent memory"
                     );
@@ -240,12 +240,12 @@ pub fn import(
                     .any(|name| source_ws.join(name).is_file());
 
                 if has_files {
-                    let agent_data_dir = data_dir.join("agents").join(&agent.moltis_id);
+                    let agent_data_dir = data_dir.join("agents").join(&agent.clawmaster_id);
                     let agent_report =
                         workspace_files::import_agent_workspace_files(source_ws, &agent_data_dir);
                     if agent_report.items_imported > 0 {
                         debug!(
-                            agent = %agent.moltis_id,
+                            agent = %agent.clawmaster_id,
                             imported = agent_report.items_imported,
                             "imported per-agent workspace files"
                         );
@@ -302,7 +302,7 @@ pub fn import_sessions_only(detection: &OpenClawDetection, data_dir: &Path) -> C
     let agent_id_mapping: std::collections::HashMap<String, String> = imported_agents
         .agents
         .iter()
-        .map(|a| (a.openclaw_id.clone(), a.moltis_id.clone()))
+        .map(|a| (a.openclaw_id.clone(), a.clawmaster_id.clone()))
         .collect();
     sessions::import_sessions(
         detection,
@@ -351,7 +351,7 @@ fn save_import_state(path: &Path, report: &ImportReport) -> error::Result<()> {
 ///
 /// Loads any existing config, merges identity and timezone, and writes back.
 fn persist_identity(imported: &identity::ImportedIdentity, config_dir: &Path) -> error::Result<()> {
-    let config_path = config_dir.join("moltis.toml");
+    let config_path = config_dir.join("clawmaster.toml");
     let mut config = load_or_default_config(&config_path);
 
     info!(
@@ -377,7 +377,7 @@ fn persist_identity(imported: &identity::ImportedIdentity, config_dir: &Path) ->
     }
 
     if let Some(ref tz_str) = imported.user_timezone {
-        if let Ok(tz) = tz_str.parse::<moltis_config::Timezone>() {
+        if let Ok(tz) = tz_str.parse::<clawmaster_config::Timezone>() {
             debug!(timezone = tz_str, "persisting user timezone to moltis.toml");
             config.user.timezone = Some(tz);
         } else {
@@ -395,7 +395,7 @@ fn persist_identity(imported: &identity::ImportedIdentity, config_dir: &Path) ->
 
 /// Persist imported channel configs to `[channels.*]` in `moltis.toml`.
 fn persist_channels(imported: &channels::ImportedChannels, config_dir: &Path) -> error::Result<()> {
-    let config_path = config_dir.join("moltis.toml");
+    let config_path = config_dir.join("clawmaster.toml");
     let mut config = load_or_default_config(&config_path);
 
     for ch in &imported.telegram {
@@ -482,18 +482,18 @@ fn map_discord_mention_mode(mode: Option<&str>) -> &'static str {
 }
 
 /// Load a `MoltisConfig` from a TOML file, or return defaults if not found.
-fn load_or_default_config(path: &Path) -> moltis_config::MoltisConfig {
+fn load_or_default_config(path: &Path) -> clawmaster_config::MoltisConfig {
     if !path.is_file() {
-        return moltis_config::MoltisConfig::default();
+        return clawmaster_config::MoltisConfig::default();
     }
     let Ok(content) = std::fs::read_to_string(path) else {
-        return moltis_config::MoltisConfig::default();
+        return clawmaster_config::MoltisConfig::default();
     };
     toml::from_str(&content).unwrap_or_default()
 }
 
 /// Serialize a `MoltisConfig` to TOML and write it to the given path.
-fn save_config_to_path(path: &Path, config: &moltis_config::MoltisConfig) -> error::Result<()> {
+fn save_config_to_path(path: &Path, config: &clawmaster_config::MoltisConfig) -> error::Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -871,11 +871,11 @@ mod tests {
         let report = import(&detection, &selection, &config_dir, &data_dir);
 
         // Identity should be persisted to moltis.toml
-        let config_path = config_dir.join("moltis.toml");
-        assert!(config_path.is_file(), "moltis.toml should be created");
+        let config_path = config_dir.join("clawmaster.toml");
+        assert!(config_path.is_file(), "clawmaster.toml should be created");
 
         let content = std::fs::read_to_string(&config_path).unwrap();
-        let config: moltis_config::MoltisConfig = toml::from_str(&content).unwrap();
+        let config: clawmaster_config::MoltisConfig = toml::from_str(&content).unwrap();
 
         assert_eq!(config.identity.name.as_deref(), Some("Claude"));
         assert_eq!(config.identity.theme.as_deref(), Some("wise owl"));
@@ -913,11 +913,11 @@ mod tests {
         let report = import(&detection, &selection, &config_dir, &data_dir);
 
         // Channels should be persisted to moltis.toml
-        let config_path = config_dir.join("moltis.toml");
-        assert!(config_path.is_file(), "moltis.toml should be created");
+        let config_path = config_dir.join("clawmaster.toml");
+        assert!(config_path.is_file(), "clawmaster.toml should be created");
 
         let content = std::fs::read_to_string(&config_path).unwrap();
-        let config: moltis_config::MoltisConfig = toml::from_str(&content).unwrap();
+        let config: clawmaster_config::MoltisConfig = toml::from_str(&content).unwrap();
 
         assert!(
             !config.channels.telegram.is_empty(),
@@ -979,11 +979,11 @@ mod tests {
         };
         let report = import(&detection, &selection, &config_dir, &data_dir);
 
-        let config_path = config_dir.join("moltis.toml");
-        assert!(config_path.is_file(), "moltis.toml should be created");
+        let config_path = config_dir.join("clawmaster.toml");
+        assert!(config_path.is_file(), "clawmaster.toml should be created");
 
         let content = std::fs::read_to_string(&config_path).unwrap();
-        let config: moltis_config::MoltisConfig = toml::from_str(&content).unwrap();
+        let config: clawmaster_config::MoltisConfig = toml::from_str(&content).unwrap();
 
         assert!(
             config
@@ -1038,15 +1038,15 @@ mod tests {
         std::fs::create_dir_all(&data_dir).unwrap();
 
         // Pre-existing config with theme already set
-        let existing = moltis_config::MoltisConfig {
-            identity: moltis_config::AgentIdentity {
+        let existing = clawmaster_config::MoltisConfig {
+            identity: clawmaster_config::AgentIdentity {
                 theme: Some("chill cat".to_string()),
                 ..Default::default()
             },
             ..Default::default()
         };
         let toml_str = toml::to_string_pretty(&existing).unwrap();
-        std::fs::write(config_dir.join("moltis.toml"), &toml_str).unwrap();
+        std::fs::write(config_dir.join("clawmaster.toml"), &toml_str).unwrap();
 
         let detection = detect::detect_at(home).unwrap();
         let selection = ImportSelection {
@@ -1055,8 +1055,8 @@ mod tests {
         };
         import(&detection, &selection, &config_dir, &data_dir);
 
-        let content = std::fs::read_to_string(config_dir.join("moltis.toml")).unwrap();
-        let config: moltis_config::MoltisConfig = toml::from_str(&content).unwrap();
+        let content = std::fs::read_to_string(config_dir.join("clawmaster.toml")).unwrap();
+        let config: clawmaster_config::MoltisConfig = toml::from_str(&content).unwrap();
 
         // Imported name should be set
         assert_eq!(config.identity.name.as_deref(), Some("Claude"));
@@ -1079,8 +1079,8 @@ mod tests {
         let report = import(&detection, &ImportSelection::all(), &config_dir, &data_dir);
 
         // moltis.toml should contain both identity and channels
-        let content = std::fs::read_to_string(config_dir.join("moltis.toml")).unwrap();
-        let config: moltis_config::MoltisConfig = toml::from_str(&content).unwrap();
+        let content = std::fs::read_to_string(config_dir.join("clawmaster.toml")).unwrap();
+        let config: clawmaster_config::MoltisConfig = toml::from_str(&content).unwrap();
 
         assert_eq!(config.identity.name.as_deref(), Some("Claude"));
         assert_eq!(config.user.name.as_deref(), Some("Penso"));

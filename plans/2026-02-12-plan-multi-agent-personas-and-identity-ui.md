@@ -321,7 +321,7 @@ Single PR, gated behind `#[cfg(feature = "agent")]`:
 
 1. **UI placement**: Settings > Agents (new page) for additional agents.
    Settings > Identity stays as-is for the default `"main"` agent.
-2. **`USER.md`**: Stays **global** — Moltis is single-user, `USER.md`
+2. **`USER.md`**: Stays **global** — ClawMaster is single-user, `USER.md`
    represents the human, not the agent.
 3. **Root file cleanup**: Open — decide in a future version whether to
    deprecate root `IDENTITY.md` / `SOUL.md` in favor of

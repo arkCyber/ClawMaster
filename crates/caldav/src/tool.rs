@@ -5,8 +5,8 @@ use std::{collections::HashMap, sync::Arc};
 use {
     anyhow::{Result, anyhow},
     async_trait::async_trait,
-    moltis_agents::tool_registry::AgentTool,
-    moltis_config::CalDavConfig,
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_config::CalDavConfig,
     serde_json::{Value, json},
 };
 
@@ -385,7 +385,7 @@ impl crate::client::CalDavClient for MockCalDavClient {
 mod tests {
     use {
         super::*,
-        moltis_config::{CalDavAccountConfig, CalDavConfig},
+        clawmaster_config::{CalDavAccountConfig, CalDavConfig},
         secrecy::Secret,
     };
 

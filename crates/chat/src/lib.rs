@@ -19,10 +19,10 @@ use {
     tracing::{debug, info, warn},
 };
 
-use moltis_config::{MessageQueueMode, ToolMode};
+use clawmaster_config::{MessageQueueMode, ToolMode};
 
 use {
-    moltis_agents::{
+    clawmaster_agents::{
         AgentRunError, ChatMessage, ContentPart, UserContent,
         model::{StreamEvent, values_to_chat_messages},
         multimodal::parse_data_uri,
@@ -34,14 +34,14 @@ use {
         runner::{RunnerEvent, run_agent_loop_streaming},
         tool_registry::{AgentTool, ToolRegistry},
     },
-    moltis_providers::{ProviderRegistry, raw_model_id},
-    moltis_sessions::{
+    clawmaster_providers::{ProviderRegistry, raw_model_id},
+    clawmaster_sessions::{
         ContentBlock, MessageContent, PersistedMessage,
         metadata::{SessionEntry, SqliteSessionMetadata},
         store::SessionStore,
     },
-    moltis_skills::discover::SkillDiscoverer,
-    moltis_tools::policy::{ToolPolicy, profile_tools},
+    clawmaster_skills::discover::SkillDiscoverer,
+    clawmaster_tools::policy::{ToolPolicy, profile_tools},
 };
 
 pub mod chat_error;
@@ -51,7 +51,7 @@ pub mod runtime;
 pub use runtime::{ChatRuntime, TtsOverride};
 use {
     chat_error::parse_chat_error,
-    moltis_service_traits::{ChatService, ModelService, ServiceError, ServiceResult},
+    clawmaster_service_traits::{ChatService, ModelService, ServiceError, ServiceResult},
 };
 
 /// Extract preview text from a single message JSON value.
@@ -113,7 +113,7 @@ async fn broadcast(
 }
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, histogram, labels, llm as llm_metrics};
+use clawmaster_metrics::{counter, histogram, labels, llm as llm_metrics};
 
 /// Convert session-crate `MessageContent` to agents-crate `UserContent`.
 ///
@@ -387,7 +387,7 @@ fn allowlist_pattern_matches_key(pattern: &str, key: &str) -> bool {
 }
 
 #[allow(dead_code)]
-pub fn model_matches_allowlist(model: &moltis_providers::ModelInfo, patterns: &[String]) -> bool {
+pub fn model_matches_allowlist(model: &clawmaster_providers::ModelInfo, patterns: &[String]) -> bool {
     if patterns.is_empty() {
         return true;
     }
@@ -406,7 +406,7 @@ pub fn model_matches_allowlist(model: &moltis_providers::ModelInfo, patterns: &[
 
 #[allow(dead_code)]
 pub fn model_matches_allowlist_with_provider(
-    model: &moltis_providers::ModelInfo,
+    model: &clawmaster_providers::ModelInfo,
     provider_name: Option<&str>,
     patterns: &[String],
 ) -> bool {
@@ -574,7 +574,7 @@ async fn run_single_probe(
     model_id: String,
     display_name: String,
     provider_name: String,
-    provider: Arc<dyn moltis_agents::model::LlmProvider>,
+    provider: Arc<dyn clawmaster_agents::model::LlmProvider>,
     limiter: Arc<Semaphore>,
     provider_limiter: Arc<ProbeProviderLimiter>,
     rate_limiter: Arc<ProbeRateLimiter>,
@@ -1002,9 +1002,9 @@ async fn detect_host_root_user() -> Option<bool> {
 
 /// Pre-loaded persona data used to build the system prompt.
 struct PromptPersona {
-    config: moltis_config::MoltisConfig,
-    identity: moltis_config::AgentIdentity,
-    user: moltis_config::UserProfile,
+    config: clawmaster_config::MoltisConfig,
+    identity: clawmaster_config::AgentIdentity,
+    user: clawmaster_config::UserProfile,
     soul_text: Option<String>,
     agents_text: Option<String>,
     tools_text: Option<String>,
@@ -1026,7 +1026,7 @@ fn resolve_prompt_agent_id(session_entry: Option<&SessionEntry>) -> String {
     if agent_id == "main" {
         return "main".to_string();
     }
-    if moltis_config::agent_workspace_dir(agent_id).exists() {
+    if clawmaster_config::agent_workspace_dir(agent_id).exists() {
         return agent_id.to_string();
     }
     warn!(
@@ -1042,9 +1042,9 @@ fn resolve_prompt_agent_id(session_entry: Option<&SessionEntry>) -> String {
 /// Both `run_with_tools` and `run_streaming` need the same persona data;
 /// this function avoids duplicating the merge logic.
 fn load_prompt_persona_for_agent(agent_id: &str) -> PromptPersona {
-    let config = moltis_config::discover_and_load();
+    let config = clawmaster_config::discover_and_load();
     let mut identity = config.identity.clone();
-    if let Some(file_identity) = moltis_config::load_identity_for_agent(agent_id) {
+    if let Some(file_identity) = clawmaster_config::load_identity_for_agent(agent_id) {
         if file_identity.name.is_some() {
             identity.name = file_identity.name;
         }
@@ -1056,7 +1056,7 @@ fn load_prompt_persona_for_agent(agent_id: &str) -> PromptPersona {
         }
     }
     let mut user = config.user.clone();
-    if let Some(file_user) = moltis_config::load_user() {
+    if let Some(file_user) = clawmaster_config::load_user() {
         if file_user.name.is_some() {
             user.name = file_user.name;
         }
@@ -1068,10 +1068,10 @@ fn load_prompt_persona_for_agent(agent_id: &str) -> PromptPersona {
         config,
         identity,
         user,
-        soul_text: moltis_config::load_soul_for_agent(agent_id),
-        agents_text: moltis_config::load_agents_md_for_agent(agent_id),
-        tools_text: moltis_config::load_tools_md_for_agent(agent_id),
-        memory_text: moltis_config::load_memory_md_for_agent(agent_id),
+        soul_text: clawmaster_config::load_soul_for_agent(agent_id),
+        agents_text: clawmaster_config::load_agents_md_for_agent(agent_id),
+        tools_text: clawmaster_config::load_tools_md_for_agent(agent_id),
+        memory_text: clawmaster_config::load_memory_md_for_agent(agent_id),
     }
 }
 
@@ -1125,7 +1125,7 @@ fn resolve_channel_runtime_context(
 
     if let Some(binding_json) = session_entry.and_then(|entry| entry.channel_binding.as_deref())
         && let Ok(binding) =
-            serde_json::from_str::<moltis_channels::ChannelReplyTarget>(binding_json)
+            serde_json::from_str::<clawmaster_channels::ChannelReplyTarget>(binding_json)
     {
         let channel_type = binding.channel_type.as_str().to_string();
         let chat_id = binding.chat_id;
@@ -1148,11 +1148,11 @@ fn resolve_channel_runtime_context(
 
 async fn build_prompt_runtime_context(
     state: &Arc<dyn ChatRuntime>,
-    provider: &Arc<dyn moltis_agents::model::LlmProvider>,
+    provider: &Arc<dyn clawmaster_agents::model::LlmProvider>,
     session_key: &str,
     session_entry: Option<&SessionEntry>,
 ) -> PromptRuntimeContext {
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
     let data_dir_display = data_dir.display().to_string();
 
     let sudo_fut = detect_host_sudo_access();
@@ -1342,7 +1342,7 @@ fn normalized_iana_timezone(timezone: Option<&str>) -> Option<String> {
 }
 
 fn default_user_prompt_timezone() -> Option<String> {
-    let user = moltis_config::load_user()?;
+    let user = clawmaster_config::load_user()?;
     user.timezone
         .as_ref()
         .map(|timezone| timezone.name().to_string())
@@ -1379,7 +1379,7 @@ fn prompt_sandbox_no_network_state(backend: &str, configured_no_network: bool) -
     }
 }
 
-fn effective_tool_policy(config: &moltis_config::MoltisConfig) -> ToolPolicy {
+fn effective_tool_policy(config: &clawmaster_config::MoltisConfig) -> ToolPolicy {
     let mut effective = ToolPolicy::default();
     if let Some(profile) = config.tools.policy.profile.as_deref()
         && !profile.is_empty()
@@ -1395,8 +1395,8 @@ fn effective_tool_policy(config: &moltis_config::MoltisConfig) -> ToolPolicy {
 
 fn apply_runtime_tool_filters(
     base: &ToolRegistry,
-    config: &moltis_config::MoltisConfig,
-    _skills: &[moltis_skills::types::SkillMetadata],
+    config: &clawmaster_config::MoltisConfig,
+    _skills: &[clawmaster_skills::types::SkillMetadata],
     mcp_disabled: bool,
 ) -> ToolRegistry {
     let base_registry = if mcp_disabled {
@@ -1435,7 +1435,7 @@ pub struct UnsupportedModelInfo {
 
 impl DisabledModelsStore {
     fn config_path() -> Option<PathBuf> {
-        moltis_config::config_dir().map(|d| d.join("disabled-models.json"))
+        clawmaster_config::config_dir().map(|d| d.join("disabled-models.json"))
     }
 
     /// Load disabled models from config file.
@@ -1548,7 +1548,7 @@ impl LiveModelService {
         order
     }
 
-    fn priority_rank(order: &HashMap<String, usize>, model: &moltis_providers::ModelInfo) -> usize {
+    fn priority_rank(order: &HashMap<String, usize>, model: &clawmaster_providers::ModelInfo) -> usize {
         let full = normalize_model_key(&model.id);
         if let Some(rank) = order.get(&full) {
             return *rank;
@@ -1566,9 +1566,9 @@ impl LiveModelService {
 
     fn prioritize_models<'a>(
         order: &HashMap<String, usize>,
-        models: impl Iterator<Item = &'a moltis_providers::ModelInfo>,
-    ) -> Vec<&'a moltis_providers::ModelInfo> {
-        let mut ordered: Vec<(usize, &'a moltis_providers::ModelInfo)> =
+        models: impl Iterator<Item = &'a clawmaster_providers::ModelInfo>,
+    ) -> Vec<&'a clawmaster_providers::ModelInfo> {
+        let mut ordered: Vec<(usize, &'a clawmaster_providers::ModelInfo)> =
             models.enumerate().collect();
         ordered.sort_by_key(|(idx, model)| {
             (
@@ -1726,7 +1726,7 @@ impl ModelService for LiveModelService {
             &order,
             all_models
                 .iter()
-                .filter(|m| moltis_providers::is_chat_capable_model(&m.id))
+                .filter(|m| clawmaster_providers::is_chat_capable_model(&m.id))
                 .filter(|m| !disabled.is_disabled(&m.id))
                 .filter(|m| disabled.unsupported_info(&m.id).is_none()),
         );
@@ -1763,7 +1763,7 @@ impl ModelService for LiveModelService {
             &order,
             all_models
                 .iter()
-                .filter(|m| moltis_providers::is_chat_capable_model(&m.id)),
+                .filter(|m| clawmaster_providers::is_chat_capable_model(&m.id)),
         );
         info!(model_count = prioritized.len(), "models.list_all response");
         let models: Vec<_> = prioritized
@@ -2304,7 +2304,7 @@ pub struct LiveChatService {
     tool_registry: Arc<RwLock<ToolRegistry>>,
     session_store: Arc<SessionStore>,
     session_metadata: Arc<SqliteSessionMetadata>,
-    hook_registry: Option<Arc<moltis_common::hooks::HookRegistry>>,
+    hook_registry: Option<Arc<clawmaster_common::hooks::HookRegistry>>,
     /// Per-session semaphore ensuring only one agent run executes per session at a time.
     session_locks: Arc<RwLock<HashMap<String, Arc<Semaphore>>>>,
     /// Per-session message queue for messages arriving during an active run.
@@ -2320,7 +2320,7 @@ pub struct LiveChatService {
     /// `voicePending` state after a page reload.
     active_reply_medium: Arc<RwLock<HashMap<String, ReplyMedium>>>,
     /// Failover configuration for automatic model/provider failover.
-    failover_config: moltis_config::schema::FailoverConfig,
+    failover_config: clawmaster_config::schema::FailoverConfig,
 }
 
 impl LiveChatService {
@@ -2347,11 +2347,11 @@ impl LiveChatService {
             active_thinking_text: Arc::new(RwLock::new(HashMap::new())),
             active_tool_calls: Arc::new(RwLock::new(HashMap::new())),
             active_reply_medium: Arc::new(RwLock::new(HashMap::new())),
-            failover_config: moltis_config::schema::FailoverConfig::default(),
+            failover_config: clawmaster_config::schema::FailoverConfig::default(),
         }
     }
 
-    pub fn with_failover(mut self, config: moltis_config::schema::FailoverConfig) -> Self {
+    pub fn with_failover(mut self, config: clawmaster_config::schema::FailoverConfig) -> Self {
         self.failover_config = config;
         self
     }
@@ -2361,12 +2361,12 @@ impl LiveChatService {
         self
     }
 
-    pub fn with_hooks(mut self, registry: moltis_common::hooks::HookRegistry) -> Self {
+    pub fn with_hooks(mut self, registry: clawmaster_common::hooks::HookRegistry) -> Self {
         self.hook_registry = Some(Arc::new(registry));
         self
     }
 
-    pub fn with_hooks_arc(mut self, registry: Arc<moltis_common::hooks::HookRegistry>) -> Self {
+    pub fn with_hooks_arc(mut self, registry: Arc<clawmaster_common::hooks::HookRegistry>) -> Self {
         self.hook_registry = Some(registry);
         self
     }
@@ -2448,7 +2448,7 @@ impl LiveChatService {
         &self,
         session_key: &str,
         history: &[Value],
-    ) -> error::Result<Arc<dyn moltis_agents::model::LlmProvider>> {
+    ) -> error::Result<Arc<dyn clawmaster_agents::model::LlmProvider>> {
         let reg = self.providers.read().await;
         let session_model = self
             .session_metadata
@@ -2506,14 +2506,14 @@ impl LiveChatService {
             .await
             .ok()?;
         let dir = val.get("directory").and_then(|v| v.as_str())?;
-        let files = match moltis_projects::context::load_context_files(Path::new(dir)) {
+        let files = match clawmaster_projects::context::load_context_files(Path::new(dir)) {
             Ok(f) => f,
             Err(e) => {
                 warn!("failed to load project context: {e}");
                 return None;
             },
         };
-        let project: moltis_projects::Project = serde_json::from_value(val.clone()).ok()?;
+        let project: clawmaster_projects::Project = serde_json::from_value(val.clone()).ok()?;
         let worktree_dir = self
             .session_metadata
             .get(session_key)
@@ -2527,7 +2527,7 @@ impl LiveChatService {
                     None
                 }
             });
-        let ctx = moltis_projects::ProjectContext {
+        let ctx = clawmaster_projects::ProjectContext {
             project,
             context_files: files,
             worktree_dir,
@@ -2570,7 +2570,7 @@ impl ChatService for LiveChatService {
                                 "image_url" => {
                                     let url = block.get("image_url")?.get("url")?.as_str()?;
                                     Some(ContentBlock::ImageUrl {
-                                        image_url: moltis_sessions::message::ImageUrl {
+                                        image_url: clawmaster_sessions::message::ImageUrl {
                                             url: url.to_string(),
                                         },
                                     })
@@ -2712,7 +2712,7 @@ impl ChatService for LiveChatService {
                 && let Some(entry) = self.session_metadata.get(&session_key).await
                 && let Some(ref binding_json) = entry.channel_binding
                 && let Ok(target) =
-                    serde_json::from_str::<moltis_channels::ChannelReplyTarget>(binding_json)
+                    serde_json::from_str::<clawmaster_channels::ChannelReplyTarget>(binding_json)
             {
                 let is_active = self
                     .session_metadata
@@ -2746,7 +2746,7 @@ impl ChatService for LiveChatService {
                     .get("_channel_reply_target")
                     .cloned()
                     .and_then(|value| {
-                        match serde_json::from_value::<moltis_channels::ChannelReplyTarget>(value) {
+                        match serde_json::from_value::<clawmaster_channels::ChannelReplyTarget>(value) {
                             Ok(target) => Some(target),
                             Err(e) => {
                                 warn!(
@@ -2775,7 +2775,7 @@ impl ChatService for LiveChatService {
             let permit: OwnedSemaphorePermit = match session_sem.clone().try_acquire_owned() {
                 Ok(p) => p,
                 Err(_) => {
-                    let queue_mode = moltis_config::discover_and_load().chat.message_queue_mode;
+                    let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
                     info!(
                         session = %session_key,
                         mode = ?queue_mode,
@@ -2922,7 +2922,7 @@ impl ChatService for LiveChatService {
                     .remove(&session_key_clone)
                     .unwrap_or_default();
                 if !queued.is_empty() {
-                    let queue_mode = moltis_config::discover_and_load().chat.message_queue_mode;
+                    let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
                     let chat = state_for_drain.chat_service().await;
                     match queue_mode {
                         MessageQueueMode::Followup => {
@@ -2995,7 +2995,7 @@ impl ChatService for LiveChatService {
         };
         let model_id = explicit_model.or(session_model.as_deref());
 
-        let provider: Arc<dyn moltis_agents::model::LlmProvider> = {
+        let provider: Arc<dyn clawmaster_agents::model::LlmProvider> = {
             let reg = self.providers.read().await;
             let primary = if let Some(id) = model_id {
                 reg.get(id).ok_or_else(|| {
@@ -3024,7 +3024,7 @@ impl ChatService for LiveChatService {
                 } else {
                     let mut chain = vec![primary];
                     chain.extend(fallbacks);
-                    Arc::new(moltis_agents::provider_chain::ProviderChain::new(chain))
+                    Arc::new(clawmaster_agents::provider_chain::ProviderChain::new(chain))
                 }
             } else {
                 primary
@@ -3060,7 +3060,7 @@ impl ChatService for LiveChatService {
                 .get("channel")
                 .and_then(|v| v.as_str())
                 .map(String::from);
-            let payload = moltis_common::hooks::HookPayload::MessageReceived {
+            let payload = clawmaster_common::hooks::HookPayload::MessageReceived {
                 session_key: session_key.clone(),
                 content: text.clone(),
                 channel,
@@ -3116,7 +3116,7 @@ impl ChatService for LiveChatService {
             && let Some(entry) = self.session_metadata.get(&session_key).await
             && let Some(ref binding_json) = entry.channel_binding
             && let Ok(target) =
-                serde_json::from_str::<moltis_channels::ChannelReplyTarget>(binding_json)
+                serde_json::from_str::<clawmaster_channels::ChannelReplyTarget>(binding_json)
         {
             // Only echo to channel if this is the active session for this chat.
             let is_active = self
@@ -3151,7 +3151,7 @@ impl ChatService for LiveChatService {
                 .get("_channel_reply_target")
                 .cloned()
                 .and_then(|value| {
-                    match serde_json::from_value::<moltis_channels::ChannelReplyTarget>(value) {
+                    match serde_json::from_value::<clawmaster_channels::ChannelReplyTarget>(value) {
                         Ok(target) => Some(target),
                         Err(e) => {
                             warn!(
@@ -3165,8 +3165,8 @@ impl ChatService for LiveChatService {
                 });
 
         // Discover enabled skills/plugins for prompt injection.
-        let search_paths = moltis_skills::discover::FsSkillDiscoverer::default_paths();
-        let discoverer = moltis_skills::discover::FsSkillDiscoverer::new(search_paths);
+        let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
+        let discoverer = clawmaster_skills::discover::FsSkillDiscoverer::new(search_paths);
         let discovered_skills = match discoverer.discover().await {
             Ok(s) => s,
             Err(e) => {
@@ -3330,7 +3330,7 @@ impl ChatService for LiveChatService {
             Ok(p) => p,
             Err(_) => {
                 // Active run — enqueue and return immediately.
-                let queue_mode = moltis_config::discover_and_load().chat.message_queue_mode;
+                let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
                 info!(
                     session = %session_key,
                     mode = ?queue_mode,
@@ -3387,7 +3387,7 @@ impl ChatService for LiveChatService {
             }
         }
 
-        let agent_timeout_secs = moltis_config::discover_and_load().tools.agent_timeout_secs;
+        let agent_timeout_secs = clawmaster_config::discover_and_load().tools.agent_timeout_secs;
 
         let message_queue = Arc::clone(&self.message_queue);
         let state_for_drain = Arc::clone(&self.state);
@@ -3564,7 +3564,7 @@ impl ChatService for LiveChatService {
                 .remove(&session_key_clone)
                 .unwrap_or_default();
             if !queued.is_empty() {
-                let queue_mode = moltis_config::discover_and_load().chat.message_queue_mode;
+                let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
                 let chat = state_for_drain.chat_service().await;
                 match queue_mode {
                     MessageQueueMode::Followup => {
@@ -3647,7 +3647,7 @@ impl ChatService for LiveChatService {
         };
 
         // Resolve provider.
-        let provider: Arc<dyn moltis_agents::model::LlmProvider> = {
+        let provider: Arc<dyn clawmaster_agents::model::LlmProvider> = {
             let reg = self.providers.read().await;
             if let Some(id) = explicit_model {
                 reg.get(id)
@@ -4026,7 +4026,7 @@ impl ChatService for LiveChatService {
 
         // Dispatch BeforeCompaction hook.
         if let Some(ref hooks) = self.hook_registry {
-            let payload = moltis_common::hooks::HookPayload::BeforeCompaction {
+            let payload = clawmaster_common::hooks::HookPayload::BeforeCompaction {
                 session_key: session_key.clone(),
                 message_count: history.len(),
             };
@@ -4042,10 +4042,10 @@ impl ChatService for LiveChatService {
             && let Ok(provider) = self.resolve_provider(&session_key, &history).await
         {
             let chat_history_for_memory = values_to_chat_messages(&history);
-            let writer: Arc<dyn moltis_agents::memory_writer::MemoryWriter> = Arc::new(
+            let writer: Arc<dyn clawmaster_agents::memory_writer::MemoryWriter> = Arc::new(
                 AgentScopedMemoryWriter::new(Arc::clone(mm), session_agent_id.clone()),
             );
-            match moltis_agents::silent_turn::run_silent_memory_turn(
+            match clawmaster_agents::silent_turn::run_silent_memory_turn(
                 provider,
                 &chat_history_for_memory,
                 writer,
@@ -4139,7 +4139,7 @@ impl ChatService for LiveChatService {
 
         // Save compaction summary to memory file and trigger sync.
         if let Some(mm) = self.state.memory_manager() {
-            let memory_dir = moltis_config::agent_workspace_dir(&session_agent_id).join("memory");
+            let memory_dir = clawmaster_config::agent_workspace_dir(&session_agent_id).join("memory");
             if let Err(e) = tokio::fs::create_dir_all(&memory_dir).await {
                 warn!(error = %e, "compact: failed to create memory dir");
             } else {
@@ -4167,7 +4167,7 @@ impl ChatService for LiveChatService {
 
         // Dispatch AfterCompaction hook.
         if let Some(ref hooks) = self.hook_registry {
-            let payload = moltis_common::hooks::HookPayload::AfterCompaction {
+            let payload = clawmaster_common::hooks::HookPayload::AfterCompaction {
                 session_key: session_key.clone(),
                 summary_len: summary.len(),
             };
@@ -4243,7 +4243,7 @@ impl ChatService for LiveChatService {
                 Ok(val) => {
                     let dir = val.get("directory").and_then(|v| v.as_str());
                     let context_files = if let Some(d) = dir {
-                        match moltis_projects::context::load_context_files(Path::new(d)) {
+                        match clawmaster_projects::context::load_context_files(Path::new(d)) {
                             Ok(files) => files
                                 .iter()
                                 .map(|f| {
@@ -4277,7 +4277,7 @@ impl ChatService for LiveChatService {
             .as_ref()
             .and_then(|e| e.mcp_disabled)
             .unwrap_or(false);
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         let tools: Vec<Value> = if supports_tools {
             let registry_guard = self.tool_registry.read().await;
             let effective_registry =
@@ -4334,7 +4334,7 @@ impl ChatService for LiveChatService {
                     config
                         .container_prefix
                         .as_deref()
-                        .unwrap_or("moltis-sandbox"),
+                        .unwrap_or("clawmaster-sandbox"),
                     id.key
                 )
             };
@@ -4380,8 +4380,8 @@ impl ChatService for LiveChatService {
 
         // Discover enabled skills/plugins (only if provider supports tools)
         let skills_list: Vec<Value> = if supports_tools {
-            let search_paths = moltis_skills::discover::FsSkillDiscoverer::default_paths();
-            let discoverer = moltis_skills::discover::FsSkillDiscoverer::new(search_paths);
+            let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
+            let discoverer = clawmaster_skills::discover::FsSkillDiscoverer::new(search_paths);
             match discoverer.discover().await {
                 Ok(s) => s
                     .iter()
@@ -4481,8 +4481,8 @@ impl ChatService for LiveChatService {
             .await;
 
         // Discover skills.
-        let search_paths = moltis_skills::discover::FsSkillDiscoverer::default_paths();
-        let discoverer = moltis_skills::discover::FsSkillDiscoverer::new(search_paths);
+        let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
+        let discoverer = clawmaster_skills::discover::FsSkillDiscoverer::new(search_paths);
         let discovered_skills = match discoverer.discover().await {
             Ok(s) => s,
             Err(e) => {
@@ -4604,8 +4604,8 @@ impl ChatService for LiveChatService {
             .await;
 
         // Discover skills.
-        let search_paths = moltis_skills::discover::FsSkillDiscoverer::default_paths();
-        let discoverer = moltis_skills::discover::FsSkillDiscoverer::new(search_paths);
+        let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
+        let discoverer = clawmaster_skills::discover::FsSkillDiscoverer::new(search_paths);
         let discovered_skills = match discoverer.discover().await {
             Ok(s) => s,
             Err(e) => {
@@ -4880,14 +4880,14 @@ const CHANNEL_STREAM_BUFFER_SIZE: usize = 64;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 struct ChannelReplyTargetKey {
-    channel_type: moltis_channels::ChannelType,
+    channel_type: clawmaster_channels::ChannelType,
     account_id: String,
     chat_id: String,
     message_id: Option<String>,
 }
 
-impl From<&moltis_channels::ChannelReplyTarget> for ChannelReplyTargetKey {
-    fn from(target: &moltis_channels::ChannelReplyTarget) -> Self {
+impl From<&clawmaster_channels::ChannelReplyTarget> for ChannelReplyTargetKey {
+    fn from(target: &clawmaster_channels::ChannelReplyTarget) -> Self {
         Self {
             channel_type: target.channel_type,
             account_id: target.account_id.clone(),
@@ -4898,7 +4898,7 @@ impl From<&moltis_channels::ChannelReplyTarget> for ChannelReplyTargetKey {
 }
 
 struct ChannelStreamWorker {
-    sender: moltis_channels::StreamSender,
+    sender: clawmaster_channels::StreamSender,
 }
 
 /// Fan out model deltas to channel stream workers (Telegram/Discord edit-in-place).
@@ -4907,8 +4907,8 @@ struct ChannelStreamWorker {
 /// during long-running tool execution before the first text delta arrives.
 /// Stream-dedup only applies after at least one delta has been sent.
 struct ChannelStreamDispatcher {
-    outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound>,
-    targets: Vec<moltis_channels::ChannelReplyTarget>,
+    outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound>,
+    targets: Vec<clawmaster_channels::ChannelReplyTarget>,
     workers: Vec<ChannelStreamWorker>,
     tasks: Vec<tokio::task::JoinHandle<()>>,
     completed: Arc<Mutex<HashSet<ChannelReplyTargetKey>>>,
@@ -4919,7 +4919,7 @@ struct ChannelStreamDispatcher {
 impl ChannelStreamDispatcher {
     async fn for_session(state: &Arc<dyn ChatRuntime>, session_key: &str) -> Option<Self> {
         let outbound = state.channel_stream_outbound()?;
-        let targets: Vec<moltis_channels::ChannelReplyTarget> = state
+        let targets: Vec<clawmaster_channels::ChannelReplyTarget> = state
             .peek_channel_replies(session_key)
             .await
             .into_iter()
@@ -4994,7 +4994,7 @@ impl ChannelStreamDispatcher {
         }
         self.sent_delta = true;
         self.ensure_started().await;
-        let event = moltis_channels::StreamEvent::Delta(delta.to_string());
+        let event = clawmaster_channels::StreamEvent::Delta(delta.to_string());
         for worker in &self.workers {
             if worker.sender.send(event.clone()).await.is_err() {
                 debug!("channel stream delta dropped: worker closed");
@@ -5003,11 +5003,11 @@ impl ChannelStreamDispatcher {
     }
 
     async fn finish(&mut self) {
-        self.send_terminal(moltis_channels::StreamEvent::Done).await;
+        self.send_terminal(clawmaster_channels::StreamEvent::Done).await;
         self.join_workers().await;
     }
 
-    async fn send_terminal(&mut self, event: moltis_channels::StreamEvent) {
+    async fn send_terminal(&mut self, event: clawmaster_channels::StreamEvent) {
         if self.workers.is_empty() {
             return;
         }
@@ -5252,7 +5252,7 @@ fn resolve_agent_memory_target_path(agent_id: &str, file: &str) -> anyhow::Resul
         anyhow::bail!("memory path cannot be empty");
     }
 
-    let workspace = moltis_config::agent_workspace_dir(agent_id);
+    let workspace = clawmaster_config::agent_workspace_dir(agent_id);
     if trimmed == "MEMORY.md" || trimmed == "memory.md" {
         return Ok(workspace.join("MEMORY.md"));
     }
@@ -5271,7 +5271,7 @@ fn resolve_agent_memory_target_path(agent_id: &str, file: &str) -> anyhow::Resul
 }
 
 fn is_path_in_agent_memory_scope(path: &Path, agent_id: &str) -> bool {
-    let workspace = moltis_config::agent_workspace_dir(agent_id);
+    let workspace = clawmaster_config::agent_workspace_dir(agent_id);
     let workspace_memory_dir = workspace.join("memory");
     if path == workspace.join("MEMORY.md")
         || path == workspace.join("memory.md")
@@ -5284,7 +5284,7 @@ fn is_path_in_agent_memory_scope(path: &Path, agent_id: &str) -> bool {
         return false;
     }
 
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
     let root_memory_dir = data_dir.join("memory");
     path == data_dir.join("MEMORY.md")
         || path == data_dir.join("memory.md")
@@ -5292,24 +5292,24 @@ fn is_path_in_agent_memory_scope(path: &Path, agent_id: &str) -> bool {
 }
 
 struct AgentScopedMemoryWriter {
-    manager: Arc<moltis_memory::manager::MemoryManager>,
+    manager: Arc<clawmaster_memory::manager::MemoryManager>,
     agent_id: String,
 }
 
 impl AgentScopedMemoryWriter {
-    fn new(manager: Arc<moltis_memory::manager::MemoryManager>, agent_id: String) -> Self {
+    fn new(manager: Arc<clawmaster_memory::manager::MemoryManager>, agent_id: String) -> Self {
         Self { manager, agent_id }
     }
 }
 
 #[async_trait]
-impl moltis_agents::memory_writer::MemoryWriter for AgentScopedMemoryWriter {
+impl clawmaster_agents::memory_writer::MemoryWriter for AgentScopedMemoryWriter {
     async fn write_memory(
         &self,
         file: &str,
         content: &str,
         append: bool,
-    ) -> anyhow::Result<moltis_agents::memory_writer::MemoryWriteResult> {
+    ) -> anyhow::Result<clawmaster_agents::memory_writer::MemoryWriteResult> {
         if content.len() > MAX_AGENT_MEMORY_WRITE_BYTES {
             anyhow::bail!(
                 "content exceeds maximum size of {} bytes ({} bytes provided)",
@@ -5336,7 +5336,7 @@ impl moltis_agents::memory_writer::MemoryWriter for AgentScopedMemoryWriter {
             warn!(path = %path.display(), %error, "agent memory write re-index failed");
         }
 
-        Ok(moltis_agents::memory_writer::MemoryWriteResult {
+        Ok(clawmaster_agents::memory_writer::MemoryWriteResult {
             location: path.to_string_lossy().into_owned(),
             bytes_written,
         })
@@ -5344,12 +5344,12 @@ impl moltis_agents::memory_writer::MemoryWriter for AgentScopedMemoryWriter {
 }
 
 struct AgentScopedMemorySearchTool {
-    manager: Arc<moltis_memory::manager::MemoryManager>,
+    manager: Arc<clawmaster_memory::manager::MemoryManager>,
     agent_id: String,
 }
 
 impl AgentScopedMemorySearchTool {
-    fn new(manager: Arc<moltis_memory::manager::MemoryManager>, agent_id: String) -> Self {
+    fn new(manager: Arc<clawmaster_memory::manager::MemoryManager>, agent_id: String) -> Self {
         Self { manager, agent_id }
     }
 }
@@ -5394,7 +5394,7 @@ impl AgentTool for AgentScopedMemorySearchTool {
             .max(MEMORY_SEARCH_MIN_FETCH)
             .max(limit);
 
-        let mut results: Vec<moltis_memory::search::SearchResult> = self
+        let mut results: Vec<clawmaster_memory::search::SearchResult> = self
             .manager
             .search(query, search_limit)
             .await?
@@ -5403,7 +5403,7 @@ impl AgentTool for AgentScopedMemorySearchTool {
             .collect();
         results.truncate(limit);
 
-        let include_citations = moltis_memory::search::SearchResult::should_include_citations(
+        let include_citations = clawmaster_memory::search::SearchResult::should_include_citations(
             &results,
             self.manager.citation_mode(),
         );
@@ -5436,12 +5436,12 @@ impl AgentTool for AgentScopedMemorySearchTool {
 }
 
 struct AgentScopedMemoryGetTool {
-    manager: Arc<moltis_memory::manager::MemoryManager>,
+    manager: Arc<clawmaster_memory::manager::MemoryManager>,
     agent_id: String,
 }
 
 impl AgentScopedMemoryGetTool {
-    fn new(manager: Arc<moltis_memory::manager::MemoryManager>, agent_id: String) -> Self {
+    fn new(manager: Arc<clawmaster_memory::manager::MemoryManager>, agent_id: String) -> Self {
         Self { manager, agent_id }
     }
 }
@@ -5501,7 +5501,7 @@ struct AgentScopedMemorySaveTool {
 }
 
 impl AgentScopedMemorySaveTool {
-    fn new(manager: Arc<moltis_memory::manager::MemoryManager>, agent_id: String) -> Self {
+    fn new(manager: Arc<clawmaster_memory::manager::MemoryManager>, agent_id: String) -> Self {
         Self {
             writer: AgentScopedMemoryWriter::new(manager, agent_id),
         }
@@ -5555,7 +5555,7 @@ impl AgentTool for AgentScopedMemorySaveTool {
             .and_then(Value::as_bool)
             .unwrap_or(true);
 
-        use moltis_agents::memory_writer::MemoryWriter;
+        use clawmaster_agents::memory_writer::MemoryWriter;
         let result = self.writer.write_memory(file, content, append).await?;
 
         Ok(serde_json::json!({
@@ -5568,7 +5568,7 @@ impl AgentTool for AgentScopedMemorySaveTool {
 
 fn install_agent_scoped_memory_tools(
     registry: &mut ToolRegistry,
-    manager: &Arc<moltis_memory::manager::MemoryManager>,
+    manager: &Arc<clawmaster_memory::manager::MemoryManager>,
     agent_id: &str,
 ) {
     let had_search = registry.unregister("memory_search");
@@ -5603,7 +5603,7 @@ fn install_agent_scoped_memory_tools(
 /// - `Native` — provider handles tool schemas via API (OpenAI function calling, etc.)
 /// - `Text` — tools are described in the prompt; the runner parses tool calls from text
 /// - `Off` — no tools at all
-fn effective_tool_mode(provider: &dyn moltis_agents::model::LlmProvider) -> ToolMode {
+fn effective_tool_mode(provider: &dyn clawmaster_agents::model::LlmProvider) -> ToolMode {
     match provider.tool_mode() {
         Some(ToolMode::Native) => ToolMode::Native,
         Some(ToolMode::Text) => ToolMode::Text,
@@ -5622,7 +5622,7 @@ async fn run_with_tools(
     state: &Arc<dyn ChatRuntime>,
     model_store: &Arc<RwLock<DisabledModelsStore>>,
     run_id: &str,
-    provider: Arc<dyn moltis_agents::model::LlmProvider>,
+    provider: Arc<dyn clawmaster_agents::model::LlmProvider>,
     model_id: &str,
     tool_registry: &Arc<RwLock<ToolRegistry>>,
     user_content: &UserContent,
@@ -5634,8 +5634,8 @@ async fn run_with_tools(
     project_context: Option<&str>,
     runtime_context: Option<&PromptRuntimeContext>,
     user_message_index: usize,
-    skills: &[moltis_skills::types::SkillMetadata],
-    hook_registry: Option<Arc<moltis_common::hooks::HookRegistry>>,
+    skills: &[clawmaster_skills::types::SkillMetadata],
+    hook_registry: Option<Arc<clawmaster_common::hooks::HookRegistry>>,
     accept_language: Option<String>,
     conn_id: Option<String>,
     session_store: Option<&Arc<SessionStore>>,
@@ -6405,7 +6405,7 @@ async fn run_with_tools(
 async fn compact_session(
     store: &Arc<SessionStore>,
     session_key: &str,
-    provider: &Arc<dyn moltis_agents::model::LlmProvider>,
+    provider: &Arc<dyn clawmaster_agents::model::LlmProvider>,
 ) -> error::Result<()> {
     let history = store
         .read(session_key)
@@ -6556,7 +6556,7 @@ async fn run_streaming(
     state: &Arc<dyn ChatRuntime>,
     model_store: &Arc<RwLock<DisabledModelsStore>>,
     run_id: &str,
-    provider: Arc<dyn moltis_agents::model::LlmProvider>,
+    provider: Arc<dyn clawmaster_agents::model::LlmProvider>,
     model_id: &str,
     user_content: &UserContent,
     provider_name: &str,
@@ -6566,7 +6566,7 @@ async fn run_streaming(
     desired_reply_medium: ReplyMedium,
     project_context: Option<&str>,
     user_message_index: usize,
-    _skills: &[moltis_skills::types::SkillMetadata],
+    _skills: &[clawmaster_skills::types::SkillMetadata],
     runtime_context: Option<&PromptRuntimeContext>,
     session_store: Option<&Arc<SessionStore>>,
     client_seq: Option<u64>,
@@ -7080,8 +7080,8 @@ fn format_logbook_html(entries: &[String]) -> String {
 }
 
 async fn send_channel_logbook_follow_up_to_targets(
-    outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound>,
-    targets: Vec<moltis_channels::ChannelReplyTarget>,
+    outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound>,
+    targets: Vec<clawmaster_channels::ChannelReplyTarget>,
     logbook_html: &str,
 ) {
     if targets.is_empty() || logbook_html.is_empty() {
@@ -7235,8 +7235,8 @@ async fn deliver_channel_error(state: &Arc<dyn ChatRuntime>, session_key: &str, 
 }
 
 async fn deliver_channel_replies_to_targets(
-    outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound>,
-    targets: Vec<moltis_channels::ChannelReplyTarget>,
+    outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound>,
+    targets: Vec<clawmaster_channels::ChannelReplyTarget>,
     session_key: &str,
     text: &str,
     state: Arc<dyn ChatRuntime>,
@@ -7265,7 +7265,7 @@ async fn deliver_channel_replies_to_targets(
             };
             let reply_to = target.message_id.as_deref();
             match target.channel_type {
-                moltis_channels::ChannelType::Telegram => match tts_payload {
+                clawmaster_channels::ChannelType::Telegram => match tts_payload {
                     Some(mut payload) => {
                         let transcript = std::mem::take(&mut payload.text);
 
@@ -7299,7 +7299,7 @@ async fn deliver_channel_replies_to_targets(
                                 );
                             }
                         } else if transcript.len()
-                            <= moltis_telegram::markdown::TELEGRAM_CAPTION_LIMIT
+                            <= clawmaster_telegram::markdown::TELEGRAM_CAPTION_LIMIT
                         {
                             // Short transcript fits as a caption on the voice message.
                             payload.text = transcript;
@@ -7525,7 +7525,7 @@ async fn generate_tts_audio(
     }
 
     // Layer 2: strip markdown/URLs the LLM may have included despite the prompt.
-    let text = moltis_voice::tts::sanitize_text_for_tts(text);
+    let text = clawmaster_voice::tts::sanitize_text_for_tts(text);
     let text = text.trim();
     if text.is_empty() {
         return Err(error::Error::message("response has no speakable text"));
@@ -7559,10 +7559,10 @@ async fn generate_tts_audio(
 async fn build_tts_payload(
     state: &Arc<dyn ChatRuntime>,
     session_key: &str,
-    target: &moltis_channels::ChannelReplyTarget,
+    target: &clawmaster_channels::ChannelReplyTarget,
     text: &str,
-) -> Option<moltis_common::types::ReplyPayload> {
-    use moltis_common::types::{MediaAttachment, ReplyPayload};
+) -> Option<clawmaster_common::types::ReplyPayload> {
+    use clawmaster_common::types::{MediaAttachment, ReplyPayload};
 
     let tts_status = state.tts_service().status().await.ok()?;
     let status: TtsStatusResponse = serde_json::from_value(tts_status).ok()?;
@@ -7572,7 +7572,7 @@ async fn build_tts_payload(
 
     // Strip markdown/URLs the LLM may have included — use sanitized text
     // only for TTS conversion, but keep the original for the caption.
-    let sanitized = moltis_voice::tts::sanitize_text_for_tts(text);
+    let sanitized = clawmaster_voice::tts::sanitize_text_for_tts(text);
 
     let channel_key = format!("{}:{}", target.channel_type.as_str(), target.account_id);
     let (channel_override, session_override) = state.tts_overrides(session_key, &channel_key).await;
@@ -7821,7 +7821,7 @@ async fn send_screenshot_to_channels(
     screenshot_data: &str,
     caption: Option<&str>,
 ) {
-    use moltis_common::types::{MediaAttachment, ReplyPayload};
+    use clawmaster_common::types::{MediaAttachment, ReplyPayload};
 
     let targets = state.peek_channel_replies(session_key).await;
     if targets.is_empty() {
@@ -7956,8 +7956,8 @@ mod tests {
     use {
         super::*,
         anyhow::Result,
-        moltis_agents::{model::LlmProvider, tool_registry::AgentTool},
-        moltis_common::types::ReplyPayload,
+        clawmaster_agents::{model::LlmProvider, tool_registry::AgentTool},
+        clawmaster_common::types::ReplyPayload,
         std::{
             pin::Pin,
             sync::{
@@ -7992,7 +7992,7 @@ mod tests {
             &self,
             _messages: &[ChatMessage],
             _tools: &[Value],
-        ) -> Result<moltis_agents::model::CompletionResponse> {
+        ) -> Result<clawmaster_agents::model::CompletionResponse> {
             anyhow::bail!("not implemented for test")
         }
 
@@ -8079,13 +8079,13 @@ mod tests {
     }
 
     struct MockChatRuntime {
-        channel_replies: Mutex<HashMap<String, Vec<moltis_channels::ChannelReplyTarget>>>,
+        channel_replies: Mutex<HashMap<String, Vec<clawmaster_channels::ChannelReplyTarget>>>,
         channel_status_log: Mutex<HashMap<String, Vec<String>>>,
-        channel_outbound: Option<Arc<dyn moltis_channels::ChannelOutbound>>,
-        channel_stream_outbound: Option<Arc<dyn moltis_channels::ChannelStreamOutbound>>,
-        tts: moltis_service_traits::NoopTtsService,
-        project: moltis_service_traits::NoopProjectService,
-        mcp: moltis_service_traits::NoopMcpService,
+        channel_outbound: Option<Arc<dyn clawmaster_channels::ChannelOutbound>>,
+        channel_stream_outbound: Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>>,
+        tts: clawmaster_service_traits::NoopTtsService,
+        project: clawmaster_service_traits::NoopProjectService,
+        mcp: clawmaster_service_traits::NoopMcpService,
     }
 
     impl MockChatRuntime {
@@ -8095,15 +8095,15 @@ mod tests {
                 channel_status_log: Mutex::new(HashMap::new()),
                 channel_outbound: None,
                 channel_stream_outbound: None,
-                tts: moltis_service_traits::NoopTtsService,
-                project: moltis_service_traits::NoopProjectService,
-                mcp: moltis_service_traits::NoopMcpService,
+                tts: clawmaster_service_traits::NoopTtsService,
+                project: clawmaster_service_traits::NoopProjectService,
+                mcp: clawmaster_service_traits::NoopMcpService,
             }
         }
 
         fn with_channel_outbound(
             mut self,
-            outbound: Arc<dyn moltis_channels::ChannelOutbound>,
+            outbound: Arc<dyn clawmaster_channels::ChannelOutbound>,
         ) -> Self {
             self.channel_outbound = Some(outbound);
             self
@@ -8111,7 +8111,7 @@ mod tests {
 
         fn with_channel_stream_outbound(
             mut self,
-            outbound: Arc<dyn moltis_channels::ChannelStreamOutbound>,
+            outbound: Arc<dyn clawmaster_channels::ChannelStreamOutbound>,
         ) -> Self {
             self.channel_stream_outbound = Some(outbound);
             self
@@ -8125,7 +8125,7 @@ mod tests {
         async fn push_channel_reply(
             &self,
             session_key: &str,
-            target: moltis_channels::ChannelReplyTarget,
+            target: clawmaster_channels::ChannelReplyTarget,
         ) {
             self.channel_replies
                 .lock()
@@ -8138,7 +8138,7 @@ mod tests {
         async fn drain_channel_replies(
             &self,
             session_key: &str,
-        ) -> Vec<moltis_channels::ChannelReplyTarget> {
+        ) -> Vec<clawmaster_channels::ChannelReplyTarget> {
             self.channel_replies
                 .lock()
                 .await
@@ -8149,7 +8149,7 @@ mod tests {
         async fn peek_channel_replies(
             &self,
             session_key: &str,
-        ) -> Vec<moltis_channels::ChannelReplyTarget> {
+        ) -> Vec<clawmaster_channels::ChannelReplyTarget> {
             self.channel_replies
                 .lock()
                 .await
@@ -8189,15 +8189,15 @@ mod tests {
             "test"
         }
 
-        fn sandbox_router(&self) -> Option<&Arc<moltis_tools::sandbox::SandboxRouter>> {
+        fn sandbox_router(&self) -> Option<&Arc<clawmaster_tools::sandbox::SandboxRouter>> {
             None
         }
 
-        fn memory_manager(&self) -> Option<&Arc<moltis_memory::manager::MemoryManager>> {
+        fn memory_manager(&self) -> Option<&Arc<clawmaster_memory::manager::MemoryManager>> {
             None
         }
 
-        async fn cached_location(&self) -> Option<moltis_config::GeoLocation> {
+        async fn cached_location(&self) -> Option<clawmaster_config::GeoLocation> {
             None
         }
 
@@ -8209,30 +8209,30 @@ mod tests {
             (None, None)
         }
 
-        fn channel_outbound(&self) -> Option<Arc<dyn moltis_channels::ChannelOutbound>> {
+        fn channel_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelOutbound>> {
             self.channel_outbound.clone()
         }
 
         fn channel_stream_outbound(
             &self,
-        ) -> Option<Arc<dyn moltis_channels::ChannelStreamOutbound>> {
+        ) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>> {
             self.channel_stream_outbound.clone()
         }
 
-        fn tts_service(&self) -> &dyn moltis_service_traits::TtsService {
+        fn tts_service(&self) -> &dyn clawmaster_service_traits::TtsService {
             &self.tts
         }
 
-        fn project_service(&self) -> &dyn moltis_service_traits::ProjectService {
+        fn project_service(&self) -> &dyn clawmaster_service_traits::ProjectService {
             &self.project
         }
 
-        fn mcp_service(&self) -> &dyn moltis_service_traits::McpService {
+        fn mcp_service(&self) -> &dyn clawmaster_service_traits::McpService {
             &self.mcp
         }
 
         async fn chat_service(&self) -> Arc<dyn ChatService> {
-            Arc::new(moltis_service_traits::NoopChatService)
+            Arc::new(clawmaster_service_traits::NoopChatService)
         }
 
         async fn last_run_error(&self, _run_id: &str) -> Option<String> {
@@ -8398,8 +8398,8 @@ mod tests {
 
     #[test]
     fn resolve_channel_runtime_context_extracts_channel_binding() {
-        let binding = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let binding = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "bot-main".to_string(),
             chat_id: "123456".to_string(),
             message_id: Some("99".to_string()),
@@ -8552,14 +8552,14 @@ mod tests {
     }
 
     #[async_trait]
-    impl moltis_channels::plugin::ChannelOutbound for MockChannelOutbound {
+    impl clawmaster_channels::plugin::ChannelOutbound for MockChannelOutbound {
         async fn send_text(
             &self,
             _account_id: &str,
             _to: &str,
             _text: &str,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             tokio::time::sleep(self.delay).await;
             self.calls.fetch_add(1, Ordering::SeqCst);
             Ok(())
@@ -8571,20 +8571,20 @@ mod tests {
             _to: &str,
             _payload: &ReplyPayload,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             Ok(())
         }
     }
 
     #[async_trait]
-    impl moltis_channels::plugin::ChannelOutbound for RecordingChannelOutbound {
+    impl clawmaster_channels::plugin::ChannelOutbound for RecordingChannelOutbound {
         async fn send_text(
             &self,
             _account_id: &str,
             _to: &str,
             _text: &str,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             self.text_calls.fetch_add(1, Ordering::SeqCst);
             Ok(())
         }
@@ -8595,7 +8595,7 @@ mod tests {
             _to: &str,
             _payload: &ReplyPayload,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             Ok(())
         }
 
@@ -8606,7 +8606,7 @@ mod tests {
             _text: &str,
             _suffix_html: &str,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             self.suffix_calls.fetch_add(1, Ordering::SeqCst);
             Ok(())
         }
@@ -8617,23 +8617,23 @@ mod tests {
             _to: &str,
             html: &str,
             _reply_to: Option<&str>,
-        ) -> moltis_channels::Result<()> {
+        ) -> clawmaster_channels::Result<()> {
             self.html_payloads.lock().await.push(html.to_string());
             Ok(())
         }
     }
 
     #[async_trait]
-    impl moltis_channels::plugin::ChannelStreamOutbound for MockChannelStreamOutbound {
+    impl clawmaster_channels::plugin::ChannelStreamOutbound for MockChannelStreamOutbound {
         async fn send_stream(
             &self,
             _account_id: &str,
             _to: &str,
             reply_to: Option<&str>,
-            mut stream: moltis_channels::StreamReceiver,
-        ) -> moltis_channels::Result<()> {
+            mut stream: clawmaster_channels::StreamReceiver,
+        ) -> clawmaster_channels::Result<()> {
             if self.fail {
-                return Err(moltis_channels::Error::unavailable("stream failed"));
+                return Err(clawmaster_channels::Error::unavailable("stream failed"));
             }
             self.reply_tos
                 .lock()
@@ -8641,10 +8641,10 @@ mod tests {
                 .push(reply_to.map(ToString::to_string));
             while let Some(event) = stream.recv().await {
                 match event {
-                    moltis_channels::StreamEvent::Delta(delta) => {
+                    clawmaster_channels::StreamEvent::Delta(delta) => {
                         self.deltas.lock().await.push(delta);
                     },
-                    moltis_channels::StreamEvent::Done | moltis_channels::StreamEvent::Error(_) => {
+                    clawmaster_channels::StreamEvent::Done | clawmaster_channels::StreamEvent::Error(_) => {
                         break;
                     },
                 }
@@ -8662,7 +8662,7 @@ mod tests {
         let pool = sqlx::SqlitePool::connect("sqlite::memory:")
             .await
             .expect("sqlite memory pool");
-        moltis_projects::run_migrations(&pool)
+        clawmaster_projects::run_migrations(&pool)
             .await
             .expect("projects migrations");
         SqliteSessionMetadata::init(&pool)
@@ -8674,13 +8674,13 @@ mod tests {
     #[tokio::test]
     async fn deliver_channel_replies_waits_for_outbound_sends() {
         let calls = Arc::new(AtomicUsize::new(0));
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> =
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> =
             Arc::new(MockChannelOutbound {
                 calls: Arc::clone(&calls),
                 delay: Duration::from_millis(50),
             });
-        let targets = vec![moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let targets = vec![clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: None,
@@ -8710,15 +8710,15 @@ mod tests {
     #[tokio::test]
     async fn deliver_channel_replies_skips_targets_already_streamed() {
         let calls = Arc::new(AtomicUsize::new(0));
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> =
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> =
             Arc::new(MockChannelOutbound {
                 calls: Arc::clone(&calls),
                 delay: Duration::from_millis(0),
             });
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_outbound(outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("42".to_string()),
@@ -8755,15 +8755,15 @@ mod tests {
     #[tokio::test]
     async fn deliver_channel_replies_voice_no_tts_skips_streamed_text_fallback() {
         let calls = Arc::new(AtomicUsize::new(0));
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> =
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> =
             Arc::new(MockChannelOutbound {
                 calls: Arc::clone(&calls),
                 delay: Duration::from_millis(0),
             });
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_outbound(outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("42".to_string()),
@@ -8805,12 +8805,12 @@ mod tests {
             suffix_calls: Arc::clone(&suffix_calls),
             html_payloads: Arc::clone(&html_payloads),
         });
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> = outbound_impl;
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> = outbound_impl;
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_outbound(outbound));
 
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("42".to_string()),
@@ -8854,12 +8854,12 @@ mod tests {
             suffix_calls: Arc::clone(&suffix_calls),
             html_payloads: Arc::clone(&html_payloads),
         });
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> = outbound_impl;
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> = outbound_impl;
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_outbound(outbound));
 
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Discord,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Discord,
             account_id: "acct".to_string(),
             chat_id: "456".to_string(),
             message_id: Some("99".to_string()),
@@ -8900,12 +8900,12 @@ mod tests {
             suffix_calls: Arc::clone(&suffix_calls),
             html_payloads: Arc::clone(&html_payloads),
         });
-        let outbound: Arc<dyn moltis_channels::plugin::ChannelOutbound> = outbound_impl;
+        let outbound: Arc<dyn clawmaster_channels::plugin::ChannelOutbound> = outbound_impl;
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_outbound(outbound));
 
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Discord,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Discord,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("42".to_string()),
@@ -8941,7 +8941,7 @@ mod tests {
         let deltas = Arc::new(Mutex::new(Vec::new()));
         let reply_tos = Arc::new(Mutex::new(Vec::new()));
         let completions = Arc::new(AtomicUsize::new(0));
-        let stream_outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound> =
+        let stream_outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound> =
             Arc::new(MockChannelStreamOutbound {
                 deltas: Arc::clone(&deltas),
                 reply_tos: Arc::clone(&reply_tos),
@@ -8952,8 +8952,8 @@ mod tests {
 
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_stream_outbound(stream_outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("55".to_string()),
@@ -8977,7 +8977,7 @@ mod tests {
 
     #[tokio::test]
     async fn channel_stream_dispatcher_skips_failed_workers_from_dedupe() {
-        let stream_outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound> =
+        let stream_outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound> =
             Arc::new(MockChannelStreamOutbound {
                 deltas: Arc::new(Mutex::new(Vec::new())),
                 reply_tos: Arc::new(Mutex::new(Vec::new())),
@@ -8987,8 +8987,8 @@ mod tests {
             });
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_stream_outbound(stream_outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("55".to_string()),
@@ -9013,7 +9013,7 @@ mod tests {
     async fn channel_stream_dispatcher_skips_stream_disabled_targets() {
         let deltas = Arc::new(Mutex::new(Vec::new()));
         let completions = Arc::new(AtomicUsize::new(0));
-        let stream_outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound> =
+        let stream_outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound> =
             Arc::new(MockChannelStreamOutbound {
                 deltas: Arc::clone(&deltas),
                 reply_tos: Arc::new(Mutex::new(Vec::new())),
@@ -9023,8 +9023,8 @@ mod tests {
             });
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_stream_outbound(stream_outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("55".to_string()),
@@ -9045,7 +9045,7 @@ mod tests {
 
     #[tokio::test]
     async fn channel_stream_dispatcher_no_deltas_do_not_dedup_targets() {
-        let stream_outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound> =
+        let stream_outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound> =
             Arc::new(MockChannelStreamOutbound {
                 deltas: Arc::new(Mutex::new(Vec::new())),
                 reply_tos: Arc::new(Mutex::new(Vec::new())),
@@ -9055,8 +9055,8 @@ mod tests {
             });
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_stream_outbound(stream_outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "123".to_string(),
             message_id: Some("55".to_string()),
@@ -9084,7 +9084,7 @@ mod tests {
         let deltas = Arc::new(Mutex::new(Vec::new()));
         let reply_tos = Arc::new(Mutex::new(Vec::new()));
         let completions = Arc::new(AtomicUsize::new(0));
-        let stream_outbound: Arc<dyn moltis_channels::plugin::ChannelStreamOutbound> =
+        let stream_outbound: Arc<dyn clawmaster_channels::plugin::ChannelStreamOutbound> =
             Arc::new(MockChannelStreamOutbound {
                 deltas: Arc::clone(&deltas),
                 reply_tos: Arc::clone(&reply_tos),
@@ -9095,8 +9095,8 @@ mod tests {
 
         let state: Arc<dyn ChatRuntime> =
             Arc::new(MockChatRuntime::new().with_channel_stream_outbound(stream_outbound));
-        let target = moltis_channels::ChannelReplyTarget {
-            channel_type: moltis_channels::ChannelType::Telegram,
+        let target = clawmaster_channels::ChannelReplyTarget {
+            channel_type: clawmaster_channels::ChannelType::Telegram,
             account_id: "acct".to_string(),
             chat_id: "456".to_string(),
             message_id: Some("77".to_string()),
@@ -9829,7 +9829,7 @@ mod tests {
 
     #[test]
     fn effective_tool_policy_profile_and_config_merge() {
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.tools.policy.profile = Some("full".into());
         cfg.tools.policy.deny = vec!["exec".into()];
 
@@ -9854,10 +9854,10 @@ mod tests {
             name: "session_state".to_string(),
         }));
 
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.tools.policy.allow = vec!["exec".into(), "web_fetch".into(), "create_skill".into()];
 
-        let skills = vec![moltis_skills::types::SkillMetadata {
+        let skills = vec![clawmaster_skills::types::SkillMetadata {
             name: "my-skill".into(),
             description: "test".into(),
             license: None,
@@ -9887,10 +9887,10 @@ mod tests {
             name: "web_fetch".to_string(),
         }));
 
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.tools.policy.allow = vec!["create_skill".into(), "web_fetch".into()];
 
-        let skills = vec![moltis_skills::types::SkillMetadata {
+        let skills = vec![clawmaster_skills::types::SkillMetadata {
             name: "weather".into(),
             description: "weather checker".into(),
             license: None,
@@ -9910,19 +9910,19 @@ mod tests {
 
     #[test]
     fn priority_models_pin_raw_model_ids_first() {
-        let m1 = moltis_providers::ModelInfo {
+        let m1 = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT 5.2".into(),
             created_at: None,
         };
-        let m2 = moltis_providers::ModelInfo {
+        let m2 = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-opus-4-5".into(),
             provider: "anthropic".into(),
             display_name: "Claude Opus 4.5".into(),
             created_at: None,
         };
-        let m3 = moltis_providers::ModelInfo {
+        let m3 = clawmaster_providers::ModelInfo {
             id: "google::gemini-3-flash".into(),
             provider: "gemini".into(),
             display_name: "Gemini 3 Flash".into(),
@@ -9939,19 +9939,19 @@ mod tests {
 
     #[test]
     fn priority_models_match_separator_variants() {
-        let m1 = moltis_providers::ModelInfo {
+        let m1 = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT-5.2".into(),
             created_at: None,
         };
-        let m2 = moltis_providers::ModelInfo {
+        let m2 = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-sonnet-4-5-20250929".into(),
             provider: "anthropic".into(),
             display_name: "Claude Sonnet 4.5".into(),
             created_at: None,
         };
-        let m3 = moltis_providers::ModelInfo {
+        let m3 = clawmaster_providers::ModelInfo {
             id: "google::gemini-3-flash".into(),
             provider: "gemini".into(),
             display_name: "Gemini 3 Flash".into(),
@@ -9968,19 +9968,19 @@ mod tests {
 
     #[test]
     fn models_without_priority_prefer_subscription_providers() {
-        let m1 = moltis_providers::ModelInfo {
+        let m1 = clawmaster_providers::ModelInfo {
             id: "openai::gpt-5.2".into(),
             provider: "openai".into(),
             display_name: "GPT-5.2".into(),
             created_at: None,
         };
-        let m2 = moltis_providers::ModelInfo {
+        let m2 = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT-5.2".into(),
             created_at: None,
         };
-        let m3 = moltis_providers::ModelInfo {
+        let m3 = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-sonnet-4-5-20250929".into(),
             provider: "anthropic".into(),
             display_name: "Claude Sonnet 4.5".into(),
@@ -9996,13 +9996,13 @@ mod tests {
 
     #[test]
     fn explicit_priority_still_overrides_subscription_preference() {
-        let m1 = moltis_providers::ModelInfo {
+        let m1 = clawmaster_providers::ModelInfo {
             id: "openai::gpt-5.2".into(),
             provider: "openai".into(),
             display_name: "GPT-5.2".into(),
             created_at: None,
         };
-        let m2 = moltis_providers::ModelInfo {
+        let m2 = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT-5.2".into(),
@@ -10017,19 +10017,19 @@ mod tests {
 
     #[test]
     fn allowed_models_filters_by_substring_match() {
-        let m1 = moltis_providers::ModelInfo {
+        let m1 = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-opus-4-5".into(),
             provider: "anthropic".into(),
             display_name: "Claude Opus 4.5".into(),
             created_at: None,
         };
-        let m2 = moltis_providers::ModelInfo {
+        let m2 = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT 5.2".into(),
             created_at: None,
         };
-        let m3 = moltis_providers::ModelInfo {
+        let m3 = clawmaster_providers::ModelInfo {
             id: "google::gemini-3-flash".into(),
             provider: "google".into(),
             display_name: "Gemini 3 Flash".into(),
@@ -10044,7 +10044,7 @@ mod tests {
 
     #[test]
     fn allowed_models_empty_shows_all() {
-        let m = moltis_providers::ModelInfo {
+        let m = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-opus-4-5".into(),
             provider: "anthropic".into(),
             display_name: "Claude Opus 4.5".into(),
@@ -10055,7 +10055,7 @@ mod tests {
 
     #[test]
     fn allowed_models_case_insensitive() {
-        let m = moltis_providers::ModelInfo {
+        let m = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-opus-4-5".into(),
             provider: "anthropic".into(),
             display_name: "Claude Opus 4.5".into(),
@@ -10073,7 +10073,7 @@ mod tests {
 
     #[test]
     fn allowed_models_match_separator_variants() {
-        let m = moltis_providers::ModelInfo {
+        let m = clawmaster_providers::ModelInfo {
             id: "openai-codex::gpt-5.2".into(),
             provider: "openai-codex".into(),
             display_name: "GPT-5.2".into(),
@@ -10089,13 +10089,13 @@ mod tests {
 
     #[test]
     fn allowed_models_numeric_pattern_does_not_match_extended_variants() {
-        let exact = moltis_providers::ModelInfo {
+        let exact = clawmaster_providers::ModelInfo {
             id: "openai::gpt-5.2".into(),
             provider: "openai".into(),
             display_name: "GPT-5.2".into(),
             created_at: None,
         };
-        let extended = moltis_providers::ModelInfo {
+        let extended = clawmaster_providers::ModelInfo {
             id: "openai::gpt-5.2-chat-latest".into(),
             provider: "openai".into(),
             display_name: "GPT-5.2 Chat Latest".into(),
@@ -10109,7 +10109,7 @@ mod tests {
 
     #[test]
     fn allowed_models_numeric_pattern_matches_provider_prefixed_models() {
-        let m = moltis_providers::ModelInfo {
+        let m = clawmaster_providers::ModelInfo {
             id: "anthropic::claude-sonnet-4-5".into(),
             provider: "anthropic".into(),
             display_name: "Claude Sonnet 4.5".into(),
@@ -10122,13 +10122,13 @@ mod tests {
 
     #[test]
     fn allowed_models_does_not_filter_local_llm_or_ollama() {
-        let local = moltis_providers::ModelInfo {
+        let local = clawmaster_providers::ModelInfo {
             id: "local-llm::qwen2.5-coder-7b-q4_k_m".into(),
             provider: "local-llm".into(),
             display_name: "Qwen2.5 Coder 7B".into(),
             created_at: None,
         };
-        let ollama = moltis_providers::ModelInfo {
+        let ollama = clawmaster_providers::ModelInfo {
             id: "ollama::llama3.1:8b".into(),
             provider: "ollama".into(),
             display_name: "Llama 3.1 8B".into(),
@@ -10142,7 +10142,7 @@ mod tests {
 
     #[test]
     fn allowed_models_does_not_filter_ollama_when_provider_is_aliased() {
-        let aliased = moltis_providers::ModelInfo {
+        let aliased = clawmaster_providers::ModelInfo {
             id: "local-ai::llama3.1:8b".into(),
             provider: "local-ai".into(),
             display_name: "Llama 3.1 8B".into(),
@@ -10161,7 +10161,7 @@ mod tests {
     async fn list_and_list_all_return_all_registered_models() {
         let mut registry = ProviderRegistry::empty();
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "anthropic::claude-opus-4-5".to_string(),
                 provider: "anthropic".to_string(),
                 display_name: "Claude Opus 4.5".to_string(),
@@ -10173,7 +10173,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai-codex::gpt-5.2".to_string(),
                 provider: "openai-codex".to_string(),
                 display_name: "GPT 5.2".to_string(),
@@ -10185,7 +10185,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "google::gemini-3-flash".to_string(),
                 provider: "google".to_string(),
                 display_name: "Gemini 3 Flash".to_string(),
@@ -10228,7 +10228,7 @@ mod tests {
     async fn list_includes_created_at_in_response() {
         let mut registry = ProviderRegistry::empty();
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai::gpt-5.3".to_string(),
                 provider: "openai".to_string(),
                 display_name: "GPT-5.3".to_string(),
@@ -10240,7 +10240,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai::babbage-002".to_string(),
                 provider: "openai".to_string(),
                 display_name: "babbage-002".to_string(),
@@ -10252,7 +10252,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "anthropic::claude-opus".to_string(),
                 provider: "anthropic".to_string(),
                 display_name: "Claude Opus".to_string(),
@@ -10301,7 +10301,7 @@ mod tests {
     async fn list_includes_ollama_when_provider_is_aliased() {
         let mut registry = ProviderRegistry::empty();
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai-codex::gpt-5.2".to_string(),
                 provider: "openai-codex".to_string(),
                 display_name: "GPT 5.2".to_string(),
@@ -10313,7 +10313,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "local-ai::llama3.1:8b".to_string(),
                 provider: "local-ai".to_string(),
                 display_name: "Llama 3.1 8B".to_string(),
@@ -10411,7 +10411,7 @@ mod tests {
     async fn list_all_includes_disabled_models_and_list_hides_them() {
         let mut registry = ProviderRegistry::empty();
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "unit-test-model".to_string(),
                 provider: "unit-test-provider".to_string(),
                 display_name: "Unit Test Model".to_string(),
@@ -10482,7 +10482,7 @@ mod tests {
     async fn model_test_rejects_missing_model_id() {
         let service = LiveModelService::new(
             Arc::new(RwLock::new(ProviderRegistry::from_env_with_config(
-                &moltis_config::schema::ProvidersConfig::default(),
+                &clawmaster_config::schema::ProvidersConfig::default(),
             ))),
             Arc::new(RwLock::new(DisabledModelsStore::default())),
             vec![],
@@ -10501,7 +10501,7 @@ mod tests {
     async fn model_test_rejects_unknown_model() {
         let service = LiveModelService::new(
             Arc::new(RwLock::new(ProviderRegistry::from_env_with_config(
-                &moltis_config::schema::ProvidersConfig::default(),
+                &clawmaster_config::schema::ProvidersConfig::default(),
             ))),
             Arc::new(RwLock::new(DisabledModelsStore::default())),
             vec![],
@@ -10517,7 +10517,7 @@ mod tests {
     async fn model_test_unknown_model_includes_suggestion() {
         let mut registry = ProviderRegistry::empty();
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai::gpt-5.2-codex".to_string(),
                 provider: "openai".to_string(),
                 display_name: "GPT 5.2 Codex".to_string(),
@@ -10529,7 +10529,7 @@ mod tests {
             }),
         );
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "openai::gpt-5".to_string(),
                 provider: "openai".to_string(),
                 display_name: "GPT 5".to_string(),
@@ -10584,11 +10584,11 @@ mod tests {
     #[tokio::test]
     async fn model_test_returns_error_when_provider_fails() {
         let mut registry = ProviderRegistry::from_env_with_config(
-            &moltis_config::schema::ProvidersConfig::default(),
+            &clawmaster_config::schema::ProvidersConfig::default(),
         );
         // StaticProvider's complete() returns an error ("not implemented for test")
         registry.register(
-            moltis_providers::ModelInfo {
+            clawmaster_providers::ModelInfo {
                 id: "test-provider::test-model".to_string(),
                 provider: "test-provider".to_string(),
                 display_name: "Test Model".to_string(),
@@ -10639,7 +10639,7 @@ mod tests {
 
     #[test]
     fn to_user_content_multimodal_with_image() {
-        use moltis_sessions::message::{ContentBlock, ImageUrl as SessionImageUrl};
+        use clawmaster_sessions::message::{ContentBlock, ImageUrl as SessionImageUrl};
 
         let mc = MessageContent::Multimodal(vec![
             ContentBlock::Text {
@@ -10673,7 +10673,7 @@ mod tests {
 
     #[test]
     fn to_user_content_drops_invalid_data_uri() {
-        use moltis_sessions::message::{ContentBlock, ImageUrl as SessionImageUrl};
+        use clawmaster_sessions::message::{ContentBlock, ImageUrl as SessionImageUrl};
 
         let mc = MessageContent::Multimodal(vec![
             ContentBlock::Text {
@@ -10858,7 +10858,7 @@ mod tests {
 
     #[test]
     fn resolve_agent_memory_target_path_maps_to_agent_workspace() {
-        let workspace = moltis_config::agent_workspace_dir("ops");
+        let workspace = clawmaster_config::agent_workspace_dir("ops");
         assert_eq!(
             resolve_agent_memory_target_path("ops", "MEMORY.md").unwrap(),
             workspace.join("MEMORY.md")
@@ -10879,12 +10879,12 @@ mod tests {
 
     #[test]
     fn path_in_agent_memory_scope_is_isolated_per_agent() {
-        let ops_workspace = moltis_config::agent_workspace_dir("ops");
+        let ops_workspace = clawmaster_config::agent_workspace_dir("ops");
         let ops_memory = ops_workspace.join("memory").join("daily.md");
         assert!(is_path_in_agent_memory_scope(&ops_memory, "ops"));
         assert!(!is_path_in_agent_memory_scope(&ops_memory, "research"));
 
-        let root_memory = moltis_config::data_dir().join("memory").join("root.md");
+        let root_memory = clawmaster_config::data_dir().join("memory").join("root.md");
         assert!(is_path_in_agent_memory_scope(&root_memory, "main"));
         assert!(!is_path_in_agent_memory_scope(&root_memory, "ops"));
     }
@@ -11051,7 +11051,7 @@ mod tests {
             &self,
             _messages: &[ChatMessage],
             _tools: &[Value],
-        ) -> Result<moltis_agents::model::CompletionResponse> {
+        ) -> Result<clawmaster_agents::model::CompletionResponse> {
             anyhow::bail!("not implemented")
         }
 

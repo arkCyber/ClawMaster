@@ -1,6 +1,6 @@
 # Metrics and Tracing
 
-Moltis includes comprehensive observability support through Prometheus metrics and
+ClawMaster includes comprehensive observability support through Prometheus metrics and
 tracing integration. This document explains how to enable, configure, and use
 these features.
 
@@ -26,14 +26,14 @@ Metrics are controlled by two feature flags:
 
 ```toml
 # Enable only metrics collection (no Prometheus endpoint)
-moltis-gateway = { version = "0.1", features = ["metrics"] }
+clawmaster-gateway = { version = "0.1", features = ["metrics"] }
 
 # Enable metrics with Prometheus export (default)
-moltis-gateway = { version = "0.1", features = ["metrics", "prometheus"] }
+clawmaster-gateway = { version = "0.1", features = ["metrics", "prometheus"] }
 
 # Enable metrics for specific crates
-moltis-agents = { version = "0.1", features = ["metrics"] }
-moltis-cron = { version = "0.1", features = ["metrics"] }
+clawmaster-agents = { version = "0.1", features = ["metrics"] }
+clawmaster-cron = { version = "0.1", features = ["metrics"] }
 ```
 
 To build without metrics entirely:
@@ -54,31 +54,31 @@ This endpoint is **unauthenticated** to allow Prometheus scrapers to access it.
 It returns metrics in Prometheus text format:
 
 ```
-# HELP moltis_http_requests_total Total number of HTTP requests handled
-# TYPE moltis_http_requests_total counter
-moltis_http_requests_total{method="GET",status="200",endpoint="/api/chat"} 42
+# HELP clawmaster_http_requests_total Total number of HTTP requests handled
+# TYPE clawmaster_http_requests_total counter
+clawmaster_http_requests_total{method="GET",status="200",endpoint="/api/chat"} 42
 
-# HELP moltis_llm_completion_duration_seconds Duration of LLM completion requests
-# TYPE moltis_llm_completion_duration_seconds histogram
-moltis_llm_completion_duration_seconds_bucket{provider="anthropic",model="claude-3-opus",le="1.0"} 5
+# HELP clawmaster_llm_completion_duration_seconds Duration of LLM completion requests
+# TYPE clawmaster_llm_completion_duration_seconds histogram
+clawmaster_llm_completion_duration_seconds_bucket{provider="anthropic",model="claude-3-opus",le="1.0"} 5
 ```
 
 ### Grafana Integration
 
 To scrape metrics with Prometheus and visualize in Grafana:
 
-1. Add moltis to your `prometheus.yml`:
+1. Add clawmaster to your `prometheus.yml`:
 
 ```yaml
 scrape_configs:
-  - job_name: 'moltis'
+  - job_name: 'clawmaster'
     static_configs:
       - targets: ['localhost:18789']
     metrics_path: /metrics
     scrape_interval: 15s
 ```
 
-2. Import or create Grafana dashboards using the `moltis_*` metrics.
+2. Import or create Grafana dashboards using the `clawmaster_*` metrics.
 
 ## JSON API Endpoints
 
@@ -120,7 +120,7 @@ time-series charts:
 ## Metrics Persistence
 
 Metrics history is persisted to SQLite, so historical data survives server
-restarts. The database is stored at `~/.moltis/metrics.db` (or the configured
+restarts. The database is stored at `~/.clawmaster/metrics.db` (or the configured
 data directory).
 
 Key features:
@@ -179,20 +179,20 @@ metrics and every 30 seconds for history.
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_http_requests_total` | Counter | method, status, endpoint | Total HTTP requests |
-| `moltis_http_request_duration_seconds` | Histogram | method, status, endpoint | Request latency |
-| `moltis_http_requests_in_flight` | Gauge | — | Currently processing requests |
+| `clawmaster_http_requests_total` | Counter | method, status, endpoint | Total HTTP requests |
+| `clawmaster_http_request_duration_seconds` | Histogram | method, status, endpoint | Request latency |
+| `clawmaster_http_requests_in_flight` | Gauge | — | Currently processing requests |
 
 ### LLM/Agent Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_llm_completions_total` | Counter | provider, model | Total completions requested |
-| `moltis_llm_completion_duration_seconds` | Histogram | provider, model | Completion latency |
-| `moltis_llm_input_tokens_total` | Counter | provider, model | Input tokens processed |
-| `moltis_llm_output_tokens_total` | Counter | provider, model | Output tokens generated |
-| `moltis_llm_completion_errors_total` | Counter | provider, model, error_type | Completion failures |
-| `moltis_llm_time_to_first_token_seconds` | Histogram | provider, model | Streaming TTFT |
+| `clawmaster_llm_completions_total` | Counter | provider, model | Total completions requested |
+| `clawmaster_llm_completion_duration_seconds` | Histogram | provider, model | Completion latency |
+| `clawmaster_llm_input_tokens_total` | Counter | provider, model | Input tokens processed |
+| `clawmaster_llm_output_tokens_total` | Counter | provider, model | Output tokens generated |
+| `clawmaster_llm_completion_errors_total` | Counter | provider, model, error_type | Completion failures |
+| `clawmaster_llm_time_to_first_token_seconds` | Histogram | provider, model | Streaming TTFT |
 
 #### Provider Aliases
 
@@ -212,8 +212,8 @@ alias = "anthropic-work"
 The alias appears in the `provider` label of all LLM metrics:
 
 ```
-moltis_llm_input_tokens_total{provider="anthropic-work", model="claude-3-opus"} 5000
-moltis_llm_input_tokens_total{provider="anthropic-personal", model="claude-3-opus"} 3000
+clawmaster_llm_input_tokens_total{provider="anthropic-work", model="claude-3-opus"} 5000
+clawmaster_llm_input_tokens_total{provider="anthropic-personal", model="claude-3-opus"} 3000
 ```
 
 This allows you to:
@@ -225,96 +225,96 @@ This allows you to:
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_mcp_tool_calls_total` | Counter | server, tool | Tool invocations |
-| `moltis_mcp_tool_call_duration_seconds` | Histogram | server, tool | Tool call latency |
-| `moltis_mcp_tool_call_errors_total` | Counter | server, tool, error_type | Tool call failures |
-| `moltis_mcp_servers_connected` | Gauge | — | Active MCP server connections |
+| `clawmaster_mcp_tool_calls_total` | Counter | server, tool | Tool invocations |
+| `clawmaster_mcp_tool_call_duration_seconds` | Histogram | server, tool | Tool call latency |
+| `clawmaster_mcp_tool_call_errors_total` | Counter | server, tool, error_type | Tool call failures |
+| `clawmaster_mcp_servers_connected` | Gauge | — | Active MCP server connections |
 
 ### Tool Execution Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_tool_executions_total` | Counter | tool | Tool executions |
-| `moltis_tool_execution_duration_seconds` | Histogram | tool | Execution time |
-| `moltis_sandbox_command_executions_total` | Counter | — | Sandbox commands run |
+| `clawmaster_tool_executions_total` | Counter | tool | Tool executions |
+| `clawmaster_tool_execution_duration_seconds` | Histogram | tool | Execution time |
+| `clawmaster_sandbox_command_executions_total` | Counter | — | Sandbox commands run |
 
 ### Session Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_sessions_created_total` | Counter | — | Sessions created |
-| `moltis_sessions_active` | Gauge | — | Currently active sessions |
-| `moltis_session_messages_total` | Counter | role | Messages by role |
+| `clawmaster_sessions_created_total` | Counter | — | Sessions created |
+| `clawmaster_sessions_active` | Gauge | — | Currently active sessions |
+| `clawmaster_session_messages_total` | Counter | role | Messages by role |
 
 ### Cron Job Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_cron_jobs_scheduled` | Gauge | — | Number of scheduled jobs |
-| `moltis_cron_executions_total` | Counter | — | Job executions |
-| `moltis_cron_execution_duration_seconds` | Histogram | — | Job duration |
-| `moltis_cron_errors_total` | Counter | — | Failed jobs |
-| `moltis_cron_stuck_jobs_cleared_total` | Counter | — | Jobs exceeding 2h timeout |
-| `moltis_cron_input_tokens_total` | Counter | — | Input tokens from cron runs |
-| `moltis_cron_output_tokens_total` | Counter | — | Output tokens from cron runs |
+| `clawmaster_cron_jobs_scheduled` | Gauge | — | Number of scheduled jobs |
+| `clawmaster_cron_executions_total` | Counter | — | Job executions |
+| `clawmaster_cron_execution_duration_seconds` | Histogram | — | Job duration |
+| `clawmaster_cron_errors_total` | Counter | — | Failed jobs |
+| `clawmaster_cron_stuck_jobs_cleared_total` | Counter | — | Jobs exceeding 2h timeout |
+| `clawmaster_cron_input_tokens_total` | Counter | — | Input tokens from cron runs |
+| `clawmaster_cron_output_tokens_total` | Counter | — | Output tokens from cron runs |
 
 ### Memory/Search Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_memory_searches_total` | Counter | search_type | Searches performed |
-| `moltis_memory_search_duration_seconds` | Histogram | search_type | Search latency |
-| `moltis_memory_embeddings_generated_total` | Counter | provider | Embeddings created |
+| `clawmaster_memory_searches_total` | Counter | search_type | Searches performed |
+| `clawmaster_memory_search_duration_seconds` | Histogram | search_type | Search latency |
+| `clawmaster_memory_embeddings_generated_total` | Counter | provider | Embeddings created |
 
 ### Channel Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_channels_active` | Gauge | — | Loaded channel plugins |
-| `moltis_channel_messages_received_total` | Counter | channel | Inbound messages |
-| `moltis_channel_messages_sent_total` | Counter | channel | Outbound messages |
+| `clawmaster_channels_active` | Gauge | — | Loaded channel plugins |
+| `clawmaster_channel_messages_received_total` | Counter | channel | Inbound messages |
+| `clawmaster_channel_messages_sent_total` | Counter | channel | Outbound messages |
 
 ### Telegram-Specific Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_telegram_messages_received_total` | Counter | — | Messages from Telegram |
-| `moltis_telegram_access_control_denials_total` | Counter | — | Access denied events |
-| `moltis_telegram_polling_duration_seconds` | Histogram | — | Message handling time |
+| `clawmaster_telegram_messages_received_total` | Counter | — | Messages from Telegram |
+| `clawmaster_telegram_access_control_denials_total` | Counter | — | Access denied events |
+| `clawmaster_telegram_polling_duration_seconds` | Histogram | — | Message handling time |
 
 ### OAuth Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_oauth_flow_starts_total` | Counter | — | OAuth flows initiated |
-| `moltis_oauth_flow_completions_total` | Counter | — | Successful completions |
-| `moltis_oauth_token_refresh_total` | Counter | — | Token refreshes |
-| `moltis_oauth_token_refresh_failures_total` | Counter | — | Refresh failures |
+| `clawmaster_oauth_flow_starts_total` | Counter | — | OAuth flows initiated |
+| `clawmaster_oauth_flow_completions_total` | Counter | — | Successful completions |
+| `clawmaster_oauth_token_refresh_total` | Counter | — | Token refreshes |
+| `clawmaster_oauth_token_refresh_failures_total` | Counter | — | Refresh failures |
 
 ### Skills Metrics
 
 | Metric | Type | Labels | Description |
 |--------|------|--------|-------------|
-| `moltis_skills_installation_attempts_total` | Counter | — | Installation attempts |
-| `moltis_skills_installation_duration_seconds` | Histogram | — | Installation time |
-| `moltis_skills_git_clone_total` | Counter | — | Successful git clones |
-| `moltis_skills_git_clone_fallback_total` | Counter | — | Fallbacks to HTTP tarball |
+| `clawmaster_skills_installation_attempts_total` | Counter | — | Installation attempts |
+| `clawmaster_skills_installation_duration_seconds` | Histogram | — | Installation time |
+| `clawmaster_skills_git_clone_total` | Counter | — | Successful git clones |
+| `clawmaster_skills_git_clone_fallback_total` | Counter | — | Fallbacks to HTTP tarball |
 
 ## Tracing Integration
 
-The `moltis-metrics` crate includes optional tracing integration via the
+The `clawmaster-metrics` crate includes optional tracing integration via the
 `tracing` feature. This allows span context to propagate to metric labels.
 
 ### Enabling Tracing
 
 ```toml
-moltis-metrics = { version = "0.1", features = ["prometheus", "tracing"] }
+clawmaster-metrics = { version = "0.1", features = ["prometheus", "tracing"] }
 ```
 
 ### Initialization
 
 ```rust
-use moltis_metrics::tracing_integration::init_tracing;
+use clawmaster_metrics::tracing_integration::init_tracing;
 
 fn main() {
     // Initialize tracing with metrics context propagation
@@ -354,10 +354,10 @@ The following span fields are propagated to metrics:
 
 ### In Your Code
 
-Use the `metrics` macros re-exported from `moltis-metrics`:
+Use the `metrics` macros re-exported from `clawmaster-metrics`:
 
 ```rust
-use moltis_metrics::{counter, gauge, histogram, labels};
+use clawmaster_metrics::{counter, gauge, histogram, labels};
 
 // Simple counter
 counter!("my_custom_requests_total").increment(1);
@@ -382,7 +382,7 @@ Always gate metrics code to avoid overhead when disabled:
 
 ```rust
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, histogram};
+use clawmaster_metrics::{counter, histogram};
 
 pub async fn my_function() {
     #[cfg(feature = "metrics")]
@@ -407,23 +407,23 @@ For consistency, add metric name constants to `crates/metrics/src/definitions.rs
 /// My feature metrics
 pub mod my_feature {
     /// Total operations performed
-    pub const OPERATIONS_TOTAL: &str = "moltis_my_feature_operations_total";
+    pub const OPERATIONS_TOTAL: &str = "clawmaster_my_feature_operations_total";
     /// Operation duration in seconds
-    pub const OPERATION_DURATION_SECONDS: &str = "moltis_my_feature_operation_duration_seconds";
+    pub const OPERATION_DURATION_SECONDS: &str = "clawmaster_my_feature_operation_duration_seconds";
 }
 ```
 
 Then use them:
 
 ```rust
-use moltis_metrics::{counter, my_feature};
+use clawmaster_metrics::{counter, my_feature};
 
 counter!(my_feature::OPERATIONS_TOTAL).increment(1);
 ```
 
 ## Configuration
 
-Metrics configuration in `moltis.toml`:
+Metrics configuration in `clawmaster.toml`:
 
 ```toml
 [metrics]
@@ -434,11 +434,11 @@ labels = { env = "prod" }   # Add custom labels to all metrics
 
 Environment variables:
 
-- `RUST_LOG=moltis_metrics=debug` — Enable debug logging for metrics initialization
+- `RUST_LOG=clawmaster_metrics=debug` — Enable debug logging for metrics initialization
 
 ## Best Practices
 
-1. **Use consistent naming**: Follow the pattern `moltis_<subsystem>_<metric>_<unit>`
+1. **Use consistent naming**: Follow the pattern `clawmaster_<subsystem>_<metric>_<unit>`
 2. **Add units to names**: `_total` for counters, `_seconds` for durations, `_bytes` for sizes
 3. **Keep cardinality low**: Avoid high-cardinality labels (like user IDs or request IDs)
 4. **Feature-gate everything**: Use `#[cfg(feature = "metrics")]` to ensure zero overhead when disabled
@@ -451,7 +451,7 @@ Environment variables:
 1. Verify the `metrics` feature is enabled at compile time
 2. Check that the metrics recorder is initialized (happens automatically in gateway)
 3. Ensure you're hitting the correct `/metrics` endpoint
-4. Check `moltis.toml` has `[metrics] enabled = true`
+4. Check `clawmaster.toml` has `[metrics] enabled = true`
 
 ### Prometheus endpoint not available
 

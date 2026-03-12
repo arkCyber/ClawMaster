@@ -1,0 +1,13 @@
+package clawmaster:hex-decode@0.1.0;
+
+/// Hex decoding tool for Moltis AI agents.
+world hex-decode {
+    /// Decode hex string to bytes.
+    export decode: func(input: string) -> result<list<u8>, string>;
+    
+    /// Decode hex to string.
+    export decode-string: func(input: string) -> result<string, string>;
+    
+    /// Validate hex string.
+    export is-valid: func(input: string) -> bool;
+}

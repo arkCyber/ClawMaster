@@ -2,7 +2,7 @@
 
 ## Goal
 
-Introduce a storage abstraction for configuration and credentials so Moltis can:
+Introduce a storage abstraction for configuration and credentials so ClawMaster can:
 
 1. Stop depending on file-only config writes for mutable runtime settings.
 2. Use SQLite as the primary durable config backend.
@@ -14,13 +14,13 @@ In scope:
 
 - New `ConfigStore` trait and implementations.
 - Migration of mutable config/credential paths to the trait.
-- Backward-compatible bootstrap from `moltis.toml` and existing JSON files.
+- Backward-compatible bootstrap from `clawmaster.toml` and existing JSON files.
 - Tests and migration tooling.
 
 Out of scope (for this branch):
 
 - Full PostgreSQL implementation.
-- Removal of `moltis.toml` support.
+- Removal of `clawmaster.toml` support.
 - Reworking session/message/memory storage formats.
 
 ## Current State (Baseline)
@@ -36,10 +36,10 @@ Out of scope (for this branch):
 
 Add `ConfigStore` trait in `crates/config` (or a new small crate if needed):
 
-- `load_effective() -> MoltisConfig` (resolved view)
-- `load_raw() -> MoltisConfig` (without env overrides)
-- `save_raw(&MoltisConfig)`
-- `update_raw(fn(&mut MoltisConfig))`
+- `load_effective() -> ClawMasterConfig` (resolved view)
+- `load_raw() -> ClawMasterConfig` (without env overrides)
+- `save_raw(&ClawMasterConfig)`
+- `update_raw(fn(&mut ClawMasterConfig))`
 - `source_metadata()` (where values came from, optional)
 
 Keep env overrides as a separate layer, applied after store reads.
@@ -71,7 +71,7 @@ Minimal first model:
 - `config_documents`
   - `id` (singleton key)
   - `format_version`
-  - `payload_json` (serialized `MoltisConfig`)
+  - `payload_json` (serialized `ClawMasterConfig`)
   - `updated_at`
 
 - `provider_configs`
@@ -147,5 +147,5 @@ To ease later move to PostgreSQL:
 ## Open Decisions
 
 - Should sqlite become default immediately or after one release cycle?
-- Do we keep full `MoltisConfig` blob storage long-term, or normalize early?
+- Do we keep full `ClawMasterConfig` blob storage long-term, or normalize early?
 - Where to keep secret material policy for provider keys (existing file parity vs encrypted at rest)?

@@ -131,8 +131,8 @@ impl BrowserManager {
                     },
                     Err(e) => {
                         #[cfg(feature = "metrics")]
-                        moltis_metrics::counter!(
-                            moltis_metrics::browser::ERRORS_TOTAL,
+                        clawmaster_metrics::counter!(
+                            clawmaster_metrics::browser::ERRORS_TOTAL,
                             "type" => e.to_string()
                         )
                         .increment(1);
@@ -147,8 +147,8 @@ impl BrowserManager {
             },
             Err(_) => {
                 #[cfg(feature = "metrics")]
-                moltis_metrics::counter!(
-                    moltis_metrics::browser::ERRORS_TOTAL,
+                clawmaster_metrics::counter!(
+                    clawmaster_metrics::browser::ERRORS_TOTAL,
                     "type" => "timeout"
                 )
                 .increment(1);
@@ -301,7 +301,7 @@ impl BrowserManager {
 
         #[cfg(feature = "metrics")]
         {
-            moltis_metrics::histogram!(moltis_metrics::browser::NAVIGATION_DURATION_SECONDS)
+            clawmaster_metrics::histogram!(clawmaster_metrics::browser::NAVIGATION_DURATION_SECONDS)
                 .record(nav_start.elapsed().as_secs_f64());
         }
 
@@ -355,7 +355,7 @@ impl BrowserManager {
         let data_uri = format!("data:image/png;base64,{}", BASE64.encode(&screenshot));
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::counter!(moltis_metrics::browser::SCREENSHOTS_TOTAL).increment(1);
+        clawmaster_metrics::counter!(clawmaster_metrics::browser::SCREENSHOTS_TOTAL).increment(1);
 
         // Calculate approximate dimensions from PNG data (width/height are in bytes 16-23)
         let (width, height) = if screenshot.len() > 24 {

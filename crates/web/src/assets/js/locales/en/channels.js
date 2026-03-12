@@ -90,4 +90,6 @@ export default {
 		modelServerDefault: "(server default)",
 		dmAllowlistLabel: "DM Allowlist",
 	},
+	confirmRemove: "Remove {{name}}?",
+	confirmRemoveMessage: "This action cannot be undone.",
 };

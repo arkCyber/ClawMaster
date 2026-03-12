@@ -50,9 +50,9 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
             port,
             log_level,
         } => {
-            let data_dir = moltis_config::data_dir();
-            let log_path = data_dir.join("moltis.log");
-            let moltis_bin = resolve_binary()?;
+            let data_dir = clawmaster_config::data_dir();
+            let log_path = data_dir.join("clawmaster.log");
+            let clawmaster_bin = resolve_binary()?;
 
             let opts = GatewayServiceOpts {
                 bind,
@@ -61,14 +61,14 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
             };
 
             if cfg!(target_os = "macos") {
-                install_launchd(&moltis_bin, &opts, &log_path)?;
+                install_launchd(&clawmaster_bin, &opts, &log_path)?;
             } else if cfg!(target_os = "linux") {
-                install_systemd(&moltis_bin, &opts, &log_path)?;
+                install_systemd(&clawmaster_bin, &opts, &log_path)?;
             } else {
                 anyhow::bail!("service install not supported on {}", std::env::consts::OS);
             }
 
-            println!("Moltis service installed and started.");
+            println!("ClawMaster service installed and started.");
             println!("Logs: {}", log_path.display());
             Ok(())
         },
@@ -84,7 +84,7 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
                     std::env::consts::OS
                 );
             }
-            println!("Moltis service uninstalled.");
+            println!("ClawMaster service uninstalled.");
             Ok(())
         },
 
@@ -96,7 +96,7 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
             } else {
                 anyhow::bail!("service status not supported on {}", std::env::consts::OS);
             };
-            println!("Moltis service: {status}");
+            println!("ClawMaster service: {status}");
             Ok(())
         },
 
@@ -108,7 +108,7 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
             } else {
                 anyhow::bail!("service stop not supported on {}", std::env::consts::OS);
             }
-            println!("Moltis service stopped.");
+            println!("ClawMaster service stopped.");
             Ok(())
         },
 
@@ -120,13 +120,13 @@ pub fn handle_service(action: ServiceAction) -> Result<()> {
             } else {
                 anyhow::bail!("service restart not supported on {}", std::env::consts::OS);
             }
-            println!("Moltis service restarted.");
+            println!("ClawMaster service restarted.");
             Ok(())
         },
 
         ServiceAction::Logs => {
-            let data_dir = moltis_config::data_dir();
-            println!("{}", data_dir.join("moltis.log").display());
+            let data_dir = clawmaster_config::data_dir();
+            println!("{}", data_dir.join("clawmaster.log").display());
             Ok(())
         },
     }
@@ -164,12 +164,12 @@ impl std::fmt::Display for ServiceStatus {
 fn resolve_binary() -> Result<PathBuf> {
     if let Ok(exe) = std::env::current_exe() {
         let name = exe.file_name().unwrap_or_default().to_string_lossy();
-        if name == "moltis" || name.starts_with("moltis-") {
+        if name == "clawmaster" || name.starts_with("clawmaster-") {
             return Ok(exe);
         }
     }
 
-    which::which("moltis").map_err(|_| {
+    which::which("clawmaster").map_err(|_| {
         anyhow::anyhow!("cannot find 'moltis' binary; ensure it is installed and in PATH")
     })
 }
@@ -192,7 +192,7 @@ fn uid() -> u32 {
 // ── macOS launchd ──────────────────────────────────────────────────────────
 
 const LAUNCHD_LABEL: &str = "org.moltis.gateway";
-const SYSTEMD_UNIT: &str = "moltis.service";
+const SYSTEMD_UNIT: &str = "clawmaster.service";
 
 fn launchd_plist_path() -> Result<PathBuf> {
     let home = home_dir()?;
@@ -202,8 +202,8 @@ fn launchd_plist_path() -> Result<PathBuf> {
         .join(format!("{LAUNCHD_LABEL}.plist")))
 }
 
-fn generate_launchd_plist(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
-    let bin = moltis_bin.display();
+fn generate_launchd_plist(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
+    let bin = clawmaster_bin.display();
     let log = log_path.display();
 
     let mut args = vec![
@@ -255,7 +255,7 @@ fn generate_launchd_plist(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path
     )
 }
 
-fn install_launchd(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
+fn install_launchd(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
     let plist_path = launchd_plist_path()?;
 
     // Unload first if already loaded (ignore errors).
@@ -267,7 +267,7 @@ fn install_launchd(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path
         ])
         .output();
 
-    let plist = generate_launchd_plist(moltis_bin, opts, log_path);
+    let plist = generate_launchd_plist(clawmaster_bin, opts, log_path);
 
     if let Some(parent) = plist_path.parent() {
         fs::create_dir_all(parent)?;
@@ -383,8 +383,8 @@ fn systemd_unit_path() -> Result<PathBuf> {
         .join(SYSTEMD_UNIT))
 }
 
-fn generate_systemd_unit(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
-    let bin = moltis_bin.display();
+fn generate_systemd_unit(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
+    let bin = clawmaster_bin.display();
     let log = log_path.display();
 
     let mut exec_args = format!("{bin} --log-level {}", opts.log_level);
@@ -398,7 +398,7 @@ fn generate_systemd_unit(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path:
 
     format!(
         r#"[Unit]
-Description=Moltis Gateway
+Description=ClawMaster Gateway
 After=network-online.target
 Wants=network-online.target
 
@@ -417,14 +417,14 @@ WantedBy=default.target
     )
 }
 
-fn install_systemd(moltis_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
+fn install_systemd(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
     let unit_path = systemd_unit_path()?;
 
     let _ = Command::new("systemctl")
         .args(["--user", "stop", SYSTEMD_UNIT])
         .output();
 
-    let unit = generate_systemd_unit(moltis_bin, opts, log_path);
+    let unit = generate_systemd_unit(clawmaster_bin, opts, log_path);
 
     if let Some(parent) = unit_path.parent() {
         fs::create_dir_all(parent)?;
@@ -599,7 +599,7 @@ mod tests {
         assert!(unit.contains("[Unit]"));
         assert!(unit.contains("[Service]"));
         assert!(unit.contains("[Install]"));
-        assert!(unit.contains("Moltis Gateway"));
+        assert!(unit.contains("ClawMaster Gateway"));
         assert!(unit.contains("/usr/bin/moltis --log-level info"));
         assert!(unit.contains("Restart=on-failure"));
         assert!(unit.contains("RestartSec=10"));

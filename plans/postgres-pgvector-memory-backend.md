@@ -8,7 +8,7 @@
 ## Overview
 
 Add PostgreSQL with pgvector as a feature-gated alternative to the SQLite
-memory backend. The main database (`moltis.db`) stays SQLite — only the memory
+memory backend. The main database (`clawmaster.db`) stays SQLite — only the memory
 system (`memory.db`) gets a Postgres option. This gives power users native
 vector similarity search (HNSW indexes), real concurrency, and multi-user
 support while preserving the zero-dependency default.
@@ -79,8 +79,8 @@ Gate `SqliteMemoryStore` behind `#[cfg(feature = "sqlite")]` and the new
 ```toml
 [features]
 default = ["memory-sqlite", ...]
-memory-sqlite = ["moltis-memory/sqlite"]
-memory-postgres = ["moltis-memory/postgres"]
+memory-sqlite = ["clawmaster-memory/sqlite"]
+memory-postgres = ["clawmaster-memory/postgres"]
 ```
 
 Both can be enabled simultaneously; the user picks at runtime via config.
@@ -92,7 +92,7 @@ Add memory backend config:
 ```toml
 [memory]
 backend = "sqlite"                              # or "postgres"
-database_url = "postgresql://user:pass@localhost/moltis"  # required for postgres
+database_url = "postgresql://user:pass@localhost/clawmaster"  # required for postgres
 ```
 
 Add `MemoryBackend` enum (`Sqlite | Postgres`) and
@@ -117,7 +117,7 @@ Implementation notes:
   since compile-time checking requires a live DB at build time.
 - pgvector `vector(N)` requires a fixed dimension. Store dimension in config
   and validate on startup. If the embedding model changes dimensions, require
-  explicit re-index (`moltis memory reindex`).
+  explicit re-index (`clawmaster memory reindex`).
 - HNSW index creation:
   `CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops)`.
 
@@ -204,7 +204,7 @@ pgvector needs a known dimension for HNSW indexes:
   `("embedding_dims", "1536")`
 - On first sync, record the dimension from the configured provider
 - On subsequent syncs, if the provider dimension changes, warn and require
-  explicit re-index via `moltis memory reindex`
+  explicit re-index via `clawmaster memory reindex`
 - Without HNSW (no fixed dimension), pgvector still works via sequential
   scan — faster than loading all BLOBs into Rust
 
@@ -220,7 +220,7 @@ pgvector needs a known dimension for HNSW indexes:
 
 - Add `docs/src/postgres-memory.md`:
   - How to set up Postgres + pgvector (Docker one-liner)
-  - Configuration in `moltis.toml`
+  - Configuration in `clawmaster.toml`
   - When to use Postgres vs SQLite (scale guidelines)
   - Migration from SQLite to Postgres (export/import)
 - Update `docs/src/SUMMARY.md`
@@ -248,7 +248,7 @@ Under `[Unreleased]`:
 
 ## Out of Scope
 
-- Migrating main DB (`moltis.db`) to Postgres
+- Migrating main DB (`clawmaster.db`) to Postgres
 - Migrating session JSONL storage to Postgres
 - Automatic SQLite-to-Postgres data migration tool (future work)
 - Multi-tenancy / row-level security

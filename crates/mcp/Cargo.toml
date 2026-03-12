@@ -1,18 +1,18 @@
 [package]
 edition.workspace = true
-name              = "moltis-mcp"
+name              = "clawmaster-mcp"
 version.workspace = true
 
 [features]
 default = ["metrics"]
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dependencies]
 async-trait    = { workspace = true }
 futures        = { workspace = true }
-moltis-common  = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
-moltis-oauth   = { workspace = true }
+clawmaster-common  = { workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
+clawmaster-oauth   = { workspace = true }
 reqwest        = { workspace = true }
 secrecy        = { workspace = true }
 serde          = { workspace = true }

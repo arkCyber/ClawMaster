@@ -5,8 +5,8 @@ import os
 
 // MARK: - GraphQL client
 
-actor MoltisGraphQLClient {
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "graphql")
+actor ClawMasterGraphQLClient {
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "graphql")
     private var server: ServerConnection?
     private var apolloClient: ApolloClient?
 
@@ -123,20 +123,20 @@ actor MoltisGraphQLClient {
     // MARK: - Standard queries
 
     func fetchSessions() async throws -> [GQLSession] {
-        let data = try await execute(MoltisAPI.FetchSessionsQuery(), operationName: "FetchSessions")
+        let data = try await execute(ClawMasterAPI.FetchSessionsQuery(), operationName: "FetchSessions")
         return data.sessions.list.map { mapSession($0.fragments.sessionFields) }
     }
 
     func searchSessions(query searchQuery: String) async throws -> [GQLSession] {
         let data = try await execute(
-            MoltisAPI.SearchSessionsQuery(query: searchQuery),
+            ClawMasterAPI.SearchSessionsQuery(query: searchQuery),
             operationName: "SearchSessions"
         )
         return data.sessions.search.map { mapSession($0.fragments.sessionFields) }
     }
 
     func fetchModels() async throws -> [GQLModel] {
-        let data = try await execute(MoltisAPI.FetchModelsQuery(), operationName: "FetchModels")
+        let data = try await execute(ClawMasterAPI.FetchModelsQuery(), operationName: "FetchModels")
         return data.models.list.map { model in
             GQLModel(
                 id: model.id,
@@ -147,7 +147,7 @@ actor MoltisGraphQLClient {
         }
     }
 
-    private func mapSession(_ s: MoltisAPI.SessionFields) -> GQLSession {
+    private func mapSession(_ s: ClawMasterAPI.SessionFields) -> GQLSession {
         let key = s.key ?? ""
         return GQLSession(
             id: s.id ?? key,
@@ -164,7 +164,7 @@ actor MoltisGraphQLClient {
     }
 
     func fetchStatus() async throws -> GQLStatus {
-        let data = try await execute(MoltisAPI.FetchStatusQuery(), operationName: "FetchStatus")
+        let data = try await execute(ClawMasterAPI.FetchStatusQuery(), operationName: "FetchStatus")
         return GQLStatus(
             hostname: data.status.hostname,
             version: data.status.version,
@@ -186,7 +186,7 @@ actor MoltisGraphQLClient {
         }
 
         let data = try await execute(
-            MoltisAPI.UpdateUserLocationMutation(input: payloadString),
+            ClawMasterAPI.UpdateUserLocationMutation(input: payloadString),
             operationName: "UpdateUserLocation"
         )
         return data.agents.updateIdentity.ok

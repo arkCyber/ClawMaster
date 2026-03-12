@@ -14,10 +14,52 @@
 import { signal, useComputed } from "@preact/signals";
 import i18next from "i18next";
 
-var STORAGE_KEY = "moltis-locale";
+var STORAGE_KEY = "clawmaster-locale";
 var initPromise = null;
-var SUPPORTED_LOCALES = new Set(["en", "fr", "zh"]);
-export var supportedLocales = Object.freeze(["en", "fr", "zh"]);
+// 支持 16 种语言
+var SUPPORTED_LOCALES = new Set([
+	"en", // English
+	"zh", // 中文
+	"es", // Español
+	"fr", // Français
+	"de", // Deutsch
+	"ja", // 日本語
+	"ko", // 한국어
+	"ru", // Русский
+	"pt", // Português
+	"it", // Italiano
+	"ar", // العربية
+	"hi", // हिन्दी
+	"tr", // Türkçe
+	"nl", // Nederlands
+	"pl", // Polski
+	"vi", // Tiếng Việt
+]);
+
+export var supportedLocales = Object.freeze([
+	"en", "zh", "es", "fr", "de", "ja", "ko", "ru",
+	"pt", "it", "ar", "hi", "tr", "nl", "pl", "vi"
+]);
+
+// 语言显示名称（本地化）
+export var localeNames = Object.freeze({
+	en: "English",
+	zh: "中文",
+	es: "Español",
+	fr: "Français",
+	de: "Deutsch",
+	ja: "日本語",
+	ko: "한국어",
+	ru: "Русский",
+	pt: "Português",
+	it: "Italiano",
+	ar: "العربية",
+	hi: "हिन्दी",
+	tr: "Türkçe",
+	nl: "Nederlands",
+	pl: "Polski",
+	vi: "Tiếng Việt",
+});
 
 function normalizeLocaleTag(value) {
 	if (!value) return "en";
@@ -183,7 +225,7 @@ export function setLocale(lng) {
 			applyDocumentLocale(normalized);
 			// Re-translate any static data-i18n elements.
 			translateStaticElements(document.documentElement);
-			window.dispatchEvent(new CustomEvent("moltis:locale-changed", { detail: { locale: normalized } }));
+			window.dispatchEvent(new CustomEvent("clawmaster:locale-changed", { detail: { locale: normalized } }));
 		}),
 	);
 }

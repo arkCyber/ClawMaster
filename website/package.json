@@ -1,5 +1,5 @@
 {
-  "name": "moltis-website",
+  "name": "clawmaster-website",
   "private": true,
   "scripts": {
     "build": "node scripts/build-statement.mjs",

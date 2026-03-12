@@ -1,5 +1,5 @@
 /* Moltis Documentation - Custom Theme
-   Matches www.moltis.org design system */
+   Matches www.clawmaster.org design system */
 
 /* ===== Google Fonts ===== */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
@@ -388,7 +388,7 @@
 }
 
 /* ============================================
-   LIGHT THEME - Matches moltis.org light mode
+   LIGHT THEME - Matches clawmaster.org light mode
    ============================================ */
 .light {
     --bg: #ffffff;
@@ -429,7 +429,7 @@
 }
 
 /* ============================================
-   DARK THEME (Navy) - Matches moltis.org dark mode
+   DARK THEME (Navy) - Matches clawmaster.org dark mode
    ============================================ */
 .navy, .coal, .ayu {
     --bg: #111827;  /* gray-900 */

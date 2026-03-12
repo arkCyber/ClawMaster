@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Moltis macOS app will be documented in this file.
+All notable changes to the ClawMaster macOS app will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -10,20 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Settings panels connected to Rust backend — all settings (Identity, Soul,
   Heartbeat, Memory, Security, Tailscale, Monitoring, GraphQL, Sandbox, Voice,
-  Channels, Hooks, MCP, Skills) now load from and save to `moltis.toml`,
+  Channels, Hooks, MCP, Skills) now load from and save to `clawmaster.toml`,
   `IDENTITY.md`, `USER.md`, and `SOUL.md` via 6 new FFI functions
-  (`moltis_get_config`, `moltis_save_config`, `moltis_get_soul`,
-  `moltis_save_soul`, `moltis_save_identity`, `moltis_save_user_profile`)
+  (`clawmaster_get_config`, `clawmaster_save_config`, `clawmaster_get_soul`,
+  `clawmaster_save_soul`, `clawmaster_save_identity`, `clawmaster_save_user_profile`)
 - Environment panel shows read-only `config_dir` and `data_dir` paths
 - Environment panel now matches web UI behavior with env-var CRUD backed by the
-  credential store (`moltis_list_env_vars`, `moltis_set_env_var`,
-  `moltis_delete_env_var`), including encrypted/plaintext badges and vault
+  credential store (`clawmaster_list_env_vars`, `clawmaster_set_env_var`,
+  `clawmaster_delete_env_var`), including encrypted/plaintext badges and vault
   status messaging
 - Tailscale panel uses mode picker (off/serve/funnel) matching config schema
 - Real-time session sync with web UI — sessions created, deleted, or patched in
   the web UI now instantly appear in the macOS sidebar (and vice versa) via the
-  new `SessionEventBus` and `moltis_set_session_event_callback` FFI
-- Full Moltis gateway in the HTTP Server pane — starts the complete gateway
+  new `SessionEventBus` and `clawmaster_set_session_event_callback` FFI
+- Full ClawMaster gateway in the HTTP Server pane — starts the complete gateway
   (web UI, REST API, WebSocket endpoints, DB migrations, background services)
   instead of a minimal health-check-only server
 - Bind address picker (Loopback / All interfaces) replacing the free-text host field
@@ -31,26 +31,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Async server startup dispatched off the main thread to keep the UI responsive
 - Model picker labels now show context size and tier badges
 - Provider model list sorting by context window size
-- Identity loaded from `moltis.toml` + `SOUL.md` at startup via new
-  `moltis_get_identity` FFI — Settings→Identity now shows agent name, emoji,
+- Identity loaded from `clawmaster.toml` + `SOUL.md` at startup via new
+  `clawmaster_get_identity` FFI — Settings→Identity now shows agent name, emoji,
   theme, user name, and soul
 - Version loaded on app launch via `chatStore.loadVersion()`
 - Persistent session storage via FFI — sessions backed by JSONL files shared
   with the web UI and TUI (no longer ephemeral in-memory arrays)
-- Session CRUD FFI functions: `moltis_list_sessions`, `moltis_switch_session`,
-  `moltis_create_session`, `moltis_session_chat_stream`
+- Session CRUD FFI functions: `clawmaster_list_sessions`, `clawmaster_switch_session`,
+  `clawmaster_create_session`, `clawmaster_session_chat_stream`
 - Session sidebar now loads from disk and shows message counts
 - Abort generation button (red stop circle) replaces the send button while streaming
 - Peek popover on session toolbar (eye icon) showing thinking text, active tool calls, or idle state
-- `abortSession(key:)` and `peekSession(key:)` FFI bindings via `moltis_abort_session` and `moltis_peek_session`
-- Chat messages are persisted to `~/.moltis/data/sessions/<key>.jsonl`
+- `abortSession(key:)` and `peekSession(key:)` FFI bindings via `clawmaster_abort_session` and `clawmaster_peek_session`
+- Chat messages are persisted to `~/.clawmaster/data/sessions/<key>.jsonl`
 - "Open in Browser" button in HTTP Server pane when the gateway is running
 - Memory settings now match web UI flow with status/config sections:
   backend selection (Built-in/QMD), citation mode, LLM reranking, session
   export, QMD availability, and explicit save feedback
 - New memory bridge endpoints for macOS settings:
-  `moltis_memory_status`, `moltis_memory_config_get`,
-  `moltis_memory_config_update`, `moltis_memory_qmd_status`
+  `clawmaster_memory_status`, `clawmaster_memory_config_get`,
+  `clawmaster_memory_config_update`, `clawmaster_memory_qmd_status`
 - Sandboxes settings now match web UI behavior: runtime backend status and
   recommendations, default image override, shared home controls, running
   container management, cached image management, and custom image build flow
@@ -58,7 +58,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Session metadata now stored in SQLite (`moltis.db`) instead of JSON file,
+- Session metadata now stored in SQLite (`clawmaster.db`) instead of JSON file,
   so the macOS app and web UI share the same session list
 
 - HTTP Server description updated to reflect full gateway capability
@@ -78,12 +78,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Full-screen monospace TOML configuration editor with file I/O
-  - Loads and saves `~/.moltis/moltis.toml` directly
+  - Loads and saves `~/.clawmaster/clawmaster.toml` directly
   - Unsaved-changes indicator, Reveal in Finder button, Cmd+S save
-- Streaming LLM responses via C function pointer callback (`moltis_chat_stream` FFI)
+- Streaming LLM responses via C function pointer callback (`clawmaster_chat_stream` FFI)
 - Themed message bubbles matching web UI colors (light/dark mode)
 - Live token bar with K/M formatting for input/output tokens
-- In-app logging system with Rust-to-Swift bridge (`moltis_set_log_callback`)
+- In-app logging system with Rust-to-Swift bridge (`clawmaster_set_log_callback`)
   - LogStore with level/target/search filtering, pause/resume
   - JSONL export and clipboard copy
 - Thinking dots and streaming cursor animations
@@ -101,10 +101,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Initial macOS app structure under `apps/macos/`
-- Swift-Rust FFI bridge via `moltis-swift-bridge` static library
+- Swift-Rust FFI bridge via `clawmaster-swift-bridge` static library
   - JSON serialization between Swift and Rust
   - `with_ffi_boundary` panic safety wrapper
-  - `consumeCStringPointer` + `moltis_free_string` memory management
+  - `consumeCStringPointer` + `clawmaster_free_string` memory management
 - Chat interface with message history and send functionality
 - Provider management: list known providers, save API keys, detect configured providers
 - Model listing and selection
@@ -115,8 +115,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Colored icon badges, section grouping, search filtering
 - Structured DisclosureGroup list views for Channels, Hooks, MCP, Skills, Crons
 - Onboarding flow for first-launch provider setup
-- Retina app icon asset catalog (16–1024px from Moltis crab SVG)
-- `MoltisClient` helper with `callBridge` pattern for FFI encode-call-decode
+- Retina app icon asset catalog (16–1024px from ClawMaster crab SVG)
+- `ClawMasterClient` helper with `callBridge` pattern for FFI encode-call-decode
 - `BridgeHttpdStatus`, `startHttpd`, `stopHttpd`, `httpdStatus` client methods
 - Resizable settings window via AppKit styleMask integration
 

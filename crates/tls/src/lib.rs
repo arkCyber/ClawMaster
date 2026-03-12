@@ -31,7 +31,7 @@ use {
 
 /// The hostname used for loopback URLs instead of raw `127.0.0.1`.
 /// Subdomains of `.localhost` resolve to loopback per RFC 6761.
-pub const LOCALHOST_DOMAIN: &str = "moltis.localhost";
+pub const LOCALHOST_DOMAIN: &str = "clawmaster.localhost";
 
 /// DNS SAN names that must always exist on generated server certificates.
 fn required_dns_san_names() -> Vec<String> {
@@ -101,7 +101,7 @@ impl FsCertManager {
 
 /// Returns the certificate storage directory (`~/.config/moltis/certs/`).
 pub fn cert_dir() -> Result<PathBuf> {
-    let dir = moltis_config::config_dir()
+    let dir = clawmaster_config::config_dir()
         .unwrap_or_else(|| PathBuf::from(".moltis"))
         .join("certs");
     std::fs::create_dir_all(&dir).context("failed to create certs directory")?;
@@ -327,7 +327,7 @@ async fn serve_ca_cert(State(state): State<HttpRedirectState>) -> impl IntoRespo
             ("content-type", "application/x-pem-file"),
             (
                 "content-disposition",
-                "attachment; filename=\"moltis-ca.pem\"",
+                "attachment; filename=\"clawmaster-ca.pem\"",
             ),
         ],
         state.ca_pem.as_ref().clone(),
@@ -611,7 +611,7 @@ mod tests {
         let mut headers = axum::http::HeaderMap::new();
         headers.insert(
             axum::http::header::HOST,
-            "moltis.localhost:18080".parse().unwrap(),
+            "clawmaster.localhost:18080".parse().unwrap(),
         );
         let uri: axum::http::Uri = "/foo?bar=baz".parse().unwrap();
         let response = redirect_to_https(State(state), headers, uri)

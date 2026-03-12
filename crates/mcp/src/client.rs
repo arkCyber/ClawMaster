@@ -8,7 +8,7 @@ use tracing::{debug, info, warn};
 use std::time::Instant;
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, gauge, histogram, labels, mcp as mcp_metrics};
+use clawmaster_metrics::{counter, gauge, histogram, labels, mcp as mcp_metrics};
 
 use crate::{
     auth::SharedAuthProvider,
@@ -136,7 +136,7 @@ impl McpClient {
             protocol_version: PROTOCOL_VERSION.into(),
             capabilities: ClientCapabilities::default(),
             client_info: ClientInfo {
-                name: "moltis".into(),
+                name: "clawmaster".into(),
                 version: env!("CARGO_PKG_VERSION").into(),
             },
         };

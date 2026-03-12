@@ -46,7 +46,7 @@ Create request structs in `crates/gateway/src/session.rs` (or `session_types.rs`
 - `ByMessageIndex(usize)`
 
 ### 2) Typed session message adapter
-Use `moltis_sessions::message::PersistedMessage` as the canonical type in `session.rs`.
+Use `clawmaster_sessions::message::PersistedMessage` as the canonical type in `session.rs`.
 
 Add adapter helpers:
 - `fn parse_history(values: Vec<Value>) -> Result<Vec<PersistedMessage>, String>`
@@ -129,8 +129,8 @@ Targeted tests (not full suite):
 - Store typed API tests in `crates/sessions/src/store.rs`.
 
 Suggested commands:
-- `cargo test -p moltis-gateway session::tests::`
-- `cargo test -p moltis-sessions store::tests::`
+- `cargo test -p clawmaster-gateway session::tests::`
+- `cargo test -p clawmaster-sessions store::tests::`
 - `cargo fmt`
 - `cargo clippy --all --benches --tests --examples --all-features`
 

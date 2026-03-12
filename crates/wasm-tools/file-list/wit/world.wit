@@ -1,0 +1,71 @@
+package clawmaster:file-list@0.1.0;
+
+/// File listing tool for Moltis AI agents.
+///
+/// This tool provides directory listing with filtering and metadata.
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All operations return Result types
+/// DO-178C §11.10: Resource management - Entry count limits enforced
+world file-list {
+    /// File entry information.
+    record file-entry {
+        /// File or directory name
+        name: string,
+        /// Full path
+        path: string,
+        /// Is directory
+        is-dir: bool,
+        /// File size in bytes (0 for directories)
+        size: u64,
+    }
+    
+    /// List directory contents.
+    ///
+    /// # Arguments
+    /// * `path` - Directory path to list
+    ///
+    /// # Returns
+    /// * `Ok(entries)` - List of file entries
+    /// * `Err(message)` - Error message if listing fails
+    ///
+    /// # Security
+    /// - Path validation
+    /// - Entry count limited to 1000
+    /// - Hidden files excluded by default
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All errors properly handled
+    export list-dir: func(path: string) -> result<list<file-entry>, string>;
+    
+    /// List directory with hidden files.
+    ///
+    /// # Arguments
+    /// * `path` - Directory path
+    /// * `include-hidden` - Include hidden files
+    ///
+    /// # Returns
+    /// * `Ok(entries)` - List of file entries
+    /// * `Err(message)` - Error message
+    export list-dir-all: func(path: string, include-hidden: bool) -> result<list<file-entry>, string>;
+    
+    /// Check if directory exists.
+    ///
+    /// # Arguments
+    /// * `path` - Directory path
+    ///
+    /// # Returns
+    /// * `true` if directory exists
+    /// * `false` otherwise
+    export dir-exists: func(path: string) -> bool;
+    
+    /// Count files in directory.
+    ///
+    /// # Arguments
+    /// * `path` - Directory path
+    ///
+    /// # Returns
+    /// * `Ok(count)` - Number of entries
+    /// * `Err(message)` - Error message
+    export count-entries: func(path: string) -> result<u32, string>;
+}

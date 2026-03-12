@@ -1,6 +1,6 @@
 # WhatsApp Channel
 
-Moltis supports WhatsApp as a messaging channel using the WhatsApp Linked Devices
+ClawMaster supports WhatsApp as a messaging channel using the WhatsApp Linked Devices
 protocol. Your WhatsApp account connects as a linked device (like WhatsApp Web),
 so no separate phone number or WhatsApp Business API is needed — you pair your
 existing personal or business WhatsApp by scanning a QR code.
@@ -9,7 +9,7 @@ existing personal or business WhatsApp by scanning a QR code.
 
 ```
 ┌────────────────┐   QR pair   ┌─────────────────┐   Signal   ┌──────────────┐
-│  Your Phone    │ ──────────► │  Moltis Gateway  │ ◄────────► │  WhatsApp    │
+│  Your Phone    │ ──────────► │  ClawMaster Gateway  │ ◄────────► │  WhatsApp    │
 │  (WhatsApp)    │             │  (linked device)  │            │  Servers     │
 └────────────────┘             └─────────────────┘            └──────────────┘
                                        │
@@ -20,9 +20,9 @@ existing personal or business WhatsApp by scanning a QR code.
                                └─────────────────┘
 ```
 
-1. Moltis registers as a **linked device** on your WhatsApp account
-2. Messages sent to your WhatsApp number arrive at both your phone and Moltis
-3. Moltis processes inbound messages through the configured LLM
+1. ClawMaster registers as a **linked device** on your WhatsApp account
+2. Messages sent to your WhatsApp number arrive at both your phone and ClawMaster
+3. ClawMaster processes inbound messages through the configured LLM
 4. The LLM reply is sent back through your WhatsApp account
 
 ```admonish info title="Dedicated vs Personal Number"
@@ -31,9 +31,9 @@ account. All messages to that number go to the bot. Clean separation, no
 accidental replies to personal contacts.
 
 **Personal number (self-chat):** Use your own WhatsApp account and message
-yourself via WhatsApp's "Message Yourself" feature. Moltis automatically
+yourself via WhatsApp's "Message Yourself" feature. ClawMaster automatically
 detects self-chat and prevents reply loops. Convenient for personal use.
-Note that Moltis (as a linked device) sees all your incoming messages —
+Note that ClawMaster (as a linked device) sees all your incoming messages —
 whether it *responds* is governed by access control (see below).
 ```
 
@@ -45,7 +45,7 @@ WhatsApp is behind the `whatsapp` cargo feature, enabled by default:
 # crates/cli/Cargo.toml
 [features]
 default = ["whatsapp", ...]
-whatsapp = ["moltis-gateway/whatsapp"]
+whatsapp = ["clawmaster-gateway/whatsapp"]
 ```
 
 When disabled, all WhatsApp code is compiled out — no QR code library, no
@@ -55,7 +55,7 @@ Signal Protocol store, no WhatsApp event handlers.
 
 The fastest way to connect WhatsApp:
 
-1. Start Moltis: `moltis serve`
+1. Start ClawMaster: `clawmaster serve`
 2. Open the web UI and navigate to **Settings > Channels**
 3. Click **+ Add Channel** > **WhatsApp**
 4. Enter an **Account ID** (any name you like, e.g. `my-whatsapp`)
@@ -66,7 +66,7 @@ The fastest way to connect WhatsApp:
 9. Scan the QR code
 10. The modal shows "Connected" with your phone's display name
 
-That's it — messages to your WhatsApp account are now processed by Moltis.
+That's it — messages to your WhatsApp account are now processed by ClawMaster.
 
 ```admonish tip
 The QR code refreshes automatically every ~20 seconds. If it expires before
@@ -75,11 +75,11 @@ you scan it, a new one appears without any action needed.
 
 ## Quick Start (Config File)
 
-You can also configure WhatsApp accounts in `moltis.toml`. This is useful for
+You can also configure WhatsApp accounts in `clawmaster.toml`. This is useful for
 automated deployments or when you want to pre-configure settings before pairing.
 
 ```toml
-# ~/.moltis/moltis.toml
+# ~/.clawmaster/clawmaster.toml
 
 [channels.whatsapp."my-whatsapp"]
 dm_policy = "open"
@@ -87,7 +87,7 @@ model = "anthropic/claude-sonnet-4-20250514"
 model_provider = "anthropic"
 ```
 
-Start Moltis and the account will begin the pairing process. The QR code is
+Start ClawMaster and the account will begin the pairing process. The QR code is
 printed to the terminal and also available via the web UI. Once paired, the
 config file is updated with:
 
@@ -114,7 +114,7 @@ Each WhatsApp account is a named entry under `[channels.whatsapp]`:
 | `paired` | bool | `false` | Whether QR code pairing is complete (auto-set) |
 | `display_name` | string | — | Phone name after pairing (auto-populated) |
 | `phone_number` | string | — | Phone number after pairing (auto-populated) |
-| `store_path` | string | — | Custom path to sled store; defaults to `~/.moltis/whatsapp/<account_id>/` |
+| `store_path` | string | — | Custom path to sled store; defaults to `~/.clawmaster/whatsapp/<account_id>/` |
 | `model` | string | — | Default LLM model ID for this account |
 | `model_provider` | string | — | Provider name for the model |
 | `dm_policy` | string | `"open"` | DM access policy: `"open"`, `"allowlist"`, or `"disabled"` |
@@ -190,7 +190,7 @@ user from the web UI instead of letting them self-approve.
 
 ### Using Your Personal Number Safely
 
-When Moltis is linked to your personal WhatsApp, it sees **every** incoming
+When ClawMaster is linked to your personal WhatsApp, it sees **every** incoming
 message — from friends, family, groups, everyone. The key question is: who
 does the bot *respond* to?
 
@@ -198,7 +198,7 @@ does the bot *respond* to?
 Yourself") bypass access control entirely. You are the account owner, so
 you're always authorized regardless of `dm_policy` settings.
 
-**Other people's messages follow `dm_policy`.** If you want Moltis to only
+**Other people's messages follow `dm_policy`.** If you want ClawMaster to only
 respond to your self-chat and ignore everyone else:
 
 ```toml
@@ -231,7 +231,7 @@ WhatsApp uses the Signal Protocol for end-to-end encryption. The encryption
 keys and session state are stored in a **sled database** at:
 
 ```
-~/.moltis/whatsapp/<account_id>/
+~/.clawmaster/whatsapp/<account_id>/
 ```
 
 This means:
@@ -244,13 +244,13 @@ This means:
   (useful for Docker volumes or shared storage)
 
 ```admonish warning
-Do not delete the sled store directory while Moltis is running. If you need
-to re-pair, stop Moltis first, then delete the directory and restart.
+Do not delete the sled store directory while ClawMaster is running. If you need
+to re-pair, stop ClawMaster first, then delete the directory and restart.
 ```
 
 ## Self-Chat
 
-Moltis automatically supports WhatsApp's "Message Yourself" feature. When you
+ClawMaster automatically supports WhatsApp's "Message Yourself" feature. When you
 send a message to yourself, the bot processes it as a regular inbound message
 and replies in the same chat.
 
@@ -262,7 +262,7 @@ This is useful for:
 ### Loop Prevention
 
 When the bot replies to your self-chat, WhatsApp delivers that reply back as
-an incoming message (since it's your own chat). Moltis uses two mechanisms to
+an incoming message (since it's your own chat). ClawMaster uses two mechanisms to
 prevent infinite reply loops:
 
 1. **Message ID tracking**: Every message the bot sends is recorded in a
@@ -278,7 +278,7 @@ Both checks are automatic — no configuration needed.
 
 ## Media Handling
 
-WhatsApp supports rich media messages. Moltis handles each type:
+WhatsApp supports rich media messages. ClawMaster handles each type:
 
 | Message Type | Handling |
 |--------------|----------|
@@ -340,12 +340,12 @@ Switch to the **Senders** tab to see everyone who has messaged the bot:
 
 - Ensure the `whatsapp` feature is enabled (it is by default)
 - Check terminal output for errors — the QR code is also printed to stdout
-- Verify the sled store directory is writable: `~/.moltis/whatsapp/`
+- Verify the sled store directory is writable: `~/.clawmaster/whatsapp/`
 
 ### "Logged Out" After Restart
 
 - This usually means the sled store was corrupted or deleted
-- Check that `~/.moltis/whatsapp/<account_id>/` exists and has data files
+- Check that `~/.clawmaster/whatsapp/<account_id>/` exists and has data files
 - Re-pair by removing the directory and restarting: the pairing flow starts again
 
 ### Bot Not Responding to Messages

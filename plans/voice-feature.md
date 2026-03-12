@@ -1,8 +1,8 @@
-# Voice Feature Implementation Plan for Moltis
+# Voice Feature Implementation Plan for ClawMaster
 
 ## Overview
 
-This plan outlines the implementation of comprehensive voice capabilities in moltis, based on research of openclaw's architecture. The goal is to provide:
+This plan outlines the implementation of comprehensive voice capabilities in clawmaster, based on research of openclaw's architecture. The goal is to provide:
 
 1. **Text-to-Speech (TTS)**: Convert AI responses to spoken audio
 2. **Speech-to-Text (STT)**: Transcribe user voice input
@@ -11,7 +11,7 @@ This plan outlines the implementation of comprehensive voice capabilities in mol
 
 ## Current State
 
-Moltis already has foundational infrastructure:
+ClawMaster already has foundational infrastructure:
 
 - **Service Traits** (`crates/gateway/src/services.rs:300-307, 1234-1239`):
   - `TtsService` trait with methods: `status`, `providers`, `enable`, `disable`, `convert`, `set_provider`
@@ -101,7 +101,7 @@ Moltis already has foundational infrastructure:
 2. **Streaming First**: Use streaming APIs where available for lower latency
 3. **Secret Handling**: All API keys use `Secret<String>` from secrecy crate
 4. **Async All The Way**: No blocking calls in async contexts
-5. **Configuration Driven**: All voice settings in `moltis.toml`
+5. **Configuration Driven**: All voice settings in `clawmaster.toml`
 
 ---
 

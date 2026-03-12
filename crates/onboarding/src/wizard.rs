@@ -2,7 +2,7 @@
 
 use std::io::{BufRead, Write};
 
-use moltis_config::{MoltisConfig, find_or_default_config_path, save_config};
+use clawmaster_config::{MoltisConfig, find_or_default_config_path, save_config};
 
 use crate::{Context, Result, state::WizardState};
 
@@ -14,17 +14,17 @@ pub async fn run_onboarding() -> Result<()> {
     let mut identity_name: Option<String> = None;
     let mut user_name: Option<String> = None;
     if config_path.exists()
-        && let Ok(cfg) = moltis_config::loader::load_config(&config_path)
+        && let Ok(cfg) = clawmaster_config::loader::load_config(&config_path)
     {
         identity_name = cfg.identity.name;
         user_name = cfg.user.name;
     }
-    if let Some(id) = moltis_config::load_identity_for_agent("main")
+    if let Some(id) = clawmaster_config::load_identity_for_agent("main")
         && id.name.is_some()
     {
         identity_name = id.name;
     }
-    if let Some(user) = moltis_config::load_user()
+    if let Some(user) = clawmaster_config::load_user()
         && user.name.is_some()
     {
         user_name = user.name;
@@ -54,7 +54,7 @@ pub async fn run_onboarding() -> Result<()> {
 
     // Merge into existing config or create new one.
     let mut config = if config_path.exists() {
-        moltis_config::loader::load_config(&config_path).unwrap_or_default()
+        clawmaster_config::loader::load_config(&config_path).unwrap_or_default()
     } else {
         MoltisConfig::default()
     };
@@ -62,9 +62,9 @@ pub async fn run_onboarding() -> Result<()> {
     config.user = state.user;
 
     let path = save_config(&config).context("failed to save onboarding config")?;
-    moltis_config::save_identity_for_agent("main", &config.identity)
+    clawmaster_config::save_identity_for_agent("main", &config.identity)
         .context("failed to save identity")?;
-    moltis_config::save_user(&config.user).context("failed to save user")?;
+    clawmaster_config::save_user(&config.user).context("failed to save user")?;
     println!("Config saved to {}", path.display());
     println!("Onboarding complete!");
     Ok(())

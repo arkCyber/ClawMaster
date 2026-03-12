@@ -16,7 +16,7 @@ use {
 };
 
 #[cfg(feature = "vault")]
-use moltis_vault::Vault;
+use clawmaster_vault::Vault;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -108,14 +108,14 @@ impl CredentialStore {
     /// Create a new store and initialize tables.
     /// Reads `auth.disabled` from the discovered config file.
     pub async fn new(pool: SqlitePool) -> anyhow::Result<Self> {
-        let config = moltis_config::discover_and_load();
+        let config = clawmaster_config::discover_and_load();
         Self::with_config(pool, &config.auth).await
     }
 
     /// Create a new store with explicit auth config (avoids reading from disk).
     pub async fn with_config(
         pool: SqlitePool,
-        auth_config: &moltis_config::AuthConfig,
+        auth_config: &clawmaster_config::AuthConfig,
     ) -> anyhow::Result<Self> {
         let store = Self {
             pool,
@@ -146,7 +146,7 @@ impl CredentialStore {
     #[cfg(feature = "vault")]
     pub async fn with_vault(
         pool: SqlitePool,
-        auth_config: &moltis_config::AuthConfig,
+        auth_config: &clawmaster_config::AuthConfig,
         vault: Option<Arc<Vault>>,
     ) -> anyhow::Result<Self> {
         let store = Self {
@@ -286,7 +286,7 @@ impl CredentialStore {
         })
         .execute(&self.pool)
         .await?;
-        moltis_config::update_config(|c| c.auth.disabled = disabled)?;
+        clawmaster_config::update_config(|c| c.auth.disabled = disabled)?;
         Ok(())
     }
 
@@ -751,7 +751,7 @@ impl CredentialStore {
 // ── EnvVarProvider impl ─────────────────────────────────────────────────────
 
 #[async_trait::async_trait]
-impl moltis_tools::exec::EnvVarProvider for CredentialStore {
+impl clawmaster_tools::exec::EnvVarProvider for CredentialStore {
     async fn get_env_vars(&self) -> Vec<(String, secrecy::Secret<String>)> {
         self.get_all_env_values()
             .await
@@ -1345,13 +1345,13 @@ mod tests {
     async fn vault_store(password: &str) -> (CredentialStore, Arc<Vault>) {
         let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
         // Run vault migrations first.
-        moltis_vault::run_migrations(&pool).await.unwrap();
+        clawmaster_vault::run_migrations(&pool).await.unwrap();
         let vault = Vault::new(pool.clone()).await.unwrap();
         vault.initialize(password).await.unwrap();
         let vault = Arc::new(vault);
         let store = CredentialStore::with_vault(
             pool,
-            &moltis_config::AuthConfig::default(),
+            &clawmaster_config::AuthConfig::default(),
             Some(vault.clone()),
         )
         .await

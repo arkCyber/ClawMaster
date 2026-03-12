@@ -32,7 +32,7 @@ function selectFilter(id) {
 	var p = projectStore.getById(id);
 	label.textContent = p ? p.label || p.id : t("common:sessions.allSessions");
 	closeDropdown();
-	document.dispatchEvent(new CustomEvent("moltis:render-session-list"));
+	document.dispatchEvent(new CustomEvent("clawmaster:render-session-list"));
 }
 
 function closeDropdown() {
@@ -169,7 +169,7 @@ document.addEventListener("click", (e) => {
 	}
 });
 
-window.addEventListener("moltis:locale-changed", () => {
+window.addEventListener("clawmaster:locale-changed", () => {
 	renderProjectSelect();
 	if (!dropdown.classList.contains("hidden")) {
 		var query = searchInput ? searchInput.value.trim() : "";

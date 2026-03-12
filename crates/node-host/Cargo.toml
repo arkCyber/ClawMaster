@@ -1,17 +1,17 @@
 [package]
 edition.workspace = true
-name              = "moltis-node-host"
+name              = "clawmaster-node-host"
 version.workspace = true
 
 [features]
 default = ["metrics"]
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dependencies]
 anyhow            = { workspace = true }
 futures           = { workspace = true }
-moltis-metrics    = { optional = true, workspace = true }
-moltis-protocol   = { workspace = true }
+clawmaster-metrics    = { optional = true, workspace = true }
+clawmaster-protocol   = { workspace = true }
 reqwest           = { workspace = true }
 serde             = { workspace = true }
 serde_json        = { workspace = true }

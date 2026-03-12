@@ -4,14 +4,14 @@ use std::sync::Arc;
 
 use {async_trait::async_trait, serde_json::Value, tracing::error};
 
-use moltis_cron::{
+use clawmaster_cron::{
     service::CronService,
     types::{CronJobCreate, CronJobPatch},
 };
 
 use crate::services::{CronService as CronServiceTrait, ServiceError, ServiceResult};
 
-/// Gateway-facing cron service backed by the real [`moltis_cron::service::CronService`].
+/// Gateway-facing cron service backed by the real [`clawmaster_cron::service::CronService`].
 pub struct LiveCronService {
     inner: Arc<CronService>,
 }

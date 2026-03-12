@@ -6,8 +6,8 @@ use crate::multimodal::parse_data_uri;
 
 // ── Reasoning effort ──────────────────────────────────────────────────────
 
-/// Re-export from config so downstream crates can use `moltis_agents::model::ReasoningEffort`.
-pub use moltis_config::schema::ReasoningEffort;
+/// Re-export from config so downstream crates can use `clawmaster_agents::model::ReasoningEffort`.
+pub use clawmaster_config::schema::ReasoningEffort;
 
 // ── Typed chat messages ─────────────────────────────────────────────────────
 
@@ -389,7 +389,7 @@ pub trait LlmProvider: Send + Sync {
     ///
     /// Returns `None` when the provider has no explicit tool mode override
     /// (the caller should fall back to `Auto` behavior based on `supports_tools()`).
-    fn tool_mode(&self) -> Option<moltis_config::ToolMode> {
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
         None
     }
 

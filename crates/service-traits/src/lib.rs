@@ -35,9 +35,9 @@ impl From<&str> for ServiceError {
     }
 }
 
-impl From<ServiceError> for moltis_protocol::ErrorShape {
+impl From<ServiceError> for clawmaster_protocol::ErrorShape {
     fn from(err: ServiceError) -> Self {
-        Self::new(moltis_protocol::error_codes::UNAVAILABLE, err.to_string())
+        Self::new(clawmaster_protocol::error_codes::UNAVAILABLE, err.to_string())
     }
 }
 
@@ -66,7 +66,7 @@ impl AgentService for NoopAgentService {
     }
 
     async fn identity_get(&self) -> ServiceResult {
-        Ok(serde_json::json!({ "name": "moltis", "avatar": null }))
+        Ok(serde_json::json!({ "name": "clawmaster", "avatar": null }))
     }
 
     async fn list(&self) -> ServiceResult {
@@ -608,7 +608,7 @@ pub trait SkillsService: Send + Sync {
 
 /// Minimal stub for `SkillsService` used only by the `Services::default()` impl.
 /// The gateway provides the full implementation (`NoopSkillsService`) that
-/// delegates to `moltis_skills`.
+/// delegates to `clawmaster_skills`.
 pub struct NoopSkillsStub;
 
 #[async_trait]
@@ -809,7 +809,7 @@ impl OnboardingService for NoopOnboardingService {
     }
 
     async fn identity_get(&self) -> ServiceResult {
-        Ok(serde_json::json!({ "name": "moltis", "avatar": null }))
+        Ok(serde_json::json!({ "name": "clawmaster", "avatar": null }))
     }
 
     async fn identity_update(&self, _params: Value) -> ServiceResult {

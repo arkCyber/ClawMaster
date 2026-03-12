@@ -1,14 +1,14 @@
 [package]
 edition.workspace = true
-name              = "moltis-auto-reply"
+name              = "clawmaster-auto-reply"
 version.workspace = true
 
 [dependencies]
-moltis-agents   = { workspace = true }
-moltis-common   = { workspace = true }
-moltis-metrics  = { optional = true, workspace = true }
-moltis-routing  = { workspace = true }
-moltis-sessions = { workspace = true }
+clawmaster-agents   = { workspace = true }
+clawmaster-common   = { workspace = true }
+clawmaster-metrics  = { optional = true, workspace = true }
+clawmaster-routing  = { workspace = true }
+clawmaster-sessions = { workspace = true }
 serde           = { workspace = true }
 serde_json      = { workspace = true }
 tokio           = { workspace = true }
@@ -16,7 +16,7 @@ tracing         = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [lints]
 workspace = true

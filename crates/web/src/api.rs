@@ -9,8 +9,8 @@ use {
         http::StatusCode,
         response::{IntoResponse, Response},
     },
-    moltis_gateway::server::AppState,
-    moltis_tools::image_cache::ImageBuilder,
+    clawmaster_gateway::server::AppState,
+    clawmaster_tools::image_cache::ImageBuilder,
     tracing::warn,
 };
 
@@ -59,20 +59,20 @@ pub struct SandboxSharedHomeUpdateRequest {
     path: Option<String>,
 }
 
-fn shared_home_config_payload(config: &moltis_config::MoltisConfig) -> serde_json::Value {
-    let runtime_cfg = moltis_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+fn shared_home_config_payload(config: &clawmaster_config::MoltisConfig) -> serde_json::Value {
+    let runtime_cfg = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
     let mode = match config.tools.exec.sandbox.home_persistence {
-        moltis_config::schema::HomePersistenceConfig::Off => "off",
-        moltis_config::schema::HomePersistenceConfig::Session => "session",
-        moltis_config::schema::HomePersistenceConfig::Shared => "shared",
+        clawmaster_config::schema::HomePersistenceConfig::Off => "off",
+        clawmaster_config::schema::HomePersistenceConfig::Session => "session",
+        clawmaster_config::schema::HomePersistenceConfig::Shared => "shared",
     };
     serde_json::json!({
         "enabled": matches!(
             config.tools.exec.sandbox.home_persistence,
-            moltis_config::schema::HomePersistenceConfig::Shared
+            clawmaster_config::schema::HomePersistenceConfig::Shared
         ),
         "mode": mode,
-        "path": moltis_tools::sandbox::shared_home_dir_path(&runtime_cfg)
+        "path": clawmaster_tools::sandbox::shared_home_dir_path(&runtime_cfg)
             .display()
             .to_string(),
         "configured_path": config.tools.exec.sandbox.shared_home_dir.clone(),
@@ -380,7 +380,7 @@ pub async fn api_logs_download_handler(State(state): State<AppState>) -> impl In
         (header::CONTENT_TYPE, "application/x-ndjson"),
         (
             header::CONTENT_DISPOSITION,
-            "attachment; filename=\"moltis-logs.jsonl\"",
+            "attachment; filename=\"clawmaster-logs.jsonl\"",
         ),
     ];
     (headers, body).into_response()
@@ -397,7 +397,7 @@ pub async fn api_bootstrap_handler(
 }
 
 async fn api_bootstrap_with_query(
-    gw: &moltis_gateway::state::GatewayState,
+    gw: &clawmaster_gateway::state::GatewayState,
     query: &BootstrapQuery,
 ) -> Response {
     let channels_enabled = query.channels_enabled();
@@ -464,7 +464,7 @@ async fn api_bootstrap_with_query(
         serde_json::json!({
             "backend": "none",
             "os": std::env::consts::OS,
-            "default_image": moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE,
+            "default_image": clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE,
         })
     };
     Json(serde_json::json!({
@@ -508,7 +508,7 @@ where
     let Ok(path) = path_result else {
         return Vec::new();
     };
-    let store = moltis_skills::manifest::ManifestStore::new(path);
+    let store = clawmaster_skills::manifest::ManifestStore::new(path);
     store
         .load()
         .map(|m| {
@@ -540,19 +540,19 @@ pub async fn api_skills_handler(State(state): State<AppState>) -> impl IntoRespo
         .and_then(|v| v.as_array().cloned())
         .unwrap_or_default();
 
-    let mut skills = enabled_from_manifest(moltis_skills::manifest::ManifestStore::default_path());
+    let mut skills = enabled_from_manifest(clawmaster_skills::manifest::ManifestStore::default_path());
 
     {
-        use moltis_skills::discover::{FsSkillDiscoverer, SkillDiscoverer};
-        let data_dir = moltis_config::data_dir();
+        use clawmaster_skills::discover::{FsSkillDiscoverer, SkillDiscoverer};
+        let data_dir = clawmaster_config::data_dir();
         let search_paths = vec![
             (
                 data_dir.join("skills"),
-                moltis_skills::types::SkillSource::Personal,
+                clawmaster_skills::types::SkillSource::Personal,
             ),
             (
                 data_dir.join(".moltis/skills"),
-                moltis_skills::types::SkillSource::Project,
+                clawmaster_skills::types::SkillSource::Project,
             ),
         ];
         let discoverer = FsSkillDiscoverer::new(search_paths);
@@ -636,10 +636,10 @@ pub async fn api_skills_search_handler(
 // ── Images ───────────────────────────────────────────────────────────────────
 
 pub async fn api_cached_images_handler() -> impl IntoResponse {
-    let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+    let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
     let (cached, sandbox) = tokio::join!(
         builder.list_cached(),
-        moltis_tools::sandbox::list_sandbox_images(),
+        clawmaster_tools::sandbox::list_sandbox_images(),
     );
 
     let mut images: Vec<serde_json::Value> = Vec::new();
@@ -681,13 +681,13 @@ pub async fn api_cached_images_handler() -> impl IntoResponse {
 
 pub async fn api_delete_cached_image_handler(Path(tag): Path<String>) -> impl IntoResponse {
     let result = if tag.contains("-sandbox:") {
-        moltis_tools::sandbox::remove_sandbox_image(&tag).await
+        clawmaster_tools::sandbox::remove_sandbox_image(&tag).await
     } else {
-        let builder = moltis_tools::image_cache::DockerImageBuilder::new();
-        let full_tag = if tag.starts_with("moltis-cache/") {
+        let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
+        let full_tag = if tag.starts_with("clawmaster-cache/") {
             tag
         } else {
-            format!("moltis-cache/{tag}")
+            format!("clawmaster-cache/{tag}")
         };
         builder.remove_cached(&full_tag).await
     };
@@ -702,10 +702,10 @@ pub async fn api_delete_cached_image_handler(Path(tag): Path<String>) -> impl In
 }
 
 pub async fn api_prune_cached_images_handler() -> impl IntoResponse {
-    let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+    let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
     let (tool_result, sandbox_result) = tokio::join!(
         builder.prune_all(),
-        moltis_tools::sandbox::clean_sandbox_images(),
+        clawmaster_tools::sandbox::clean_sandbox_images(),
     );
     let mut count = 0;
     if let Ok(n) = tool_result {
@@ -787,7 +787,7 @@ pub async fn api_get_default_image_handler(State(state): State<AppState>) -> imp
     let image = if let Some(ref router) = state.gateway.sandbox_router {
         router.default_image().await
     } else {
-        moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string()
+        clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string()
     };
     Json(serde_json::json!({ "image": image }))
 }
@@ -813,7 +813,7 @@ pub async fn api_set_default_image_handler(
 }
 
 pub async fn api_get_shared_home_handler() -> impl IntoResponse {
-    let config = moltis_config::discover_and_load();
+    let config = clawmaster_config::discover_and_load();
     Json(shared_home_config_payload(&config))
 }
 
@@ -827,23 +827,23 @@ pub async fn api_set_shared_home_handler(
         .filter(|p| !p.is_empty())
         .map(ToOwned::to_owned);
 
-    let update_result = moltis_config::update_config(|cfg| {
+    let update_result = clawmaster_config::update_config(|cfg| {
         cfg.tools.exec.sandbox.shared_home_dir = path.clone();
         if body.enabled {
             cfg.tools.exec.sandbox.home_persistence =
-                moltis_config::schema::HomePersistenceConfig::Shared;
+                clawmaster_config::schema::HomePersistenceConfig::Shared;
         } else if matches!(
             cfg.tools.exec.sandbox.home_persistence,
-            moltis_config::schema::HomePersistenceConfig::Shared
+            clawmaster_config::schema::HomePersistenceConfig::Shared
         ) {
             cfg.tools.exec.sandbox.home_persistence =
-                moltis_config::schema::HomePersistenceConfig::Off;
+                clawmaster_config::schema::HomePersistenceConfig::Off;
         }
     });
 
     match update_result {
         Ok(saved_path) => {
-            let config = moltis_config::discover_and_load();
+            let config = clawmaster_config::discover_and_load();
             Json(serde_json::json!({
                 "ok": true,
                 "restart_required": true,
@@ -917,7 +917,7 @@ ENV HOME=/home/sandbox\n\
 WORKDIR /home/sandbox\n"
     );
 
-    let tmp_dir = std::env::temp_dir().join(format!("moltis-build-{}", uuid::Uuid::new_v4()));
+    let tmp_dir = std::env::temp_dir().join(format!("clawmaster-build-{}", uuid::Uuid::new_v4()));
     if let Err(e) = std::fs::create_dir_all(&tmp_dir) {
         return api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -936,7 +936,7 @@ WORKDIR /home/sandbox\n"
         );
     }
 
-    let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+    let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
     let result = builder.ensure_image(name, &dockerfile_path, &tmp_dir).await;
     let _ = std::fs::remove_dir_all(&tmp_dir);
     match result {
@@ -960,10 +960,10 @@ pub async fn api_list_containers_handler(State(state): State<AppState>) -> impl 
             r.config()
                 .container_prefix
                 .clone()
-                .unwrap_or_else(|| "moltis-sandbox".to_string())
+                .unwrap_or_else(|| "clawmaster-sandbox".to_string())
         })
-        .unwrap_or_else(|| "moltis-sandbox".to_string());
-    match moltis_tools::sandbox::list_running_containers(&prefix).await {
+        .unwrap_or_else(|| "clawmaster-sandbox".to_string());
+    match clawmaster_tools::sandbox::list_running_containers(&prefix).await {
         Ok(containers) => Json(serde_json::json!({ "containers": containers })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -985,9 +985,9 @@ pub async fn api_stop_container_handler(
             r.config()
                 .container_prefix
                 .clone()
-                .unwrap_or_else(|| "moltis-sandbox".to_string())
+                .unwrap_or_else(|| "clawmaster-sandbox".to_string())
         })
-        .unwrap_or_else(|| "moltis-sandbox".to_string());
+        .unwrap_or_else(|| "clawmaster-sandbox".to_string());
     if !name.starts_with(&prefix) {
         return api_error_response(
             StatusCode::FORBIDDEN,
@@ -995,7 +995,7 @@ pub async fn api_stop_container_handler(
             "container name does not match expected prefix",
         );
     }
-    match moltis_tools::sandbox::stop_container(&name).await {
+    match clawmaster_tools::sandbox::stop_container(&name).await {
         Ok(()) => Json(serde_json::json!({ "ok": true })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -1017,9 +1017,9 @@ pub async fn api_remove_container_handler(
             r.config()
                 .container_prefix
                 .clone()
-                .unwrap_or_else(|| "moltis-sandbox".to_string())
+                .unwrap_or_else(|| "clawmaster-sandbox".to_string())
         })
-        .unwrap_or_else(|| "moltis-sandbox".to_string());
+        .unwrap_or_else(|| "clawmaster-sandbox".to_string());
     if !name.starts_with(&prefix) {
         return api_error_response(
             StatusCode::FORBIDDEN,
@@ -1027,7 +1027,7 @@ pub async fn api_remove_container_handler(
             "container name does not match expected prefix",
         );
     }
-    match moltis_tools::sandbox::remove_container(&name).await {
+    match clawmaster_tools::sandbox::remove_container(&name).await {
         Ok(()) => Json(serde_json::json!({ "ok": true })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -1046,10 +1046,10 @@ pub async fn api_clean_all_containers_handler(State(state): State<AppState>) -> 
             r.config()
                 .container_prefix
                 .clone()
-                .unwrap_or_else(|| "moltis-sandbox".to_string())
+                .unwrap_or_else(|| "clawmaster-sandbox".to_string())
         })
-        .unwrap_or_else(|| "moltis-sandbox".to_string());
-    match moltis_tools::sandbox::clean_all_containers(&prefix).await {
+        .unwrap_or_else(|| "clawmaster-sandbox".to_string());
+    match clawmaster_tools::sandbox::clean_all_containers(&prefix).await {
         Ok(removed) => Json(serde_json::json!({ "ok": true, "removed": removed })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -1060,7 +1060,7 @@ pub async fn api_clean_all_containers_handler(State(state): State<AppState>) -> 
 }
 
 pub async fn api_disk_usage_handler() -> impl IntoResponse {
-    match moltis_tools::sandbox::container_disk_usage().await {
+    match clawmaster_tools::sandbox::container_disk_usage().await {
         Ok(usage) => Json(serde_json::json!({ "usage": usage })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -1071,7 +1071,7 @@ pub async fn api_disk_usage_handler() -> impl IntoResponse {
 }
 
 pub async fn api_restart_daemon_handler() -> impl IntoResponse {
-    match moltis_tools::sandbox::restart_container_daemon().await {
+    match clawmaster_tools::sandbox::restart_container_daemon().await {
         Ok(()) => Json(serde_json::json!({ "ok": true })).into_response(),
         Err(e) => api_error_response(
             StatusCode::INTERNAL_SERVER_ERROR,

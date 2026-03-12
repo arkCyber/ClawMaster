@@ -8,7 +8,7 @@
 ## Overview
 
 This document describes how to add Firecracker microVM support as a sandbox
-backend for moltis on Linux. Firecracker provides hypervisor-level isolation
+backend for clawmaster on Linux. Firecracker provides hypervisor-level isolation
 (the same technology powering AWS Lambda) with ~125ms boot times and <5 MiB
 memory overhead per VM.
 
@@ -44,7 +44,7 @@ This is significantly more work than the other backends.
 ┌─────────────────────────────────────────────────────────────────┐
 │ Host                                                             │
 │  ┌───────────────┐                      ┌────────────────────┐  │
-│  │ moltis        │                      │ Firecracker VMM    │  │
+│  │ clawmaster        │                      │ Firecracker VMM    │  │
 │  │ ExecTool      │◄────Unix Socket─────►│                    │  │
 │  │               │    /tmp/fc-XX.sock   │ API: localhost/... │  │
 │  └───────┬───────┘                      └─────────┬──────────┘  │
@@ -168,7 +168,7 @@ Create a minimal rootfs with the agent:
 set -euo pipefail
 
 ROOTFS_SIZE="512M"
-ROOTFS_FILE="moltis-rootfs.ext4"
+ROOTFS_FILE="clawmaster-rootfs.ext4"
 AGENT_BINARY="target/x86_64-unknown-linux-musl/release/firecracker-agent"
 
 # Create empty ext4 image
@@ -190,18 +190,18 @@ sudo apk --arch x86_64 -X http://dl-cdn.alpinelinux.org/alpine/latest-stable/mai
     git curl wget openssh-client jq
 
 # Copy guest agent
-sudo cp "$AGENT_BINARY" "$MOUNT_DIR/usr/local/bin/moltis-agent"
-sudo chmod +x "$MOUNT_DIR/usr/local/bin/moltis-agent"
+sudo cp "$AGENT_BINARY" "$MOUNT_DIR/usr/local/bin/clawmaster-agent"
+sudo chmod +x "$MOUNT_DIR/usr/local/bin/clawmaster-agent"
 
 # Create init script to start agent on boot
-sudo tee "$MOUNT_DIR/etc/init.d/moltis-agent" > /dev/null <<'EOF'
+sudo tee "$MOUNT_DIR/etc/init.d/clawmaster-agent" > /dev/null <<'EOF'
 #!/sbin/openrc-run
-command="/usr/local/bin/moltis-agent"
+command="/usr/local/bin/clawmaster-agent"
 command_background=true
-pidfile="/run/moltis-agent.pid"
+pidfile="/run/clawmaster-agent.pid"
 EOF
-sudo chmod +x "$MOUNT_DIR/etc/init.d/moltis-agent"
-sudo chroot "$MOUNT_DIR" rc-update add moltis-agent default
+sudo chmod +x "$MOUNT_DIR/etc/init.d/clawmaster-agent"
+sudo chroot "$MOUNT_DIR" rc-update add clawmaster-agent default
 
 # Set up networking (optional, for internet access)
 sudo tee "$MOUNT_DIR/etc/network/interfaces" > /dev/null <<'EOF'
@@ -307,7 +307,7 @@ impl FirecrackerSandbox {
     }
 
     fn socket_dir(&self) -> PathBuf {
-        std::env::temp_dir().join("moltis-firecracker")
+        std::env::temp_dir().join("clawmaster-firecracker")
     }
 
     async fn configure_vm(&self, api_socket: &Path, vsock_path: &Path) -> Result<()> {
@@ -492,8 +492,8 @@ fn select_backend(config: SandboxConfig) -> Arc<dyn Sandbox> {
         "firecracker" => {
             // TODO: resolve paths from config or defaults
             let fc_bin = PathBuf::from("/usr/local/bin/firecracker");
-            let kernel = PathBuf::from("/var/lib/moltis/vmlinux");
-            let rootfs = PathBuf::from("/var/lib/moltis/rootfs.ext4");
+            let kernel = PathBuf::from("/var/lib/clawmaster/vmlinux");
+            let rootfs = PathBuf::from("/var/lib/clawmaster/rootfs.ext4");
             Arc::new(FirecrackerSandbox::new(config, fc_bin, kernel, rootfs))
         }
         _ => auto_detect_backend(config),
@@ -503,7 +503,7 @@ fn select_backend(config: SandboxConfig) -> Arc<dyn Sandbox> {
 
 ## Configuration
 
-Add to `moltis.toml`:
+Add to `clawmaster.toml`:
 
 ```toml
 [tools.exec.sandbox]
@@ -511,8 +511,8 @@ backend = "firecracker"  # or "auto" to prefer it when available
 
 [tools.exec.sandbox.firecracker]
 binary = "/usr/local/bin/firecracker"
-kernel = "/var/lib/moltis/vmlinux"
-rootfs = "/var/lib/moltis/rootfs.ext4"
+kernel = "/var/lib/clawmaster/vmlinux"
+rootfs = "/var/lib/clawmaster/rootfs.ext4"
 ```
 
 ## Requirements
@@ -536,7 +536,7 @@ CONFIG_EXT4_FS=y
 ### Rootfs Requirements
 
 - Linux userland (Alpine recommended for size)
-- moltis guest agent running on boot
+- clawmaster guest agent running on boot
 - `/dev/vsock` device available
 
 ## Workspace Mounting
@@ -583,8 +583,8 @@ ls -la /dev/kvm
 # Test firecracker manually
 ./firecracker --api-sock /tmp/test.sock
 
-# Run moltis with firecracker backend
-MOLTIS_SANDBOX_BACKEND=firecracker moltis serve
+# Run clawmaster with firecracker backend
+MOLTIS_SANDBOX_BACKEND=firecracker clawmaster serve
 ```
 
 ## Security Considerations

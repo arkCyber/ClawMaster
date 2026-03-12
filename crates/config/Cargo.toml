@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "moltis-config"
+name              = "clawmaster-config"
 version.workspace = true
 
 [dependencies]
@@ -8,7 +8,7 @@ anyhow         = { workspace = true }
 chrono-tz      = { workspace = true }
 directories    = { workspace = true }
 ipnet          = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 secrecy        = { workspace = true }
 serde          = { workspace = true }
 serde_json     = { workspace = true }
@@ -20,7 +20,7 @@ tracing        = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dev-dependencies]
 tempfile = { workspace = true }

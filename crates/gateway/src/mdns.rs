@@ -9,7 +9,7 @@ const SERVICE_TYPE: &str = "_moltis._tcp.local.";
 
 fn alias_service_type(alias_slug: &str) -> Option<String> {
     let mut slug = alias_slug.trim().trim_matches('-').to_ascii_lowercase();
-    if slug.is_empty() || slug == "moltis" {
+    if slug.is_empty() || slug == "clawmaster" {
         return None;
     }
 
@@ -50,9 +50,9 @@ pub fn register(
     let host = hostname::get()
         .ok()
         .and_then(|h| h.into_string().ok())
-        .unwrap_or_else(|| "moltis-gateway".to_string());
+        .unwrap_or_else(|| "clawmaster-gateway".to_string());
 
-    let host_label = "moltis-gateway.local.".to_string();
+    let host_label = "clawmaster-gateway.local.".to_string();
 
     let port_value = port.to_string();
     let properties = [
@@ -119,7 +119,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn service_type_is_moltis_tcp() {
+    fn service_type_is_clawmaster_tcp() {
         assert_eq!(SERVICE_TYPE, "_moltis._tcp.local.");
     }
 
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn alias_service_type_ignores_empty_or_default() {
         assert!(alias_service_type("").is_none());
-        assert!(alias_service_type("moltis").is_none());
+        assert!(alias_service_type("clawmaster").is_none());
     }
 
     #[test]
@@ -146,7 +146,7 @@ mod tests {
 
     #[test]
     fn register_with_unicode_instance_name() {
-        let daemon = register("moltis-тест", 0, "0.0.0-test", Some("my-bot"))
+        let daemon = register("clawmaster-тест", 0, "0.0.0-test", Some("my-bot"))
             .expect("mDNS register should handle unicode");
         shutdown(&daemon);
     }

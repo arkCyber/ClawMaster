@@ -117,4 +117,8 @@ export default {
 	featuredAnthropic: "Official Anthropic agent skills",
 	featuredVercelAgent: "Vercel agent skills collection",
 	featuredVercelSkills: "Vercel skills toolkit",
+	confirmDisableAll: "Disable all third-party skills now?",
+	confirmInstall: "Install dependency for {{name}}?\n\n{{preview}}\n\nOnly continue if you trust this skill and its source.",
+	confirmTrust: "Trust skill \"{{name}}\" from {{source}}?",
+	confirmDelete: "Delete skill \"{{name}}\"? This removes the SKILL.md file.",
 };

@@ -111,13 +111,13 @@ mod tests {
         assert!(is_loopback_host("127.0.0.1:18789"));
         assert!(is_loopback_host("::1"));
         assert!(is_loopback_host("[::1]:18789"));
-        assert!(is_loopback_host("moltis.localhost"));
-        assert!(is_loopback_host("moltis.localhost:8080"));
+        assert!(is_loopback_host("clawmaster.localhost"));
+        assert!(is_loopback_host("clawmaster.localhost:8080"));
 
         assert!(!is_loopback_host("example.com"));
         assert!(!is_loopback_host("example.com:18789"));
         assert!(!is_loopback_host("192.168.1.1:18789"));
-        assert!(!is_loopback_host("moltis.example.com"));
+        assert!(!is_loopback_host("clawmaster.example.com"));
     }
 
     #[test]
@@ -196,7 +196,7 @@ mod tests {
         let mut headers = axum::http::HeaderMap::new();
         headers.insert(
             axum::http::header::HOST,
-            "moltis.example.com".parse().unwrap(),
+            "clawmaster.example.com".parse().unwrap(),
         );
         assert!(!is_local_connection(&headers, addr, false));
     }
@@ -224,7 +224,7 @@ mod tests {
         let mut headers = axum::http::HeaderMap::new();
         headers.insert(
             axum::http::header::HOST,
-            "moltis.example.com".parse().unwrap(),
+            "clawmaster.example.com".parse().unwrap(),
         );
         headers.insert("x-forwarded-for", "203.0.113.50".parse().unwrap());
         assert!(!is_local_connection(&headers, addr, false));
@@ -237,7 +237,7 @@ mod tests {
         let mut headers = axum::http::HeaderMap::new();
         headers.insert(
             axum::http::header::HOST,
-            "moltis.example.com".parse().unwrap(),
+            "clawmaster.example.com".parse().unwrap(),
         );
         assert!(!is_local_connection(&headers, addr, false));
     }

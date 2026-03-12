@@ -1,6 +1,6 @@
 //! Pure state machine for the onboarding wizard. No I/O.
 
-use moltis_config::{AgentIdentity, UserProfile};
+use clawmaster_config::{AgentIdentity, UserProfile};
 
 /// Steps in the onboarding wizard.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
@@ -70,7 +70,7 @@ impl WizardState {
                 if !input.is_empty() {
                     self.identity.name = Some(input.to_string());
                 } else if self.identity.name.is_none() {
-                    self.identity.name = Some("moltis".to_string());
+                    self.identity.name = Some("clawmaster".to_string());
                 }
                 self.step = WizardStep::AgentEmoji;
             },
@@ -152,7 +152,7 @@ mod tests {
         let mut s = WizardState::new();
         s.advance(""); // welcome
         s.advance("User");
-        s.advance(""); // empty agent name → defaults to "moltis"
-        assert_eq!(s.identity.name.as_deref(), Some("moltis"));
+        s.advance(""); // empty agent name → defaults to "clawmaster"
+        assert_eq!(s.identity.name.as_deref(), Some("clawmaster"));
     }
 }

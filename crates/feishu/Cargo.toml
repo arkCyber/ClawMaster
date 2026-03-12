@@ -1,0 +1,22 @@
+[package]
+name = "clawmaster-feishu"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+tokio = { features = ["full"], workspace = true }
+reqwest = { features = ["json"], workspace = true }
+serde = { features = ["derive"], workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+clawmaster-channels = { workspace = true }
+clawmaster-common = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[lints]
+workspace = true

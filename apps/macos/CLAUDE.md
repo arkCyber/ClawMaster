@@ -1,7 +1,7 @@
 
 # macOS App Guidelines
 
-The macOS app should match the Moltis web UI (`crates/web/src/assets/`) in layout, behavior, and visual style. When implementing a feature, refer to the web UI as the source of truth for how it should look and work. Use native macOS/SwiftUI controls but keep the same information hierarchy, spacing, and flow.
+The macOS app should match the ClawMaster web UI (`crates/web/src/assets/`) in layout, behavior, and visual style. When implementing a feature, refer to the web UI as the source of truth for how it should look and work. Use native macOS/SwiftUI controls but keep the same information hierarchy, spacing, and flow.
 
 ## Changelog
 

@@ -19,15 +19,15 @@ use {
 pub mod error;
 
 use {
-    moltis_config::schema::ProvidersConfig,
-    moltis_oauth::{
+    clawmaster_config::schema::ProvidersConfig,
+    clawmaster_oauth::{
         CallbackServer, OAuthFlow, TokenStore, callback_port, device_flow, load_oauth_config,
         parse_callback_input,
     },
-    moltis_providers::{ProviderRegistry, raw_model_id},
+    clawmaster_providers::{ProviderRegistry, raw_model_id},
 };
 
-use moltis_service_traits::{ProviderSetupService, ServiceError, ServiceResult};
+use clawmaster_service_traits::{ProviderSetupService, ServiceError, ServiceResult};
 
 /// Callback for publishing events to connected clients.
 ///
@@ -181,7 +181,7 @@ impl Default for KeyStore {
 
 impl KeyStore {
     pub fn new() -> Self {
-        let path = moltis_config::config_dir()
+        let path = clawmaster_config::config_dir()
             .unwrap_or_else(|| PathBuf::from(".config/moltis"))
             .join("provider_keys.json");
         Self {
@@ -917,11 +917,11 @@ pub struct AutoDetectedProviderSource {
 }
 
 fn current_config_dir() -> PathBuf {
-    moltis_config::config_dir().unwrap_or_else(|| PathBuf::from(".config/moltis"))
+    clawmaster_config::config_dir().unwrap_or_else(|| PathBuf::from(".config/moltis"))
 }
 
 fn home_config_dir_if_different() -> Option<PathBuf> {
-    moltis_config::user_global_config_dir_if_different()
+    clawmaster_config::user_global_config_dir_if_different()
 }
 
 fn home_key_store() -> Option<(KeyStore, PathBuf)> {
@@ -937,12 +937,12 @@ fn home_token_store() -> Option<(TokenStore, PathBuf)> {
 }
 
 fn home_provider_config() -> Option<(ProvidersConfig, PathBuf)> {
-    let path = moltis_config::find_user_global_config_file()?;
+    let path = clawmaster_config::find_user_global_config_file()?;
     let home_dir = home_config_dir_if_different()?;
     if !path.starts_with(&home_dir) {
         return None;
     }
-    let loaded = moltis_config::loader::load_config(&path).ok()?;
+    let loaded = clawmaster_config::loader::load_config(&path).ok()?;
     Some((loaded.providers, path))
 }
 
@@ -965,7 +965,7 @@ fn codex_cli_auth_has_access_token(path: &Path) -> bool {
 }
 
 /// Parse Codex CLI `auth.json` content into `OAuthTokens`.
-fn parse_codex_cli_tokens(data: &str) -> Option<moltis_oauth::OAuthTokens> {
+fn parse_codex_cli_tokens(data: &str) -> Option<clawmaster_oauth::OAuthTokens> {
     let json: Value = serde_json::from_str(data).ok()?;
     let tokens = json.get("tokens")?;
     let access_token = tokens.get("access_token")?.as_str()?.to_string();
@@ -984,7 +984,7 @@ fn parse_codex_cli_tokens(data: &str) -> Option<moltis_oauth::OAuthTokens> {
         .get("refresh_token")
         .and_then(|v| v.as_str())
         .map(|s| s.to_string());
-    Some(moltis_oauth::OAuthTokens {
+    Some(clawmaster_oauth::OAuthTokens {
         access_token: Secret::new(access_token),
         refresh_token: refresh_token.map(Secret::new),
         id_token: id_token.map(Secret::new),
@@ -1023,7 +1023,7 @@ pub fn import_detected_oauth_tokens(
 }
 
 fn set_provider_enabled_in_config(provider: &str, enabled: bool) -> ServiceResult<()> {
-    moltis_config::update_config(|cfg| {
+    clawmaster_config::update_config(|cfg| {
         let entry = cfg
             .providers
             .providers
@@ -1228,7 +1228,7 @@ pub struct LiveProviderSetupService {
 #[derive(Clone)]
 struct PendingOAuthFlow {
     provider_name: String,
-    oauth_config: moltis_oauth::OAuthConfig,
+    oauth_config: clawmaster_oauth::OAuthConfig,
     verifier: String,
 }
 
@@ -1477,7 +1477,7 @@ impl LiveProviderSetupService {
         #[cfg(feature = "local-llm")]
         if provider.auth_type == AuthType::Local && provider.name == "local-llm" {
             // Check if local-llm model config file exists
-            if let Some(config_dir) = moltis_config::config_dir() {
+            if let Some(config_dir) = clawmaster_config::config_dir() {
                 let config_path = config_dir.join("local-llm.json");
                 return config_path.exists();
             }
@@ -1490,7 +1490,7 @@ impl LiveProviderSetupService {
     async fn oauth_start_device_flow(
         &self,
         provider_name: String,
-        oauth_config: moltis_oauth::OAuthConfig,
+        oauth_config: clawmaster_oauth::OAuthConfig,
     ) -> ServiceResult {
         let client = reqwest::Client::new();
         let extra_headers = build_provider_headers(&provider_name);
@@ -1607,7 +1607,7 @@ fn has_oauth_tokens_for_provider(
 /// Build provider-specific extra headers for device-flow OAuth calls.
 fn build_provider_headers(provider: &str) -> Option<reqwest::header::HeaderMap> {
     match provider {
-        "kimi-code" => Some(moltis_oauth::kimi_headers()),
+        "kimi-code" => Some(clawmaster_oauth::kimi_headers()),
         _ => None,
     }
 }
@@ -2165,7 +2165,7 @@ impl ProviderSetupService for LiveProviderSetupService {
             #[cfg(feature = "local-llm")]
             if known.auth_type == AuthType::Local
                 && provider_name == "local-llm"
-                && let Some(config_dir) = moltis_config::config_dir()
+                && let Some(config_dir) = clawmaster_config::config_dir()
             {
                 let config_path = config_dir.join("local-llm.json");
                 let _ = std::fs::remove_file(config_path);
@@ -2200,7 +2200,7 @@ impl ProviderSetupService for LiveProviderSetupService {
     }
 
     async fn validate_key(&self, params: Value) -> ServiceResult {
-        use moltis_agents::model::ChatMessage;
+        use clawmaster_agents::model::ChatMessage;
 
         let provider_name = params
             .get("provider")
@@ -2363,7 +2363,7 @@ impl ProviderSetupService for LiveProviderSetupService {
         let mut temp_config = ProvidersConfig::default();
         temp_config.providers.insert(
             validation_provider_name.clone(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 enabled: true,
                 api_key: api_key.map(|k| Secret::new(k.to_string())),
                 base_url: normalized_base_url,
@@ -2581,7 +2581,7 @@ impl ProviderSetupService for LiveProviderSetupService {
             // Build model list for the frontend, excluding non-chat models.
             let model_list: Vec<Value> = models
                 .iter()
-                .filter(|m| moltis_providers::is_chat_capable_model(&m.id))
+                .filter(|m| clawmaster_providers::is_chat_capable_model(&m.id))
                 .map(|m| {
                     let supports_tools =
                         temp_registry.get(&m.id).is_some_and(|p| p.supports_tools());
@@ -2835,7 +2835,7 @@ impl ProviderSetupService for LiveProviderSetupService {
 /// Reorder models so that known-fast, reliable models appear first for
 /// validation probing.  We only need *one* successful response to prove the
 /// API key works, so prefer the cheapest/fastest endpoints.
-fn reorder_models_for_validation(models: &mut [moltis_providers::ModelInfo]) {
+fn reorder_models_for_validation(models: &mut [clawmaster_providers::ModelInfo]) {
     /// Known-fast model substrings, ordered by preference.
     /// These are small/cheap models that respond quickly on every major provider.
     const FAST_PATTERNS: &[&str] = &[
@@ -2880,7 +2880,7 @@ fn probe_priority_rank(model_id: &str, fast: &[&str], slow: &[&str]) -> u8 {
 #[cfg(test)]
 mod tests {
     use {
-        super::*, moltis_config::schema::ProviderEntry, moltis_oauth::OAuthTokens, secrecy::Secret,
+        super::*, clawmaster_config::schema::ProviderEntry, clawmaster_oauth::OAuthTokens, secrecy::Secret,
     };
 
     #[test]
@@ -3364,7 +3364,7 @@ mod tests {
 
     #[tokio::test]
     async fn noop_service_returns_empty() {
-        use moltis_service_traits::NoopProviderSetupService;
+        use clawmaster_service_traits::NoopProviderSetupService;
         let svc = NoopProviderSetupService;
         let result = svc.available().await.unwrap();
         assert_eq!(result, serde_json::json!([]));
@@ -4508,8 +4508,8 @@ mod tests {
         assert_eq!(models, vec!["gpt-5.2", "anthropic/claude-sonnet-4-5"]);
     }
 
-    fn make_model(id: &str) -> moltis_providers::ModelInfo {
-        moltis_providers::ModelInfo {
+    fn make_model(id: &str) -> clawmaster_providers::ModelInfo {
+        clawmaster_providers::ModelInfo {
             id: id.to_string(),
             provider: "test".to_string(),
             display_name: id.to_string(),

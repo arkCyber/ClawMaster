@@ -4,8 +4,8 @@
 @_exported import ApolloAPI
 @_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-extension MoltisAPI {
-  struct SessionFields: MoltisAPI.SelectionSet, Fragment {
+extension ClawMasterAPI {
+  struct SessionFields: ClawMasterAPI.SelectionSet, Fragment {
     static var fragmentDefinition: StaticString {
       #"fragment SessionFields on SessionEntry { __typename id key label model preview createdAt updatedAt messageCount lastSeenMessageCount archived }"#
     }
@@ -13,7 +13,7 @@ extension MoltisAPI {
     let __data: DataDict
     init(_dataDict: DataDict) { __data = _dataDict }
 
-    static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.SessionEntry }
+    static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.SessionEntry }
     static var __selections: [ApolloAPI.Selection] { [
       .field("__typename", String.self),
       .field("id", String?.self),

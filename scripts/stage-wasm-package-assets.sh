@@ -23,9 +23,9 @@ fi
 dest_release_dir="$1"
 source_dir="target/wasm32-wasip2/release"
 artifacts=(
-  "moltis_wasm_calc.wasm"
-  "moltis_wasm_web_fetch.wasm"
-  "moltis_wasm_web_search.wasm"
+  "clawmaster_wasm_calc.wasm"
+  "clawmaster_wasm_web_fetch.wasm"
+  "clawmaster_wasm_web_search.wasm"
 )
 
 mkdir -p "$dest_release_dir"
@@ -35,7 +35,7 @@ for artifact in "${artifacts[@]}"; do
   dest="$dest_release_dir/$artifact"
   if [[ ! -f "$src" ]]; then
     echo "missing wasm artifact: $src" >&2
-    echo "run cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release" >&2
+    echo "run cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release" >&2
     exit 1
   fi
   cp "$src" "$dest"

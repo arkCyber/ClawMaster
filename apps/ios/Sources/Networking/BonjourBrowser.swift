@@ -32,7 +32,7 @@ struct DiscoveredServer: Identifiable, Hashable {
 final class BonjourBrowser: ObservableObject {
     @Published private(set) var servers: [DiscoveredServer] = []
 
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "bonjour")
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "bonjour")
     private var browser: NWBrowser?
     private var connections: [String: NWConnection] = [:]
     private static let defaultGatewayPort: UInt16 = 65085
@@ -44,7 +44,7 @@ final class BonjourBrowser: ObservableObject {
         params.includePeerToPeer = true
 
         let browser = NWBrowser(
-            for: .bonjourWithTXTRecord(type: "_moltis._tcp", domain: nil),
+            for: .bonjourWithTXTRecord(type: "_clawmaster._tcp", domain: nil),
             using: params
         )
 

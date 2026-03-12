@@ -3,18 +3,18 @@
 # and will be lost on each redeploy. For persistent storage, use a
 # Droplet with Docker instead.
 spec:
-  name: moltis
+  name: clawmaster
   services:
-    - name: moltis
+    - name: clawmaster
       image:
         registry_type: GHCR
         registry: ghcr.io
-        repository: moltis-org/moltis
+        repository: clawmaster-org/clawmaster
         tag: "0.10.18"
       instance_count: 1
       instance_size_slug: basic-xxs
       http_port: 8080
-      run_command: moltis --bind 0.0.0.0 --port 8080 --no-tls
+      run_command: clawmaster --bind 0.0.0.0 --port 8080 --no-tls
       health_check:
         http_path: /health
       envs:

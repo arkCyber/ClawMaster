@@ -2,7 +2,7 @@ use std::{collections::HashMap, path::PathBuf};
 
 use tracing::{debug, info, warn};
 
-use crate::{Result, config_dir::moltis_config_dir, types::OAuthTokens};
+use crate::{Result, config_dir::clawmaster_config_dir, types::OAuthTokens};
 
 /// File-based token storage at `~/.config/moltis/oauth_tokens.json`.
 #[derive(Debug, Clone)]
@@ -12,7 +12,7 @@ pub struct TokenStore {
 
 impl TokenStore {
     pub fn new() -> Self {
-        let path = moltis_config_dir().join("oauth_tokens.json");
+        let path = clawmaster_config_dir().join("oauth_tokens.json");
         Self { path }
     }
 

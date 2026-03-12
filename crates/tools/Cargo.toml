@@ -1,12 +1,12 @@
 [package]
 edition.workspace = true
-name              = "moltis-tools"
+name              = "clawmaster-tools"
 version.workspace = true
 
 [features]
 default       = ["metrics", "wasm"]
 embedded-wasm = []
-metrics       = ["dep:moltis-metrics"]
+metrics       = ["dep:clawmaster-metrics"]
 wasm          = ["dep:shell-words", "dep:wasmtime", "dep:wasmtime-wasi", "wasmtime/component-model"]
 
 [dependencies]
@@ -17,16 +17,16 @@ bytes                 = { workspace = true }
 futures               = { workspace = true }
 image                 = { workspace = true }
 ipnet                 = { workspace = true }
-moltis-agents         = { workspace = true }
-moltis-browser        = { workspace = true }
-moltis-common         = { workspace = true }
-moltis-config         = { workspace = true }
-moltis-cron           = { workspace = true }
-moltis-metrics        = { optional = true, workspace = true }
-moltis-network-filter = { workspace = true }
-moltis-providers      = { workspace = true }
-moltis-sessions       = { workspace = true }
-moltis-skills         = { workspace = true }
+clawmaster-agents         = { workspace = true }
+clawmaster-browser        = { workspace = true }
+clawmaster-common         = { workspace = true }
+clawmaster-config         = { workspace = true }
+clawmaster-cron           = { workspace = true }
+clawmaster-metrics        = { optional = true, workspace = true }
+clawmaster-network-filter = { workspace = true }
+clawmaster-providers      = { workspace = true }
+clawmaster-sessions       = { workspace = true }
+clawmaster-skills         = { workspace = true }
 regex                 = { workspace = true }
 reqwest               = { features = ["blocking"], workspace = true }
 secrecy               = { workspace = true }

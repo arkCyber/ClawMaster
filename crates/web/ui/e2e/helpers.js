@@ -101,7 +101,7 @@ async function navigateAndWait(page, path) {
 async function createSession(page) {
 	const timeoutMs = 20_000;
 	const previousActiveKey = await page.evaluate(() => {
-		return window.__moltis_stores?.sessionStore?.activeSessionKey?.value || "";
+		return window.__clawmaster_stores?.sessionStore?.activeSessionKey?.value || "";
 	});
 
 	await page.locator("#newSessionBtn").click();
@@ -109,7 +109,7 @@ async function createSession(page) {
 		.poll(
 			() =>
 				page.evaluate(() => {
-					return window.__moltis_stores?.sessionStore?.activeSessionKey?.value || "";
+					return window.__clawmaster_stores?.sessionStore?.activeSessionKey?.value || "";
 				}),
 			{ timeout: timeoutMs },
 		)
@@ -119,7 +119,7 @@ async function createSession(page) {
 		.poll(
 			() =>
 				page.evaluate(() => {
-					const key = window.__moltis_stores?.sessionStore?.activeSessionKey?.value || "";
+					const key = window.__clawmaster_stores?.sessionStore?.activeSessionKey?.value || "";
 					if (!key) return false;
 					return window.location.pathname === `/chats/${key.replace(/:/g, "/")}`;
 				}),

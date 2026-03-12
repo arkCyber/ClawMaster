@@ -10,8 +10,8 @@
 use {
     crate::sandbox::SandboxRouter,
     async_trait::async_trait,
-    moltis_agents::tool_registry::AgentTool,
-    moltis_browser::{BrowserManager, BrowserRequest},
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_browser::{BrowserManager, BrowserRequest},
     std::sync::Arc,
     tokio::sync::{OnceCell, RwLock},
     tracing::debug,
@@ -30,7 +30,7 @@ use crate::error::Error;
 /// tool will use the most recently created session. This prevents pool
 /// exhaustion from creating new browser instances on every call.
 pub struct BrowserTool {
-    config: moltis_browser::BrowserConfig,
+    config: clawmaster_browser::BrowserConfig,
     manager: OnceCell<Arc<BrowserManager>>,
     sandbox_router: Option<Arc<SandboxRouter>>,
     /// Track the most recent session ID for automatic reuse.
@@ -40,7 +40,7 @@ pub struct BrowserTool {
 
 impl BrowserTool {
     /// Create a new browser tool from browser configuration.
-    pub fn new(config: moltis_browser::BrowserConfig) -> Self {
+    pub fn new(config: clawmaster_browser::BrowserConfig) -> Self {
         Self {
             config,
             manager: OnceCell::new(),
@@ -56,11 +56,11 @@ impl BrowserTool {
     }
 
     /// Create from config; returns `None` if browser is disabled.
-    pub fn from_config(config: &moltis_config::schema::BrowserConfig) -> Option<Self> {
+    pub fn from_config(config: &clawmaster_config::schema::BrowserConfig) -> Option<Self> {
         if !config.enabled {
             return None;
         }
-        let browser_config = moltis_browser::BrowserConfig::from(config);
+        let browser_config = clawmaster_browser::BrowserConfig::from(config);
         Some(Self::new(browser_config))
     }
 
@@ -91,7 +91,7 @@ impl BrowserTool {
                     let config = self.config.clone();
                     match tokio::task::spawn_blocking(move || {
                         // Browser detection/container cleanup can block.
-                        moltis_browser::detect::check_and_warn(config.chrome_path.as_deref());
+                        clawmaster_browser::detect::check_and_warn(config.chrome_path.as_deref());
                         Arc::new(BrowserManager::new(config))
                     })
                     .await
@@ -103,7 +103,7 @@ impl BrowserTool {
                                 "browser tool warmup worker failed, falling back to inline initialization"
                             );
                             let config = self.config.clone();
-                            moltis_browser::detect::check_and_warn(config.chrome_path.as_deref());
+                            clawmaster_browser::detect::check_and_warn(config.chrome_path.as_deref());
                             Arc::new(BrowserManager::new(config))
                         },
                     }
@@ -300,7 +300,7 @@ mod tests {
 
     #[test]
     fn test_tool_name() {
-        let config = moltis_config::schema::BrowserConfig {
+        let config = clawmaster_config::schema::BrowserConfig {
             enabled: true,
             ..Default::default()
         };
@@ -310,7 +310,7 @@ mod tests {
 
     #[test]
     fn test_disabled_returns_none() {
-        let config = moltis_config::schema::BrowserConfig {
+        let config = clawmaster_config::schema::BrowserConfig {
             enabled: false,
             ..Default::default()
         };
@@ -319,7 +319,7 @@ mod tests {
 
     #[test]
     fn test_parameters_schema_has_required_action() {
-        let config = moltis_config::schema::BrowserConfig {
+        let config = clawmaster_config::schema::BrowserConfig {
             enabled: true,
             ..Default::default()
         };

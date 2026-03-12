@@ -102,7 +102,7 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
             let resolved_node_id = node_id.unwrap_or_else(|| uuid::Uuid::new_v4().to_string());
 
             if foreground {
-                let config = moltis_node_host::NodeConfig {
+                let config = clawmaster_node_host::NodeConfig {
                     gateway_url: host,
                     device_token: token,
                     node_id: resolved_node_id,
@@ -122,11 +122,11 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
                     working_dir,
                 };
 
-                let node = moltis_node_host::NodeHost::new(config);
+                let node = clawmaster_node_host::NodeHost::new(config);
                 node.run().await
             } else {
-                let data_dir = moltis_config::data_dir();
-                let svc_config = moltis_node_host::ServiceConfig {
+                let data_dir = clawmaster_config::data_dir();
+                let svc_config = clawmaster_node_host::ServiceConfig {
                     gateway_url: host,
                     device_token: token,
                     node_id: Some(resolved_node_id),
@@ -135,26 +135,26 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
                     timeout,
                 };
 
-                moltis_node_host::service::install(&data_dir, &svc_config)?;
+                clawmaster_node_host::service::install(&data_dir, &svc_config)?;
                 println!("Node registered and service started.");
                 println!(
                     "Logs: {}",
-                    moltis_node_host::service::log_path(&data_dir).display()
+                    clawmaster_node_host::service::log_path(&data_dir).display()
                 );
                 Ok(())
             }
         },
 
         NodeAction::Run { timeout } => {
-            let data_dir = moltis_config::data_dir();
-            let config = moltis_node_host::ServiceConfig::load(&data_dir)
+            let data_dir = clawmaster_config::data_dir();
+            let config = clawmaster_node_host::ServiceConfig::load(&data_dir)
                 .map_err(|e| anyhow::anyhow!(
                     "cannot load node config: {e}\nRun `moltis node add` first to register this machine."
                 ))?;
 
             let exec_timeout = Duration::from_secs(timeout.unwrap_or(config.timeout));
 
-            let node_config = moltis_node_host::NodeConfig {
+            let node_config = clawmaster_node_host::NodeConfig {
                 gateway_url: config.gateway_url,
                 device_token: config.device_token,
                 node_id: config
@@ -176,19 +176,19 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
                 working_dir: config.working_dir,
             };
 
-            let node = moltis_node_host::NodeHost::new(node_config);
+            let node = clawmaster_node_host::NodeHost::new(node_config);
             node.run().await
         },
 
         NodeAction::Remove => {
-            let data_dir = moltis_config::data_dir();
-            moltis_node_host::service::uninstall(&data_dir)?;
+            let data_dir = clawmaster_config::data_dir();
+            clawmaster_node_host::service::uninstall(&data_dir)?;
             println!("Node removed.");
             Ok(())
         },
 
         NodeAction::Status => {
-            let data_dir = moltis_config::data_dir();
+            let data_dir = clawmaster_config::data_dir();
             let config_path = data_dir.join("node.json");
 
             if !config_path.exists() {
@@ -196,8 +196,8 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
                 return Ok(());
             }
 
-            let config = moltis_node_host::ServiceConfig::load(&data_dir)?;
-            let status = moltis_node_host::service::status()?;
+            let config = clawmaster_node_host::ServiceConfig::load(&data_dir)?;
+            let status = clawmaster_node_host::service::status()?;
 
             println!("Gateway: {}", config.gateway_url);
             if let Some(ref name) = config.display_name {
@@ -208,10 +208,10 @@ pub async fn handle_node(action: NodeAction) -> Result<()> {
         },
 
         NodeAction::Logs => {
-            let data_dir = moltis_config::data_dir();
+            let data_dir = clawmaster_config::data_dir();
             println!(
                 "{}",
-                moltis_node_host::service::log_path(&data_dir).display()
+                clawmaster_node_host::service::log_path(&data_dir).display()
             );
             Ok(())
         },

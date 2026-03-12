@@ -17,7 +17,7 @@ struct ConfigurationPane: View {
     private var configFilePath: String {
         let dir = settings.environmentConfigDir
         guard !dir.isEmpty else { return "" }
-        let path = (dir as NSString).appendingPathComponent("moltis.toml")
+        let path = (dir as NSString).appendingPathComponent("clawmaster.toml")
         return path
     }
 

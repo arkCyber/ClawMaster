@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use {async_trait::async_trait, moltis_common::types::ReplyPayload, tokio::sync::mpsc};
+use {async_trait::async_trait, clawmaster_common::types::ReplyPayload, tokio::sync::mpsc};
 
 use crate::{Error, Result, config_view::ChannelConfigView};
 

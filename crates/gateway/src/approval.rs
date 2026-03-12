@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use {async_trait::async_trait, serde_json::Value, tracing::info};
 
-use moltis_tools::{
+use clawmaster_tools::{
     approval::{ApprovalDecision, ApprovalManager},
     exec::ApprovalBroadcaster,
 };
@@ -92,7 +92,7 @@ impl GatewayApprovalBroadcaster {
 
 #[async_trait]
 impl ApprovalBroadcaster for GatewayApprovalBroadcaster {
-    async fn broadcast_request(&self, request_id: &str, command: &str) -> moltis_tools::Result<()> {
+    async fn broadcast_request(&self, request_id: &str, command: &str) -> clawmaster_tools::Result<()> {
         broadcast(
             &self.state,
             "exec.approval.requested",

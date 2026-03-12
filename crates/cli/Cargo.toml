@@ -1,85 +1,85 @@
 [package]
 description       = "Personal AI gateway inspired by OpenClaw"
 edition.workspace = true
-homepage          = "https://www.moltis.org/"
+homepage          = "https://www.clawmaster.org/"
 license           = "MIT"
-name              = "moltis"
-repository        = "https://github.com/moltis-org/moltis"
+name              = "clawmaster"
+repository        = "https://github.com/arkCyber/ClawMaster"
 version.workspace = true
 
 [package.metadata.deb]
 assets = [
   [
-    "target/release/moltis",
+    "target/release/clawmaster",
     "usr/bin/",
     "755",
   ],
   [
     "../web/src/assets/**/*",
-    "usr/share/moltis/web/",
+    "usr/share/clawmaster/web/",
     "644",
   ],
   [
-    "target/release/moltis_wasm_calc.wasm",
-    "usr/share/moltis/wasm/",
+    "target/release/clawmaster_wasm_calc.wasm",
+    "usr/share/clawmaster/wasm/",
     "644",
   ],
   [
-    "target/release/moltis_wasm_web_fetch.wasm",
-    "usr/share/moltis/wasm/",
+    "target/release/clawmaster_wasm_web_fetch.wasm",
+    "usr/share/clawmaster/wasm/",
     "644",
   ],
   [
-    "target/release/moltis_wasm_web_search.wasm",
-    "usr/share/moltis/wasm/",
+    "target/release/clawmaster_wasm_web_search.wasm",
+    "usr/share/clawmaster/wasm/",
     "644",
   ],
 ]
-copyright = "2025, Moltis Contributors"
+copyright = "2025, ClawMaster Contributors"
 depends = "$auto"
-maintainer = "Moltis Contributors"
-name = "moltis"
+maintainer = "ClawMaster Contributors"
+name = "clawmaster"
 priority = "optional"
 section = "net"
 
 [package.metadata.generate-rpm]
 assets = [
-  { dest = "/usr/bin/moltis", mode = "0755", source = "target/release/moltis" },
-  { dest = "/usr/share/moltis/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" },
-  { dest = "/usr/share/moltis/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" },
-  { dest = "/usr/share/moltis/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" },
-  { dest = "/usr/share/moltis/web/", mode = "0644", source = "crates/web/src/assets/**/*" },
+  { dest = "/usr/bin/clawmaster", mode = "0755", source = "target/release/clawmaster" },
+  { dest = "/usr/share/clawmaster/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" },
+  { dest = "/usr/share/clawmaster/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" },
+  { dest = "/usr/share/clawmaster/wasm/", mode = "0644", source = "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" },
+  { dest = "/usr/share/clawmaster/web/", mode = "0644", source = "crates/web/src/assets/**/*" },
 ]
 license = "MIT"
-name = "moltis"
+name = "clawmaster"
 summary = "Personal AI gateway inspired by OpenClaw"
-url = "https://www.moltis.org/"
+url = "https://www.clawmaster.org/"
 
 [[bin]]
-name = "moltis"
+name = "clawmaster"
 path = "src/main.rs"
 
 [dependencies]
 anyhow                 = { workspace = true }
 clap                   = { workspace = true }
 dotenvy                = { workspace = true }
-moltis-agents          = { workspace = true }
-moltis-browser         = { workspace = true }
-moltis-common          = { workspace = true }
-moltis-config          = { workspace = true }
-moltis-cron            = { workspace = true }
-moltis-gateway         = { workspace = true }
-moltis-memory          = { workspace = true }
-moltis-node-host       = { workspace = true }
-moltis-oauth           = { workspace = true }
-moltis-onboarding      = { workspace = true }
-moltis-openclaw-import = { optional = true, workspace = true }
-moltis-plugins         = { workspace = true }
-moltis-projects        = { workspace = true }
-moltis-sessions        = { workspace = true }
-moltis-skills          = { workspace = true }
-moltis-tools           = { workspace = true }
-moltis-web             = { optional = true, workspace = true }
+clawmaster-agents          = { workspace = true }
+clawmaster-browser         = { workspace = true }
+clawmaster-common          = { workspace = true }
+clawmaster-config          = { workspace = true }
+clawmaster-cron            = { workspace = true }
+clawmaster-gateway         = { workspace = true }
+clawmaster-memory          = { workspace = true }
+clawmaster-node-host       = { workspace = true }
+clawmaster-oauth           = { workspace = true }
+clawmaster-onboarding      = { workspace = true }
+clawmaster-openclaw-import = { optional = true, workspace = true }
+clawmaster-plugins         = { workspace = true }
+clawmaster-projects        = { workspace = true }
+clawmaster-sessions        = { workspace = true }
+clawmaster-skills          = { workspace = true }
+clawmaster-tools           = { workspace = true }
+clawmaster-web             = { optional = true, workspace = true }
 open                   = { workspace = true }
 rand                   = { workspace = true }
 reqwest                = { workspace = true }
@@ -100,8 +100,8 @@ tikv-jemallocator = { optional = true, workspace = true }
 tempfile = { workspace = true }
 
 [features]
-agent = ["moltis-gateway/agent", "moltis-web?/agent"]
-caldav = ["moltis-gateway/caldav"]
+agent = ["clawmaster-gateway/agent", "clawmaster-web?/agent"]
+caldav = ["clawmaster-gateway/caldav"]
 default = [
   "agent",
   "caldav",
@@ -128,44 +128,44 @@ default = [
 ]
 # Minimal build for memory-constrained devices (Raspberry Pi, etc.).
 # Build with: cargo build --release --no-default-features --features lightweight
-code-splitter   = ["moltis-memory/code-splitter"]
-embedded-assets = ["moltis-web?/embedded-assets"]
-embedded-wasm   = ["moltis-tools/embedded-wasm"]
-file-watcher    = ["moltis-gateway/file-watcher"]
-graphql         = ["moltis-gateway/graphql", "moltis-web?/graphql"]
+code-splitter   = ["clawmaster-memory/code-splitter"]
+embedded-assets = ["clawmaster-web?/embedded-assets"]
+embedded-wasm   = ["clawmaster-tools/embedded-wasm"]
+file-watcher    = ["clawmaster-gateway/file-watcher"]
+graphql         = ["clawmaster-gateway/graphql", "clawmaster-web?/graphql"]
 jemalloc        = ["dep:tikv-jemallocator"]
-lang-bash       = ["moltis-memory/lang-bash"]
-lang-c          = ["moltis-memory/lang-c"]
-lang-cpp        = ["moltis-memory/lang-cpp"]
-lang-css        = ["moltis-memory/lang-css"]
-lang-html       = ["moltis-memory/lang-html"]
-lang-java       = ["moltis-memory/lang-java"]
-lang-json       = ["moltis-memory/lang-json"]
-lang-markdown   = ["moltis-memory/lang-markdown"]
-lang-ruby       = ["moltis-memory/lang-ruby"]
-lang-toml       = ["moltis-memory/lang-toml"]
-lang-typescript = ["moltis-memory/lang-typescript"]
+lang-bash       = ["clawmaster-memory/lang-bash"]
+lang-c          = ["clawmaster-memory/lang-c"]
+lang-cpp        = ["clawmaster-memory/lang-cpp"]
+lang-css        = ["clawmaster-memory/lang-css"]
+lang-html       = ["clawmaster-memory/lang-html"]
+lang-java       = ["clawmaster-memory/lang-java"]
+lang-json       = ["clawmaster-memory/lang-json"]
+lang-markdown   = ["clawmaster-memory/lang-markdown"]
+lang-ruby       = ["clawmaster-memory/lang-ruby"]
+lang-toml       = ["clawmaster-memory/lang-toml"]
+lang-typescript = ["clawmaster-memory/lang-typescript"]
 # jemalloc is intentionally unavailable on linux/aarch64 to avoid runtime
 # crashes on 16 KiB page kernels (e.g. Raspberry Pi OS variants).
 lightweight        = ["jemalloc", "tls", "web-ui"]
-local-llm          = ["moltis-gateway/local-llm"]
-local-llm-cuda     = ["local-llm", "moltis-gateway/local-llm-cuda"]
-local-llm-metal    = ["local-llm", "moltis-gateway/local-llm-metal"]
-mdns               = ["moltis-gateway/mdns"]
-metrics            = ["moltis-gateway/metrics", "moltis-web?/metrics"]
-openclaw-import    = ["dep:moltis-openclaw-import", "moltis-gateway/openclaw-import"]
-prometheus         = ["moltis-gateway/prometheus"]
-push-notifications = ["moltis-gateway/push-notifications", "moltis-web?/push-notifications"]
-qmd                = ["moltis-gateway/qmd"]
-slack              = ["moltis-gateway/slack"]
-tailscale          = ["moltis-gateway/tailscale", "moltis-web?/tailscale"]
-tls                = ["moltis-gateway/tls"]
-trusted-network    = ["moltis-gateway/trusted-network"]
-vault              = ["moltis-gateway/vault", "moltis-web?/vault"]
-voice              = ["moltis-gateway/voice", "moltis-web?/voice"]
-wasm               = ["moltis-tools/wasm"]
-web-ui             = ["dep:moltis-web", "moltis-gateway/web-ui"]
-whatsapp           = ["moltis-gateway/whatsapp"]
+local-llm          = ["clawmaster-gateway/local-llm"]
+local-llm-cuda     = ["local-llm", "clawmaster-gateway/local-llm-cuda"]
+local-llm-metal    = ["local-llm", "clawmaster-gateway/local-llm-metal"]
+mdns               = ["clawmaster-gateway/mdns"]
+metrics            = ["clawmaster-gateway/metrics", "clawmaster-web?/metrics"]
+openclaw-import    = ["dep:clawmaster-openclaw-import", "clawmaster-gateway/openclaw-import"]
+prometheus         = ["clawmaster-gateway/prometheus"]
+push-notifications = ["clawmaster-gateway/push-notifications", "clawmaster-web?/push-notifications"]
+qmd                = ["clawmaster-gateway/qmd"]
+slack              = ["clawmaster-gateway/slack"]
+tailscale          = ["clawmaster-gateway/tailscale", "clawmaster-web?/tailscale"]
+tls                = ["clawmaster-gateway/tls"]
+trusted-network    = ["clawmaster-gateway/trusted-network"]
+vault              = ["clawmaster-gateway/vault", "clawmaster-web?/vault"]
+voice              = ["clawmaster-gateway/voice", "clawmaster-web?/voice"]
+wasm               = ["clawmaster-tools/wasm"]
+web-ui             = ["dep:clawmaster-web", "clawmaster-gateway/web-ui"]
+whatsapp           = ["clawmaster-gateway/whatsapp"]
 
 [lints]
 workspace = true

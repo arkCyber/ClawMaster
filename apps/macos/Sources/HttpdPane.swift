@@ -7,13 +7,13 @@ struct HttpdPane: View {
     @State private var errorMessage: String?
     @State private var isStarting = false
 
-    private let client = MoltisClient()
+    private let client = ClawMasterClient()
 
     var body: some View {
         Group {
             Section {
                 // swiftlint:disable:next line_length
-                Text("The HTTP server runs the full Moltis gateway — web UI, REST API, and WebSocket — on your local machine. Open the address in a browser to use the web interface.")
+                Text("The HTTP server runs the full ClawMaster gateway — web UI, REST API, and WebSocket — on your local machine. Open the address in a browser to use the web interface.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)

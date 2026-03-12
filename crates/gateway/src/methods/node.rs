@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use moltis_protocol::{ErrorShape, error_codes};
+use clawmaster_protocol::{ErrorShape, error_codes};
 
 use crate::broadcast::{BroadcastOpts, broadcast};
 
@@ -218,7 +218,7 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                 };
 
                 // Send invoke event to the node.
-                let invoke_event = moltis_protocol::EventFrame::new(
+                let invoke_event = clawmaster_protocol::EventFrame::new(
                     "node.invoke.request",
                     serde_json::json!({
                         "invokeId": invoke_id,
@@ -423,13 +423,13 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                         loc.get("latitude").and_then(|v| v.as_f64()),
                         loc.get("longitude").and_then(|v| v.as_f64()),
                     ) {
-                        let geo = moltis_config::GeoLocation::now(lat, lon, None);
+                        let geo = clawmaster_config::GeoLocation::now(lat, lon, None);
                         ctx.state.inner.write().await.cached_location = Some(geo.clone());
 
                         // Persist to USER.md (best-effort).
-                        let mut user = moltis_config::load_user().unwrap_or_default();
+                        let mut user = clawmaster_config::load_user().unwrap_or_default();
                         user.location = Some(geo);
-                        if let Err(e) = moltis_config::save_user(&user) {
+                        if let Err(e) = clawmaster_config::save_user(&user) {
                             tracing::warn!(error = %e, "failed to persist location to USER.md");
                         }
                     }

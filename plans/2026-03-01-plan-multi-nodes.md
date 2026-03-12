@@ -10,7 +10,7 @@
 
 OpenClaw nodes are companion devices (iOS, Android, macOS, headless) that connect to a Gateway via WebSocket with `role: "node"`. They expose capabilities (`canvas.*`, `camera.*`, `system.run`, `system.which`, `system.notify`, `location.get`, `sms.send`) via `node.invoke`. The key feature is **remote command execution**: binding `tools.exec.host = "node"` routes shell commands to a remote machine while the LLM runs locally.
 
-Moltis already has: `NodeRegistry`, `NodeSession`, `PairingState`, `node.invoke` RPC, mDNS discovery, GraphQL types, iOS schema. Missing: persistent pairing, device token auth, headless node host binary, command routing, CLI commands, web UI.
+ClawMaster already has: `NodeRegistry`, `NodeSession`, `PairingState`, `node.invoke` RPC, mDNS discovery, GraphQL types, iOS schema. Missing: persistent pairing, device token auth, headless node host binary, command routing, CLI commands, web UI.
 
 ## Architecture
 
@@ -106,7 +106,7 @@ Block: `DYLD_*`, `LD_*`, `NODE_OPTIONS`, `PYTHON*`, `PERL*`, `RUBYOPT`, `SHELLOP
 
 ### 3.1 New Crate: `crates/node-host/`
 
-Depends on: `moltis-protocol`, `tokio`, `tokio-tungstenite`, `serde_json`, `sha2`, `tracing`.
+Depends on: `clawmaster-protocol`, `tokio`, `tokio-tungstenite`, `serde_json`, `sha2`, `tracing`.
 
 ### 3.2 WS Client Loop
 
@@ -114,20 +114,20 @@ Connect to gateway WS with `role: "node"`, capabilities `["system.run", "system.
 
 ### 3.3 Local Approvals
 
-`~/.moltis/exec-approvals.json`: allowlist-based security. Security levels: deny, allowlist (default), full.
+`~/.clawmaster/exec-approvals.json`: allowlist-based security. Security levels: deny, allowlist (default), full.
 
 ### 3.4 Config Persistence
 
-`~/.moltis/node.json`: nodeId, displayName, gatewayHost, gatewayPort, deviceToken, tls, securityLevel.
+`~/.clawmaster/node.json`: nodeId, displayName, gatewayHost, gatewayPort, deviceToken, tls, securityLevel.
 
 ### 3.5 Service Install
 
-macOS: launchd plist. Linux: systemd --user unit. `moltis node install/uninstall`.
+macOS: launchd plist. Linux: systemd --user unit. `clawmaster node install/uninstall`.
 
 ### 3.6 CLI Commands
 
-**File:** `crates/cli/src/node_commands.rs` — `moltis node run|install|status|stop|restart|uninstall`
-**File:** `crates/cli/src/nodes_commands.rs` — `moltis nodes list|pending|approve|describe|rename|invoke|run`
+**File:** `crates/cli/src/node_commands.rs` — `clawmaster node run|install|status|stop|restart|uninstall`
+**File:** `crates/cli/src/nodes_commands.rs` — `clawmaster nodes list|pending|approve|describe|rename|invoke|run`
 
 ---
 
@@ -159,8 +159,8 @@ Add connected node count + pending pairing count + exec config to gon.
 | `crates/node-host/src/exec_runner.rs` | Local command runner |
 | `crates/node-host/src/approvals.rs` | Local approval manager |
 | `crates/node-host/src/service.rs` | Service install/uninstall |
-| `crates/cli/src/node_commands.rs` | `moltis node` subcommands |
-| `crates/cli/src/nodes_commands.rs` | `moltis nodes` subcommands |
+| `crates/cli/src/node_commands.rs` | `clawmaster node` subcommands |
+| `crates/cli/src/nodes_commands.rs` | `clawmaster nodes` subcommands |
 | `crates/web/src/assets/js/page-nodes.js` | Web UI nodes page |
 
 ### Modified Files

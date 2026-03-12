@@ -7,8 +7,8 @@ use {
 };
 
 use {
-    moltis_agents::tool_registry::{AgentTool, ToolRegistry},
-    moltis_mcp::tool_bridge::{McpAgentTool, McpToolBridge},
+    clawmaster_agents::tool_registry::{AgentTool, ToolRegistry},
+    clawmaster_mcp::tool_bridge::{McpAgentTool, McpToolBridge},
 };
 
 use crate::services::{McpService, ServiceError, ServiceResult};
@@ -46,7 +46,7 @@ impl AgentTool for McpToolAdapter {
 ///
 /// Removes all existing `mcp__*` tools and re-registers current bridges.
 pub async fn sync_mcp_tools(
-    manager: &moltis_mcp::McpManager,
+    manager: &clawmaster_mcp::McpManager,
     registry: &Arc<RwLock<ToolRegistry>>,
 ) {
     let bridges = manager.tool_bridges().await;
@@ -75,14 +75,14 @@ pub async fn sync_mcp_tools(
 /// For updates, omitted fields inherit from `existing`.
 fn parse_server_config(
     params: &Value,
-    existing: Option<&moltis_mcp::McpServerConfig>,
-) -> Result<moltis_mcp::McpServerConfig, ServiceError> {
+    existing: Option<&clawmaster_mcp::McpServerConfig>,
+) -> Result<clawmaster_mcp::McpServerConfig, ServiceError> {
     let transport = match params.get("transport").and_then(|v| v.as_str()) {
-        Some("sse") => moltis_mcp::TransportType::Sse,
-        Some(_) => moltis_mcp::TransportType::Stdio,
+        Some("sse") => clawmaster_mcp::TransportType::Sse,
+        Some(_) => clawmaster_mcp::TransportType::Stdio,
         None => existing
             .map(|cfg| cfg.transport)
-            .unwrap_or(moltis_mcp::TransportType::Stdio),
+            .unwrap_or(clawmaster_mcp::TransportType::Stdio),
     };
 
     let command = params
@@ -92,7 +92,7 @@ fn parse_server_config(
         .or_else(|| existing.map(|cfg| cfg.command.clone()))
         .unwrap_or_default();
 
-    if matches!(transport, moltis_mcp::TransportType::Stdio) && command.trim().is_empty() {
+    if matches!(transport, clawmaster_mcp::TransportType::Stdio) && command.trim().is_empty() {
         return Err(ServiceError::message("missing 'command' parameter"));
     }
 
@@ -130,7 +130,7 @@ fn parse_server_config(
         existing.and_then(|cfg| cfg.url.clone())
     };
 
-    if matches!(transport, moltis_mcp::TransportType::Sse)
+    if matches!(transport, clawmaster_mcp::TransportType::Sse)
         && url
             .as_deref()
             .is_none_or(|candidate| candidate.trim().is_empty())
@@ -163,7 +163,7 @@ fn parse_server_config(
                 .get("scopes")
                 .and_then(|s| serde_json::from_value(s.clone()).ok())
                 .unwrap_or_default();
-            Some(moltis_mcp::registry::McpOAuthConfig {
+            Some(clawmaster_mcp::registry::McpOAuthConfig {
                 client_id,
                 auth_url,
                 token_url,
@@ -174,7 +174,7 @@ fn parse_server_config(
         existing.and_then(|cfg| cfg.oauth.clone())
     };
 
-    Ok(moltis_mcp::McpServerConfig {
+    Ok(clawmaster_mcp::McpServerConfig {
         command,
         args,
         env,
@@ -189,14 +189,14 @@ fn parse_server_config(
 
 /// Live MCP service delegating to `McpManager`.
 pub struct LiveMcpService {
-    manager: Arc<moltis_mcp::McpManager>,
+    manager: Arc<clawmaster_mcp::McpManager>,
     /// Shared tool registry for syncing MCP tools into the agent loop.
     /// Set after construction via `set_tool_registry`.
     tool_registry: RwLock<Option<Arc<RwLock<ToolRegistry>>>>,
 }
 
 impl LiveMcpService {
-    pub fn new(manager: Arc<moltis_mcp::McpManager>) -> Self {
+    pub fn new(manager: Arc<clawmaster_mcp::McpManager>) -> Self {
         Self {
             manager,
             tool_registry: RwLock::new(None),
@@ -218,7 +218,7 @@ impl LiveMcpService {
     }
 
     /// Access the underlying manager.
-    pub fn manager(&self) -> &Arc<moltis_mcp::McpManager> {
+    pub fn manager(&self) -> &Arc<clawmaster_mcp::McpManager> {
         &self.manager
     }
 }
@@ -268,7 +268,7 @@ impl McpService for LiveMcpService {
             Err(e) => {
                 if matches!(
                     e,
-                    moltis_mcp::Error::Manager(moltis_mcp::McpManagerError::OAuthRequired { .. })
+                    clawmaster_mcp::Error::Manager(clawmaster_mcp::McpManagerError::OAuthRequired { .. })
                 ) {
                     if let Some(uri) = redirect_uri {
                         let auth_url = self
@@ -333,7 +333,7 @@ impl McpService for LiveMcpService {
             Err(e) => {
                 if matches!(
                     e,
-                    moltis_mcp::Error::Manager(moltis_mcp::McpManagerError::OAuthRequired { .. })
+                    clawmaster_mcp::Error::Manager(clawmaster_mcp::McpManagerError::OAuthRequired { .. })
                 ) {
                     if let Some(uri) = redirect_uri {
                         let auth_url = self
@@ -518,7 +518,7 @@ impl McpService for LiveMcpService {
 
 #[cfg(test)]
 mod tests {
-    use {super::*, moltis_mcp::McpRegistry};
+    use {super::*, clawmaster_mcp::McpRegistry};
 
     #[test]
     fn parse_server_config_allows_sse_without_command() {
@@ -538,7 +538,7 @@ mod tests {
             panic!("SSE config unexpectedly failed to parse");
         };
 
-        assert!(matches!(cfg.transport, moltis_mcp::TransportType::Sse));
+        assert!(matches!(cfg.transport, clawmaster_mcp::TransportType::Sse));
         assert_eq!(cfg.command, "");
         assert_eq!(cfg.url.as_deref(), Some("https://mcp.linear.app/mcp"));
     }
@@ -578,8 +578,8 @@ mod tests {
 
     #[test]
     fn parse_server_config_update_preserves_existing_sse_fields() {
-        let existing = moltis_mcp::McpServerConfig {
-            transport: moltis_mcp::TransportType::Sse,
+        let existing = clawmaster_mcp::McpServerConfig {
+            transport: clawmaster_mcp::TransportType::Sse,
             url: Some("https://mcp.linear.app/mcp".to_string()),
             ..Default::default()
         };
@@ -598,17 +598,17 @@ mod tests {
             panic!("failed to parse update with inherited SSE config");
         };
 
-        assert!(matches!(cfg.transport, moltis_mcp::TransportType::Sse));
+        assert!(matches!(cfg.transport, clawmaster_mcp::TransportType::Sse));
         assert_eq!(cfg.url.as_deref(), Some("https://mcp.linear.app/mcp"));
         assert!(!cfg.enabled);
     }
 
     #[test]
     fn parse_server_config_update_preserves_oauth_when_omitted() {
-        let existing = moltis_mcp::McpServerConfig {
-            transport: moltis_mcp::TransportType::Sse,
+        let existing = clawmaster_mcp::McpServerConfig {
+            transport: clawmaster_mcp::TransportType::Sse,
             url: Some("https://mcp.linear.app/mcp".to_string()),
-            oauth: Some(moltis_mcp::McpOAuthConfig {
+            oauth: Some(clawmaster_mcp::McpOAuthConfig {
                 client_id: "linear-client".to_string(),
                 auth_url: "https://linear.app/oauth/authorize".to_string(),
                 token_url: "https://api.linear.app/oauth/token".to_string(),
@@ -643,7 +643,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sync_mcp_tools_empty_manager() {
-        let manager = moltis_mcp::McpManager::new(McpRegistry::new());
+        let manager = clawmaster_mcp::McpManager::new(McpRegistry::new());
         let registry = Arc::new(RwLock::new(ToolRegistry::new()));
 
         sync_mcp_tools(&manager, &registry).await;
@@ -654,7 +654,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sync_mcp_tools_removes_stale_tools() {
-        let manager = moltis_mcp::McpManager::new(McpRegistry::new());
+        let manager = clawmaster_mcp::McpManager::new(McpRegistry::new());
         let registry = Arc::new(RwLock::new(ToolRegistry::new()));
 
         // Manually register a fake MCP tool to simulate a stale entry.
@@ -675,7 +675,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_sync_preserves_non_mcp_tools() {
-        let manager = moltis_mcp::McpManager::new(McpRegistry::new());
+        let manager = clawmaster_mcp::McpManager::new(McpRegistry::new());
         let registry = Arc::new(RwLock::new(ToolRegistry::new()));
 
         {

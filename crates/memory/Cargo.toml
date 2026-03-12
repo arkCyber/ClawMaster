@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "moltis-memory"
+name              = "clawmaster-memory"
 version.workspace = true
 
 [features]
@@ -28,7 +28,7 @@ lang-typescript = ["code-splitter-base", "dep:tree-sitter-typescript"]
 # Existing features.
 file-watcher     = ["dep:notify-debouncer-full"]
 local-embeddings = ["dep:llama-cpp-2"]
-metrics          = ["dep:moltis-metrics"]
+metrics          = ["dep:clawmaster-metrics"]
 
 [dependencies]
 anyhow                 = { workspace = true }
@@ -38,9 +38,9 @@ chrono                 = { features = ["serde"], workspace = true }
 directories.workspace  = true
 futures                = { workspace = true }
 llama-cpp-2            = { optional = true, workspace = true }
-moltis-agents          = { workspace = true }
-moltis-common          = { workspace = true }
-moltis-metrics         = { optional = true, workspace = true }
+clawmaster-agents          = { workspace = true }
+clawmaster-common          = { workspace = true }
+clawmaster-metrics         = { optional = true, workspace = true }
 notify-debouncer-full  = { optional = true, workspace = true }
 reqwest                = { workspace = true }
 secrecy                = { workspace = true }

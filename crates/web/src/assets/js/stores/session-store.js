@@ -119,11 +119,11 @@ export class Session {
 
 // ── Store signals ────────────────────────────────────────────
 export var sessions = signal([]);
-export var activeSessionKey = signal(localStorage.getItem("moltis-session") || "main");
+export var activeSessionKey = signal(localStorage.getItem("clawmaster-session") || "main");
 export var switchInProgress = signal(false);
 export var refreshInProgressKey = signal("");
 /** Session list tab filter: "all" | "sessions" | "cron" */
-export var sessionListTab = signal(localStorage.getItem("moltis-session-tab") || "sessions");
+export var sessionListTab = signal(localStorage.getItem("clawmaster-session-tab") || "sessions");
 
 export var activeSession = computed(() => {
 	var key = activeSessionKey.value;
@@ -189,7 +189,7 @@ export function remove(key) {
 	if (activeSessionKey.value === key) {
 		var fallback = sessions.value.find((session) => session.key === "main")?.key || sessions.value[0]?.key || "main";
 		activeSessionKey.value = fallback;
-		localStorage.setItem("moltis-session", fallback);
+		localStorage.setItem("clawmaster-session", fallback);
 	}
 	return true;
 }
@@ -221,13 +221,13 @@ export function getByKey(key) {
 /** Set the active session key. Persists to localStorage. */
 export function setActive(key) {
 	activeSessionKey.value = key;
-	localStorage.setItem("moltis-session", key);
+	localStorage.setItem("clawmaster-session", key);
 }
 
 /** Set the session list tab and persist it. */
 export function setSessionListTab(tab) {
 	sessionListTab.value = tab;
-	localStorage.setItem("moltis-session-tab", tab);
+	localStorage.setItem("clawmaster-session-tab", tab);
 }
 
 export var sessionStore = {

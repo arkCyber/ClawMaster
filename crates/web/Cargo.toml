@@ -1,6 +1,6 @@
 [package]
 edition.workspace    = true
-name                 = "moltis-web"
+name                 = "clawmaster-web"
 repository.workspace = true
 version.workspace    = true
 
@@ -13,13 +13,13 @@ chrono          = { features = ["serde"], workspace = true }
 futures         = { workspace = true }
 gix             = { workspace = true }
 include_dir     = { optional = true, workspace = true }
-moltis-channels = { workspace = true }
-moltis-config   = { workspace = true }
-moltis-cron     = { workspace = true }
-moltis-gateway  = { workspace = true }
-moltis-media    = { workspace = true }
-moltis-skills   = { workspace = true }
-moltis-tools    = { workspace = true }
+clawmaster-channels = { workspace = true }
+clawmaster-config   = { workspace = true }
+clawmaster-cron     = { workspace = true }
+clawmaster-gateway  = { workspace = true }
+clawmaster-media    = { workspace = true }
+clawmaster-skills   = { workspace = true }
+clawmaster-tools    = { workspace = true }
 portable-pty    = { workspace = true }
 serde           = { workspace = true }
 serde_json      = { workspace = true }
@@ -33,14 +33,14 @@ uuid            = { workspace = true }
 which           = { workspace = true }
 
 [features]
-agent              = ["moltis-gateway/agent"]
+agent              = ["clawmaster-gateway/agent"]
 default            = ["embedded-assets"]
 embedded-assets    = ["dep:include_dir"]
 graphql            = []
-metrics            = ["moltis-gateway/metrics"]
-push-notifications = ["moltis-gateway/push-notifications"]
-tailscale          = ["moltis-gateway/tailscale"]
-vault              = ["moltis-gateway/vault"]
+metrics            = ["clawmaster-gateway/metrics"]
+push-notifications = ["clawmaster-gateway/push-notifications"]
+tailscale          = ["clawmaster-gateway/tailscale"]
+vault              = ["clawmaster-gateway/vault"]
 voice              = []
 
 [lints]

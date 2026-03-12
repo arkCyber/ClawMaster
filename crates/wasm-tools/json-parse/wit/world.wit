@@ -1,0 +1,73 @@
+package clawmaster:json-parse@0.1.0;
+
+/// JSON parsing and manipulation tool for Moltis AI agents.
+///
+/// This tool provides JSON operations with:
+/// - Validation and parsing
+/// - JSONPath-like queries
+/// - Pretty printing
+/// - Size limits
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All operations return Result types
+/// DO-178C §11.10: Resource management - JSON size limits enforced
+world json-parse {
+    /// Parse and validate JSON.
+    ///
+    /// # Arguments
+    /// * `json` - JSON string to parse
+    ///
+    /// # Returns
+    /// * `Ok(())` - JSON is valid
+    /// * `Err(message)` - Parse error message
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All parse errors are caught and returned
+    export validate-json: func(json: string) -> result<_, string>;
+    
+    /// Pretty print JSON.
+    ///
+    /// # Arguments
+    /// * `json` - JSON string to format
+    ///
+    /// # Returns
+    /// * `Ok(formatted)` - Formatted JSON string
+    /// * `Err(message)` - Error message if invalid JSON
+    export format-json: func(json: string) -> result<string, string>;
+    
+    /// Minify JSON (remove whitespace).
+    ///
+    /// # Arguments
+    /// * `json` - JSON string to minify
+    ///
+    /// # Returns
+    /// * `Ok(minified)` - Minified JSON string
+    /// * `Err(message)` - Error message if invalid JSON
+    export minify-json: func(json: string) -> result<string, string>;
+    
+    /// Get value from JSON using simple path.
+    ///
+    /// # Arguments
+    /// * `json` - JSON string
+    /// * `path` - Dot-separated path (e.g., "user.name")
+    ///
+    /// # Returns
+    /// * `Ok(value)` - JSON value as string
+    /// * `Err(message)` - Error message if path not found or invalid JSON
+    ///
+    /// # Examples
+    /// - `get-value('{"user":{"name":"Alice"}}', "user.name")` → `"Alice"`
+    /// - `get-value('{"items":[1,2,3]}', "items.0")` → `1`
+    export get-value: func(json: string, path: string) -> result<string, string>;
+    
+    /// Check if JSON contains a key.
+    ///
+    /// # Arguments
+    /// * `json` - JSON string
+    /// * `key` - Key to check
+    ///
+    /// # Returns
+    /// * `true` if key exists at top level
+    /// * `false` otherwise
+    export has-key: func(json: string, key: string) -> bool;
+}

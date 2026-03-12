@@ -7,7 +7,7 @@ const { navigateAndWait, watchPageErrors, expectPageContentMounted, waitForWsCon
 var repoRoot = path.resolve(__dirname, "../../../../..");
 var runtimeRoot = process.env.MOLTIS_E2E_OAUTH_RUNTIME_DIR || path.join(repoRoot, "target/e2e-runtime-oauth");
 var runtimeConfigDir = path.join(runtimeRoot, "config");
-var runtimeHomeConfigDir = path.join(runtimeRoot, "home", ".config", "moltis");
+var runtimeHomeConfigDir = path.join(runtimeRoot, "home", ".config", "clawmaster");
 
 function getMockPort() {
 	var portFile = path.join(runtimeRoot, "mock-oauth-port");

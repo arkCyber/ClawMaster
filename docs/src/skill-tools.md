@@ -1,6 +1,6 @@
 # Skill Self-Extension
 
-Moltis can create, update, and delete skills at runtime through agent tools,
+ClawMaster can create, update, and delete skills at runtime through agent tools,
 enabling the system to extend its own capabilities during a conversation.
 
 ## Overview
@@ -9,12 +9,12 @@ Three agent tools manage project-local skills:
 
 | Tool | Description |
 |------|-------------|
-| `create_skill` | Write a new `SKILL.md` to `.moltis/skills/<name>/` |
+| `create_skill` | Write a new `SKILL.md` to `.clawmaster/skills/<name>/` |
 | `update_skill` | Overwrite an existing skill's `SKILL.md` |
 | `delete_skill` | Remove a skill directory |
 
 Skills created this way are project-local and stored in the working directory's
-`.moltis/skills/` folder. They become available on the next message
+`.clawmaster/skills/` folder. They become available on the next message
 automatically thanks to the skill watcher.
 
 ## Skill Watcher
@@ -41,7 +41,7 @@ The agent can create a skill by calling the `create_skill` tool:
 }
 ```
 
-This writes `.moltis/skills/summarize-pr/SKILL.md` with the provided content.
+This writes `.clawmaster/skills/summarize-pr/SKILL.md` with the provided content.
 The skill discoverer picks it up on the next message.
 
 ## Updating a Skill
@@ -61,7 +61,7 @@ The skill discoverer picks it up on the next message.
 }
 ```
 
-This removes the entire `.moltis/skills/summarize-pr/` directory.
+This removes the entire `.clawmaster/skills/summarize-pr/` directory.
 
 ```admonish warning
 Deleted skills cannot be recovered. The agent should confirm with the user

@@ -2,7 +2,7 @@
 
 use {anyhow::Result, clap::Subcommand};
 
-use moltis_gateway::tailscale::{
+use clawmaster_gateway::tailscale::{
     CliTailscaleManager, TailscaleManager, TailscaleMode, validate_tailscale_config,
 };
 
@@ -42,7 +42,7 @@ pub async fn handle_tailscale(action: TailscaleAction) -> Result<()> {
             }
         },
         TailscaleAction::Serve { port } => {
-            let config = moltis_config::discover_and_load();
+            let config = clawmaster_config::discover_and_load();
             let tls = config.tls.enabled;
             validate_tailscale_config(TailscaleMode::Serve, "127.0.0.1", false)?;
             manager.enable_serve(port, tls).await?;
@@ -52,7 +52,7 @@ pub async fn handle_tailscale(action: TailscaleAction) -> Result<()> {
             }
         },
         TailscaleAction::Funnel { port } => {
-            let config = moltis_config::discover_and_load();
+            let config = clawmaster_config::discover_and_load();
             let tls = config.tls.enabled;
             let has_password = !config.auth.disabled;
             validate_tailscale_config(TailscaleMode::Funnel, "127.0.0.1", has_password)?;

@@ -7,7 +7,7 @@ use {
     tracing::{debug, info, warn},
 };
 
-use moltis_protocol::{
+use clawmaster_protocol::{
     ConnectParams, ConnectParamsV4, ErrorShape, EventFrame, Extensions, Features, GatewayFrame,
     HANDSHAKE_TIMEOUT_MS, HelloAuth, HelloOk, KNOWN_EVENTS, MAX_PAYLOAD_BYTES, PROTOCOL_VERSION,
     Policy, ResponseFrame, ServerInfo, error_codes, roles, scopes,
@@ -358,15 +358,15 @@ pub async fn handle_connection(
     if let Some(ref tz_str) = browser_timezone
         && let Ok(tz) = tz_str.parse::<chrono_tz::Tz>()
     {
-        let existing_user = moltis_config::load_user();
+        let existing_user = clawmaster_config::load_user();
         if existing_user
             .as_ref()
             .and_then(|u| u.timezone.as_ref())
             .is_none()
         {
             let mut user = existing_user.unwrap_or_default();
-            user.timezone = Some(moltis_config::Timezone::from(tz));
-            if let Err(e) = moltis_config::save_user(&user) {
+            user.timezone = Some(clawmaster_config::Timezone::from(tz));
+            if let Err(e) = clawmaster_config::save_user(&user) {
                 warn!(conn_id = %conn_id, error = %e, "ws: failed to auto-persist timezone");
             } else {
                 info!(conn_id = %conn_id, timezone = %tz_str, "ws: auto-persisted browser timezone to USER.md");
@@ -399,8 +399,8 @@ pub async fn handle_connection(
 
     #[cfg(feature = "metrics")]
     {
-        moltis_metrics::counter!(moltis_metrics::websocket::CONNECTIONS_TOTAL).increment(1);
-        moltis_metrics::gauge!(moltis_metrics::websocket::CONNECTIONS_ACTIVE).increment(1.0);
+        clawmaster_metrics::counter!(clawmaster_metrics::websocket::CONNECTIONS_TOTAL).increment(1);
+        clawmaster_metrics::gauge!(clawmaster_metrics::websocket::CONNECTIONS_ACTIVE).increment(1.0);
     }
 
     // If node role, register in node registry.
@@ -616,7 +616,7 @@ pub async fn handle_connection(
         .unwrap_or_default();
 
     #[cfg(feature = "metrics")]
-    moltis_metrics::gauge!(moltis_metrics::websocket::CONNECTIONS_ACTIVE).decrement(1.0);
+    clawmaster_metrics::gauge!(clawmaster_metrics::websocket::CONNECTIONS_ACTIVE).decrement(1.0);
 
     info!(
         conn_id = %conn_id,

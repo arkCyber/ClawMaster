@@ -97,8 +97,8 @@ async fn handle_slash_command(
         return;
     };
 
-    let reply_to = moltis_channels::plugin::ChannelReplyTarget {
-        channel_type: moltis_channels::ChannelType::Discord,
+    let reply_to = clawmaster_channels::plugin::ChannelReplyTarget {
+        channel_type: clawmaster_channels::ChannelType::Discord,
         account_id: account_id.to_string(),
         chat_id: command.channel_id.to_string(),
         message_id: None,
@@ -149,8 +149,8 @@ async fn handle_component_interaction(
         return;
     };
 
-    let reply_to = moltis_channels::plugin::ChannelReplyTarget {
-        channel_type: moltis_channels::ChannelType::Discord,
+    let reply_to = clawmaster_channels::plugin::ChannelReplyTarget {
+        channel_type: clawmaster_channels::ChannelType::Discord,
         account_id: account_id.to_string(),
         chat_id: component.channel_id.to_string(),
         message_id: None,

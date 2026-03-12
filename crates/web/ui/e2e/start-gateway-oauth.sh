@@ -97,7 +97,7 @@ export MOLTIS_PROVIDERS__OFFERED='["openai-codex","openai","github-copilot"]'
 # Prefer a pre-built binary to avoid recompiling every test run.
 BINARY="${MOLTIS_BINARY:-}"
 if [ -z "${BINARY}" ]; then
-	for candidate in target/debug/moltis target/release/moltis; do
+	for candidate in target/debug/clawmaster target/release/clawmaster; do
 		if [ -x "${candidate}" ] && { [ -z "${BINARY}" ] || [ "${candidate}" -nt "${BINARY}" ]; }; then
 			BINARY="${candidate}"
 		fi
@@ -107,5 +107,5 @@ fi
 if [ -n "${BINARY}" ]; then
 	exec "${BINARY}" --no-tls --bind 127.0.0.1 --port "${PORT}"
 else
-	exec cargo run --bin moltis -- --no-tls --bind 127.0.0.1 --port "${PORT}"
+	exec cargo run --bin clawmaster -- --no-tls --bind 127.0.0.1 --port "${PORT}"
 fi

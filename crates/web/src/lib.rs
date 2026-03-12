@@ -20,7 +20,7 @@ pub use error::{Error, Result};
 
 use {
     axum::{Router, routing::get},
-    moltis_gateway::server::AppState,
+    clawmaster_gateway::server::AppState,
 };
 
 /// Build the web-UI router: pages, API routes, assets, and SPA fallback.
@@ -122,28 +122,28 @@ fn build_api_routes() -> Router<AppState> {
         )
         .route(
             "/api/env",
-            get(moltis_gateway::env_routes::env_list).post(moltis_gateway::env_routes::env_set),
+            get(clawmaster_gateway::env_routes::env_list).post(clawmaster_gateway::env_routes::env_set),
         )
         .route(
             "/api/env/{id}",
-            axum::routing::delete(moltis_gateway::env_routes::env_delete),
+            axum::routing::delete(clawmaster_gateway::env_routes::env_delete),
         )
         .route(
             "/api/config",
-            get(moltis_gateway::tools_routes::config_get)
-                .post(moltis_gateway::tools_routes::config_save),
+            get(clawmaster_gateway::tools_routes::config_get)
+                .post(clawmaster_gateway::tools_routes::config_save),
         )
         .route(
             "/api/config/validate",
-            axum::routing::post(moltis_gateway::tools_routes::config_validate),
+            axum::routing::post(clawmaster_gateway::tools_routes::config_validate),
         )
         .route(
             "/api/config/template",
-            get(moltis_gateway::tools_routes::config_template),
+            get(clawmaster_gateway::tools_routes::config_template),
         )
         .route(
             "/api/restart",
-            axum::routing::post(moltis_gateway::tools_routes::restart),
+            axum::routing::post(clawmaster_gateway::tools_routes::restart),
         )
         .route("/api/sessions", get(api::api_sessions_handler))
         .route(
@@ -152,9 +152,9 @@ fn build_api_routes() -> Router<AppState> {
         )
         .route(
             "/api/sessions/{session_key}/upload",
-            axum::routing::post(moltis_gateway::upload_routes::session_upload).layer(
+            axum::routing::post(clawmaster_gateway::upload_routes::session_upload).layer(
                 axum::extract::DefaultBodyLimit::max(
-                    moltis_gateway::upload_routes::MAX_UPLOAD_SIZE,
+                    clawmaster_gateway::upload_routes::MAX_UPLOAD_SIZE,
                 ),
             ),
         )
@@ -169,15 +169,15 @@ fn build_api_routes() -> Router<AppState> {
     let protected = protected
         .route(
             "/api/metrics",
-            get(moltis_gateway::metrics_routes::api_metrics_handler),
+            get(clawmaster_gateway::metrics_routes::api_metrics_handler),
         )
         .route(
             "/api/metrics/summary",
-            get(moltis_gateway::metrics_routes::api_metrics_summary_handler),
+            get(clawmaster_gateway::metrics_routes::api_metrics_summary_handler),
         )
         .route(
             "/api/metrics/history",
-            get(moltis_gateway::metrics_routes::api_metrics_history_handler),
+            get(clawmaster_gateway::metrics_routes::api_metrics_history_handler),
         );
 
     protected
@@ -188,11 +188,11 @@ fn add_feature_routes(routes: Router<AppState>) -> Router<AppState> {
     #[cfg(feature = "tailscale")]
     let routes = routes.nest(
         "/api/tailscale",
-        moltis_gateway::tailscale_routes::tailscale_router(),
+        clawmaster_gateway::tailscale_routes::tailscale_router(),
     );
 
     #[cfg(feature = "push-notifications")]
-    let routes = routes.nest("/api/push", moltis_gateway::push_routes::push_router());
+    let routes = routes.nest("/api/push", clawmaster_gateway::push_routes::push_router());
 
     routes
 }

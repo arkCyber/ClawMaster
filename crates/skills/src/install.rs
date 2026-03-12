@@ -1,7 +1,7 @@
 use std::path::{Component, Path, PathBuf};
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, histogram, skills as skills_metrics};
+use clawmaster_metrics::{counter, histogram, skills as skills_metrics};
 
 use crate::{
     formats::{PluginFormat, detect_format, scan_with_adapter},
@@ -43,7 +43,7 @@ pub async fn install_skill(source: &str, install_dir: &Path) -> anyhow::Result<V
     tokio::fs::create_dir_all(install_dir).await?;
 
     #[cfg(feature = "metrics")]
-    counter!("moltis_skills_git_clone_fallback_total").increment(1);
+    counter!("clawmaster_skills_git_clone_fallback_total").increment(1);
     let commit_sha = install_via_http(&owner, &repo, &target).await?;
 
     // Auto-detect repo format and scan accordingly.
@@ -143,7 +143,7 @@ async fn install_via_http(
     let commit_sha = fetch_latest_commit_sha(&client, owner, repo).await;
     let resp = client
         .get(&url)
-        .header("User-Agent", "moltis-skills")
+        .header("User-Agent", "clawmaster-skills")
         .send()
         .await?;
 
@@ -214,7 +214,7 @@ async fn fetch_latest_commit_sha(
     let url = format!("https://api.github.com/repos/{owner}/{repo}/commits?per_page=1");
     let response = client
         .get(url)
-        .header("User-Agent", "moltis-skills")
+        .header("User-Agent", "clawmaster-skills")
         .send()
         .await
         .ok()?;
@@ -353,7 +353,7 @@ fn parse_source(source: &str) -> anyhow::Result<(String, String)> {
 
 /// Get the default installation directory.
 pub fn default_install_dir() -> anyhow::Result<PathBuf> {
-    Ok(moltis_config::data_dir().join("installed-skills"))
+    Ok(clawmaster_config::data_dir().join("installed-skills"))
 }
 
 #[allow(clippy::unwrap_used, clippy::expect_used)]

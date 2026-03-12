@@ -1,7 +1,7 @@
-// Service Worker for moltis PWA
+// Service Worker for ClawMaster PWA
 // Handles caching for offline support and push notifications
 
-var CACHE_NAME = "moltis-v2";
+var CACHE_NAME = "clawmaster-v2";
 var STATIC_ASSETS = [
   "/manifest.json",
   "/assets/css/base.css",
@@ -123,14 +123,14 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch (e) {
-    data = { body: event.data ? event.data.text() : "New message from moltis" };
+    data = { body: event.data ? event.data.text() : "New message from ClawMaster" };
   }
 
   var options = {
     body: data.body || "New response available",
     icon: "/assets/icons/icon-192.png",
     badge: "/assets/icons/icon-72.png",
-    tag: data.sessionKey || "moltis-notification",
+    tag: data.sessionKey || "clawmaster-notification",
     data: {
       url: data.url || "/chats",
       sessionKey: data.sessionKey,
@@ -144,7 +144,7 @@ self.addEventListener("push", (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || "moltis", options),
+    self.registration.showNotification(data.title || "ClawMaster", options),
   );
 });
 

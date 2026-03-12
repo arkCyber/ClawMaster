@@ -147,7 +147,7 @@ export default {
 	downloadingModel: "Téléchargement de {{modelName}}\u2026",
 	downloadProgressWithTotal: "{{downloaded}} / {{total}} MB",
 	downloadProgressNoTotal: "{{downloaded}} MB",
-	connectedToGateway: "Connecté à la passerelle moltis v{{version}} à {{time}}",
+	connectedToGateway: "Connecté à la passerelle clawmaster v{{version}} à {{time}}",
 	statusHandshakeFailed: "échec de l'initialisation",
 	handshakeFailed: "Initialisation échouée : {{reason}}",
 	statusDisconnectedReconnecting: "déconnecté \u2014 reconnexion\u2026",

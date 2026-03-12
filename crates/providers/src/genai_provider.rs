@@ -2,7 +2,7 @@ use std::pin::Pin;
 
 use {async_trait::async_trait, futures::StreamExt, tokio_stream::Stream};
 
-use moltis_agents::model::{
+use clawmaster_agents::model::{
     ChatMessage, CompletionResponse, LlmProvider, StreamEvent, Usage, UserContent,
 };
 

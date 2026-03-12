@@ -7,7 +7,7 @@
 use {
     bytes::Bytes,
     http::HeaderMap,
-    moltis_channels::{
+    clawmaster_channels::{
         channel_webhook_middleware::{
             ChannelWebhookRejection, ChannelWebhookVerifier, VerifiedChannelWebhook,
         },
@@ -189,7 +189,7 @@ mod tests {
     fn contract_rejects_empty_signature() {
         // With require_secret=true, missing headers → BadSignature.
         let verifier = TeamsChannelWebhookVerifier::new(Some(Secret::new("secret".into())), true);
-        moltis_channels::contract::channel_webhook_verifier_rejects_empty_signature(&verifier);
+        clawmaster_channels::contract::channel_webhook_verifier_rejects_empty_signature(&verifier);
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
         let verifier =
             TeamsChannelWebhookVerifier::new(Some(Secret::new("correct-secret".into())), true);
         let headers = headers_with_secret("wrong-secret");
-        moltis_channels::contract::channel_webhook_verifier_rejects_bad_signature(
+        clawmaster_channels::contract::channel_webhook_verifier_rejects_bad_signature(
             &verifier, &headers,
         );
     }
@@ -205,18 +205,18 @@ mod tests {
     #[test]
     fn contract_has_channel_type() {
         let verifier = TeamsChannelWebhookVerifier::new(None, false);
-        moltis_channels::contract::channel_webhook_verifier_has_channel_type(&verifier);
+        clawmaster_channels::contract::channel_webhook_verifier_has_channel_type(&verifier);
     }
 
     #[test]
     fn contract_has_positive_max_age() {
         let verifier = TeamsChannelWebhookVerifier::new(None, false);
-        moltis_channels::contract::channel_webhook_verifier_has_positive_max_age(&verifier);
+        clawmaster_channels::contract::channel_webhook_verifier_has_positive_max_age(&verifier);
     }
 
     #[test]
     fn contract_has_valid_rate_policy() {
         let verifier = TeamsChannelWebhookVerifier::new(None, false);
-        moltis_channels::contract::channel_webhook_verifier_has_valid_rate_policy(&verifier);
+        clawmaster_channels::contract::channel_webhook_verifier_has_valid_rate_policy(&verifier);
     }
 }

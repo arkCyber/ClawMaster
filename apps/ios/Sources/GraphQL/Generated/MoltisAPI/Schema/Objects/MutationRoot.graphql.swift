@@ -3,7 +3,7 @@
 
 import ApolloAPI
 
-extension MoltisAPI.Objects {
+extension ClawMasterAPI.Objects {
   static let MutationRoot = ApolloAPI.Object(
     typename: "MutationRoot",
     implementedInterfaces: [],

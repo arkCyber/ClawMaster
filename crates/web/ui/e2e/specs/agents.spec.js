@@ -173,7 +173,7 @@ test.describe("Agents settings page", () => {
 		// the session store to reflect the agent switch (RPC round-trip)
 		// before asserting the DOM value.
 		await expect
-			.poll(async () => page.evaluate(() => window.__moltis_stores?.sessionStore?.activeSession?.value?.agent_id), {
+			.poll(async () => page.evaluate(() => window.__clawmaster_stores?.sessionStore?.activeSession?.value?.agent_id), {
 				timeout: 15_000,
 			})
 			.toBe("selector-test");

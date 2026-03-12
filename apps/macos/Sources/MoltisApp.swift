@@ -14,7 +14,7 @@ private struct SettingsMenuCommand: Commands {
 }
 
 @main
-struct MoltisApp: App {
+struct ClawMasterApp: App {
     @StateObject private var settings: AppSettings
     @StateObject private var chatStore: ChatStore
     @StateObject private var onboardingState: OnboardingState
@@ -29,7 +29,7 @@ struct MoltisApp: App {
         let networkAuditStore = NetworkAuditStore()
 
         // Install Rust→Swift log bridge before any FFI calls
-        MoltisClient.installLogCallback(logStore: logStore)
+        ClawMasterClient.installLogCallback(logStore: logStore)
 
         let providerStore = ProviderStore(logStore: logStore)
         let chatStore = ChatStore(
@@ -37,10 +37,10 @@ struct MoltisApp: App {
         )
 
         // Install Rust→Swift session event bridge (shares bus with gateway)
-        MoltisClient.installSessionEventCallback(chatStore: chatStore)
+        ClawMasterClient.installSessionEventCallback(chatStore: chatStore)
 
         // Install Rust→Swift network audit bridge
-        MoltisClient.installNetworkAuditCallback(store: networkAuditStore)
+        ClawMasterClient.installNetworkAuditCallback(store: networkAuditStore)
 
         _settings = StateObject(wrappedValue: settings)
         _chatStore = StateObject(wrappedValue: chatStore)
@@ -51,7 +51,7 @@ struct MoltisApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("Moltis") {
+        WindowGroup("ClawMaster") {
             Group {
                 if onboardingState.isCompleted {
                     ContentView(chatStore: chatStore, settings: settings, providerStore: providerStore)

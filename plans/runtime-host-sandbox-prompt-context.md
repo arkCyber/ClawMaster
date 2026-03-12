@@ -1,4 +1,4 @@
-# Plan: Runtime Host + Sandbox Prompt Context (Moltis)
+# Plan: Runtime Host + Sandbox Prompt Context (ClawMaster)
 
 ## Goal
 Give the model reliable runtime awareness so it can make correct execution decisions:
@@ -14,7 +14,7 @@ Give the model reliable runtime awareness so it can make correct execution decis
 
 ## Implementation Plan
 
-1. Add typed runtime context in `moltis-agents` prompt layer.
+1. Add typed runtime context in `clawmaster-agents` prompt layer.
 - `PromptHostRuntimeContext`
 - `PromptSandboxRuntimeContext`
 - `PromptRuntimeContext`
@@ -60,11 +60,11 @@ Give the model reliable runtime awareness so it can make correct execution decis
 
 ## Validation Commands Used
 - `cargo fmt`
-- `cargo test -p moltis-agents test_runtime_context_injected_when_provided`
-- `cargo test -p moltis-agents test_minimal_prompt_runtime_does_not_add_exec_routing_block`
-- `cargo test -p moltis-agents test_native_prompt_uses_compact_tool_list`
-- `cargo clippy -p moltis-agents --tests`
-- `cargo clippy -p moltis-gateway --lib`
+- `cargo test -p clawmaster-agents test_runtime_context_injected_when_provided`
+- `cargo test -p clawmaster-agents test_minimal_prompt_runtime_does_not_add_exec_routing_block`
+- `cargo test -p clawmaster-agents test_native_prompt_uses_compact_tool_list`
+- `cargo clippy -p clawmaster-agents --tests`
+- `cargo clippy -p clawmaster-gateway --lib`
 
 ## Known Environment Caveat
 - Full workspace `cargo clippy --all --benches --tests --examples --all-features` is blocked in this environment by `llama-cpp-sys` CUDA/OpenMP toolchain requirements.

@@ -43,7 +43,7 @@ jobs:
           for i in $(seq 1 30); do
             COUNT=0
             for target in aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
-              ASSET="moltis-${VERSION}-${target}.tar.gz"
+              ASSET="clawmaster-${VERSION}-${target}.tar.gz"
               URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET}"
               if curl --silent --show-error --fail --location --head "$URL" >/dev/null; then
                 COUNT=$((COUNT + 1))
@@ -72,7 +72,7 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
           for target in aarch64-apple-darwin x86_64-apple-darwin aarch64-unknown-linux-gnu x86_64-unknown-linux-gnu; do
-            ASSET="moltis-${VERSION}-${target}.tar.gz"
+            ASSET="clawmaster-${VERSION}-${target}.tar.gz"
             URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET}"
             curl --silent --show-error --fail --location "$URL" -o "$ASSET"
             SHA=$(sha256sum "$ASSET" | cut -d' ' -f1)
@@ -84,47 +84,47 @@ jobs:
       - name: Checkout homebrew-tap
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          repository: moltis-org/homebrew-tap
+          repository: clawmaster-org/homebrew-tap
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           persist-credentials: true
 
       - name: Update formula
         run: |
-          cat > Formula/moltis.rb <<RUBY
+          cat > Formula/clawmaster.rb <<RUBY
           class Moltis < Formula
             desc "Personal AI gateway — one binary, multiple LLM providers"
-            homepage "https://www.moltis.org/"
+            homepage "https://www.clawmaster.org/"
             license "MIT"
             version "${VERSION}"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-aarch64-apple-darwin.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-aarch64-apple-darwin.tar.gz"
                 sha256 "${SHA_aarch64_apple_darwin}"
               else
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-x86_64-apple-darwin.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-x86_64-apple-darwin.tar.gz"
                 sha256 "${SHA_x86_64_apple_darwin}"
               end
             end
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-aarch64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-aarch64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_aarch64_unknown_linux_gnu}"
               else
-                url "https://github.com/moltis-org/moltis/releases/download/v#{version}/moltis-#{version}-x86_64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/clawmaster-org/clawmaster/releases/download/v#{version}/clawmaster-#{version}-x86_64-unknown-linux-gnu.tar.gz"
                 sha256 "${SHA_x86_64_unknown_linux_gnu}"
               end
             end
 
             def install
-              libexec.install "moltis"
-              share.install "share/moltis"
-              (bin/"moltis").write_env_script libexec/"moltis", MOLTIS_SHARE_DIR: share/"moltis"
+              libexec.install "clawmaster"
+              share.install "share/clawmaster"
+              (bin/"clawmaster").write_env_script libexec/"clawmaster", MOLTIS_SHARE_DIR: share/"clawmaster"
             end
 
             test do
-              assert_match "moltis", shell_output("#{bin}/moltis --version")
+              assert_match "clawmaster", shell_output("#{bin}/clawmaster --version")
             end
           end
           RUBY
@@ -133,6 +133,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/moltis.rb
-          git commit -m "moltis ${VERSION}"
+          git add Formula/clawmaster.rb
+          git commit -m "clawmaster ${VERSION}"
           git push

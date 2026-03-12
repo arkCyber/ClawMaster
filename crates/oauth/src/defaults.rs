@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{config_dir::moltis_config_dir, types::OAuthConfig};
+use crate::{config_dir::clawmaster_config_dir, types::OAuthConfig};
 
 /// Default OAuth configurations for known providers.
 fn builtin_defaults() -> HashMap<String, OAuthConfig> {
@@ -51,7 +51,7 @@ fn builtin_defaults() -> HashMap<String, OAuthConfig> {
 
 /// Path to the OAuth providers config file.
 fn config_path() -> std::path::PathBuf {
-    moltis_config_dir().join("oauth_providers.json")
+    clawmaster_config_dir().join("oauth_providers.json")
 }
 
 /// Load the OAuth config for a provider.

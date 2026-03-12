@@ -1,0 +1,43 @@
+[package]
+name = "clawmaster-wechat"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+# Async runtime
+tokio = { features = ["full"], workspace = true }
+
+# HTTP client
+reqwest = { features = ["json"], workspace = true }
+
+# Serialization
+serde = { features = ["derive"], workspace = true }
+serde_json = { workspace = true }
+
+# Async trait
+async-trait = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Crypto for signature
+sha1 = "0.10"
+hex = { workspace = true }
+
+# XML parsing
+quick-xml = { version = "0.31", features = ["serialize"] }
+
+# Workspace crates
+clawmaster-channels = { workspace = true }
+clawmaster-common = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio-test = "0.4"
+
+[lints]
+workspace = true

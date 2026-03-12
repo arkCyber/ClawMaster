@@ -112,6 +112,10 @@ export default {
 	// ── Featured skill descriptions ─────────────────────────
 	featuredOpenClaw: "来自 ClawdHub 的社区技能",
 	featuredAnthropic: "Anthropic 官方代理技能",
-	featuredVercelAgent: "Vercel 代理技能合集",
+	featuredVercelAgent: "Vercel 代理技能集合",
 	featuredVercelSkills: "Vercel 技能工具包",
+	confirmDisableAll: "立即禁用所有第三方技能？",
+	confirmInstall: "为 {{name}} 安装依赖？\n\n{{preview}}\n\n仅在您信任此技能及其来源时继续。",
+	confirmTrust: "信任来自 {{source}} 的技能 \"{{name}}\"？",
+	confirmDelete: "删除技能 \"{{name}}\"？这将删除 SKILL.md 文件。",
 };

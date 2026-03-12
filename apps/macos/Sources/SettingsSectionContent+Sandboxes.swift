@@ -38,7 +38,7 @@ struct SandboxesPane: View {
                     Text("Overview")
                         .textCase(nil)
                     Text(
-                        "Container images cached by moltis for sandbox execution. "
+                        "Container images cached by clawmaster for sandbox execution. "
                             + "You can delete individual images or prune all. "
                             + "Build custom images from a base with apt packages."
                     )
@@ -383,7 +383,7 @@ struct SandboxesPane: View {
             return Recommendation(
                 level: .info,
                 text: "Apple Container provides stronger VM-level isolation on macOS 26+. "
-                    + "Install it for automatic use (moltis prefers it over Docker). "
+                    + "Install it for automatic use (clawmaster prefers it over Docker). "
                     + "Run: brew install container"
             )
         }

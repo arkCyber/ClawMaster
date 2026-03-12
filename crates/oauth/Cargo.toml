@@ -1,13 +1,13 @@
 [package]
 edition.workspace = true
-name              = "moltis-oauth"
+name              = "clawmaster-oauth"
 version.workspace = true
 
 [dependencies]
 axum           = { workspace = true }
 base64         = { workspace = true }
-moltis-config  = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-config  = { workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 rand           = { workspace = true }
 reqwest        = { workspace = true }
 secrecy        = { workspace = true }
@@ -22,7 +22,7 @@ uuid           = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dev-dependencies]
 mockito  = { workspace = true }

@@ -21,7 +21,7 @@ fn generate_random_port() -> u16 {
 }
 
 /// Standard config file names, checked in order.
-const CONFIG_FILENAMES: &[&str] = &["moltis.toml", "moltis.yaml", "moltis.yml", "moltis.json"];
+const CONFIG_FILENAMES: &[&str] = &["clawmaster.toml", "clawmaster.yaml", "clawmaster.yml", "clawmaster.json"];
 
 /// Override for the config directory, set via `set_config_dir()`.
 static CONFIG_DIR_OVERRIDE: Mutex<Option<PathBuf>> = Mutex::new(None);
@@ -241,7 +241,7 @@ pub fn find_config_file() -> Option<PathBuf> {
     }
 
     // User-global: ~/.config/moltis/
-    if let Some(dir) = home_dir().map(|h| h.join(".config").join("moltis")) {
+    if let Some(dir) = home_dir().map(|h| h.join(".config").join("clawmaster")) {
         for name in CONFIG_FILENAMES {
             let p = dir.join(name);
             if p.exists() {
@@ -264,13 +264,13 @@ pub fn config_dir() -> Option<PathBuf> {
     {
         return Some(PathBuf::from(dir));
     }
-    home_dir().map(|h| h.join(".config").join("moltis"))
+    home_dir().map(|h| h.join(".config").join("clawmaster"))
 }
 
 /// Returns the user-global config directory (`~/.config/moltis`) without
 /// considering overrides like `MOLTIS_CONFIG_DIR`.
 pub fn user_global_config_dir() -> Option<PathBuf> {
-    home_dir().map(|h| h.join(".config").join("moltis"))
+    home_dir().map(|h| h.join(".config").join("clawmaster"))
 }
 
 /// Returns the user-global config directory only when it differs from the
@@ -906,7 +906,7 @@ fn strip_leading_html_comments(content: &str) -> &str {
 /// Returns the user's home directory (`$HOME` / `~`).
 ///
 /// This is the **single call-site** for `directories::BaseDirs` — all other
-/// crates must call this via `moltis_config::home_dir()` instead of using the
+/// crates must call this via `clawmaster_config::home_dir()` instead of using the
 /// `directories` crate directly.
 pub fn home_dir() -> Option<PathBuf> {
     directories::BaseDirs::new().map(|d| d.home_dir().to_path_buf())
@@ -919,7 +919,7 @@ pub fn find_or_default_config_path() -> PathBuf {
     }
     config_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("moltis.toml")
+        .join("clawmaster.toml")
 }
 
 /// Lock guarding config read-modify-write cycles.
@@ -1405,7 +1405,7 @@ mod tests {
     #[test]
     fn write_default_config_writes_template_to_requested_path() {
         let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("nested").join("moltis.toml");
+        let path = dir.path().join("nested").join("clawmaster.toml");
         let mut config = MoltisConfig::default();
         config.server.port = 23456;
 
@@ -1449,7 +1449,7 @@ mod tests {
     #[test]
     fn write_default_config_does_not_overwrite_existing_file() {
         let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("moltis.toml");
+        let path = dir.path().join("clawmaster.toml");
         std::fs::write(&path, "existing = true\n").expect("seed config");
 
         let mut config = MoltisConfig::default();
@@ -1463,7 +1463,7 @@ mod tests {
     #[test]
     fn save_config_to_path_preserves_provider_and_voice_comment_blocks() {
         let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("moltis.toml");
+        let path = dir.path().join("clawmaster.toml");
         std::fs::write(&path, crate::template::default_config_template(18789))
             .expect("write template");
 
@@ -1484,7 +1484,7 @@ mod tests {
     #[test]
     fn save_config_to_path_removes_stale_keys_when_values_are_cleared() {
         let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().join("moltis.toml");
+        let path = dir.path().join("clawmaster.toml");
         std::fs::write(
             &path,
             r#"[server]

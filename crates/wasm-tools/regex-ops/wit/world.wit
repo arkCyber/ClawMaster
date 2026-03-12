@@ -1,0 +1,22 @@
+package clawmaster:regex-ops@0.1.0;
+
+/// Regex operations tool for Moltis AI agents.
+world regex-ops {
+    /// Test if pattern matches.
+    export test: func(pattern: string, input: string) -> result<bool, string>;
+    
+    /// Find first match.
+    export find: func(pattern: string, input: string) -> result<string, string>;
+    
+    /// Find all matches (returns JSON array).
+    export find-all: func(pattern: string, input: string) -> result<string, string>;
+    
+    /// Replace first match.
+    export replace: func(pattern: string, input: string, replacement: string) -> result<string, string>;
+    
+    /// Replace all matches.
+    export replace-all: func(pattern: string, input: string, replacement: string) -> result<string, string>;
+    
+    /// Split by pattern.
+    export split: func(pattern: string, input: string) -> result<string, string>;
+}

@@ -4,7 +4,7 @@
 @_exported import ApolloAPI
 @_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-extension MoltisAPI {
+extension ClawMasterAPI {
   struct SearchSessionsQuery: GraphQLQuery {
     static let operationName: String = "SearchSessions"
     static let operationDocument: ApolloAPI.OperationDocument = .init(
@@ -21,11 +21,11 @@ extension MoltisAPI {
 
     @_spi(Unsafe) public var __variables: Variables? { ["query": query] }
 
-    struct Data: MoltisAPI.SelectionSet {
+    struct Data: ClawMasterAPI.SelectionSet {
       let __data: DataDict
       init(_dataDict: DataDict) { __data = _dataDict }
 
-      static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.QueryRoot }
+      static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.QueryRoot }
       static var __selections: [ApolloAPI.Selection] { [
         .field("sessions", Sessions.self),
       ] }
@@ -39,11 +39,11 @@ extension MoltisAPI {
       /// Sessions
       ///
       /// Parent Type: `SessionQuery`
-      struct Sessions: MoltisAPI.SelectionSet {
+      struct Sessions: ClawMasterAPI.SelectionSet {
         let __data: DataDict
         init(_dataDict: DataDict) { __data = _dataDict }
 
-        static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.SessionQuery }
+        static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.SessionQuery }
         static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("search", [Search].self, arguments: ["query": .variable("query")]),
@@ -58,11 +58,11 @@ extension MoltisAPI {
         /// Sessions.Search
         ///
         /// Parent Type: `SessionEntry`
-        struct Search: MoltisAPI.SelectionSet {
+        struct Search: ClawMasterAPI.SelectionSet {
           let __data: DataDict
           init(_dataDict: DataDict) { __data = _dataDict }
 
-          static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.SessionEntry }
+          static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.SessionEntry }
           static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .fragment(SessionFields.self),

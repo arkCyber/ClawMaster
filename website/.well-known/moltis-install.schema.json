@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://moltis.org/.well-known/moltis-install.schema.json",
-  "title": "Moltis Install Root Manifest",
-  "description": "Stable machine-readable entrypoint for agent-driven Moltis install/bootstrap.",
+  "$id": "https://clawmaster.org/.well-known/clawmaster-install.schema.json",
+  "title": "ClawMaster Install Root Manifest",
+  "description": "Stable machine-readable entrypoint for agent-driven ClawMaster install/bootstrap.",
   "type": "object",
   "additionalProperties": false,
   "required": [

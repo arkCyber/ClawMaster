@@ -48,12 +48,12 @@ fi
 rustup target add wasm32-wasip2 "${TARGETS[@]}"
 
 # Build and pre-compile embedded WASM guest components before release host builds.
-# moltis-tools includes these bytes at compile time in release mode.
-cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
+# clawmaster-tools includes these bytes at compile time in release mode.
+cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
 if [ "${SKIP_WASM_PRECOMPILE}" = "1" ]; then
   echo "Skipping wasm precompile (MOLTIS_SWIFT_BRIDGE_SKIP_WASM_PRECOMPILE=1)"
 else
-  cargo run -p moltis-wasm-precompile --release
+  cargo run -p clawmaster-wasm-precompile --release
 fi
 
 # Keep Rust and C/C++ deps aligned with Xcode app link settings to avoid min-version mismatch.
@@ -75,28 +75,28 @@ for target in "${TARGETS[@]}"; do
 done
 
 for target in "${TARGETS[@]}"; do
-  cargo build -p moltis-swift-bridge --release --target "${target}"
+  cargo build -p clawmaster-swift-bridge --release --target "${target}"
 done
 
 mkdir -p "${UNIVERSAL_DIR}" "${OUTPUT_DIR}"
 
 if [ "${#TARGETS[@]}" -eq 1 ]; then
   cp \
-    "${REPO_ROOT}/target/${TARGETS[0]}/release/libmoltis_swift_bridge.a" \
-    "${UNIVERSAL_DIR}/libmoltis_bridge.a"
+    "${REPO_ROOT}/target/${TARGETS[0]}/release/libclawmaster_swift_bridge.a" \
+    "${UNIVERSAL_DIR}/libclawmaster_bridge.a"
 else
   LIPO_INPUTS=()
   for target in "${TARGETS[@]}"; do
-    LIPO_INPUTS+=("${REPO_ROOT}/target/${target}/release/libmoltis_swift_bridge.a")
+    LIPO_INPUTS+=("${REPO_ROOT}/target/${target}/release/libclawmaster_swift_bridge.a")
   done
-  lipo -create "${LIPO_INPUTS[@]}" -output "${UNIVERSAL_DIR}/libmoltis_bridge.a"
+  lipo -create "${LIPO_INPUTS[@]}" -output "${UNIVERSAL_DIR}/libclawmaster_bridge.a"
 fi
 
 cbindgen "${BRIDGE_CRATE_DIR}" \
   --config "${BRIDGE_CRATE_DIR}/cbindgen.toml" \
-  --crate moltis-swift-bridge \
-  --output "${OUTPUT_DIR}/moltis_bridge.h"
+  --crate clawmaster-swift-bridge \
+  --output "${OUTPUT_DIR}/clawmaster_bridge.h"
 
-cp "${UNIVERSAL_DIR}/libmoltis_bridge.a" "${OUTPUT_DIR}/libmoltis_bridge.a"
+cp "${UNIVERSAL_DIR}/libclawmaster_bridge.a" "${OUTPUT_DIR}/libclawmaster_bridge.a"
 
 echo "Built Rust bridge artifacts in ${OUTPUT_DIR}"

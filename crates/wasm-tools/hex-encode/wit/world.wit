@@ -1,0 +1,13 @@
+package clawmaster:hex-encode@0.1.0;
+
+/// Hex encoding tool for Moltis AI agents.
+world hex-encode {
+    /// Encode bytes to hex string.
+    export encode: func(input: list<u8>) -> result<string, string>;
+    
+    /// Encode string to hex.
+    export encode-string: func(input: string) -> result<string, string>;
+    
+    /// Encode with uppercase.
+    export encode-upper: func(input: list<u8>) -> result<string, string>;
+}

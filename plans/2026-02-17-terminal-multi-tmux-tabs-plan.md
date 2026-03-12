@@ -17,7 +17,7 @@ Current `Settings > Terminal` attaches to one host PTY (and optionally one tmux 
 - Preserve current fallback behavior when tmux is missing.
 
 ## Preferred UX direction
-- Primary UX should focus on a single managed tmux session: `moltis-host-terminal`.
+- Primary UX should focus on a single managed tmux session: `clawmaster-host-terminal`.
 - Browser tabs should map to tmux windows in that session.
 - Non-expert users should not need to know `Ctrl-b c`, `n`, or `p`.
 
@@ -39,7 +39,7 @@ Introduce an explicit target descriptor:
 A tab is a `(target, wsConnection, xtermInstance)` tuple.
 
 Phase-1 constraint:
-- `session` is fixed to `moltis-host-terminal`.
+- `session` is fixed to `clawmaster-host-terminal`.
 - Tabs represent tmux windows only.
 
 ### 2) Backend API split
@@ -58,7 +58,7 @@ WS connection includes target in first client message:
 Server validates target and spawns the corresponding PTY command.
 
 Phase-1 simplified API (window-first):
-- `GET /api/terminal/windows` (for `moltis-host-terminal`)
+- `GET /api/terminal/windows` (for `clawmaster-host-terminal`)
 - `POST /api/terminal/windows` (create new window/tab)
 - `POST /api/terminal/windows/{id}/attach`
 - Optional `DELETE /api/terminal/windows/{id}` (close window)
@@ -71,7 +71,7 @@ Phase-1 simplified API (window-first):
 ### 4) UI model
 In `Settings > Terminal`:
 - top tab strip with:
-  - active tmux-window tabs (same `moltis-host-terminal` session),
+  - active tmux-window tabs (same `clawmaster-host-terminal` session),
   - `+` button for new tmux window,
   - optional overflow dropdown for many windows.
 - each tab owns one xterm + websocket.
@@ -79,7 +79,7 @@ In `Settings > Terminal`:
 
 ## UX behavior
 - First load:
-  - if tmux available: open default tab for `moltis-host-terminal`.
+  - if tmux available: open default tab for `clawmaster-host-terminal`.
   - if absent: open one ephemeral tab and show “Install tmux for persistence”.
 - New tab:
   - quick options: new tmux window, new pane (split), attach existing target, ephemeral shell.
@@ -102,7 +102,7 @@ In `Settings > Terminal`:
 ## Implementation phases
 
 ### Phase 1: Target-aware backend and single-active tab UI
-- Lock to `moltis-host-terminal` and windows-only tabs.
+- Lock to `clawmaster-host-terminal` and windows-only tabs.
 - Add `/api/terminal/windows` discovery/create/attach endpoints.
 - Add WS `attach_window` handshake payload.
 - UI: tab strip with one active terminal at a time.

@@ -1,6 +1,6 @@
 # Scheduling (Cron Jobs)
 
-Moltis includes a built-in cron system that lets the agent schedule and manage
+ClawMaster includes a built-in cron system that lets the agent schedule and manage
 recurring tasks. Jobs can fire agent turns, send system events, or trigger
 other actions on a flexible schedule.
 
@@ -18,7 +18,7 @@ turn is skipped to save tokens.
 ## Event-Driven Heartbeat Wake
 
 Normally the heartbeat fires on its regular schedule. The **wake** system lets
-other parts of Moltis trigger an immediate heartbeat when something noteworthy
+other parts of ClawMaster trigger an immediate heartbeat when something noteworthy
 happens, so the agent can react in near real-time.
 
 ### Wake Mode
@@ -51,7 +51,7 @@ Aliases are accepted: `"immediate"`, `"immediately"` map to `"now"`;
 
 ### System Events Queue
 
-Moltis maintains an in-memory bounded queue of **system events** — short text
+ClawMaster maintains an in-memory bounded queue of **system events** — short text
 summaries of things that happened (command completions, cron triggers, etc.).
 When the heartbeat fires, any pending events are drained from the queue and
 prepended to the heartbeat prompt so the agent sees what occurred.
@@ -62,7 +62,7 @@ deduplicated. Events that arrive after the buffer is full are silently dropped
 
 ### Exec Completion Events
 
-When a background command finishes (via the `exec` tool), Moltis automatically
+When a background command finishes (via the `exec` tool), ClawMaster automatically
 enqueues a summary event with the command name, exit code, and a short preview
 of stdout/stderr. If the heartbeat is idle, it is woken immediately so the
 agent can react to the result.
@@ -115,10 +115,10 @@ sandbox isolation, and job notification details.
 
 | Metric | Type | Description |
 |--------|------|-------------|
-| `moltis_cron_jobs_scheduled` | Gauge | Number of scheduled jobs |
-| `moltis_cron_executions_total` | Counter | Job executions |
-| `moltis_cron_execution_duration_seconds` | Histogram | Job duration |
-| `moltis_cron_errors_total` | Counter | Failed jobs |
-| `moltis_cron_stuck_jobs_cleared_total` | Counter | Jobs exceeding 2h timeout |
-| `moltis_cron_input_tokens_total` | Counter | Input tokens from cron runs |
-| `moltis_cron_output_tokens_total` | Counter | Output tokens from cron runs |
+| `clawmaster_cron_jobs_scheduled` | Gauge | Number of scheduled jobs |
+| `clawmaster_cron_executions_total` | Counter | Job executions |
+| `clawmaster_cron_execution_duration_seconds` | Histogram | Job duration |
+| `clawmaster_cron_errors_total` | Counter | Failed jobs |
+| `clawmaster_cron_stuck_jobs_cleared_total` | Counter | Jobs exceeding 2h timeout |
+| `clawmaster_cron_input_tokens_total` | Counter | Input tokens from cron runs |
+| `clawmaster_cron_output_tokens_total` | Counter | Output tokens from cron runs |

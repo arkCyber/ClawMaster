@@ -5,7 +5,7 @@ use {
     tracing::{info, warn},
 };
 
-use moltis_channels::{ChannelEventSink, message_log::MessageLog};
+use clawmaster_channels::{ChannelEventSink, message_log::MessageLog};
 
 use crate::{
     config::WhatsAppAccountConfig,

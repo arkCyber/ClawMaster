@@ -16,7 +16,7 @@ real Telegram Bot API, ensuring the integration never silently breaks.
                                                  │ Bot API polling
                                                  ▼
                                           ┌──────────────┐
-                                          │ Moltis       │
+                                          │ ClawMaster       │
                                           │ gateway      │
                                           │ (under test) │
                                           └──────────────┘
@@ -24,11 +24,11 @@ real Telegram Bot API, ensuring the integration never silently breaks.
 
 Two real actors:
 
-1. **The moltis bot** — a real Telegram bot running inside the gateway
+1. **The clawmaster bot** — a real Telegram bot running inside the gateway
 2. **A test user** — a real Telegram account driven programmatically via MTProto
 
 The test user sends messages to the bot, the bot processes them through
-moltis, and the test user asserts on the response.
+clawmaster, and the test user asserts on the response.
 
 ## Dependencies
 
@@ -235,7 +235,7 @@ async fn telegram_streaming_delivers_final_response() {
 
 ## Gateway Test Harness
 
-Helper to start a real moltis gateway with Telegram configured:
+Helper to start a real clawmaster gateway with Telegram configured:
 
 ```rust
 async fn start_test_gateway_with_telegram() -> TestGateway {
@@ -250,7 +250,7 @@ dm_policy = "open"
 stream_mode = "edit_in_place"
 "#, env::var("TELEGRAM_BOT_TOKEN").unwrap());
 
-    fs::write(config_dir.path().join("moltis.toml"), config).unwrap();
+    fs::write(config_dir.path().join("clawmaster.toml"), config).unwrap();
 
     // Seed identity so we skip onboarding
     fs::write(data_dir.path().join("IDENTITY.md"), "Test Bot").unwrap();
@@ -259,7 +259,7 @@ stream_mode = "edit_in_place"
     // Start gateway on random port
     let port = find_free_port();
     let handle = tokio::spawn(async move {
-        moltis_gateway::run(GatewayConfig {
+        clawmaster_gateway::run(GatewayConfig {
             port,
             config_dir: config_dir.path().to_path_buf(),
             data_dir: data_dir.path().to_path_buf(),
@@ -307,7 +307,7 @@ on:
 jobs:
   telegram-e2e:
     runs-on: ubuntu-latest
-    if: github.repository == 'moltis-org/moltis'
+    if: github.repository == 'clawmaster-org/clawmaster'
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -319,7 +319,7 @@ jobs:
         run: echo "${{ secrets.TELEGRAM_SESSION }}" | base64 -d > test_session
 
       - name: Run Telegram E2E tests
-        run: cargo test --package moltis-telegram -- --ignored --test-threads=1
+        run: cargo test --package clawmaster-telegram -- --ignored --test-threads=1
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_BOT_USERNAME: ${{ secrets.TELEGRAM_BOT_USERNAME }}

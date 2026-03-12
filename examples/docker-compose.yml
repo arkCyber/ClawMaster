@@ -5,18 +5,18 @@
 #   open https://localhost:13131
 #
 # On first launch, a setup code is printed to the logs:
-#   docker compose logs moltis
+#   docker compose logs clawmaster
 #
 # Configuration and data are stored in local directories:
-#   ./config - moltis.toml, credentials.json, mcp-servers.json
+#   ./config - clawmaster.toml, credentials.json, mcp-servers.json
 #   ./data   - databases, sessions, memory files
 #
 # For Podman, see the rootless/rootful socket paths below.
 
 services:
-  moltis:
-    image: ghcr.io/moltis-org/moltis:latest
-    container_name: moltis
+  clawmaster:
+    image: ghcr.io/clawmaster-org/clawmaster:latest
+    container_name: clawmaster
     restart: unless-stopped
     ports:
       - "13131:13131"
@@ -24,10 +24,10 @@ services:
       - "1455:1455"   # OAuth callback (OpenAI Codex, etc.)
     volumes:
       # Configuration files (editable from host)
-      - ./config:/home/moltis/.config/moltis
+      - ./config:/home/clawmaster/.config/clawmaster
 
       # Data directory (databases, sessions, memory)
-      - ./data:/home/moltis/.moltis
+      - ./data:/home/clawmaster/.clawmaster
 
       # Docker socket for sandbox command execution
       # Without this, the agent cannot run shell commands in isolated containers

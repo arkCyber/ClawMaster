@@ -1,6 +1,6 @@
 use {
     async_trait::async_trait,
-    moltis_channels::{
+    clawmaster_channels::{
         Error as ChannelError, Result as ChannelResult,
         message_log::{MessageLog, MessageLogEntry, SenderSummary},
     },

@@ -1,12 +1,12 @@
 # Security Architecture
 
-Moltis is designed with a defense-in-depth security model. This document
+ClawMaster is designed with a defense-in-depth security model. This document
 explains the key security features and provides guidance for production
 deployments.
 
 ## Overview
 
-Moltis runs AI agents that can execute code and interact with external systems.
+ClawMaster runs AI agents that can execute code and interact with external systems.
 This power requires multiple layers of protection:
 
 1. **Human-in-the-loop approval** for dangerous commands
@@ -21,7 +21,7 @@ drift re-trust, dependency install guards, kill switch, audit log), see
 
 ## Command Execution Approval
 
-By default, Moltis requires explicit user approval before executing potentially
+By default, ClawMaster requires explicit user approval before executing potentially
 dangerous commands. This "human-in-the-loop" design ensures the AI cannot take
 destructive actions without consent.
 
@@ -36,7 +36,7 @@ When the agent wants to run a command:
 
 ### Approval Policies
 
-Configure approval behavior in `moltis.toml`:
+Configure approval behavior in `clawmaster.toml`:
 
 ```toml
 [tools.exec]
@@ -50,14 +50,14 @@ cases. Only use `"never"` in fully automated, sandboxed environments.
 
 ### Built-in Dangerous Command Blocklist
 
-Even with `approval_mode = "never"` or `security_level = "full"`, Moltis
+Even with `approval_mode = "never"` or `security_level = "full"`, ClawMaster
 maintains a safety floor: a hardcoded set of regex patterns for the most
 critical destructive commands (e.g. `rm -rf /`, `git reset --hard`,
 `DROP TABLE`, `mkfs`, `terraform destroy`). Matching commands always require
 approval regardless of configuration.
 
 Users can override specific patterns by adding matching entries to their
-`allowlist` in `moltis.toml`. The blocklist only applies to host execution;
+`allowlist` in `clawmaster.toml`. The blocklist only applies to host execution;
 sandboxed commands are already isolated.
 
 ### Destructive Command Guard (dcg)
@@ -104,7 +104,7 @@ network audit log for review.
 ## Channel Authorization
 
 Channels (Telegram, Slack, etc.) allow external parties to interact with your
-Moltis agent. This requires careful access control.
+ClawMaster agent. This requires careful access control.
 
 ### Sender Allowlisting
 
@@ -149,7 +149,7 @@ heartbeat) bypass this limit.
 
 ### Job Notifications
 
-When cron jobs are created, updated, or removed, Moltis broadcasts events:
+When cron jobs are created, updated, or removed, ClawMaster broadcasts events:
 
 - `cron.job.created` - A new job was created
 - `cron.job.updated` - An existing job was modified
@@ -195,7 +195,7 @@ The gateway API uses role-based access control with scopes:
 
 ### API Keys
 
-API keys authenticate external tools and scripts connecting to Moltis. Keys
+API keys authenticate external tools and scripts connecting to ClawMaster. Keys
 **must specify at least one scope** — keys without scopes are denied access
 (least-privilege by default).
 
@@ -212,9 +212,9 @@ API keys authenticate external tools and scripts connecting to Moltis. Keys
 
 ```bash
 # Scoped key (comma-separated scopes)
-moltis auth create-api-key --label "Monitor" --scopes "operator.read"
-moltis auth create-api-key --label "Automation" --scopes "operator.read,operator.write"
-moltis auth create-api-key --label "CI pipeline" --scopes "operator.admin"
+clawmaster auth create-api-key --label "Monitor" --scopes "operator.read"
+clawmaster auth create-api-key --label "Automation" --scopes "operator.read,operator.write"
+clawmaster auth create-api-key --label "CI pipeline" --scopes "operator.admin"
 ```
 
 #### Using API Keys
@@ -311,7 +311,7 @@ unless you understand the risk.
 
 ## Authentication
 
-Moltis uses a unified auth gate that applies a single `check_auth()`
+ClawMaster uses a unified auth gate that applies a single `check_auth()`
 function to every request. This prevents split-brain bugs where different
 code paths disagree on auth status.
 
@@ -329,7 +329,7 @@ dedicated [Authentication](authentication.md) page.
 
 ## HTTP Endpoint Throttling
 
-Moltis includes built-in per-IP endpoint throttling to reduce brute force
+ClawMaster includes built-in per-IP endpoint throttling to reduce brute force
 attempts and traffic spikes, but only when auth is required for the current
 request.
 
@@ -367,13 +367,13 @@ burst controls, geo rules, bot filtering).
 
 ## Reverse Proxy Deployments
 
-Running Moltis behind a reverse proxy (Caddy, nginx, Traefik, etc.)
+Running ClawMaster behind a reverse proxy (Caddy, nginx, Traefik, etc.)
 requires understanding how authentication interacts with loopback
 connections.
 
 ### The problem
 
-When Moltis binds to `127.0.0.1` and a proxy on the same machine
+When ClawMaster binds to `127.0.0.1` and a proxy on the same machine
 forwards traffic to it, **every** incoming TCP connection appears to
 originate from `127.0.0.1` — including requests from the public
 internet.  A naive "trust all loopback connections" check would bypass
@@ -384,9 +384,9 @@ This is the same class of vulnerability as
 which allowed one-click remote code execution on OpenClaw through
 authentication token exfiltration and cross-site WebSocket hijacking.
 
-### How Moltis handles it
+### How ClawMaster handles it
 
-Moltis uses the per-request `is_local_connection()` check described
+ClawMaster uses the per-request `is_local_connection()` check described
 above.  Most reverse proxies add forwarding headers or change the
 `Host` header, which automatically triggers the "remote" classification.
 
@@ -395,7 +395,7 @@ that rewrites `Host` to the upstream address and adds no `X-Forwarded-For`),
 use the `MOLTIS_BEHIND_PROXY` environment variable as a hard override:
 
 ```bash
-MOLTIS_BEHIND_PROXY=true moltis
+MOLTIS_BEHIND_PROXY=true clawmaster
 ```
 
 When this variable is set, **all** connections are treated as remote —
@@ -411,19 +411,19 @@ no loopback bypass, no exceptions.
    for all traffic regardless of `is_local_connection()`.
 
 3. **WebSocket proxying** must preserve browser origin host info
-   (`Host`, or `X-Forwarded-Host` if `Host` is rewritten). Moltis
+   (`Host`, or `X-Forwarded-Host` if `Host` is rewritten). ClawMaster
    validates same-origin on WebSocket upgrades to prevent cross-site
    WebSocket hijacking (CSWSH).
 
-4. **TLS termination** should happen at the proxy. Run Moltis with
+4. **TLS termination** should happen at the proxy. Run ClawMaster with
    `--no-tls` (or `MOLTIS_NO_TLS=true`) in this mode.
 
    If your browser is being redirected to `https://<domain>:13131`,
-   Moltis TLS is still enabled while your proxy upstream is plain HTTP.
+   ClawMaster TLS is still enabled while your proxy upstream is plain HTTP.
 
 5. **Advanced TLS upstream mode** (optional): if your proxy connects to
-   Moltis using HTTPS upstream (or TCP TLS passthrough), you may keep
-   Moltis TLS enabled. Set `MOLTIS_ALLOW_TLS_BEHIND_PROXY=true` to
+   ClawMaster using HTTPS upstream (or TCP TLS passthrough), you may keep
+   ClawMaster TLS enabled. Set `MOLTIS_ALLOW_TLS_BEHIND_PROXY=true` to
    acknowledge this non-default setup.
 
 ### Nginx (direct config example)
@@ -460,8 +460,8 @@ map $http_upgrade $connection_upgrade {
 
 If WebSockets fail behind NPM while HTTP works, ensure:
 
-- Moltis runs with `MOLTIS_BEHIND_PROXY=true`
-- For standard edge TLS termination, Moltis runs with `--no-tls`
+- ClawMaster runs with `MOLTIS_BEHIND_PROXY=true`
+- For standard edge TLS termination, ClawMaster runs with `--no-tls`
 - NPM preserves browser host/origin context
 
 Use this in NPM's **Advanced** field:
@@ -477,9 +477,9 @@ proxy_set_header Connection "upgrade";
 
 Upstream scheme guidance:
 
-- **Edge TLS termination (most setups)**: proxy to `http://<moltis-host>:13131`
-  with Moltis started using `--no-tls`
-- **HTTPS upstream / TLS passthrough**: proxy to `https://<moltis-host>:13131`
+- **Edge TLS termination (most setups)**: proxy to `http://<clawmaster-host>:13131`
+  with ClawMaster started using `--no-tls`
+- **HTTPS upstream / TLS passthrough**: proxy to `https://<clawmaster-host>:13131`
   and set `MOLTIS_ALLOW_TLS_BEHIND_PROXY=true`
 
 ### Passkeys Behind Proxies (Host Changes)
@@ -513,7 +513,7 @@ Migration guidance when changing host/domain:
 
 ### 1. Enable Authentication
 
-By default, Moltis requires a password when accessed from non-localhost:
+By default, ClawMaster requires a password when accessed from non-localhost:
 
 ```toml
 [auth]
@@ -555,7 +555,7 @@ Watch for these suspicious patterns:
 
 ### 6. Network Segmentation
 
-Run Moltis on a private network or behind a reverse proxy with:
+Run ClawMaster on a private network or behind a reverse proxy with:
 
 - IP allowlisting
 - Rate limiting

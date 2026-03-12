@@ -1,7 +1,7 @@
 import ActivityKit
 import Foundation
 
-struct MoltisActivityAttributes: ActivityAttributes {
+struct ClawMasterActivityAttributes: ActivityAttributes {
     var agentName: String
     var userMessage: String
 

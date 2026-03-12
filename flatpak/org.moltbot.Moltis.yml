@@ -4,7 +4,7 @@ runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
-command: moltis
+command: clawmaster
 
 finish-args:
   - --share=network
@@ -12,14 +12,14 @@ finish-args:
 build-options:
   append-path: /usr/lib/sdk/rust-stable/bin
   env:
-    CARGO_HOME: /run/build/moltis/cargo
+    CARGO_HOME: /run/build/clawmaster/cargo
 
 modules:
-  - name: moltis
+  - name: clawmaster
     buildsystem: simple
     build-commands:
       - cargo build --release --manifest-path=crates/cli/Cargo.toml
-      - install -Dm755 target/release/moltis /app/bin/moltis
+      - install -Dm755 target/release/clawmaster /app/bin/clawmaster
     sources:
       - type: dir
         path: ..

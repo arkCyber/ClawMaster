@@ -4,7 +4,7 @@ use std::{
 };
 
 use {
-    moltis_channels::{ChannelEventSink, message_log::MessageLog},
+    clawmaster_channels::{ChannelEventSink, message_log::MessageLog},
     reqwest::Client,
     tokio::sync::Mutex,
 };

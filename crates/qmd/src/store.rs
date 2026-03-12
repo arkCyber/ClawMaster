@@ -7,7 +7,7 @@ use std::sync::Arc;
 
 use {
     async_trait::async_trait,
-    moltis_memory::{
+    clawmaster_memory::{
         schema::{ChunkRow, FileRow},
         search::SearchResult,
         store::{CacheEntry, MemoryStore},

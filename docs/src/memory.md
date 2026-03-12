@@ -1,10 +1,10 @@
 # Memory System
 
-Moltis provides a powerful memory system that enables the agent to recall past conversations, notes, and context across sessions. This document explains the available backends, features, and configuration options.
+ClawMaster provides a powerful memory system that enables the agent to recall past conversations, notes, and context across sessions. This document explains the available backends, features, and configuration options.
 
 ## Backends
 
-Moltis supports two memory backends:
+ClawMaster supports two memory backends:
 
 | Feature | Built-in | QMD |
 |---------|----------|-----|
@@ -23,7 +23,7 @@ Moltis supports two memory backends:
 
 The default backend uses SQLite for storage with FTS5 for keyword search and optional vector embeddings for semantic search. Key advantages:
 
-- **Zero external dependencies**: Everything is embedded in the moltis binary
+- **Zero external dependencies**: Everything is embedded in the clawmaster binary
 - **Fallback chain**: Automatically switches between embedding providers if one fails
 - **Batch embedding**: Reduces OpenAI API costs by 50% for large sync operations
 - **Embedding cache**: Avoids re-embedding unchanged content
@@ -77,7 +77,7 @@ LLM reranking uses the configured language model to re-score and reorder search 
 
 ## Configuration
 
-Memory settings can be configured in `moltis.toml`:
+Memory settings can be configured in `clawmaster.toml`:
 
 ```toml
 [memory]
@@ -129,11 +129,11 @@ The system auto-detects available providers and creates a fallback chain:
 
 ## Memory Directories
 
-By default, moltis indexes markdown files from:
+By default, clawmaster indexes markdown files from:
 
-- `~/.moltis/MEMORY.md` - Main long-term memory file
-- `~/.moltis/memory/*.md` - Additional memory files
-- `~/.moltis/memory/sessions/*.md` - Exported session transcripts
+- `~/.clawmaster/MEMORY.md` - Main long-term memory file
+- `~/.clawmaster/memory/*.md` - Additional memory files
+- `~/.clawmaster/memory/sessions/*.md` - Exported session transcripts
 
 ## Tools
 
@@ -201,7 +201,7 @@ the affected file so the new content is immediately searchable via
 ## Silent Memory Turn (Pre-Compaction Flush)
 
 Before compacting a session (summarizing old messages to free context window
-space), Moltis runs a **silent agentic turn** that reviews the conversation
+space), ClawMaster runs a **silent agentic turn** that reviews the conversation
 and saves important information to memory files. This ensures durable memories
 survive compaction.
 
@@ -277,7 +277,7 @@ systems.
 ### Search returns no results
 
 1. Check that memory files exist in the expected directories
-2. Trigger a manual sync by restarting moltis
+2. Trigger a manual sync by restarting clawmaster
 3. Check logs for sync errors
 
 ### QMD not available

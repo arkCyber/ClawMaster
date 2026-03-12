@@ -118,4 +118,6 @@ export default {
 		deleteAfterRun: "运行后删除",
 		create: "创建",
 	},
+	confirmDelete: "删除任务 '{{name}}'？",
+	confirmDeleteMessage: "这将永久删除该定时任务。",
 };

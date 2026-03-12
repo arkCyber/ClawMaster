@@ -9,7 +9,7 @@ use std::{
 };
 
 use {
-    moltis_oauth::{OAuthTokens, TokenStore},
+    clawmaster_oauth::{OAuthTokens, TokenStore},
     secrecy::Secret,
     serde::{Deserialize, Serialize},
     tracing::debug,

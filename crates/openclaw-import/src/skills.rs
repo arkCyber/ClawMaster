@@ -213,7 +213,7 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         setup_skills(tmp.path());
 
-        let dest = tmp.path().join("moltis-skills");
+        let dest = tmp.path().join("clawmaster-skills");
         let detection = make_detection(tmp.path());
         let report = import_skills(&detection, &dest);
 
@@ -229,7 +229,7 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         setup_skills(tmp.path());
 
-        let dest = tmp.path().join("moltis-skills");
+        let dest = tmp.path().join("clawmaster-skills");
         // Pre-create one skill
         std::fs::create_dir_all(dest.join("my-skill")).unwrap();
 

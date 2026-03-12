@@ -56,7 +56,7 @@ These are good candidates for transport extraction while preserving business log
 
 - Add a new crate: `crates/desktop`
   - Owns Tauri app bootstrap, window lifecycle, desktop-specific IPC glue
-  - Depends on existing workspace crates (`moltis-gateway`, `moltis-config`, etc.)
+  - Depends on existing workspace crates (`clawmaster-gateway`, `clawmaster-config`, etc.)
 - Keep `crates/cli` as-is for non-desktop runtime
 
 ### Runtime modes
@@ -291,8 +291,8 @@ This milestone proves the architecture decision early while containing risk.
 
 **Acceptance criteria:**
 
-- `cargo build -p moltis-desktop` works on macOS.
-- Existing `moltis` CLI build/test paths are unchanged.
+- `cargo build -p clawmaster-desktop` works on macOS.
+- Existing `clawmaster` CLI build/test paths are unchanged.
 - No localhost transport decisions made yet.
 
 ### PR 2: Frontend transport abstraction (browser-compatible)
@@ -404,10 +404,10 @@ This milestone proves the architecture decision early while containing risk.
 ```bash
 # Rust compile checks
 cargo check
-cargo build -p moltis
+cargo build -p clawmaster
 
 # Desktop crate compile (macOS)
-cargo build -p moltis-desktop
+cargo build -p clawmaster-desktop
 
 # JS lint/format
 biome check --write

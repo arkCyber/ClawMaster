@@ -1,0 +1,22 @@
+package clawmaster:text-case@0.1.0;
+
+/// Text case conversion tool for Moltis AI agents.
+world text-case {
+    /// Convert to uppercase.
+    export to-upper: func(input: string) -> string;
+    
+    /// Convert to lowercase.
+    export to-lower: func(input: string) -> string;
+    
+    /// Convert to title case.
+    export to-title: func(input: string) -> string;
+    
+    /// Convert to camelCase.
+    export to-camel: func(input: string) -> string;
+    
+    /// Convert to snake_case.
+    export to-snake: func(input: string) -> string;
+    
+    /// Convert to kebab-case.
+    export to-kebab: func(input: string) -> string;
+}

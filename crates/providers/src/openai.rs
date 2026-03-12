@@ -8,7 +8,7 @@ use std::{
 use {
     async_trait::async_trait,
     futures::{SinkExt, StreamExt},
-    moltis_config::schema::ProviderStreamTransport,
+    clawmaster_config::schema::ProviderStreamTransport,
     secrecy::ExposeSecret,
     tokio_stream::Stream,
     tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest, http::HeaderValue},
@@ -22,7 +22,7 @@ use {
         parse_openai_compat_usage_from_payload, parse_tool_calls, process_openai_sse_line,
         strip_think_tags, to_openai_tools, to_responses_api_tools, to_responses_input,
     },
-    moltis_agents::model::{
+    clawmaster_agents::model::{
         ChatMessage, CompletionResponse, LlmProvider, ModelMetadata, StreamEvent, Usage,
     },
 };
@@ -35,9 +35,9 @@ pub struct OpenAiProvider {
     client: &'static reqwest::Client,
     stream_transport: ProviderStreamTransport,
     metadata_cache: tokio::sync::OnceCell<ModelMetadata>,
-    tool_mode_override: Option<moltis_config::ToolMode>,
+    tool_mode_override: Option<clawmaster_config::ToolMode>,
     /// Optional reasoning effort level for o-series models.
-    reasoning_effort: Option<moltis_agents::model::ReasoningEffort>,
+    reasoning_effort: Option<clawmaster_agents::model::ReasoningEffort>,
 }
 
 const OPENAI_MODELS_ENDPOINT_PATH: &str = "/models";
@@ -470,14 +470,14 @@ impl OpenAiProvider {
     }
 
     #[must_use]
-    pub fn with_tool_mode(mut self, mode: moltis_config::ToolMode) -> Self {
+    pub fn with_tool_mode(mut self, mode: clawmaster_config::ToolMode) -> Self {
         self.tool_mode_override = Some(mode);
         self
     }
 
     /// Return the reasoning effort string if configured.
     fn reasoning_effort_str(&self) -> Option<&'static str> {
-        use moltis_agents::model::ReasoningEffort;
+        use clawmaster_agents::model::ReasoningEffort;
         self.reasoning_effort.map(|e| match e {
             ReasoningEffort::Low => "low",
             ReasoningEffort::Medium => "medium",
@@ -1039,13 +1039,13 @@ impl LlmProvider for OpenAiProvider {
         &self.provider_name
     }
 
-    fn reasoning_effort(&self) -> Option<moltis_agents::model::ReasoningEffort> {
+    fn reasoning_effort(&self) -> Option<clawmaster_agents::model::ReasoningEffort> {
         self.reasoning_effort
     }
 
     fn with_reasoning_effort(
         self: std::sync::Arc<Self>,
-        effort: moltis_agents::model::ReasoningEffort,
+        effort: clawmaster_agents::model::ReasoningEffort,
     ) -> Option<std::sync::Arc<dyn LlmProvider>> {
         Some(std::sync::Arc::new(Self {
             api_key: self.api_key.clone(),
@@ -1066,15 +1066,15 @@ impl LlmProvider for OpenAiProvider {
 
     fn supports_tools(&self) -> bool {
         match self.tool_mode_override {
-            Some(moltis_config::ToolMode::Native) => true,
-            Some(moltis_config::ToolMode::Text | moltis_config::ToolMode::Off) => false,
-            Some(moltis_config::ToolMode::Auto) | None => {
+            Some(clawmaster_config::ToolMode::Native) => true,
+            Some(clawmaster_config::ToolMode::Text | clawmaster_config::ToolMode::Off) => false,
+            Some(clawmaster_config::ToolMode::Auto) | None => {
                 super::supports_tools_for_model(&self.model)
             },
         }
     }
 
-    fn tool_mode(&self) -> Option<moltis_config::ToolMode> {
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
         self.tool_mode_override
     }
 
@@ -1266,7 +1266,7 @@ mod tests {
         tokio_stream::StreamExt,
     };
 
-    use moltis_agents::model::{ChatMessage, ToolCall, Usage};
+    use clawmaster_agents::model::{ChatMessage, ToolCall, Usage};
 
     use super::*;
 
@@ -2038,7 +2038,7 @@ mod tests {
             "o3".into(),
             "https://api.openai.com/v1".into(),
         );
-        provider.reasoning_effort = Some(moltis_agents::model::ReasoningEffort::High);
+        provider.reasoning_effort = Some(clawmaster_agents::model::ReasoningEffort::High);
 
         let mut body = serde_json::json!({ "model": "o3", "messages": [] });
         provider.apply_reasoning_effort_chat(&mut body);
@@ -2054,7 +2054,7 @@ mod tests {
             "o3".into(),
             "https://api.openai.com/v1".into(),
         );
-        provider.reasoning_effort = Some(moltis_agents::model::ReasoningEffort::Medium);
+        provider.reasoning_effort = Some(clawmaster_agents::model::ReasoningEffort::Medium);
 
         let mut body = serde_json::json!({ "model": "o3", "input": [] });
         provider.apply_reasoning_effort_responses(&mut body);
@@ -2078,7 +2078,7 @@ mod tests {
 
     #[test]
     fn with_reasoning_effort_creates_new_provider() {
-        use moltis_agents::model::{LlmProvider, ReasoningEffort};
+        use clawmaster_agents::model::{LlmProvider, ReasoningEffort};
         let provider = Arc::new(OpenAiProvider::new(
             Secret::new("test-key".into()),
             "o3".into(),

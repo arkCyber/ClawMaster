@@ -140,9 +140,9 @@ test.describe("WebSocket connection lifecycle", () => {
 
 		await expectRpcOk(page, "chat.clear", {});
 
-		const toolOutput = "Linux moltis-moltis-sandbox-main 6.12.28 #1 SMP Tue May 20 15:19:05 UTC 2025 aarch64 GNU/Linux";
+		const toolOutput = "Linux clawmaster-clawmaster-sandbox-main 6.12.28 #1 SMP Tue May 20 15:19:05 UTC 2025 aarch64 GNU/Linux";
 		const finalText =
-			"The command executed successfully. The output shows:\n- Kernel name: Linux\n- Hostname: moltis-moltis-sandbox-main\n\n" +
+			"The command executed successfully. The output shows:\n- Kernel name: Linux\n- Hostname: clawmaster-clawmaster-sandbox-main\n\n" +
 			toolOutput;
 
 		await expectRpcOk(page, "system-event", {
@@ -182,7 +182,7 @@ test.describe("WebSocket connection lifecycle", () => {
 			page.locator("#messages .msg.assistant").filter({ hasText: "command executed successfully" }),
 		).toBeVisible();
 		await expect(
-			page.locator("#messages .msg.assistant").filter({ hasText: "moltis-moltis-sandbox-main" }),
+			page.locator("#messages .msg.assistant").filter({ hasText: "clawmaster-clawmaster-sandbox-main" }),
 		).toBeVisible();
 		expect(pageErrors).toEqual([]);
 	});

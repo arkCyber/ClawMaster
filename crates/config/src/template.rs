@@ -33,7 +33,7 @@ update_releases_url = "https://www.moltis.org/releases.json"    # Releases manif
 
 [auth]
 disabled = false                  # true = disable auth entirely (DANGEROUS if exposed)
-                                  # When disabled, anyone with network access can use moltis
+                                  # When disabled, anyone with network access can use clawmaster
 
 # ══════════════════════════════════════════════════════════════════════════════
 # GRAPHQL
@@ -61,7 +61,7 @@ auto_generate = true              # Auto-generate local CA and server certificat
 # Customize your agent's personality. These are typically set during onboarding.
 
 [identity]
-# name = "moltis"                 # Agent's display name
+# name = "clawmaster"                 # Agent's display name
 # emoji = "🦊"                    # Agent's emoji/avatar
 # theme = "wise owl"              # Theme for agent personality (e.g. wise owl, chill fox)
 # soul = ""                       # Freeform personality text injected into system prompt
@@ -258,7 +258,7 @@ backend = "auto"                  # Container backend:
                                   #   "apple-container" - Use Apple Container (macOS only)
 no_network = true                 # Disable network access in sandbox (recommended)
 # image = "custom-image:tag"      # Custom Docker image (default: auto-built)
-# container_prefix = "moltis"     # Prefix for container names
+# container_prefix = "clawmaster"     # Prefix for container names
 
 # Packages installed in sandbox containers via apt-get.
 # This list is used to build the sandbox image. Customize as needed.

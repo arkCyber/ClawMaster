@@ -1,0 +1,28 @@
+package clawmaster:validate-data@0.1.0;
+
+/// Data validation tool for Moltis AI agents.
+world validate-data {
+    /// Validate email address.
+    export is-email: func(input: string) -> bool;
+    
+    /// Validate URL.
+    export is-url: func(input: string) -> bool;
+    
+    /// Validate JSON.
+    export is-json: func(input: string) -> bool;
+    
+    /// Validate UUID.
+    export is-uuid: func(input: string) -> bool;
+    
+    /// Validate IP address (v4).
+    export is-ipv4: func(input: string) -> bool;
+    
+    /// Validate number.
+    export is-number: func(input: string) -> bool;
+    
+    /// Validate integer.
+    export is-integer: func(input: string) -> bool;
+    
+    /// Validate hex string.
+    export is-hex: func(input: string) -> bool;
+}

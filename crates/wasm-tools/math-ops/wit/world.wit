@@ -1,0 +1,23 @@
+package clawmaster:math-ops@0.1.0;
+
+/// Math operations tool for Moltis AI agents.
+world math-ops {
+    // Basic operations
+    export add: func(a: f64, b: f64) -> f64;
+    export subtract: func(a: f64, b: f64) -> f64;
+    export multiply: func(a: f64, b: f64) -> f64;
+    export divide: func(a: f64, b: f64) -> result<f64, string>;
+    export modulo: func(a: f64, b: f64) -> result<f64, string>;
+    
+    // Advanced operations
+    export power: func(base: f64, exponent: f64) -> f64;
+    export sqrt: func(n: f64) -> result<f64, string>;
+    export abs: func(n: f64) -> f64;
+    export floor: func(n: f64) -> f64;
+    export ceil: func(n: f64) -> f64;
+    export round: func(n: f64) -> f64;
+    
+    // Min/Max
+    export min: func(a: f64, b: f64) -> f64;
+    export max: func(a: f64, b: f64) -> f64;
+}

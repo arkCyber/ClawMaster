@@ -130,7 +130,7 @@ function Toolbar() {
 			if (area) area.textContent = "";
 			entryCount.value = 0;
 		}}>${t("logs:toolbar.clear")}</button>
-    <a href="/api/logs/download" class="logs-btn" download="moltis-logs.jsonl"
+    <a href="/api/logs/download" class="logs-btn" download="clawmaster-logs.jsonl"
       style="text-decoration:none;text-align:center;">${t("logs:toolbar.download")}</a>
     <span class="logs-count">${entryCount.value} ${t("logs:toolbar.entries")}</span>
   </div>`;

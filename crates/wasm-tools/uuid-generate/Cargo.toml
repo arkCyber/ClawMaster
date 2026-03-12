@@ -1,0 +1,17 @@
+[package]
+name = "uuid-generate"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wit-bindgen = "0.34"
+uuid = { version = "1.10", features = ["v4", "fast-rng"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true

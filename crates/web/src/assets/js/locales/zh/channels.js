@@ -19,7 +19,10 @@ export default {
 		sessionInfo: "{{label}} ({{count}} 条消息)",
 		removeConfirm: "移除 {{name}}？",
 		fallbackName: "频道",
+		dmAllowlistLabel: "DM 白名单",
 	},
+	confirmRemove: "删除 {{name}}？",
+	confirmRemoveMessage: "此操作无法撤销。",
 
 	// ── Empty states ────────────────────────────────────────
 	empty: {
@@ -88,6 +91,6 @@ export default {
 		defaultModelLabel: "默认模型",
 		modelDefault: "（默认：{{model}}）",
 		modelServerDefault: "（服务器默认）",
-		dmAllowlistLabel: "私信允许名单",
+		dmAllowlistLabel: "私聊白名单",
 	},
 };

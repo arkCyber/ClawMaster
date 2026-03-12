@@ -259,7 +259,7 @@ final class AuthManager: ObservableObject {
     @Published var isAuthenticating = false
     @Published var authError: String?
 
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "auth")
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "auth")
     private let serversKey = "saved_servers"
     private let activeServerKey = "active_server_id"
 
@@ -653,11 +653,11 @@ final class AuthManager: ObservableObject {
         var request = URLRequest(url: apiKeysURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("moltis_session=\(sessionCookie)", forHTTPHeaderField: "Cookie")
+        request.setValue("clawmaster_session=\(sessionCookie)", forHTTPHeaderField: "Cookie")
         request.timeoutInterval = 10
 
         let body: [String: Any] = [
-            "label": "Moltis iOS (\(UIDevice.current.name))",
+            "label": "ClawMaster iOS (\(UIDevice.current.name))",
             "scopes": ["operator.read", "operator.write"]
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -726,12 +726,12 @@ final class AuthManager: ObservableObject {
 
     private static func sessionCookieValue(for url: URL, response: HTTPURLResponse) -> String? {
         let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-        if let sessionCookie = cookies.first(where: { $0.name == "moltis_session" }) {
+        if let sessionCookie = cookies.first(where: { $0.name == "clawmaster_session" }) {
             return sessionCookie.value
         }
 
         if let setCookie = response.value(forHTTPHeaderField: "Set-Cookie"),
-           let range = setCookie.range(of: "moltis_session=")
+           let range = setCookie.range(of: "clawmaster_session=")
         {
             let valueStart = range.upperBound
             let valueEnd = setCookie[valueStart...].firstIndex(of: ";") ?? setCookie.endIndex

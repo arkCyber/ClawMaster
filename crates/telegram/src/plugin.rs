@@ -11,7 +11,7 @@ use {
     tracing::{info, warn},
 };
 
-use moltis_channels::{
+use clawmaster_channels::{
     ChannelConfigView, ChannelEventSink, Error as ChannelError, Result as ChannelResult,
     message_log::MessageLog,
     otp::OtpChallengeInfo,
@@ -318,7 +318,7 @@ mod tests {
     use {
         super::*,
         crate::{otp::OtpState, outbound::TelegramOutbound, state::AccountState},
-        moltis_channels::gating::DmPolicy,
+        clawmaster_channels::gating::DmPolicy,
         secrecy::{ExposeSecret, Secret},
         tokio_util::sync::CancellationToken,
     };
@@ -407,7 +407,7 @@ mod tests {
     /// sequence that happens during OTP self-approval.
     #[test]
     fn security_config_update_immediately_affects_access_control() {
-        use {crate::access, moltis_common::types::ChatType};
+        use {crate::access, clawmaster_common::types::ChatType};
 
         let plugin = TelegramPlugin::new();
         let cancel = CancellationToken::new();
@@ -517,7 +517,7 @@ mod tests {
 
     #[test]
     fn descriptor_coherence() {
-        use moltis_channels::{ChannelType, InboundMode};
+        use clawmaster_channels::{ChannelType, InboundMode};
         let plugin = TelegramPlugin::new();
         let desc = ChannelType::Telegram.descriptor();
 

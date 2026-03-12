@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-// Re-export all core hook types so downstream code can use `moltis_plugins::hooks::*`.
-pub use moltis_common::hooks::{
+// Re-export all core hook types so downstream code can use `clawmaster_plugins::hooks::*`.
+pub use clawmaster_common::hooks::{
     HookAction, HookEvent, HookHandler, HookPayload, HookRegistry, HookStats,
 };
 
@@ -41,7 +41,7 @@ mod tests {
 
     use {
         async_trait::async_trait,
-        moltis_common::{Error as HookError, Result},
+        clawmaster_common::{Error as HookError, Result},
         serde_json::Value,
     };
 

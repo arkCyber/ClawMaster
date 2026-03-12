@@ -17,7 +17,7 @@ use {
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, cron as cron_metrics, gauge, histogram};
+use clawmaster_metrics::{counter, cron as cron_metrics, gauge, histogram};
 
 use crate::{
     Error, Result, schedule::compute_next_run, store::CronStore, system_events::SystemEventsQueue,

@@ -422,12 +422,12 @@ impl std::fmt::Display for HomePersistence {
     }
 }
 
-impl From<&moltis_config::schema::HomePersistenceConfig> for HomePersistence {
-    fn from(value: &moltis_config::schema::HomePersistenceConfig) -> Self {
+impl From<&clawmaster_config::schema::HomePersistenceConfig> for HomePersistence {
+    fn from(value: &clawmaster_config::schema::HomePersistenceConfig) -> Self {
         match value {
-            moltis_config::schema::HomePersistenceConfig::Off => Self::Off,
-            moltis_config::schema::HomePersistenceConfig::Session => Self::Session,
-            moltis_config::schema::HomePersistenceConfig::Shared => Self::Shared,
+            clawmaster_config::schema::HomePersistenceConfig::Off => Self::Off,
+            clawmaster_config::schema::HomePersistenceConfig::Session => Self::Session,
+            clawmaster_config::schema::HomePersistenceConfig::Shared => Self::Shared,
         }
     }
 }
@@ -444,7 +444,7 @@ pub struct ResourceLimits {
     pub pids_max: Option<u32>,
 }
 
-pub use moltis_network_filter::NetworkPolicy;
+pub use clawmaster_network_filter::NetworkPolicy;
 
 /// Configuration for sandbox behavior.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -507,8 +507,8 @@ impl Default for SandboxConfig {
     }
 }
 
-impl From<&moltis_config::schema::SandboxConfig> for SandboxConfig {
-    fn from(cfg: &moltis_config::schema::SandboxConfig) -> Self {
+impl From<&clawmaster_config::schema::SandboxConfig> for SandboxConfig {
+    fn from(cfg: &clawmaster_config::schema::SandboxConfig) -> Self {
         Self {
             mode: match cfg.mode.as_str() {
                 "all" => SandboxMode::All,
@@ -650,7 +650,7 @@ fn sanitize_path_component(input: &str) -> String {
 }
 
 fn sandbox_home_persistence_base_dir() -> PathBuf {
-    moltis_config::data_dir().join("sandbox").join("home")
+    clawmaster_config::data_dir().join("sandbox").join("home")
 }
 
 fn default_shared_home_dir() -> PathBuf {
@@ -668,7 +668,7 @@ fn resolve_shared_home_dir(config: &SandboxConfig) -> PathBuf {
     if path.is_absolute() {
         return path.clone();
     }
-    moltis_config::data_dir().join(path)
+    clawmaster_config::data_dir().join(path)
 }
 
 /// Effective host path used when shared home persistence is enabled.
@@ -1552,7 +1552,7 @@ impl DockerSandbox {
         self.config
             .container_prefix
             .as_deref()
-            .unwrap_or("moltis-sandbox")
+            .unwrap_or("clawmaster-sandbox")
     }
 
     fn container_name(&self, id: &SandboxId) -> String {
@@ -1628,7 +1628,7 @@ impl DockerSandbox {
         }
         let proxy_url = format!(
             "http://host.docker.internal:{}",
-            moltis_network_filter::DEFAULT_PROXY_PORT
+            clawmaster_network_filter::DEFAULT_PROXY_PORT
         );
         let mut args = Vec::new();
         for key in ["HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy"] {
@@ -1663,7 +1663,7 @@ impl DockerSandbox {
     }
 
     fn workspace_args(&self) -> Vec<String> {
-        let workspace_dir = moltis_config::data_dir();
+        let workspace_dir = clawmaster_config::data_dir();
         let workspace_dir_str = workspace_dir.display().to_string();
         match self.config.workspace_mount {
             WorkspaceMount::Ro => vec![
@@ -1816,7 +1816,7 @@ impl Sandbox for DockerSandbox {
 
         // Generate Dockerfile in a temp dir.
         let tmp_dir =
-            std::env::temp_dir().join(format!("moltis-sandbox-build-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("clawmaster-sandbox-build-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&tmp_dir)?;
 
         let pkg_list = canonical_sandbox_packages(packages).join(" ");
@@ -1961,7 +1961,7 @@ impl CgroupSandbox {
             .config
             .container_prefix
             .as_deref()
-            .unwrap_or("moltis-sandbox");
+            .unwrap_or("clawmaster-sandbox");
         format!("{}-{}", prefix, id.key)
     }
 
@@ -2271,18 +2271,18 @@ impl WasmSandbox {
         match self.config.home_persistence {
             HomePersistence::Shared => {
                 let base = self.config.shared_home_dir.clone().unwrap_or_else(|| {
-                    moltis_config::data_dir()
+                    clawmaster_config::data_dir()
                         .join("sandbox")
                         .join("home")
                         .join("shared")
                 });
                 base.join("wasm")
             },
-            HomePersistence::Session => moltis_config::data_dir()
+            HomePersistence::Session => clawmaster_config::data_dir()
                 .join("sandbox")
                 .join("wasm")
                 .join(sanitize_path_component(&id.key)),
-            HomePersistence::Off => moltis_config::data_dir()
+            HomePersistence::Off => clawmaster_config::data_dir()
                 .join("sandbox")
                 .join("wasm")
                 .join(sanitize_path_component(&id.key)),
@@ -3577,7 +3577,7 @@ impl AppleContainerSandbox {
         self.config
             .container_prefix
             .as_deref()
-            .unwrap_or("moltis-sandbox")
+            .unwrap_or("clawmaster-sandbox")
     }
 
     fn base_container_name(&self, id: &SandboxId) -> String {
@@ -4642,7 +4642,7 @@ impl Sandbox for AppleContainerSandbox {
             let proxy_url = format!(
                 "http://{}:{}",
                 gateway,
-                moltis_network_filter::DEFAULT_PROXY_PORT
+                clawmaster_network_filter::DEFAULT_PROXY_PORT
             );
             let escaped_proxy = proxy_url.replace('\'', "'\\''");
             for key in ["HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy"] {
@@ -4739,7 +4739,7 @@ impl Sandbox for AppleContainerSandbox {
         }
 
         let tmp_dir =
-            std::env::temp_dir().join(format!("moltis-sandbox-build-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("clawmaster-sandbox-build-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&tmp_dir)?;
 
         let pkg_list = canonical_sandbox_packages(packages).join(" ");
@@ -5550,7 +5550,7 @@ mod tests {
         let args = docker.home_persistence_args(&id).unwrap();
         assert_eq!(args.len(), 2);
         assert_eq!(args[0], "-v");
-        let expected_host_dir = moltis_config::data_dir()
+        let expected_host_dir = clawmaster_config::data_dir()
             .join("sandbox")
             .join("home")
             .join("shared");
@@ -5590,7 +5590,7 @@ mod tests {
         let args = docker.home_persistence_args(&id).unwrap();
         assert_eq!(args.len(), 2);
         assert_eq!(args[0], "-v");
-        let expected_host_dir = moltis_config::data_dir().join("sandbox/custom-shared");
+        let expected_host_dir = clawmaster_config::data_dir().join("sandbox/custom-shared");
         let expected_volume = format!("{}:/home/sandbox:rw", expected_host_dir.display());
         assert_eq!(args[1], expected_volume);
     }
@@ -5609,7 +5609,7 @@ mod tests {
         let args = docker.home_persistence_args(&id).unwrap();
         assert_eq!(args.len(), 2);
         assert_eq!(args[0], "-v");
-        let expected_host_dir = moltis_config::data_dir()
+        let expected_host_dir = clawmaster_config::data_dir()
             .join("sandbox")
             .join("home")
             .join("session")
@@ -5843,9 +5843,9 @@ mod tests {
         let config = SandboxConfig::default();
         let router = SandboxRouter::new(config);
         let img = router
-            .resolve_image("main", Some("moltis-cache/my-skill:abc123"))
+            .resolve_image("main", Some("clawmaster-cache/my-skill:abc123"))
             .await;
-        assert_eq!(img, "moltis-cache/my-skill:abc123");
+        assert_eq!(img, "clawmaster-cache/my-skill:abc123");
     }
 
     #[tokio::test]
@@ -5867,9 +5867,9 @@ mod tests {
             .set_image_override("sess1", "custom:latest".into())
             .await;
         let img = router
-            .resolve_image("sess1", Some("moltis-cache/skill:hash"))
+            .resolve_image("sess1", Some("clawmaster-cache/skill:hash"))
             .await;
-        assert_eq!(img, "moltis-cache/skill:hash");
+        assert_eq!(img, "clawmaster-cache/skill:hash");
     }
 
     #[tokio::test]
@@ -5898,10 +5898,10 @@ mod tests {
     #[test]
     fn test_docker_image_tag_deterministic() {
         let packages = vec!["curl".into(), "git".into(), "wget".into()];
-        let tag1 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &packages);
-        let tag2 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &packages);
+        let tag1 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &packages);
+        let tag2 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &packages);
         assert_eq!(tag1, tag2);
-        assert!(tag1.starts_with("moltis-main-sandbox:"));
+        assert!(tag1.starts_with("clawmaster-main-sandbox:"));
     }
 
     #[test]
@@ -5909,8 +5909,8 @@ mod tests {
         let p1 = vec!["curl".into(), "git".into()];
         let p2 = vec!["git".into(), "curl".into()];
         assert_eq!(
-            sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p1),
-            sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p2),
+            sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p1),
+            sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p2),
         );
     }
 
@@ -5919,8 +5919,8 @@ mod tests {
         let p1 = vec!["curl".into(), "git".into(), "curl".into()];
         let p2 = vec![" git ".into(), "curl".into()];
         assert_eq!(
-            sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p1),
-            sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p2),
+            sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p1),
+            sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p2),
         );
     }
 
@@ -5943,8 +5943,8 @@ mod tests {
     #[test]
     fn test_docker_image_tag_changes_with_base() {
         let packages = vec!["curl".into()];
-        let t1 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &packages);
-        let t2 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:24.04", &packages);
+        let t1 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &packages);
+        let t2 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:24.04", &packages);
         assert_ne!(t1, t2);
     }
 
@@ -5952,16 +5952,16 @@ mod tests {
     fn test_docker_image_tag_changes_with_packages() {
         let p1 = vec!["curl".into()];
         let p2 = vec!["curl".into(), "git".into()];
-        let t1 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p1);
-        let t2 = sandbox_image_tag("moltis-main-sandbox", "ubuntu:25.10", &p2);
+        let t1 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p1);
+        let t2 = sandbox_image_tag("clawmaster-main-sandbox", "ubuntu:25.10", &p2);
         assert_ne!(t1, t2);
     }
 
     #[test]
     fn test_rebuildable_sandbox_image_tag_requires_packages() {
         let tag = rebuildable_sandbox_image_tag(
-            "moltis-main-sandbox:deadbeef",
-            "moltis-main-sandbox",
+            "clawmaster-main-sandbox:deadbeef",
+            "clawmaster-main-sandbox",
             "ubuntu:25.10",
             &[],
         );
@@ -5972,7 +5972,7 @@ mod tests {
     fn test_rebuildable_sandbox_image_tag_requires_local_repo_prefix() {
         let tag = rebuildable_sandbox_image_tag(
             "ubuntu:25.10",
-            "moltis-main-sandbox",
+            "clawmaster-main-sandbox",
             "ubuntu:25.10",
             &["curl".into()],
         );
@@ -5983,15 +5983,15 @@ mod tests {
     fn test_rebuildable_sandbox_image_tag_returns_deterministic_tag() {
         let packages = vec!["curl".into(), "git".into()];
         let tag = rebuildable_sandbox_image_tag(
-            "moltis-main-sandbox:oldtag",
-            "moltis-main-sandbox",
+            "clawmaster-main-sandbox:oldtag",
+            "clawmaster-main-sandbox",
             "ubuntu:25.10",
             &packages,
         );
         assert_eq!(
             tag,
             Some(sandbox_image_tag(
-                "moltis-main-sandbox",
+                "clawmaster-main-sandbox",
                 "ubuntu:25.10",
                 &packages
             ))
@@ -6048,14 +6048,14 @@ mod tests {
 
         // Set global override
         router
-            .set_global_image(Some("moltis-sandbox:abc123".into()))
+            .set_global_image(Some("clawmaster-sandbox:abc123".into()))
             .await;
         let img = router.default_image().await;
-        assert_eq!(img, "moltis-sandbox:abc123");
+        assert_eq!(img, "clawmaster-sandbox:abc123");
 
         // Global override flows through resolve_image
         let img = router.resolve_image("main", None).await;
-        assert_eq!(img, "moltis-sandbox:abc123");
+        assert_eq!(img, "clawmaster-sandbox:abc123");
 
         // Session override still wins
         router.set_image_override("main", "custom:v1".into()).await;
@@ -6097,13 +6097,13 @@ mod tests {
         };
 
         let first_name = sandbox.container_name(&id).await;
-        assert_eq!(first_name, "moltis-sandbox-session-abc");
+        assert_eq!(first_name, "clawmaster-sandbox-session-abc");
 
         let rotated_name = sandbox.bump_container_generation(&id).await;
-        assert_eq!(rotated_name, "moltis-sandbox-session-abc-g1");
+        assert_eq!(rotated_name, "clawmaster-sandbox-session-abc-g1");
 
         let current_name = sandbox.container_name(&id).await;
-        assert_eq!(current_name, "moltis-sandbox-session-abc-g1");
+        assert_eq!(current_name, "clawmaster-sandbox-session-abc-g1");
     }
 
     /// When both Docker and Apple Container are available, test that we can
@@ -6219,12 +6219,12 @@ mod tests {
     #[test]
     fn test_apple_container_run_args_pin_workdir_and_bootstrap_home() {
         let args =
-            apple_container_run_args("moltis-sandbox-test", "ubuntu:25.10", Some("UTC"), None);
+            apple_container_run_args("clawmaster-sandbox-test", "ubuntu:25.10", Some("UTC"), None);
         let expected = vec![
             "run",
             "-d",
             "--name",
-            "moltis-sandbox-test",
+            "clawmaster-sandbox-test",
             "--workdir",
             "/tmp",
             "-e",
@@ -6244,7 +6244,7 @@ mod tests {
     #[test]
     fn test_apple_container_run_args_with_home_volume() {
         let args = apple_container_run_args(
-            "moltis-sandbox-test",
+            "clawmaster-sandbox-test",
             "ubuntu:25.10",
             Some("UTC"),
             Some("/tmp/home:/home/sandbox"),
@@ -6253,7 +6253,7 @@ mod tests {
             "run",
             "-d",
             "--name",
-            "moltis-sandbox-test",
+            "clawmaster-sandbox-test",
             "--workdir",
             "/tmp",
             "-e",
@@ -6274,12 +6274,12 @@ mod tests {
     #[cfg(target_os = "macos")]
     #[test]
     fn test_apple_container_exec_args_pin_workdir() {
-        let args = apple_container_exec_args("moltis-sandbox-test", "true".to_string());
+        let args = apple_container_exec_args("clawmaster-sandbox-test", "true".to_string());
         let expected = vec![
             "exec",
             "--workdir",
             "/tmp",
-            "moltis-sandbox-test",
+            "clawmaster-sandbox-test",
             "sh",
             "-c",
             "true",
@@ -6699,7 +6699,7 @@ mod tests {
     #[test]
     fn running_container_serializes_to_json() {
         let c = RunningContainer {
-            name: "moltis-sandbox-sess1".into(),
+            name: "clawmaster-sandbox-sess1".into(),
             image: "ubuntu:25.10".into(),
             state: ContainerRunState::Running,
             backend: ContainerBackend::Docker,
@@ -6709,7 +6709,7 @@ mod tests {
             addr: None,
         };
         let json = serde_json::to_value(&c).unwrap();
-        assert_eq!(json["name"], "moltis-sandbox-sess1");
+        assert_eq!(json["name"], "clawmaster-sandbox-sess1");
         assert_eq!(json["state"], "running");
         assert_eq!(json["backend"], "docker");
         assert_eq!(json["cpus"], 2);
@@ -6754,7 +6754,7 @@ mod tests {
 
     #[test]
     fn test_from_config_network_trusted_overrides_no_network() {
-        let cfg = moltis_config::schema::SandboxConfig {
+        let cfg = clawmaster_config::schema::SandboxConfig {
             no_network: true,
             network: "trusted".into(),
             ..Default::default()
@@ -6765,7 +6765,7 @@ mod tests {
 
     #[test]
     fn test_from_config_network_bypass_overrides_no_network() {
-        let cfg = moltis_config::schema::SandboxConfig {
+        let cfg = clawmaster_config::schema::SandboxConfig {
             no_network: true,
             network: "bypass".into(),
             ..Default::default()
@@ -6776,7 +6776,7 @@ mod tests {
 
     #[test]
     fn test_from_config_empty_network_defaults_to_trusted() {
-        let cfg = moltis_config::schema::SandboxConfig {
+        let cfg = clawmaster_config::schema::SandboxConfig {
             no_network: false,
             network: String::new(),
             ..Default::default()
@@ -6787,7 +6787,7 @@ mod tests {
 
     #[test]
     fn test_from_config_no_network_true_empty_network_is_blocked() {
-        let cfg = moltis_config::schema::SandboxConfig {
+        let cfg = clawmaster_config::schema::SandboxConfig {
             no_network: true,
             network: String::new(),
             ..Default::default()
@@ -6837,7 +6837,7 @@ mod tests {
         let args = docker.proxy_exec_env_args();
         let expected_url = format!(
             "http://host.docker.internal:{}",
-            moltis_network_filter::DEFAULT_PROXY_PORT
+            clawmaster_network_filter::DEFAULT_PROXY_PORT
         );
         // Should contain -e pairs for HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy,
         // NO_PROXY, no_proxy (6 keys x 2 args each = 12 args).
@@ -6907,7 +6907,7 @@ mod tests {
         let proxy_url = format!(
             "http://{}:{}",
             gateway,
-            moltis_network_filter::DEFAULT_PROXY_PORT
+            clawmaster_network_filter::DEFAULT_PROXY_PORT
         );
         let mut prefix = String::new();
         let escaped_proxy = proxy_url.replace('\'', "'\\''");
@@ -6920,7 +6920,7 @@ mod tests {
 
         assert!(prefix.contains("export HTTP_PROXY="));
         assert!(prefix.contains("export https_proxy="));
-        assert!(prefix.contains(&format!(":{}", moltis_network_filter::DEFAULT_PROXY_PORT)));
+        assert!(prefix.contains(&format!(":{}", clawmaster_network_filter::DEFAULT_PROXY_PORT)));
         assert!(prefix.contains("export NO_PROXY='localhost,127.0.0.1,::1'"));
     }
 
@@ -7437,7 +7437,7 @@ mod tests {
                 scope: SandboxScope::Session,
                 key: "sess1".into(),
             };
-            assert_eq!(cgroup.scope_name(&id), "moltis-sandbox-sess1");
+            assert_eq!(cgroup.scope_name(&id), "clawmaster-sandbox-sess1");
         }
 
         #[test]

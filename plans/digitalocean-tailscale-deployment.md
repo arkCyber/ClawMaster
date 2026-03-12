@@ -7,7 +7,7 @@
 
 ## Goal
 
-Provide a reliable way to run Moltis on DigitalOcean with secure remote access
+Provide a reliable way to run ClawMaster on DigitalOcean with secure remote access
 through Tailscale, without requiring SSH access to the deployed instance.
 
 ## Decision Summary
@@ -25,15 +25,15 @@ through Tailscale, without requiring SSH access to the deployed instance.
 
 Run two containers:
 
-1. `moltis` app container
+1. `clawmaster` app container
 2. `tailscale/tailscale` sidecar container
 
 Key properties:
 
 - Persist Tailscale state via named volume (`/var/lib/tailscale`)
 - Use `TS_AUTHKEY` from DO secrets/environment (never hardcoded)
-- Tag nodes for policy-based ACL (`tag:moltis`)
-- Expose Moltis to tailnet (`--advertise-tags` and optional funnel/serve rules)
+- Tag nodes for policy-based ACL (`tag:clawmaster`)
+- Expose ClawMaster to tailnet (`--advertise-tags` and optional funnel/serve rules)
 
 Why this is preferred:
 
@@ -48,7 +48,7 @@ Use only when platform constraints prevent a sidecar.
 Key properties:
 
 - Install `tailscale` inside Dockerfile
-- Start both `tailscaled` and Moltis (entrypoint supervisor script)
+- Start both `tailscaled` and ClawMaster (entrypoint supervisor script)
 - Prefer `tailscaled --tun=userspace-networking` on restricted hosts
 - Add health checks for both app and Tailscale status
 
@@ -90,7 +90,7 @@ Initial endpoints/methods:
 
 ### Phase 1: Deployment Baseline (Droplet)
 
-- Create production `docker-compose.yml` with Moltis + Tailscale sidecar
+- Create production `docker-compose.yml` with ClawMaster + Tailscale sidecar
 - Add environment contract (`TS_AUTHKEY`, tags, hostname)
 - Add persistence and restart policies
 - Validate end-to-end startup and tailnet reachability

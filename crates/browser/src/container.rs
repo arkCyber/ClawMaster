@@ -955,17 +955,17 @@ mod tests {
 
     #[test]
     fn test_new_browser_container_name_prefix() {
-        let name = new_browser_container_name("moltis-test-browser");
-        assert!(name.starts_with("moltis-test-browser-"));
+        let name = new_browser_container_name("clawmaster-test-browser");
+        assert!(name.starts_with("clawmaster-test-browser-"));
     }
 
     #[test]
     fn test_parse_docker_container_names_filters_prefix() {
-        let input = b"moltis-test-browser-abc\nother-container\nmoltis-test-browser-def\n";
-        let parsed = parse_docker_container_names(input, "moltis-test-browser");
+        let input = b"clawmaster-test-browser-abc\nother-container\nmoltis-test-browser-def\n";
+        let parsed = parse_docker_container_names(input, "clawmaster-test-browser");
         assert_eq!(parsed, vec![
-            "moltis-test-browser-abc".to_string(),
-            "moltis-test-browser-def".to_string()
+            "clawmaster-test-browser-abc".to_string(),
+            "clawmaster-test-browser-def".to_string()
         ]);
     }
 
@@ -973,14 +973,14 @@ mod tests {
     #[test]
     fn test_parse_apple_container_names_filters_prefix() {
         let json = br#"[
-          {"configuration":{"id":"moltis-test-browser-123"}},
+          {"configuration":{"id":"clawmaster-test-browser-123"}},
           {"configuration":{"id":"not-browser"}},
-          {"configuration":{"id":"moltis-test-browser-456"}}
+          {"configuration":{"id":"clawmaster-test-browser-456"}}
         ]"#;
-        let parsed = parse_apple_container_names_for_prefix(json, "moltis-test-browser").unwrap();
+        let parsed = parse_apple_container_names_for_prefix(json, "clawmaster-test-browser").unwrap();
         assert_eq!(parsed, vec![
-            "moltis-test-browser-123".to_string(),
-            "moltis-test-browser-456".to_string()
+            "clawmaster-test-browser-123".to_string(),
+            "clawmaster-test-browser-456".to_string()
         ]);
     }
 

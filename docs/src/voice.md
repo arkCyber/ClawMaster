@@ -1,7 +1,7 @@
 # Voice Services
 
-Moltis provides text-to-speech (TTS) and speech-to-text (STT) capabilities
-through the `moltis-voice` crate and gateway integration.
+ClawMaster provides text-to-speech (TTS) and speech-to-text (STT) capabilities
+through the `clawmaster-voice` crate and gateway integration.
 
 ## Feature Flag
 
@@ -11,7 +11,7 @@ Voice services are behind the `voice` cargo feature, enabled by default:
 # Cargo.toml (gateway crate)
 [features]
 default = ["voice", ...]
-voice = ["dep:moltis-voice"]
+voice = ["dep:clawmaster-voice"]
 ```
 
 To disable voice features at compile time:
@@ -66,7 +66,7 @@ When disabled:
 
 ### Supported Providers
 
-Moltis supports multiple TTS providers across cloud and local backends.
+ClawMaster supports multiple TTS providers across cloud and local backends.
 
 | Category | Notes |
 |----------|-------|
@@ -84,7 +84,7 @@ export ELEVENLABS_API_KEY=your-key-here
 export OPENAI_API_KEY=your-key-here
 ```
 
-Or configure in `moltis.toml`:
+Or configure in `clawmaster.toml`:
 
 ```toml
 [voice.tts]
@@ -118,8 +118,8 @@ speaking_rate = 1.0
 
 [voice.tts.piper]
 # binary_path = "/usr/local/bin/piper"  # optional, searches PATH
-model_path = "~/.moltis/models/en_US-lessac-medium.onnx"  # required
-# config_path = "~/.moltis/models/en_US-lessac-medium.onnx.json"  # optional
+model_path = "~/.clawmaster/models/en_US-lessac-medium.onnx"  # required
+# config_path = "~/.clawmaster/models/en_US-lessac-medium.onnx.json"  # optional
 # speaker_id = 0  # for multi-speaker models
 # length_scale = 1.0  # speaking rate (lower = faster)
 
@@ -145,18 +145,18 @@ Piper is a fast, local neural text-to-speech system that runs entirely offline.
 
 2. Download a voice model from [Piper Voices](https://github.com/rhasspy/piper#voices):
    ```bash
-   mkdir -p ~/.moltis/models
-   curl -L -o ~/.moltis/models/en_US-lessac-medium.onnx \
+   mkdir -p ~/.clawmaster/models
+   curl -L -o ~/.clawmaster/models/en_US-lessac-medium.onnx \
      https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/medium/en_US-lessac-medium.onnx
    ```
 
-3. Configure in `moltis.toml`:
+3. Configure in `clawmaster.toml`:
    ```toml
    [voice.tts]
    provider = "piper"
 
    [voice.tts.piper]
-   model_path = "~/.moltis/models/en_US-lessac-medium.onnx"
+   model_path = "~/.clawmaster/models/en_US-lessac-medium.onnx"
    ```
 
 #### Coqui TTS
@@ -173,7 +173,7 @@ Coqui TTS is a high-quality neural TTS with voice cloning capabilities.
    docker run -p 5002:5002 ghcr.io/coqui-ai/tts
    ```
 
-2. Configure in `moltis.toml`:
+2. Configure in `clawmaster.toml`:
    ```toml
    [voice.tts]
    provider = "coqui"
@@ -293,7 +293,7 @@ Change the active TTS provider.
 
 ### Supported Providers
 
-Moltis supports multiple STT providers across cloud and local backends.
+ClawMaster supports multiple STT providers across cloud and local backends.
 
 | Category | Notes |
 |----------|-------|
@@ -348,12 +348,12 @@ language = "en"
 
 [voice.stt.whisper_cli]
 # binary_path = "/usr/local/bin/whisper-cli"  # optional, searches PATH
-model_path = "~/.moltis/models/ggml-base.en.bin"  # required
+model_path = "~/.clawmaster/models/ggml-base.en.bin"  # required
 language = "en"
 
 [voice.stt.sherpa_onnx]
 # binary_path = "/usr/local/bin/sherpa-onnx-offline"  # optional
-model_dir = "~/.moltis/models/sherpa-onnx-whisper-tiny.en"  # required
+model_dir = "~/.clawmaster/models/sherpa-onnx-whisper-tiny.en"  # required
 language = "en"
 ```
 
@@ -386,7 +386,7 @@ It supports 13 languages with fast transcription.
 
    The server exposes an OpenAI-compatible endpoint at `http://localhost:8000`.
 
-3. Configure in `moltis.toml`:
+3. Configure in `clawmaster.toml`:
    ```toml
    [voice.stt]
    provider = "voxtral-local"
@@ -416,18 +416,18 @@ automatically on first vLLM startup.
 
 2. Download a model from [Hugging Face](https://huggingface.co/ggerganov/whisper.cpp):
    ```bash
-   mkdir -p ~/.moltis/models
-   curl -L -o ~/.moltis/models/ggml-base.en.bin \
+   mkdir -p ~/.clawmaster/models
+   curl -L -o ~/.clawmaster/models/ggml-base.en.bin \
      https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
    ```
 
-3. Configure in `moltis.toml`:
+3. Configure in `clawmaster.toml`:
    ```toml
    [voice.stt]
    provider = "whisper-cli"
 
    [voice.stt.whisper_cli]
-   model_path = "~/.moltis/models/ggml-base.en.bin"
+   model_path = "~/.clawmaster/models/ggml-base.en.bin"
    ```
 
 #### sherpa-onnx
@@ -436,13 +436,13 @@ automatically on first vLLM startup.
 
 2. Download a model from the [model list](https://k2-fsa.github.io/sherpa/onnx/pretrained_models/index.html)
 
-3. Configure in `moltis.toml`:
+3. Configure in `clawmaster.toml`:
    ```toml
    [voice.stt]
    provider = "sherpa-onnx"
 
    [voice.stt.sherpa_onnx]
-   model_dir = "~/.moltis/models/sherpa-onnx-whisper-tiny.en"
+   model_dir = "~/.clawmaster/models/sherpa-onnx-whisper-tiny.en"
    ```
 
 ### RPC Methods

@@ -1,0 +1,60 @@
+package clawmaster:datetime-now@0.1.0;
+
+/// DateTime tool for Moltis AI agents.
+///
+/// This tool provides current time operations.
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All operations return Result types
+world datetime-now {
+    /// Get current UTC timestamp (Unix epoch seconds).
+    ///
+    /// # Returns
+    /// * `Ok(timestamp)` - Unix timestamp in seconds
+    /// * `Err(message)` - Error message if getting time fails
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All errors properly handled
+    export timestamp: func() -> result<u64, string>;
+    
+    /// Get current UTC timestamp in milliseconds.
+    ///
+    /// # Returns
+    /// * `Ok(timestamp)` - Unix timestamp in milliseconds
+    /// * `Err(message)` - Error message
+    export timestamp-millis: func() -> result<u64, string>;
+    
+    /// Get current UTC time in ISO 8601 format.
+    ///
+    /// # Returns
+    /// * `Ok(iso8601)` - ISO 8601 formatted string
+    /// * `Err(message)` - Error message
+    ///
+    /// # Example
+    /// Returns: "2026-03-11T19:30:00Z"
+    export iso8601: func() -> result<string, string>;
+    
+    /// Get current UTC time in RFC 3339 format.
+    ///
+    /// # Returns
+    /// * `Ok(rfc3339)` - RFC 3339 formatted string
+    /// * `Err(message)` - Error message
+    ///
+    /// # Example
+    /// Returns: "2026-03-11T19:30:00.123456789Z"
+    export rfc3339: func() -> result<string, string>;
+    
+    /// Get current date in YYYY-MM-DD format.
+    ///
+    /// # Returns
+    /// * `Ok(date)` - Date string
+    /// * `Err(message)` - Error message
+    export date: func() -> result<string, string>;
+    
+    /// Get current time in HH:MM:SS format.
+    ///
+    /// # Returns
+    /// * `Ok(time)` - Time string
+    /// * `Err(message)` - Error message
+    export time: func() -> result<string, string>;
+}

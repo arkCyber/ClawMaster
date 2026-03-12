@@ -1,6 +1,6 @@
 # Authentication
 
-Moltis uses a unified authentication gate that protects all routes with a
+ClawMaster uses a unified authentication gate that protects all routes with a
 single source of truth. This page explains how authentication works, the
 decision logic, and the different credential types.
 
@@ -104,12 +104,12 @@ If **any** check fails, the connection is treated as remote.
 
 ### Session cookie
 
-- HTTP-only `moltis_session` cookie, `SameSite=Strict`
+- HTTP-only `clawmaster_session` cookie, `SameSite=Strict`
 - Created on successful login (password or passkey)
 - 30-day expiry
 - Validated against `auth_sessions` table
 - When the request arrives on a `.localhost` subdomain (e.g.
-  `moltis.localhost`), the cookie includes `Domain=localhost` so it is
+  `clawmaster.localhost`), the cookie includes `Domain=localhost` so it is
   shared across all loopback hostnames
 
 ### API key
@@ -154,7 +154,7 @@ are configured:
 
 ## Request Throttling
 
-Moltis applies built-in endpoint throttling per client IP only when auth is
+ClawMaster applies built-in endpoint throttling per client IP only when auth is
 required for the current request.
 
 Requests bypass IP throttling when:

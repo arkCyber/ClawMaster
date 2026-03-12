@@ -1,0 +1,44 @@
+package clawmaster:url-decode@0.1.0;
+
+/// URL decoding tool for Moltis AI agents.
+///
+/// This tool provides URL decoding operations.
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All operations return Result types
+/// DO-178C §11.10: Resource management - Input size limits enforced
+world url-decode {
+    /// Decode URL-encoded string.
+    ///
+    /// # Arguments
+    /// * `input` - URL-encoded string
+    ///
+    /// # Returns
+    /// * `Ok(decoded)` - Decoded string
+    /// * `Err(message)` - Error message if decoding fails
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All errors properly handled
+    /// DO-178C §6.3.4: Deterministic decoding
+    export decode: func(input: string) -> result<string, string>;
+    
+    /// Decode URL component.
+    ///
+    /// # Arguments
+    /// * `input` - URL-encoded component
+    ///
+    /// # Returns
+    /// * `Ok(decoded)` - Decoded component
+    /// * `Err(message)` - Error message
+    export decode-component: func(input: string) -> result<string, string>;
+    
+    /// Validate URL encoding.
+    ///
+    /// # Arguments
+    /// * `input` - String to validate
+    ///
+    /// # Returns
+    /// * `true` if valid URL encoding
+    /// * `false` otherwise
+    export is-valid: func(input: string) -> bool;
+}

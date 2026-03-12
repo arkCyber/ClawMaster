@@ -14,7 +14,7 @@ impl ManifestStore {
 
     /// Default manifest path: `~/.moltis/skills-manifest.json`.
     pub fn default_path() -> anyhow::Result<PathBuf> {
-        Ok(moltis_config::data_dir().join("skills-manifest.json"))
+        Ok(clawmaster_config::data_dir().join("skills-manifest.json"))
     }
 
     /// Load manifest from disk, returning a default if missing.

@@ -1,6 +1,6 @@
 # Comparison
 
-How Moltis compares to other open-source AI agent frameworks.
+How ClawMaster compares to other open-source AI agent frameworks.
 
 > **Disclaimer:** This comparison reflects publicly available information at the
 > time of writing. Projects evolve quickly — check each project's repository for
@@ -8,7 +8,7 @@ How Moltis compares to other open-source AI agent frameworks.
 
 ## At a Glance
 
-| | [OpenClaw](https://github.com/openclaw/openclaw) | [PicoClaw](https://github.com/sipeed/picoclaw) | [NanoClaw](https://github.com/qwibitai/nanoclaw) | [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) | **Moltis** |
+| | [OpenClaw](https://github.com/openclaw/openclaw) | [PicoClaw](https://github.com/sipeed/picoclaw) | [NanoClaw](https://github.com/qwibitai/nanoclaw) | [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) | **ClawMaster** |
 |---|---|---|---|---|---|
 | Language | TypeScript | Go | TypeScript | Rust | **Rust** |
 | Agent loop | ~430K LoC | Small | ~500 LoC | ~3.4K LoC | **~5K LoC** |
@@ -23,7 +23,7 @@ How Moltis compares to other open-source AI agent frameworks.
 | Skills | Yes (store) | Yes | Yes | Yes | **Yes (+ OpenClaw Store)** |
 | Memory/RAG | Plugin | — | Per-group | SQLite + FTS | **SQLite + FTS + vector** |
 
-\* `unsafe` is denied workspace-wide in Moltis. The only exceptions are opt-in
+\* `unsafe` is denied workspace-wide in ClawMaster. The only exceptions are opt-in
 FFI wrappers behind the `local-embeddings` feature flag, not part of the core.
 
 ## Architecture Approach
@@ -57,9 +57,9 @@ startup. It uses trait-driven architecture with 22+ provider implementations
 and 9+ channel integrations. Memory is backed by SQLite with hybrid vector +
 FTS search. The focus is on minimal footprint and broad platform support.
 
-### Moltis — Auditable Rust gateway
+### ClawMaster — Auditable Rust gateway
 
-Moltis prioritizes auditability and defense in depth. The core agent engine
+ClawMaster prioritizes auditability and defense in depth. The core agent engine
 (runner + provider model) is ~5K lines; the core (excluding the optional web UI)
 is ~196K lines across 46 modular crates, each independently auditable. Key
 differences from ZeroClaw:
@@ -74,7 +74,7 @@ differences from ZeroClaw:
 
 ## Security Model
 
-| Aspect | OpenClaw | PicoClaw | NanoClaw | ZeroClaw | **Moltis** |
+| Aspect | OpenClaw | PicoClaw | NanoClaw | ZeroClaw | **ClawMaster** |
 |--------|----------|----------|----------|----------|------------|
 | Code sandbox | App-level permissions | None | Docker containers | Docker containers | Docker + Apple Container |
 | Secret handling | Environment variables | Environment variables | Environment variables | Encrypted profiles | `secrecy::Secret`, zeroed on drop |
@@ -87,14 +87,14 @@ differences from ZeroClaw:
 
 ## Performance
 
-| Metric | OpenClaw | PicoClaw | ZeroClaw | **Moltis** |
+| Metric | OpenClaw | PicoClaw | ZeroClaw | **ClawMaster** |
 |--------|----------|----------|----------|------------|
 | Binary / dist size | ~28 MB (node_modules) | <10 MB | 3.4 MB | 44 MB |
 | Cold start | >30s | <1s | <10ms | ~1s |
 | RAM (idle) | >100 MB | <10 MB | <5 MB | ~30 MB |
 | Min hardware | Modern desktop | $10 SBC (RISC-V) | $10 SBC | Raspberry Pi 4+ |
 
-Moltis is larger because it bundles a web UI, voice engine, browser automation,
+ClawMaster is larger because it bundles a web UI, voice engine, browser automation,
 and MCP runtime. Use `--no-default-features --features lightweight` for
 constrained devices.
 
@@ -112,7 +112,7 @@ container isolation and don't need voice, MCP, or a web UI.
 **Choose ZeroClaw if** you want the smallest possible Rust binary, sub-10ms
 startup, and broad channel support without a web UI.
 
-**Choose Moltis if** you want:
+**Choose ClawMaster if** you want:
 - A single auditable Rust binary with built-in web UI
 - Voice I/O with 15+ providers (8 TTS + 7 STT)
 - MCP server support (stdio + HTTP/SSE)
@@ -128,4 +128,4 @@ startup, and broad channel support without a web UI.
 - [PicoClaw](https://github.com/sipeed/picoclaw) — [Site](https://picoclaw.net)
 - [NanoClaw](https://github.com/qwibitai/nanoclaw)
 - [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) — [Site](https://zeroclaw.net)
-- [Moltis](https://github.com/moltis-org/moltis) — [Docs](https://docs.moltis.org)
+- [ClawMaster](https://github.com/clawmaster-org/clawmaster) — [Docs](https://docs.clawmaster.org)

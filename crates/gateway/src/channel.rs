@@ -7,14 +7,14 @@ use {
 };
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         ChannelOutbound, ChannelType,
         message_log::MessageLog,
         plugin::ChannelHealthSnapshot,
         registry::ChannelRegistry,
         store::{ChannelStore, StoredChannel},
     },
-    moltis_sessions::metadata::SqliteSessionMetadata,
+    clawmaster_sessions::metadata::SqliteSessionMetadata,
 };
 
 use crate::services::{ChannelService, ServiceError, ServiceResult};
@@ -314,7 +314,7 @@ impl ChannelService for LiveChannelService {
                     .await
                 {
                     Ok(()) => {},
-                    Err(moltis_channels::Error::UnknownAccount { .. }) => {
+                    Err(clawmaster_channels::Error::UnknownAccount { .. }) => {
                         warn!(
                             account_id,
                             channel_type = ct,

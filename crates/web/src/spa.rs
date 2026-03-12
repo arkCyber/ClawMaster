@@ -6,7 +6,7 @@ use {
         http::{StatusCode, Uri},
         response::{IntoResponse, Redirect},
     },
-    moltis_gateway::server::AppState,
+    clawmaster_gateway::server::AppState,
 };
 
 use crate::templates::{

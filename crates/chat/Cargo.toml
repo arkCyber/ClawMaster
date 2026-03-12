@@ -1,6 +1,6 @@
 [package]
 edition.workspace    = true
-name                 = "moltis-chat"
+name                 = "clawmaster-chat"
 repository.workspace = true
 version.workspace    = true
 
@@ -11,21 +11,21 @@ base64                = { workspace = true }
 chrono                = { features = ["serde"], optional = true, workspace = true }
 chrono-tz             = { workspace = true }
 futures               = { workspace = true }
-moltis-agents         = { workspace = true }
-moltis-channels       = { workspace = true }
-moltis-common         = { workspace = true }
-moltis-config         = { workspace = true }
-moltis-memory         = { workspace = true }
-moltis-metrics        = { optional = true, workspace = true }
-moltis-plugins        = { workspace = true }
-moltis-projects       = { workspace = true }
-moltis-providers      = { workspace = true }
-moltis-service-traits = { workspace = true }
-moltis-sessions       = { workspace = true }
-moltis-skills         = { workspace = true }
-moltis-telegram       = { workspace = true }
-moltis-tools          = { workspace = true }
-moltis-voice          = { workspace = true }
+clawmaster-agents         = { workspace = true }
+clawmaster-channels       = { workspace = true }
+clawmaster-common         = { workspace = true }
+clawmaster-config         = { workspace = true }
+clawmaster-memory         = { workspace = true }
+clawmaster-metrics        = { optional = true, workspace = true }
+clawmaster-plugins        = { workspace = true }
+clawmaster-projects       = { workspace = true }
+clawmaster-providers      = { workspace = true }
+clawmaster-service-traits = { workspace = true }
+clawmaster-sessions       = { workspace = true }
+clawmaster-skills         = { workspace = true }
+clawmaster-telegram       = { workspace = true }
+clawmaster-tools          = { workspace = true }
+clawmaster-voice          = { workspace = true }
 serde                 = { workspace = true }
 serde_json            = { workspace = true }
 thiserror             = { workspace = true }
@@ -36,12 +36,12 @@ uuid                  = { workspace = true }
 
 [features]
 local-llm          = []
-metrics            = ["dep:moltis-metrics", "moltis-metrics/sqlite"]
+metrics            = ["dep:clawmaster-metrics", "clawmaster-metrics/sqlite"]
 push-notifications = ["dep:chrono"]
 web-ui             = ["dep:chrono"]
 
 [dev-dependencies]
-moltis-channels = { workspace = true }
+clawmaster-channels = { workspace = true }
 sqlx            = { workspace = true }
 tempfile        = { workspace = true }
 tokio           = { workspace = true }

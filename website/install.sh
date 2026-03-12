@@ -1,20 +1,20 @@
 #!/bin/sh
 # Moltis installer script
-# https://www.moltis.org/
+# https://www.clawmaster.org/
 #
 # Usage:
-#   curl -fsSL https://www.moltis.org/install.sh | sh
+#   curl -fsSL https://www.clawmaster.org/install.sh | sh
 #
 # Or with options:
-#   curl -fsSL https://www.moltis.org/install.sh | sh -s -- --no-homebrew
-#   curl -fsSL https://www.moltis.org/install.sh | sh -s -- --method=binary
-#   curl -fsSL https://www.moltis.org/install.sh | sh -s -- --version=0.1.3
+#   curl -fsSL https://www.clawmaster.org/install.sh | sh -s -- --no-homebrew
+#   curl -fsSL https://www.clawmaster.org/install.sh | sh -s -- --method=binary
+#   curl -fsSL https://www.clawmaster.org/install.sh | sh -s -- --version=0.1.3
 
 set -e
 
-GITHUB_REPO="moltis-org/moltis"
-HOMEBREW_TAP="moltis-org/tap"
-BINARY_NAME="moltis"
+GITHUB_REPO="clawmaster-org/clawmaster"
+HOMEBREW_TAP="clawmaster-org/tap"
+BINARY_NAME="clawmaster"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
 
 # Default options
@@ -85,9 +85,9 @@ Environment variables:
     INSTALL_DIR         Binary installation directory (default: ~/.local/bin)
 
 Examples:
-    curl -fsSL https://www.moltis.org/install.sh | sh
-    curl -fsSL https://www.moltis.org/install.sh | sh -s -- --method=binary
-    curl -fsSL https://www.moltis.org/install.sh | sh -s -- --version=0.1.3
+    curl -fsSL https://www.clawmaster.org/install.sh | sh
+    curl -fsSL https://www.clawmaster.org/install.sh | sh -s -- --method=binary
+    curl -fsSL https://www.clawmaster.org/install.sh | sh -s -- --version=0.1.3
 EOF
             exit 0
             ;;
@@ -209,7 +209,7 @@ install_shared_assets() {
         return 0
     fi
 
-    share_dir="$HOME/.moltis/share"
+    share_dir="$HOME/.clawmaster/share"
     mkdir -p "$share_dir"
     cp -R "$source_dir"/. "$share_dir"/
     info "Installed shared assets to $share_dir"
@@ -259,7 +259,7 @@ install_homebrew() {
         error "Homebrew not found. Install it from https://brew.sh/"
     fi
     brew tap "$HOMEBREW_TAP" 2>/dev/null || true
-    brew install moltis
+    brew install clawmaster
     success "Moltis installed via Homebrew"
 }
 
@@ -308,8 +308,8 @@ install_binary() {
     mv "$tmpdir/$BINARY_NAME" "$INSTALL_DIR/$BINARY_NAME"
     chmod +x "$INSTALL_DIR/$BINARY_NAME"
 
-    if [ -d "$tmpdir/share/moltis" ]; then
-        install_shared_assets "$tmpdir/share/moltis"
+    if [ -d "$tmpdir/share/clawmaster" ]; then
+        install_shared_assets "$tmpdir/share/clawmaster"
     elif [ -d "$tmpdir/share/web" ] && [ -d "$tmpdir/share/wasm" ]; then
         install_shared_assets "$tmpdir/share"
     fi
@@ -328,8 +328,8 @@ install_deb() {
         *) error "Unsupported architecture for .deb: $arch" ;;
     esac
 
-    # Package naming: moltis_VERSION-REV_ARCH.deb
-    deb_file="moltis_${version}-1_${deb_arch}.deb"
+    # Package naming: clawmaster_VERSION-REV_ARCH.deb
+    deb_file="clawmaster_${version}-1_${deb_arch}.deb"
     url="https://github.com/${GITHUB_REPO}/releases/download/v${version}/${deb_file}"
 
     info "Downloading ${deb_file}..."
@@ -355,8 +355,8 @@ install_rpm() {
         *) error "Unsupported architecture for .rpm: $arch" ;;
     esac
 
-    # Package naming: moltis-VERSION-1.ARCH.rpm
-    rpm_file="moltis-${version}-1.${rpm_arch}.rpm"
+    # Package naming: clawmaster-VERSION-1.ARCH.rpm
+    rpm_file="clawmaster-${version}-1.${rpm_arch}.rpm"
     url="https://github.com/${GITHUB_REPO}/releases/download/v${version}/${rpm_file}"
 
     info "Downloading ${rpm_file}..."
@@ -382,7 +382,7 @@ install_arch() {
     arch="$1"
     version="$2"
 
-    pkg_file="moltis-${version}-1-${arch}.pkg.tar.zst"
+    pkg_file="clawmaster-${version}-1-${arch}.pkg.tar.zst"
     url="https://github.com/${GITHUB_REPO}/releases/download/v${version}/${pkg_file}"
 
     info "Downloading ${pkg_file}..."
@@ -405,7 +405,7 @@ install_snap() {
         error "Snap not found. Install it first: https://snapcraft.io/docs/installing-snapd"
     fi
 
-    sudo snap install moltis
+    sudo snap install clawmaster
 
     success "Moltis installed via Snap"
 }
@@ -434,13 +434,13 @@ install_from_source() {
     trap 'rm -rf "$tmpdir"' EXIT
 
     info "Cloning repository..."
-    git clone --depth 1 --branch "v${version}" "https://github.com/${GITHUB_REPO}.git" "$tmpdir/moltis"
+    git clone --depth 1 --branch "v${version}" "https://github.com/${GITHUB_REPO}.git" "$tmpdir/clawmaster"
 
-    cd "$tmpdir/moltis"
+    cd "$tmpdir/clawmaster"
 
     info "Building WASM tool components..."
     rustup target add wasm32-wasip2
-    cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
+    cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
 
     info "Building release binary..."
     cargo build --release
@@ -449,12 +449,12 @@ install_from_source() {
     cp "target/release/$BINARY_NAME" "$INSTALL_DIR/$BINARY_NAME"
     chmod +x "$INSTALL_DIR/$BINARY_NAME"
 
-    SHARE_STAGING="$tmpdir/moltis-share"
+    SHARE_STAGING="$tmpdir/clawmaster-share"
     mkdir -p "$SHARE_STAGING/web" "$SHARE_STAGING/wasm"
     cp -R "crates/web/src/assets/." "$SHARE_STAGING/web/"
-    cp "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" "$SHARE_STAGING/wasm/"
-    cp "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" "$SHARE_STAGING/wasm/"
-    cp "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" "$SHARE_STAGING/wasm/"
+    cp "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" "$SHARE_STAGING/wasm/"
+    cp "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" "$SHARE_STAGING/wasm/"
+    cp "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" "$SHARE_STAGING/wasm/"
     install_shared_assets "$SHARE_STAGING"
 
     success "Moltis built and installed to $INSTALL_DIR/$BINARY_NAME"
@@ -574,10 +574,10 @@ main() {
         printf "  ${BOLD}%s${NC}\n" "$installed_version"
         printf "\n"
         printf "Get started:\n"
-        printf "  ${BOLD}moltis${NC}          # Start the gateway\n"
-        printf "  ${BOLD}moltis --help${NC}   # Show help\n"
+        printf "  ${BOLD}clawmaster${NC}          # Start the gateway\n"
+        printf "  ${BOLD}clawmaster --help${NC}   # Show help\n"
         printf "\n"
-        printf "Documentation: ${BLUE}https://www.moltis.org/${NC}\n"
+        printf "Documentation: ${BLUE}https://www.clawmaster.org/${NC}\n"
     elif [ -x "$INSTALL_DIR/$BINARY_NAME" ]; then
         printf "\n"
         success "Installation complete!"

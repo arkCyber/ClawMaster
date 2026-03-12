@@ -4,7 +4,7 @@ export default {
 	// ── Page-level ──────────────────────────────────────────
 	title: "沙盒",
 	description:
-		"moltis 缓存的用于沙盒执行的容器镜像。你可以删除单个镜像或清理全部。使用基础镜像和 apt 包构建自定义镜像。",
+		"clawmaster 缓存的用于沙盒执行的容器镜像。你可以删除单个镜像或清理全部。使用基础镜像和 apt 包构建自定义镜像。",
 	appleContainerNote:
 		"Apple Container 提供 VM 隔离执行，但不支持构建镜像。需要在 Apple Container 旁安装 Docker（或 OrbStack）来构建和缓存自定义镜像。沙盒命令通过 Apple Container 运行；镜像构建使用 Docker。",
 	sandboxDisabledHint:
@@ -58,7 +58,7 @@ export default {
 		noRuntimeLinux: "未检测到容器运行时。安装 Docker 进行沙盒执行，或确保 systemd 可用以进行 cgroup 隔离。",
 		noRuntimeGeneric: "未检测到容器运行时。安装 Docker 进行沙盒执行。",
 		macosDockerTip:
-			"Apple Container 在 macOS 26+ 上提供更强的 VM 级隔离。安装后会自动使用（moltis 优先选择它而非 Docker）。运行：brew install container",
+			"Apple Container 在 macOS 26+ 上提供更强的 VM 级隔离。安装后会自动使用（clawmaster 优先选择它而非 Docker）。运行：brew install container",
 		linuxDockerTip: "Docker 是 Linux 上的好选择。如需更轻量的隔离且无 Docker 开销，也支持 systemd cgroup 沙盒。",
 		restrictedHostTip: "使用受限主机执行（环境变量清除、rlimits）。如需更强隔离，请安装 Docker 或 Apple Container。",
 		wasmTip: "使用具有文件系统隔离的 WASM 沙盒。如需容器级隔离，请安装 Docker 或 Apple Container。",

@@ -66,7 +66,7 @@ var WS_RETRY_DELAY_MS = 200;
 // ── Step indicator ──────────────────────────────────────────
 
 function preferredChatPath() {
-	var key = localStorage.getItem("moltis-session") || "main";
+	var key = localStorage.getItem("clawmaster-session") || "main";
 	return `/chats/${key.replace(/:/g, "/")}`;
 }
 
@@ -467,7 +467,7 @@ function AuthStep({ onNext, skippable }) {
 			<input type="text" class="provider-key-input w-full" inputmode="numeric" pattern="[0-9]*"
 				value=${setupCode} onInput=${(e) => setSetupCode(e.target.value)}
 				placeholder="6-digit code from terminal" />
-			<div class="text-xs text-[var(--muted)] mt-1">Find this code in the moltis process log (stdout).</div>
+			<div class="text-xs text-[var(--muted)] mt-1">Find this code in the clawmaster process log (stdout).</div>
 		</div>`
 		}
 
@@ -563,7 +563,7 @@ function AuthStep({ onNext, skippable }) {
 function IdentityStep({ onNext, onBack }) {
 	var identity = getGon("identity") || {};
 	var [userName, setUserName] = useState(identity.user_name || "");
-	var [name, setName] = useState(identity.name || "Moltis");
+	var [name, setName] = useState(identity.name || "ClawMaster");
 	var [emoji, setEmoji] = useState(identity.emoji || "\u{1f916}");
 	var [theme, setTheme] = useState(identity.theme || "");
 	var [saving, setSaving] = useState(false);
@@ -575,7 +575,7 @@ function IdentityStep({ onNext, onBack }) {
 			if (cancelled) return;
 			var refreshed = getGon("identity") || {};
 			if (refreshed.user_name) setUserName((prev) => prev || refreshed.user_name);
-			if (refreshed.name) setName((prev) => (prev && prev !== "Moltis" ? prev : refreshed.name));
+			if (refreshed.name) setName((prev) => (prev && prev !== "ClawMaster" ? prev : refreshed.name));
 			if (refreshed.emoji) setEmoji((prev) => (prev && prev !== "\u{1f916}" ? prev : refreshed.emoji));
 			if (refreshed.theme) setTheme((prev) => prev || refreshed.theme);
 		});
@@ -1346,7 +1346,7 @@ function ProviderStep({ onNext, onBack }) {
 				return false;
 			}
 			if (modelIds.length > 0) {
-				localStorage.setItem("moltis-model", modelIds[0]);
+				localStorage.setItem("clawmaster-model", modelIds[0]);
 			}
 			setValidationResults((prev) => ({ ...prev, [providerName]: { ok: true, message: null } }));
 			closeAll();
@@ -1389,7 +1389,7 @@ function ProviderStep({ onNext, onBack }) {
 						return;
 					}
 					await sendRpc("providers.save_models", { provider: providerName, models: [modelVal] });
-					localStorage.setItem("moltis-model", modelVal);
+					localStorage.setItem("clawmaster-model", modelVal);
 				}
 
 				setValidationResults((prev) => ({ ...prev, [providerName]: { ok: true, message: null } }));
@@ -1975,7 +1975,7 @@ function VoiceStep({ onNext, onBack }) {
 			try {
 				var identity = getGon("identity");
 				var user = identity?.user_name || "friend";
-				var bot = identity?.name || "Moltis";
+				var bot = identity?.name || "ClawMaster";
 				var ttsText = await fetchPhrase("onboarding", user, bot);
 				var res = await testTts(ttsText, providerId);
 				if (res?.ok && res.payload?.audio) {
@@ -2370,7 +2370,7 @@ function TeamsForm({ onConnected, error, setError }) {
 			<span class="font-medium text-[var(--text-strong)]">Microsoft Teams setup</span>
 			<span>1. <a href="https://learn.microsoft.com/en-us/azure/bot-service/bot-service-quickstart-registration" target="_blank" class="text-[var(--accent)] underline">Create an Azure Bot registration</a> and copy the App ID + App Password.</span>
 			<span>2. Generate the messaging endpoint below and paste it into your Azure Bot configuration.</span>
-			<span>3. Optional CLI shortcut: <code class="text-xs">moltis channels teams bootstrap</code>.</span>
+			<span>3. Optional CLI shortcut: <code class="text-xs">clawmaster channels teams bootstrap</code>.</span>
 		</div>
 		<div>
 			<label class="text-xs text-[var(--muted)] mb-1 block">App ID / Account ID</label>
@@ -2900,7 +2900,7 @@ function OpenClawImportStep({ onNext, onBack }) {
 			${
 				result.todos?.length > 0
 					? html`<div class="text-xs text-[var(--muted)]">
-						<div class="font-medium">Not yet supported in Moltis:</div>
+						<div class="font-medium">Not yet supported in ClawMaster:</div>
 						${result.todos.map((t) => html`<div key=${t.feature}>\u2022 ${t.feature}: ${t.description}</div>`)}
 					</div>`
 					: null
@@ -2974,11 +2974,11 @@ function OpenClawImportStep({ onNext, onBack }) {
 		<h2 class="text-lg font-medium text-[var(--text-strong)]">Import from OpenClaw</h2>
 		<p class="text-xs text-[var(--muted)] leading-relaxed">
 			We detected an OpenClaw installation at <code class="text-[var(--text)]">${scan.home_dir}</code>.
-			Select the data you'd like to bring into Moltis.
+			Select the data you'd like to bring into ClawMaster.
 		</p>
 		<p class="text-xs text-[var(--muted)] leading-relaxed">
 			This is a read-only copy \u2014 your OpenClaw installation will not be modified or removed.
-			You can keep using OpenClaw alongside Moltis, and re-import at any time from Settings.
+			You can keep using OpenClaw alongside ClawMaster, and re-import at any time from Settings.
 		</p>
 		${
 			workspaceMissing
@@ -3104,7 +3104,7 @@ function SummaryStep({ onBack, onFinish }) {
 		</div>`;
 	}
 
-	var activeModel = localStorage.getItem("moltis-model");
+	var activeModel = localStorage.getItem("clawmaster-model");
 	var configuredProviders = data.providers.filter((p) => p.configured);
 
 	return html`<div class="flex flex-col gap-4">

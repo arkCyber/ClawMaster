@@ -1,0 +1,16 @@
+package clawmaster:string-trim@0.1.0;
+
+/// String trimming tool for Moltis AI agents.
+world string-trim {
+    /// Trim whitespace from both ends.
+    export trim: func(input: string) -> string;
+    
+    /// Trim whitespace from start.
+    export trim-start: func(input: string) -> string;
+    
+    /// Trim whitespace from end.
+    export trim-end: func(input: string) -> string;
+    
+    /// Trim specific characters.
+    export trim-chars: func(input: string, chars: string) -> string;
+}

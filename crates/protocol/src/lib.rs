@@ -282,7 +282,7 @@ impl ConnectParamsV4 {
     /// Convert to v3-compatible `ConnectParams` for internal processing.
     pub fn into_connect_params(self) -> ConnectParams {
         // Extract Moltis-specific fields from extensions.
-        let moltis = self.extensions.get("moltis");
+        let moltis = self.extensions.get("clawmaster");
         let caps = moltis
             .and_then(|v| v.get("caps"))
             .and_then(|v| serde_json::from_value(v.clone()).ok());
@@ -550,7 +550,7 @@ mod tests {
             "client": { "id": "test-v4", "version": "0.2.0", "platform": "browser", "mode": "operator" },
             "locale": "fr",
             "extensions": {
-                "moltis": {
+                "clawmaster": {
                     "caps": ["audio"],
                     "pathEnv": "/usr/bin"
                 }
@@ -686,7 +686,7 @@ mod tests {
     #[test]
     fn hello_ok_with_extensions_serialized() {
         let mut extensions = Extensions::new();
-        extensions.insert("moltis".into(), serde_json::json!({"extra": true}));
+        extensions.insert("clawmaster".into(), serde_json::json!({"extra": true}));
         let hello = HelloOk {
             r#type: "hello-ok".into(),
             protocol: 4,
@@ -707,7 +707,7 @@ mod tests {
             extensions,
         };
         let json = serde_json::to_value(&hello).unwrap();
-        assert_eq!(json["extensions"]["moltis"]["extra"], true);
+        assert_eq!(json["extensions"]["clawmaster"]["extra"], true);
     }
 
     // ── Error codes ────────────────────────────────────────────────────

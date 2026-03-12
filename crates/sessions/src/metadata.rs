@@ -1139,22 +1139,22 @@ mod tests {
         meta.upsert("main", None);
         assert!(meta.get("main").unwrap().worktree_branch.is_none());
 
-        meta.set_worktree_branch("main", Some("moltis/abc".to_string()));
+        meta.set_worktree_branch("main", Some("clawmaster/abc".to_string()));
         assert_eq!(
             meta.get("main").unwrap().worktree_branch.as_deref(),
-            Some("moltis/abc")
+            Some("clawmaster/abc")
         );
 
         meta.set_worktree_branch("main", None);
         assert!(meta.get("main").unwrap().worktree_branch.is_none());
 
         // Round-trip through save/load.
-        meta.set_worktree_branch("main", Some("moltis/xyz".to_string()));
+        meta.set_worktree_branch("main", Some("clawmaster/xyz".to_string()));
         meta.save().unwrap();
         let reloaded = SessionMetadata::load(path).unwrap();
         assert_eq!(
             reloaded.get("main").unwrap().worktree_branch.as_deref(),
-            Some("moltis/xyz")
+            Some("clawmaster/xyz")
         );
     }
 
@@ -1166,11 +1166,11 @@ mod tests {
         meta.upsert("main", None).await.unwrap();
         assert!(meta.get("main").await.unwrap().worktree_branch.is_none());
 
-        meta.set_worktree_branch("main", Some("moltis/abc".to_string()))
+        meta.set_worktree_branch("main", Some("clawmaster/abc".to_string()))
             .await;
         assert_eq!(
             meta.get("main").await.unwrap().worktree_branch.as_deref(),
-            Some("moltis/abc")
+            Some("clawmaster/abc")
         );
 
         meta.set_worktree_branch("main", None).await;

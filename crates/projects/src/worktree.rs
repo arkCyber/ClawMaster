@@ -27,7 +27,7 @@ impl WorktreeManager {
     pub async fn create(project_dir: &Path, session_id: &str) -> Result<PathBuf> {
         Self::ensure_git_repo(project_dir).await?;
 
-        let branch = format!("moltis/{session_id}");
+        let branch = format!("clawmaster/{session_id}");
         let wt_dir = project_dir.join(WORKTREE_DIR).join(session_id);
 
         if wt_dir.exists() {
@@ -90,7 +90,7 @@ impl WorktreeManager {
     /// If not pushed, the branch is also deleted.
     pub async fn cleanup(project_dir: &Path, session_id: &str) -> Result<()> {
         let wt_dir = project_dir.join(WORKTREE_DIR).join(session_id);
-        let branch = format!("moltis/{session_id}");
+        let branch = format!("clawmaster/{session_id}");
 
         if wt_dir.exists() {
             let output = Command::new("git")
@@ -169,7 +169,7 @@ impl WorktreeManager {
                 current_branch = Some(branch.to_string());
             } else if line.is_empty() {
                 if let (Some(path), Some(branch)) = (current_path.take(), current_branch.take())
-                    && branch.starts_with("moltis/")
+                    && branch.starts_with("clawmaster/")
                 {
                     worktrees.push(WorktreeInfo { path, branch });
                 }
@@ -179,7 +179,7 @@ impl WorktreeManager {
         }
         // Handle last entry (no trailing blank line)
         if let (Some(path), Some(branch)) = (current_path, current_branch)
-            && branch.starts_with("moltis/")
+            && branch.starts_with("clawmaster/")
         {
             worktrees.push(WorktreeInfo { path, branch });
         }
@@ -290,7 +290,7 @@ impl WorktreeManager {
     ) -> Result<PathBuf> {
         Self::ensure_git_repo(project_dir).await?;
 
-        let branch = format!("moltis/{session_id}");
+        let branch = format!("clawmaster/{session_id}");
         let wt_dir = project_dir.join(WORKTREE_DIR).join(session_id);
 
         if wt_dir.exists() {
@@ -420,7 +420,7 @@ mod tests {
 
         let list = WorktreeManager::list(dir.path()).await.unwrap();
         assert_eq!(list.len(), 1);
-        assert_eq!(list[0].branch, "moltis/test-session");
+        assert_eq!(list[0].branch, "clawmaster/test-session");
     }
 
     #[tokio::test]
@@ -564,6 +564,6 @@ mod tests {
 
         let list = WorktreeManager::list(dir.path()).await.unwrap();
         assert_eq!(list.len(), 1);
-        assert_eq!(list[0].branch, "moltis/base-test");
+        assert_eq!(list[0].branch, "clawmaster/base-test");
     }
 }

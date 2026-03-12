@@ -9,7 +9,7 @@ use {
     tokio_tungstenite::{connect_async, tungstenite::Message},
 };
 
-use moltis_gateway::{
+use clawmaster_gateway::{
     auth,
     chat::{DisabledModelsStore, LiveChatService, LiveModelService},
     methods::MethodRegistry,
@@ -18,7 +18,7 @@ use moltis_gateway::{
     state::GatewayState,
 };
 
-use moltis_providers::ProviderRegistry;
+use clawmaster_providers::ProviderRegistry;
 
 /// Spin up a test gateway on an ephemeral port, return the bound address.
 async fn start_test_server() -> SocketAddr {
@@ -31,7 +31,7 @@ async fn start_test_server() -> SocketAddr {
     #[cfg(not(feature = "push-notifications"))]
     let (router, app_state) = build_gateway_base(state, methods, None);
 
-    let router = router.merge(moltis_web::web_routes());
+    let router = router.merge(clawmaster_web::web_routes());
     let app = finalize_gateway_app(router, app_state, false);
 
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -234,7 +234,7 @@ async fn gateway_startup_with_llm_wiring_does_not_block() {
 
     // This is the call that used to panic with blocking_write inside async.
     let tmp1 = tempfile::tempdir().unwrap();
-    let session_store1 = Arc::new(moltis_sessions::store::SessionStore::new(
+    let session_store1 = Arc::new(clawmaster_sessions::store::SessionStore::new(
         tmp1.path().to_path_buf(),
     ));
     let db_pool1 = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
@@ -242,10 +242,10 @@ async fn gateway_startup_with_llm_wiring_does_not_block() {
         .execute(&db_pool1)
         .await
         .unwrap();
-    moltis_sessions::metadata::SqliteSessionMetadata::init(&db_pool1)
+    clawmaster_sessions::metadata::SqliteSessionMetadata::init(&db_pool1)
         .await
         .unwrap();
-    let session_metadata1 = Arc::new(moltis_sessions::metadata::SqliteSessionMetadata::new(
+    let session_metadata1 = Arc::new(clawmaster_sessions::metadata::SqliteSessionMetadata::new(
         db_pool1,
     ));
     if !registry.read().await.is_empty() {
@@ -253,7 +253,7 @@ async fn gateway_startup_with_llm_wiring_does_not_block() {
             .set_chat(Arc::new(LiveChatService::new(
                 Arc::clone(&registry),
                 Arc::new(tokio::sync::RwLock::new(DisabledModelsStore::default())),
-                moltis_gateway::chat::GatewayChatRuntime::from_state(Arc::clone(&state)),
+                clawmaster_gateway::chat::GatewayChatRuntime::from_state(Arc::clone(&state)),
                 Arc::clone(&session_store1),
                 Arc::clone(&session_metadata1),
             )))
@@ -266,7 +266,7 @@ async fn gateway_startup_with_llm_wiring_does_not_block() {
     let registry2 = Arc::new(tokio::sync::RwLock::new(ProviderRegistry::from_env()));
     let state2 = GatewayState::new(resolved_auth2, GatewayServices::noop());
     let tmp2 = tempfile::tempdir().unwrap();
-    let session_store2 = Arc::new(moltis_sessions::store::SessionStore::new(
+    let session_store2 = Arc::new(clawmaster_sessions::store::SessionStore::new(
         tmp2.path().to_path_buf(),
     ));
     let db_pool2 = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
@@ -274,17 +274,17 @@ async fn gateway_startup_with_llm_wiring_does_not_block() {
         .execute(&db_pool2)
         .await
         .unwrap();
-    moltis_sessions::metadata::SqliteSessionMetadata::init(&db_pool2)
+    clawmaster_sessions::metadata::SqliteSessionMetadata::init(&db_pool2)
         .await
         .unwrap();
-    let session_metadata2 = Arc::new(moltis_sessions::metadata::SqliteSessionMetadata::new(
+    let session_metadata2 = Arc::new(clawmaster_sessions::metadata::SqliteSessionMetadata::new(
         db_pool2,
     ));
     state2
         .set_chat(Arc::new(LiveChatService::new(
             Arc::clone(&registry2),
             Arc::new(tokio::sync::RwLock::new(DisabledModelsStore::default())),
-            moltis_gateway::chat::GatewayChatRuntime::from_state(Arc::clone(&state2)),
+            clawmaster_gateway::chat::GatewayChatRuntime::from_state(Arc::clone(&state2)),
             Arc::clone(&session_store2),
             Arc::clone(&session_metadata2),
         )))

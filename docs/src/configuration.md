@@ -1,6 +1,6 @@
 # Configuration
 
-Moltis is configured through `moltis.toml`, located in `~/.config/moltis/` by default.
+ClawMaster is configured through `clawmaster.toml`, located in `~/.config/clawmaster/` by default.
 
 On first run, a complete configuration file is generated with sensible defaults. You can edit it to customize behavior.
 
@@ -8,7 +8,7 @@ On first run, a complete configuration file is generated with sensible defaults.
 
 | Platform | Default Path |
 |----------|--------------|
-| macOS/Linux | `~/.config/moltis/moltis.toml` |
+| macOS/Linux | `~/.config/clawmaster/clawmaster.toml` |
 | Custom | Set via `--config-dir` or `MOLTIS_CONFIG_DIR` |
 
 ## Basic Settings
@@ -19,7 +19,7 @@ port = 13131                    # HTTP/WebSocket port
 bind = "0.0.0.0"               # Listen address
 
 [identity]
-name = "Moltis"                 # Agent display name
+name = "ClawMaster"                 # Agent display name
 
 [tools]
 agent_timeout_secs = 600        # Agent run timeout (seconds, 0 = no timeout)
@@ -28,7 +28,7 @@ agent_max_iterations = 25       # Max tool call iterations per run
 
 ## LLM Providers
 
-Configure providers through the web UI or directly in `moltis.toml`. API keys can be set
+Configure providers through the web UI or directly in `clawmaster.toml`. API keys can be set
 via environment variables (e.g. `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`) or
 in the config file.
 
@@ -87,7 +87,7 @@ packages = [
 ```
 
 ```admonish info
-When you modify the packages list and restart, Moltis automatically rebuilds the sandbox image with a new tag.
+When you modify the packages list and restart, ClawMaster automatically rebuilds the sandbox image with a new tag.
 ```
 
 ## Web Search
@@ -112,12 +112,12 @@ duckduckgo_fallback = false      # Default: do not use DuckDuckGo fallback
 
 If no search API key is configured:
 
-- with `duckduckgo_fallback = false` (default), Moltis returns a clear hint to set `BRAVE_API_KEY` or `PERPLEXITY_API_KEY`
-- with `duckduckgo_fallback = true`, Moltis attempts DuckDuckGo HTML search, which may hit CAPTCHA/rate limits
+- with `duckduckgo_fallback = false` (default), ClawMaster returns a clear hint to set `BRAVE_API_KEY` or `PERPLEXITY_API_KEY`
+- with `duckduckgo_fallback = true`, ClawMaster attempts DuckDuckGo HTML search, which may hit CAPTCHA/rate limits
 
 ## Chat Message Queue
 
-When a new message arrives while an agent run is already active, Moltis can either
+When a new message arrives while an agent run is already active, ClawMaster can either
 replay queued messages one-by-one or merge them into a single follow-up message.
 
 ```toml
@@ -145,9 +145,9 @@ session_export = false
 
 ## Authentication
 
-Authentication is **only required when accessing Moltis from a non-localhost address**. When running on `localhost` or `127.0.0.1`, no authentication is needed by default.
+Authentication is **only required when accessing ClawMaster from a non-localhost address**. When running on `localhost` or `127.0.0.1`, no authentication is needed by default.
 
-When you access Moltis from a network address (e.g., `http://192.168.1.100:13131`), a one-time setup code is printed to the terminal. Use it to set up a password or passkey.
+When you access ClawMaster from a network address (e.g., `http://192.168.1.100:13131`), a one-time setup code is printed to the terminal. Use it to set up a password or passkey.
 
 ```toml
 [auth]
@@ -155,7 +155,7 @@ disabled = false                # Set true to disable auth entirely
 ```
 
 ```admonish warning
-Only set `disabled = true` if Moltis is running on a trusted private network. Never expose an unauthenticated instance to the internet.
+Only set `disabled = true` if ClawMaster is running on a trusted private network. Never expose an unauthenticated instance to the internet.
 ```
 
 ## Hooks
@@ -221,8 +221,8 @@ See [Discord](discord.md) for full configuration reference and setup instruction
 ```toml
 [tls]
 enabled = true
-cert_path = "~/.config/moltis/cert.pem"
-key_path = "~/.config/moltis/key.pem"
+cert_path = "~/.config/clawmaster/cert.pem"
+key_path = "~/.config/clawmaster/key.pem"
 # If paths don't exist, a self-signed certificate is generated
 
 # Port for the plain-HTTP redirect / CA-download server.
@@ -234,7 +234,7 @@ Override via environment variable: `MOLTIS_TLS__HTTP_REDIRECT_PORT=8080`.
 
 ## Tailscale Integration
 
-Expose Moltis over your Tailscale network:
+Expose ClawMaster over your Tailscale network:
 
 ```toml
 [tailscale]
@@ -252,7 +252,7 @@ prometheus_endpoint = true
 
 ## Process Environment Variables (`[env]`)
 
-The `[env]` section injects variables into the Moltis process at startup.
+The `[env]` section injects variables into the ClawMaster process at startup.
 This is useful in Docker deployments where passing individual `-e` flags is
 inconvenient, or when you want API keys stored in the config file rather
 than the host environment.
@@ -270,7 +270,7 @@ If `BRAVE_API_KEY` is already set via `docker -e` or the host shell, the
 
 ```admonish info title="Settings UI vs [env]"
 Environment variables configured through the Settings UI (Settings >
-Environment) are also injected into the Moltis process at startup.
+Environment) are also injected into the ClawMaster process at startup.
 Precedence: host/`docker -e` > config `[env]` > Settings UI.
 ```
 
@@ -290,7 +290,7 @@ All settings can be overridden via environment variables:
 ## CLI Flags
 
 ```bash
-moltis --config-dir /path/to/config --data-dir /path/to/data
+clawmaster --config-dir /path/to/config --data-dir /path/to/data
 ```
 
 ## Complete Example

@@ -1,4 +1,4 @@
-name: moltis
+name: clawmaster
 version: '0.2.0'
 summary: Personal AI gateway inspired by OpenClaw
 description: |
@@ -13,16 +13,16 @@ platforms:
   arm64:
 
 apps:
-  moltis:
-    command: bin/moltis
+  clawmaster:
+    command: bin/clawmaster
     environment:
-      MOLTIS_SHARE_DIR: $SNAP/share/moltis
+      MOLTIS_SHARE_DIR: $SNAP/share/clawmaster
     plugs:
       - network
       - network-bind
 
 parts:
-  moltis:
+  clawmaster:
     plugin: rust
     source: .
     rust-path: ["crates/cli"]
@@ -41,10 +41,10 @@ parts:
       chmod +x "$TW"
       cd crates/web/ui && TAILWINDCSS="../../../$TW" ./build.sh && cd ../../..
       rustup target add wasm32-wasip2
-      cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
+      cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
       craftctl default
-      mkdir -p "$CRAFT_PART_INSTALL/share/moltis/web" "$CRAFT_PART_INSTALL/share/moltis/wasm"
-      cp -R "crates/web/src/assets/." "$CRAFT_PART_INSTALL/share/moltis/web/"
-      cp "target/wasm32-wasip2/release/moltis_wasm_calc.wasm" "$CRAFT_PART_INSTALL/share/moltis/wasm/"
-      cp "target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm" "$CRAFT_PART_INSTALL/share/moltis/wasm/"
-      cp "target/wasm32-wasip2/release/moltis_wasm_web_search.wasm" "$CRAFT_PART_INSTALL/share/moltis/wasm/"
+      mkdir -p "$CRAFT_PART_INSTALL/share/clawmaster/web" "$CRAFT_PART_INSTALL/share/clawmaster/wasm"
+      cp -R "crates/web/src/assets/." "$CRAFT_PART_INSTALL/share/clawmaster/web/"
+      cp "target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm" "$CRAFT_PART_INSTALL/share/clawmaster/wasm/"
+      cp "target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm" "$CRAFT_PART_INSTALL/share/clawmaster/wasm/"
+      cp "target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm" "$CRAFT_PART_INSTALL/share/clawmaster/wasm/"

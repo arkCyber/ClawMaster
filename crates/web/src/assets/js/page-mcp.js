@@ -615,7 +615,7 @@ function ServerCard({ server }) {
 
 	function remove(e) {
 		e.stopPropagation();
-		requestConfirm(`This will stop and remove the "${server.name}" MCP tool. This action cannot be undone.`).then(
+		requestConfirm(t("mcp:confirmRemove", { name: server.name })).then(
 			(yes) => {
 				if (!yes) return;
 				sendRpc("mcp.remove", { name: server.name }).then(() => {
@@ -817,14 +817,14 @@ function McpPage() {
 	        <div class="flex items-center gap-2 my-3 px-3.5 py-2.5 bg-[var(--surface)] rounded-[var(--radius-sm)] font-mono text-xs text-[var(--text-strong)]">
 	          <span class="opacity-50">Agent</span>
 	          <span class="text-[var(--accent)]">\u2192</span>
-	          <span>Moltis</span>
+	          <span>ClawMaster</span>
 	          <span class="text-[var(--accent)]">\u2192</span>
 	          <span>Local process / Remote MCP host</span>
 	          <span class="text-[var(--accent)]">\u2192</span>
 	          <span class="opacity-50">External API</span>
 	        </div>
 	        <p class="text-xs text-[var(--muted)]">
-	          Moltis supports both <strong>local stdio MCP processes</strong> (spawned via npm/uvx) and <strong>remote Streamable HTTP/SSE servers</strong>. Remote servers may prompt browser OAuth when first enabled.
+	          ClawMaster supports both <strong>local stdio MCP processes</strong> (spawned via npm/uvx) and <strong>remote Streamable HTTP/SSE servers</strong>. Remote servers may prompt browser OAuth when first enabled.
 	        </p>
 	      </div>
 	      <div class="skills-warn max-w-[600px]">

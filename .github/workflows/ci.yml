@@ -236,7 +236,7 @@ jobs:
           ./scripts/download-tailwindcss-cli.sh tailwindcss-linux-x64
           cd crates/web/ui && TAILWINDCSS=../../../tailwindcss-linux-x64 ./build.sh
       - name: Generate coverage
-        run: cargo llvm-cov --workspace --exclude moltis-tools --exclude moltis-swift-bridge --lcov --output-path lcov.info
+        run: cargo llvm-cov --workspace --exclude clawmaster-tools --exclude clawmaster-swift-bridge --lcov --output-path lcov.info
       - name: Upload to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
@@ -274,8 +274,8 @@ jobs:
           ./scripts/download-tailwindcss-cli.sh tailwindcss-linux-x64
           cd crates/web/ui && TAILWINDCSS=../../../tailwindcss-linux-x64 ./build.sh
 
-      - name: Build moltis binary
-        run: cargo build --bin moltis
+      - name: Build clawmaster binary
+        run: cargo build --bin clawmaster
 
       - name: Install Playwright browsers
         working-directory: crates/web/ui
@@ -379,7 +379,7 @@ jobs:
 
       - name: Export GraphQL schema and generate project
         run: |
-          cargo run -p moltis-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls
+          cargo run -p clawmaster-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls
           ./scripts/generate-ios-graphql.sh
           ./scripts/generate-ios-project.sh
 

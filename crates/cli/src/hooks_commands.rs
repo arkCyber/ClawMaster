@@ -2,7 +2,7 @@
 
 use clap::Subcommand;
 
-use moltis_plugins::{
+use clawmaster_plugins::{
     hook_discovery::{FsHookDiscoverer, HookDiscoverer},
     hook_eligibility::check_hook_eligibility,
 };
@@ -82,7 +82,7 @@ pub async fn handle_hooks(action: HookAction) -> anyhow::Result<()> {
                 println!("{}", serde_json::to_string_pretty(&entries)?);
             } else if hooks.is_empty() {
                 println!("No hooks found.");
-                let data_dir = moltis_config::data_dir();
+                let data_dir = clawmaster_config::data_dir();
                 println!(
                     "Place hooks in {}/hooks/<name>/HOOK.md or {}/.moltis/hooks/<name>/HOOK.md",
                     data_dir.display(),
@@ -110,7 +110,7 @@ pub async fn handle_hooks(action: HookAction) -> anyhow::Result<()> {
                 "Events:      {}",
                 meta.events
                     .iter()
-                    .map(|e: &moltis_common::hooks::HookEvent| e.to_string())
+                    .map(|e: &clawmaster_common::hooks::HookEvent| e.to_string())
                     .collect::<Vec<_>>()
                     .join(", ")
             );

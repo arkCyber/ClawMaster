@@ -300,7 +300,7 @@ pub fn is_hf_repo_id(model_id: &str) -> bool {
 /// Returns `~/.moltis/models` (same base as config/data directories).
 #[must_use]
 pub fn default_models_dir() -> PathBuf {
-    moltis_config::data_dir().join("models")
+    clawmaster_config::data_dir().join("models")
 }
 
 /// Check if a GGUF model file is cached locally.
@@ -726,7 +726,7 @@ async fn list_hf_repo_files(repo: &str) -> anyhow::Result<Vec<String>> {
     let client = reqwest::Client::new();
     let response = client
         .get(&url)
-        .header("User-Agent", "moltis/1.0")
+        .header("User-Agent", "clawmaster/1.0")
         .send()
         .await
         .context("fetching HuggingFace repo file list")?
@@ -763,7 +763,7 @@ where
     let client = reqwest::Client::new();
     let response = client
         .get(url)
-        .header("User-Agent", "moltis/1.0")
+        .header("User-Agent", "clawmaster/1.0")
         .send()
         .await
         .context("starting download")?

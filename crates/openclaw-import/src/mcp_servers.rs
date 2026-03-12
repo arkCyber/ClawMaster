@@ -133,7 +133,7 @@ mod tests {
     fn import_new_mcp_servers() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest = tmp.path().join("moltis").join("mcp-servers.json");
+        let dest = tmp.path().join("clawmaster").join("mcp-servers.json");
 
         std::fs::write(
             home.join("mcp-servers.json"),
@@ -157,7 +157,7 @@ mod tests {
     fn import_merges_with_existing() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest_dir = tmp.path().join("moltis");
+        let dest_dir = tmp.path().join("clawmaster");
         std::fs::create_dir_all(&dest_dir).unwrap();
         let dest = dest_dir.join("mcp-servers.json");
 
@@ -190,7 +190,7 @@ mod tests {
     fn import_skips_duplicates() {
         let tmp = tempfile::tempdir().unwrap();
         let home = tmp.path();
-        let dest_dir = tmp.path().join("moltis");
+        let dest_dir = tmp.path().join("clawmaster");
         std::fs::create_dir_all(&dest_dir).unwrap();
         let dest = dest_dir.join("mcp-servers.json");
 

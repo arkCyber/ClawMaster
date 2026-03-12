@@ -28,7 +28,7 @@ This is a symptom of a broader issue: TLS/crypto dependencies are currently mixe
 
 Relevant local evidence:
 
-- `cargo tree -p moltis -i openssl-sys --edges normal,build`
+- `cargo tree -p clawmaster -i openssl-sys --edges normal,build`
 - `Cargo.toml` workspace deps (`openssl = { features = ["vendored"], ... }`)
 - `crates/gateway/Cargo.toml` (`openssl`, `webauthn-rs`, `web-push` path via feature)
 
@@ -59,8 +59,8 @@ Use two tracks:
 
 Add a diagnostic step (non-blocking initially) that outputs:
 
-1. `cargo tree -p moltis -i openssl-sys`
-2. `cargo tree -p moltis -i native-tls`
+1. `cargo tree -p clawmaster -i openssl-sys`
+2. `cargo tree -p clawmaster -i native-tls`
 
 This prevents guessing when a new dependency reintroduces OpenSSL.
 
@@ -77,8 +77,8 @@ This prevents guessing when a new dependency reintroduces OpenSSL.
 2. Audit all crates using `reqwest` to ensure required features are still enabled.
 3. Audit `tokio-tungstenite` TLS feature usage and pin to rustls-compatible features where used.
 4. Validate with:
-   - `cargo tree -p moltis -i native-tls`
-   - `cargo tree -p moltis -i openssl-sys`
+   - `cargo tree -p clawmaster -i native-tls`
+   - `cargo tree -p clawmaster -i openssl-sys`
 
 **Acceptance criteria**
 
@@ -144,7 +144,7 @@ Once Phase 3 decisions are implemented:
 
 **Acceptance criteria**
 
-1. `cargo tree -p moltis -i openssl-sys` is empty for default release profile.
+1. `cargo tree -p clawmaster -i openssl-sys` is empty for default release profile.
 2. Release workflows pass on Windows without Perl/OpenSSL toolchain workarounds.
 
 ---

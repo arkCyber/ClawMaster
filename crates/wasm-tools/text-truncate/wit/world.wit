@@ -1,0 +1,16 @@
+package clawmaster:text-truncate@0.1.0;
+
+/// Text truncation tool for Moltis AI agents.
+world text-truncate {
+    /// Truncate text to max length.
+    export truncate: func(text: string, max-length: u32) -> string;
+    
+    /// Truncate with ellipsis.
+    export truncate-ellipsis: func(text: string, max-length: u32) -> string;
+    
+    /// Truncate by words.
+    export truncate-words: func(text: string, max-words: u32) -> string;
+    
+    /// Truncate by lines.
+    export truncate-lines: func(text: string, max-lines: u32) -> string;
+}

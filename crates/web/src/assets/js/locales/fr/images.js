@@ -4,7 +4,7 @@ export default {
 	// ── Page-level ──────────────────────────────────────────
 	title: "Sandboxes",
 	description:
-		"Container images cached by moltis for sandbox execution. You can delete individual images or prune all. Build custom images from a base with apt packages.",
+		"Container images cached by clawmaster for sandbox execution. You can delete individual images or prune all. Build custom images from a base with apt packages.",
 	appleContainerNote:
 		"Apple Container provides VM-isolated execution but does not support building images. Docker (or OrbStack) is required alongside Apple Container to build and cache custom images. Sandboxed commands run via Apple Container; image builds use Docker.",
 	sandboxDisabledHint:
@@ -61,7 +61,7 @@ export default {
 			"Aucun runtime de conteneur détecté. Installez Docker pour l'exécution en sandbox, ou assurez-vous que systemd est disponible pour l'isolation cgroup.",
 		noRuntimeGeneric: "Aucun runtime de conteneur détecté. Installez Docker pour l'exécution en sandbox.",
 		macosDockerTip:
-			"Apple Container offre une isolation VM plus forte sur macOS 26+. Installez-le pour une utilisation automatique (moltis le préfère à Docker). Exécutez : brew install container",
+			"Apple Container offre une isolation VM plus forte sur macOS 26+. Installez-le pour une utilisation automatique (clawmaster le préfère à Docker). Exécutez : brew install container",
 		linuxDockerTip:
 			"Docker est un bon choix sous Linux. Pour une isolation plus légère sans la surcharge de Docker, le sandboxing cgroup systemd est également supporté.",
 		restrictedHostTip:

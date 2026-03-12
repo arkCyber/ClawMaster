@@ -1,13 +1,13 @@
-//! Chat execution engine — re-exported from [`moltis_chat`] with the gateway
+//! Chat execution engine — re-exported from [`clawmaster_chat`] with the gateway
 //! runtime adapter.
 
-pub use moltis_chat::*;
+pub use clawmaster_chat::*;
 
 use std::sync::Arc;
 
 use {async_trait::async_trait, serde_json::Value};
 
-use {moltis_channels::ChannelReplyTarget, moltis_tools::sandbox::SandboxRouter};
+use {clawmaster_channels::ChannelReplyTarget, clawmaster_tools::sandbox::SandboxRouter};
 
 use crate::state::GatewayState;
 
@@ -103,13 +103,13 @@ impl ChatRuntime for GatewayChatRuntime {
         self.state.sandbox_router.as_ref()
     }
 
-    fn memory_manager(&self) -> Option<&Arc<moltis_memory::manager::MemoryManager>> {
+    fn memory_manager(&self) -> Option<&Arc<clawmaster_memory::manager::MemoryManager>> {
         self.state.memory_manager.as_ref()
     }
 
     // ── Cached location ─────────────────────────────────────────────────────
 
-    async fn cached_location(&self) -> Option<moltis_config::GeoLocation> {
+    async fn cached_location(&self) -> Option<clawmaster_config::GeoLocation> {
         self.state.inner.read().await.cached_location.clone()
     }
 
@@ -142,27 +142,27 @@ impl ChatRuntime for GatewayChatRuntime {
 
     // ── Services ────────────────────────────────────────────────────────────
 
-    fn channel_outbound(&self) -> Option<Arc<dyn moltis_channels::ChannelOutbound>> {
+    fn channel_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelOutbound>> {
         self.state.services.channel_outbound_arc()
     }
 
-    fn channel_stream_outbound(&self) -> Option<Arc<dyn moltis_channels::ChannelStreamOutbound>> {
+    fn channel_stream_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>> {
         self.state.services.channel_stream_outbound_arc()
     }
 
-    fn tts_service(&self) -> &dyn moltis_service_traits::TtsService {
+    fn tts_service(&self) -> &dyn clawmaster_service_traits::TtsService {
         &*self.state.services.tts
     }
 
-    fn project_service(&self) -> &dyn moltis_service_traits::ProjectService {
+    fn project_service(&self) -> &dyn clawmaster_service_traits::ProjectService {
         &*self.state.services.project
     }
 
-    fn mcp_service(&self) -> &dyn moltis_service_traits::McpService {
+    fn mcp_service(&self) -> &dyn clawmaster_service_traits::McpService {
         &*self.state.services.mcp
     }
 
-    async fn chat_service(&self) -> Arc<dyn moltis_service_traits::ChatService> {
+    async fn chat_service(&self) -> Arc<dyn clawmaster_service_traits::ChatService> {
         self.state.chat().await
     }
 

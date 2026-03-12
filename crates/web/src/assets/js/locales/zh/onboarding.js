@@ -19,7 +19,7 @@ export default {
 		chooseHowToSecureRequired: "选择如何保护你的实例。",
 		setupCode: "设置码",
 		setupCodePlaceholder: "终端中的 6 位数字码",
-		setupCodeHint: "在 moltis 进程日志 (stdout) 中查找此码。",
+		setupCodeHint: "在 clawmaster 进程日志 (stdout) 中查找此码。",
 		enterSetupCode: "输入进程日志 (stdout) 中显示的设置码。",
 		setupFailed: "设置失败",
 		passkey: "通行密钥",

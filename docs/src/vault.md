@@ -1,6 +1,6 @@
 # Encryption at Rest (Vault)
 
-Moltis includes an encryption-at-rest vault that protects sensitive data
+ClawMaster includes an encryption-at-rest vault that protects sensitive data
 stored in the SQLite database. Environment variables (provider API keys,
 tokens, etc.) are encrypted with **XChaCha20-Poly1305** AEAD using keys
 derived from your password via **Argon2id**.

@@ -1,0 +1,13 @@
+package clawmaster:hash-md5@0.1.0;
+
+/// MD5 hash tool for Moltis AI agents.
+world hash-md5 {
+    /// Hash string to MD5.
+    export hash: func(input: string) -> string;
+    
+    /// Hash bytes to MD5.
+    export hash-bytes: func(input: list<u8>) -> string;
+    
+    /// Verify MD5 hash.
+    export verify: func(input: string, expected: string) -> bool;
+}

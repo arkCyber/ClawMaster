@@ -91,7 +91,7 @@ pub async fn config_get(State(state): State<crate::server::AppState>) -> impl In
 
     // Read raw file from disk to preserve comments.
     // Fall back to the documented template if no config file exists yet.
-    let path = moltis_config::find_or_default_config_path();
+    let path = clawmaster_config::find_or_default_config_path();
     let toml_str = if path.exists() {
         match std::fs::read_to_string(&path) {
             Ok(s) => s,
@@ -107,8 +107,8 @@ pub async fn config_get(State(state): State<crate::server::AppState>) -> impl In
             },
         }
     } else {
-        let config = moltis_config::discover_and_load();
-        moltis_config::template::default_config_template(config.server.port)
+        let config = clawmaster_config::discover_and_load();
+        clawmaster_config::template::default_config_template(config.server.port)
     };
 
     Json(serde_json::json!({
@@ -138,7 +138,7 @@ pub async fn config_validate(
     };
 
     // Try to parse the TOML as MoltisConfig
-    match toml::from_str::<moltis_config::MoltisConfig>(toml_str) {
+    match toml::from_str::<clawmaster_config::MoltisConfig>(toml_str) {
         Ok(config) => {
             // Run validation checks
             let warnings = validate_config(&config);
@@ -171,8 +171,8 @@ pub async fn config_template(State(state): State<crate::server::AppState>) -> im
     }
 
     // Load current config to preserve the port
-    let config = moltis_config::discover_and_load();
-    let template = moltis_config::template::default_config_template(config.server.port);
+    let config = clawmaster_config::discover_and_load();
+    let template = clawmaster_config::template::default_config_template(config.server.port);
 
     Json(serde_json::json!({
         "toml": template,
@@ -199,7 +199,7 @@ pub async fn config_save(
     };
 
     // Validate by parsing, then write raw string to preserve comments.
-    if let Err(e) = toml::from_str::<moltis_config::MoltisConfig>(toml_str) {
+    if let Err(e) = toml::from_str::<clawmaster_config::MoltisConfig>(toml_str) {
         return (
             StatusCode::BAD_REQUEST,
             Json(serde_json::json!({
@@ -211,7 +211,7 @@ pub async fn config_save(
             .into_response();
     }
 
-    match moltis_config::save_raw_config(toml_str) {
+    match clawmaster_config::save_raw_config(toml_str) {
         Ok(path) => {
             tracing::info!(path = %path.display(), "saved config (raw)");
             Json(serde_json::json!({
@@ -246,11 +246,11 @@ pub async fn restart(State(state): State<crate::server::AppState>) -> impl IntoR
     }
 
     // Validate the on-disk config before restarting to avoid crash loops.
-    let config_path = moltis_config::find_or_default_config_path();
+    let config_path = clawmaster_config::find_or_default_config_path();
     if config_path.exists() {
         match std::fs::read_to_string(&config_path) {
             Ok(toml_str) => {
-                if let Err(e) = toml::from_str::<moltis_config::MoltisConfig>(&toml_str) {
+                if let Err(e) = toml::from_str::<clawmaster_config::MoltisConfig>(&toml_str) {
                     tracing::warn!(
                         path = %config_path.display(),
                         error = %e,
@@ -337,7 +337,7 @@ pub async fn restart(State(state): State<crate::server::AppState>) -> impl IntoR
 }
 
 /// Validate config and return warnings.
-fn validate_config(config: &moltis_config::MoltisConfig) -> Vec<String> {
+fn validate_config(config: &clawmaster_config::MoltisConfig) -> Vec<String> {
     let mut warnings = Vec::new();
 
     // Check browser config
@@ -345,7 +345,7 @@ fn validate_config(config: &moltis_config::MoltisConfig) -> Vec<String> {
         // Browser sandbox mode follows session sandbox mode (controlled by exec.sandbox.mode).
         // If sandbox mode is available, check if container runtime exists.
         if config.tools.exec.sandbox.mode != "off"
-            && !moltis_browser::container::is_container_available()
+            && !clawmaster_browser::container::is_container_available()
         {
             warnings.push(
                 "Sandbox mode is available but no container runtime found. \

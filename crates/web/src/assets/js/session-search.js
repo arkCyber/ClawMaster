@@ -4,6 +4,7 @@ import { esc, sendRpc } from "./helpers.js";
 import { currentPrefix, navigate, sessionPath } from "./router.js";
 import { switchSession } from "./sessions.js";
 import * as S from "./state.js";
+import { t } from "./i18n.js";
 
 var searchInput = S.$("sessionSearch");
 var searchResults = S.$("searchResults");
@@ -45,7 +46,7 @@ function renderSearchResults(query) {
 	if (searchHits.length === 0) {
 		var empty = document.createElement("div");
 		empty.className = "search-hit-empty";
-		empty.textContent = "No results";
+		empty.textContent = t("common:errors.noResults");
 		searchResults.appendChild(empty);
 		searchResults.classList.remove("hidden");
 		return;
@@ -80,7 +81,7 @@ function renderSearchResults(query) {
 		el.addEventListener("click", () => {
 			var ctx = { query: query, messageIndex: hit.messageIndex };
 			if (currentPrefix !== "/chats") {
-				sessionStorage.setItem("moltis-search-ctx", JSON.stringify(ctx));
+				sessionStorage.setItem("clawmaster-search-ctx", JSON.stringify(ctx));
 				navigate(sessionPath(hit.sessionKey));
 			} else {
 				switchSession(hit.sessionKey, ctx);
@@ -124,7 +125,7 @@ searchInput.addEventListener("keydown", (e) => {
 				messageIndex: h.messageIndex,
 			};
 			if (currentPrefix !== "/chats") {
-				sessionStorage.setItem("moltis-search-ctx", JSON.stringify(ctx));
+				sessionStorage.setItem("clawmaster-search-ctx", JSON.stringify(ctx));
 				navigate(sessionPath(h.sessionKey));
 			} else {
 				switchSession(h.sessionKey, ctx);

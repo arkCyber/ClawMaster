@@ -16,7 +16,7 @@ use {
     tokio_stream::Stream,
 };
 
-use moltis_agents::model::{
+use clawmaster_agents::model::{
     ChatMessage, CompletionResponse, LlmProvider, StreamEvent, Usage, UserContent,
 };
 
@@ -98,12 +98,12 @@ fn build_messages(messages: &[ChatMessage]) -> anyhow::Result<Vec<ChatCompletion
                 let content_parts: Vec<ChatCompletionRequestUserMessageContentPart> = parts
                     .iter()
                     .map(|p| match p {
-                        moltis_agents::model::ContentPart::Text(t) => {
+                        clawmaster_agents::model::ContentPart::Text(t) => {
                             ChatCompletionRequestUserMessageContentPart::Text(
                                 ChatCompletionRequestMessageContentPartText { text: t.clone() },
                             )
                         },
-                        moltis_agents::model::ContentPart::Image { media_type, data } => {
+                        clawmaster_agents::model::ContentPart::Image { media_type, data } => {
                             let data_uri = format!("data:{media_type};base64,{data}");
                             ChatCompletionRequestUserMessageContentPart::ImageUrl(
                                 ChatCompletionRequestMessageContentPartImage {

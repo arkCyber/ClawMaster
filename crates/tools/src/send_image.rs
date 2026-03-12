@@ -7,7 +7,7 @@
 use {
     async_trait::async_trait,
     base64::{Engine as _, engine::general_purpose::STANDARD as BASE64},
-    moltis_agents::tool_registry::AgentTool,
+    clawmaster_agents::tool_registry::AgentTool,
     serde_json::{Value, json},
     std::{
         path::{Path, PathBuf},

@@ -1,8 +1,8 @@
-# Windows Moltis App (WinUI 3 + Rust FFI) Plan
+# Windows ClawMaster App (WinUI 3 + Rust FFI) Plan
 
 ## Summary
 
-Build a native Windows app equivalent to `apps/macos` using WinUI 3 + C#, reusing the existing Rust C ABI bridge (`moltis_*`) and shipping MSIX as the primary artifact.
+Build a native Windows app equivalent to `apps/macos` using WinUI 3 + C#, reusing the existing Rust C ABI bridge (`clawmaster_*`) and shipping MSIX as the primary artifact.
 
 ## Decisions
 
@@ -15,10 +15,10 @@ Build a native Windows app equivalent to `apps/macos` using WinUI 3 + C#, reusin
 
 - Add `crates/native-bridge-core` for shared non-FFI bridge logic.
 - Keep `crates/swift-bridge` for macOS `staticlib` output.
-- Add `crates/windows-bridge` as `cdylib` exporting the same `moltis_*` ABI.
+- Add `crates/windows-bridge` as `cdylib` exporting the same `clawmaster_*` ABI.
 - Add `apps/windows` WinUI app with:
-  - `MoltisNative` P/Invoke bindings
-  - `MoltisClient` JSON facade
+  - `ClawMasterNative` P/Invoke bindings
+  - `ClawMasterClient` JSON facade
   - State stores mirroring mac app scope
 
 ## Work Breakdown
@@ -27,7 +27,7 @@ Build a native Windows app equivalent to `apps/macos` using WinUI 3 + C#, reusin
 2. Rewire `crates/swift-bridge` to call shared core.
 3. Implement `crates/windows-bridge` FFI wrappers with identical symbol surface.
 4. Add `scripts/build-windows-bridge.ps1` to build DLL and generate header via `cbindgen`.
-5. Scaffold `apps/windows` solution/project and bundle `moltis_bridge.dll`.
+5. Scaffold `apps/windows` solution/project and bundle `clawmaster_bridge.dll`.
 6. Implement onboarding/chat/settings flows via C# client facade.
 7. Add MSIX packaging config and release artifact upload.
 
@@ -35,9 +35,9 @@ Build a native Windows app equivalent to `apps/macos` using WinUI 3 + C#, reusin
 
 - Preserve existing C ABI names and JSON payload contracts.
 - Add Windows bridge deliverables:
-  - `moltis_bridge.dll`
+  - `clawmaster_bridge.dll`
   - Import library
-  - Generated `moltis_bridge.h`
+  - Generated `clawmaster_bridge.h`
 
 ## Testing
 

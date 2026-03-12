@@ -7,7 +7,7 @@ use {
     tracing::info,
 };
 
-use moltis_config::{AgentIdentity, MoltisConfig, UserProfile};
+use clawmaster_config::{AgentIdentity, MoltisConfig, UserProfile};
 
 use crate::{
     Context, Result,
@@ -30,7 +30,7 @@ impl LiveOnboardingService {
 
     /// Save config to the service's config path.
     fn save(&self, config: &MoltisConfig) -> Result<()> {
-        moltis_config::loader::save_config_to_path(&self.config_path, config)
+        clawmaster_config::loader::save_config_to_path(&self.config_path, config)
             .context("failed to save onboarding config")?;
         Ok(())
     }
@@ -74,15 +74,15 @@ impl LiveOnboardingService {
 
         // Pre-populate from existing config so the user can keep values.
         if self.config_path.exists()
-            && let Ok(cfg) = moltis_config::loader::load_config(&self.config_path)
+            && let Ok(cfg) = clawmaster_config::loader::load_config(&self.config_path)
         {
             ws.identity = cfg.identity;
             ws.user = cfg.user;
         }
-        if let Some(file_identity) = moltis_config::load_identity_for_agent("main") {
+        if let Some(file_identity) = clawmaster_config::load_identity_for_agent("main") {
             merge_identity(&mut ws.identity, &file_identity);
         }
-        if let Some(file_user) = moltis_config::load_user() {
+        if let Some(file_user) = clawmaster_config::load_user() {
             merge_user(&mut ws.user, &file_user);
         }
 
@@ -100,16 +100,16 @@ impl LiveOnboardingService {
         if ws.is_done() {
             // Merge into existing config or create new one.
             let mut config = if self.config_path.exists() {
-                moltis_config::loader::load_config(&self.config_path).unwrap_or_default()
+                clawmaster_config::loader::load_config(&self.config_path).unwrap_or_default()
             } else {
                 MoltisConfig::default()
             };
             config.identity = ws.identity.clone();
             config.user = ws.user.clone();
             self.save(&config).context("failed to save config")?;
-            moltis_config::save_identity_for_agent("main", &ws.identity)
+            clawmaster_config::save_identity_for_agent("main", &ws.identity)
                 .context("failed to save IDENTITY.md")?;
-            moltis_config::save_user(&ws.user).context("failed to save USER.md")?;
+            clawmaster_config::save_user(&ws.user).context("failed to save USER.md")?;
             self.mark_onboarded();
 
             let resp = json!({
@@ -161,16 +161,16 @@ impl LiveOnboardingService {
     /// Also accepts `"creature"` and `"vibe"` as backward-compat aliases for `"theme"`.
     pub fn identity_update(&self, params: Value) -> Result<Value> {
         let mut config = if self.config_path.exists() {
-            moltis_config::loader::load_config(&self.config_path).unwrap_or_default()
+            clawmaster_config::loader::load_config(&self.config_path).unwrap_or_default()
         } else {
             MoltisConfig::default()
         };
         let mut identity = config.identity.clone();
-        if let Some(file_identity) = moltis_config::load_identity_for_agent("main") {
+        if let Some(file_identity) = clawmaster_config::load_identity_for_agent("main") {
             merge_identity(&mut identity, &file_identity);
         }
         let mut user = config.user.clone();
-        if let Some(file_user) = moltis_config::load_user() {
+        if let Some(file_user) = clawmaster_config::load_user() {
             merge_user(&mut user, &file_user);
         }
 
@@ -187,13 +187,13 @@ impl LiveOnboardingService {
         /// - empty string => Some(None) (clear timezone)
         /// - valid IANA timezone => Some(Some(Timezone))
         /// - invalid timezone => None (ignore)
-        fn timezone_field(params: &Value, key: &str) -> Option<Option<moltis_config::Timezone>> {
+        fn timezone_field(params: &Value, key: &str) -> Option<Option<clawmaster_config::Timezone>> {
             let raw = params.get(key).and_then(|v| v.as_str())?;
             let trimmed = raw.trim();
             if trimmed.is_empty() {
                 return Some(None);
             }
-            trimmed.parse::<moltis_config::Timezone>().ok().map(Some)
+            trimmed.parse::<clawmaster_config::Timezone>().ok().map(Some)
         }
 
         /// Extract optional location field from either `user_location` or `location`.
@@ -203,7 +203,7 @@ impl LiveOnboardingService {
         /// - Missing key => None (no-op)
         /// - null => Some(None) (clear location)
         /// - invalid payload => None (ignore)
-        fn location_field(params: &Value) -> Option<Option<moltis_config::GeoLocation>> {
+        fn location_field(params: &Value) -> Option<Option<clawmaster_config::GeoLocation>> {
             let raw = params
                 .get("user_location")
                 .or_else(|| params.get("location"))?;
@@ -219,7 +219,7 @@ impl LiveOnboardingService {
                 .and_then(|v| v.as_str())
                 .map(|v| v.to_string());
 
-            Some(Some(moltis_config::GeoLocation::now(
+            Some(Some(clawmaster_config::GeoLocation::now(
                 latitude, longitude, place,
             )))
         }
@@ -251,7 +251,7 @@ impl LiveOnboardingService {
             } else {
                 v.as_str().map(|s| s.to_string())
             };
-            moltis_config::save_soul_for_agent("main", soul.as_deref())
+            clawmaster_config::save_soul_for_agent("main", soul.as_deref())
                 .context("failed to save soul")?;
         }
         if let Some(v) = str_field(&params, "user_name") {
@@ -270,9 +270,9 @@ impl LiveOnboardingService {
         config.user = user.clone();
 
         self.save(&config)?;
-        moltis_config::save_identity_for_agent("main", &identity)
+        clawmaster_config::save_identity_for_agent("main", &identity)
             .context("failed to save identity")?;
-        moltis_config::save_user(&user).context("failed to save user")?;
+        clawmaster_config::save_user(&user).context("failed to save user")?;
 
         // Mark onboarding complete once both names are present.
         if identity.name.is_some() && user.name.is_some() {
@@ -283,7 +283,7 @@ impl LiveOnboardingService {
             "name": identity.name,
             "emoji": identity.emoji,
             "theme": identity.theme,
-            "soul": moltis_config::load_soul_for_agent("main"),
+            "soul": clawmaster_config::load_soul_for_agent("main"),
             "user_name": user.name,
             "user_timezone": user.timezone.as_ref().map(|tz| tz.name()),
             "user_location": user.location.as_ref().map(|loc| json!({
@@ -297,15 +297,15 @@ impl LiveOnboardingService {
 
     /// Update SOUL.md for the main agent.
     pub fn identity_update_soul(&self, soul: Option<String>) -> Result<Value> {
-        moltis_config::save_soul_for_agent("main", soul.as_deref())
+        clawmaster_config::save_soul_for_agent("main", soul.as_deref())
             .context("failed to save soul")?;
         Ok(json!({}))
     }
 
     /// Read identity from the config file (for `agent.identity.get`).
-    pub fn identity_get(&self) -> moltis_config::ResolvedIdentity {
+    pub fn identity_get(&self) -> clawmaster_config::ResolvedIdentity {
         let id = if self.config_path.exists()
-            && let Ok(cfg) = moltis_config::loader::load_config(&self.config_path)
+            && let Ok(cfg) = clawmaster_config::loader::load_config(&self.config_path)
         {
             info!(
                 config_path = %self.config_path.display(),
@@ -313,13 +313,13 @@ impl LiveOnboardingService {
                 config_theme = ?cfg.identity.theme,
                 "identity_get: loaded config"
             );
-            moltis_config::resolve_identity_from_config(&cfg)
+            clawmaster_config::resolve_identity_from_config(&cfg)
         } else {
             info!(
                 config_path = %self.config_path.display(),
                 "identity_get: config not found, using defaults"
             );
-            moltis_config::resolve_identity_from_config(&MoltisConfig::default())
+            clawmaster_config::resolve_identity_from_config(&MoltisConfig::default())
         };
         info!(
             resolved_name = %id.name,
@@ -334,7 +334,7 @@ impl LiveOnboardingService {
 
 /// Path to the `.onboarded` sentinel file in the data directory.
 fn onboarded_sentinel() -> PathBuf {
-    moltis_config::data_dir().join(".onboarded")
+    clawmaster_config::data_dir().join(".onboarded")
 }
 
 fn merge_identity(dst: &mut AgentIdentity, src: &AgentIdentity) {
@@ -399,8 +399,8 @@ mod tests {
     fn wizard_round_trip() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let config_path = dir.path().join("moltis.toml");
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let config_path = dir.path().join("clawmaster.toml");
         let svc = LiveOnboardingService::new(config_path.clone());
 
         // Start
@@ -429,15 +429,15 @@ mod tests {
 
         assert!(dir.path().join("agents/main/IDENTITY.md").exists());
         assert!(dir.path().join("USER.md").exists());
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn config_data_alone_does_not_skip_onboarding() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let config_path = dir.path().join("moltis.toml");
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let config_path = dir.path().join("clawmaster.toml");
         // Write a config with identity and user — but no sentinel file.
         let mut f = std::fs::File::create(&config_path).unwrap();
         writeln!(f, "[identity]\nname = \"Rex\"\n\n[user]\nname = \"Alice\"").unwrap();
@@ -447,43 +447,43 @@ mod tests {
         let resp = svc.wizard_start(false);
         assert_eq!(resp["onboarded"], false);
         assert_eq!(resp["step"], "welcome");
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn sentinel_file_marks_onboarded() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let config_path = dir.path().join("moltis.toml");
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let config_path = dir.path().join("clawmaster.toml");
         // Write sentinel file.
         std::fs::write(dir.path().join(".onboarded"), "").unwrap();
 
         let svc = LiveOnboardingService::new(config_path);
         let resp = svc.wizard_start(false);
         assert_eq!(resp["onboarded"], true);
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn cancel_wizard() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let svc = LiveOnboardingService::new(dir.path().join("moltis.toml"));
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let svc = LiveOnboardingService::new(dir.path().join("clawmaster.toml"));
         svc.wizard_start(false);
         assert_eq!(svc.wizard_status()["active"], true);
         svc.wizard_cancel();
         assert_eq!(svc.wizard_status()["active"], false);
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn identity_update_partial() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let config_path = dir.path().join("moltis.toml");
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let config_path = dir.path().join("clawmaster.toml");
         let svc = LiveOnboardingService::new(config_path.clone());
 
         // Create initial identity
@@ -513,7 +513,7 @@ mod tests {
         assert_eq!(id.name, "Rex");
         assert_eq!(id.theme.as_deref(), Some("playful pup"));
         assert_eq!(id.user_name.as_deref(), Some("Alice"));
-        let user = moltis_config::load_user().expect("load user");
+        let user = clawmaster_config::load_user().expect("load user");
         assert_eq!(
             user.timezone.as_ref().map(|tz| tz.name()),
             Some("America/New_York")
@@ -537,15 +537,15 @@ mod tests {
         // Reports as onboarded
         assert_eq!(svc.wizard_status()["onboarded"], true);
 
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn identity_update_location_fields() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let svc = LiveOnboardingService::new(dir.path().join("moltis.toml"));
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let svc = LiveOnboardingService::new(dir.path().join("clawmaster.toml"));
 
         let res = svc
             .identity_update(json!({
@@ -562,21 +562,21 @@ mod tests {
         assert_eq!(res["user_location"]["place"], "San Francisco");
         assert!(res["user_location"]["updated_at"].is_number());
 
-        let user = moltis_config::load_user().expect("load user");
+        let user = clawmaster_config::load_user().expect("load user");
         let location = user.location.expect("location should be persisted");
         assert_eq!(location.latitude, 37.7749);
         assert_eq!(location.longitude, -122.4194);
         assert_eq!(location.place.as_deref(), Some("San Francisco"));
 
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn identity_update_location_null_clears_existing_value() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let svc = LiveOnboardingService::new(dir.path().join("moltis.toml"));
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let svc = LiveOnboardingService::new(dir.path().join("clawmaster.toml"));
 
         svc.identity_update(json!({
             "user_location": {
@@ -591,23 +591,23 @@ mod tests {
             .unwrap();
         assert!(res["user_location"].is_null());
 
-        let user = moltis_config::load_user();
+        let user = clawmaster_config::load_user();
         assert!(user.as_ref().and_then(|u| u.location.as_ref()).is_none());
 
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 
     #[test]
     fn identity_update_empty_fields() {
         let _guard = DATA_DIR_TEST_LOCK.lock().unwrap();
         let dir = tempfile::tempdir().unwrap();
-        moltis_config::set_data_dir(dir.path().to_path_buf());
-        let svc = LiveOnboardingService::new(dir.path().join("moltis.toml"));
+        clawmaster_config::set_data_dir(dir.path().to_path_buf());
+        let svc = LiveOnboardingService::new(dir.path().join("clawmaster.toml"));
 
         // Set name, then clear it
         svc.identity_update(json!({ "name": "Rex" })).unwrap();
         let res = svc.identity_update(json!({ "name": "" })).unwrap();
         assert!(res["name"].is_null());
-        moltis_config::clear_data_dir();
+        clawmaster_config::clear_data_dir();
     }
 }

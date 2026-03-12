@@ -1,6 +1,6 @@
 use {async_trait::async_trait, sqlx::SqlitePool};
 
-use moltis_channels::{
+use clawmaster_channels::{
     Error as ChannelError, Result as ChannelResult,
     store::{ChannelStore, StoredChannel},
 };

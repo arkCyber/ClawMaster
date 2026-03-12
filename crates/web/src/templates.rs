@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use {
     askama::Template,
     axum::response::{Html, IntoResponse},
-    moltis_gateway::state::GatewayState,
+    clawmaster_gateway::state::GatewayState,
     tracing::warn,
 };
 
@@ -55,14 +55,14 @@ pub(crate) static SPA_ROUTES: SpaRoutes = SpaRoutes {
 /// (gon pattern — see CLAUDE.md § Server-Injected Data).
 #[derive(serde::Serialize)]
 pub(crate) struct GonData {
-    pub(crate) identity: moltis_config::ResolvedIdentity,
+    pub(crate) identity: clawmaster_config::ResolvedIdentity,
     version: String,
     port: u16,
     counts: NavCounts,
-    crons: Vec<moltis_cron::types::CronJob>,
-    cron_status: moltis_cron::types::CronStatus,
-    heartbeat_config: moltis_config::schema::HeartbeatConfig,
-    heartbeat_runs: Vec<moltis_cron::types::CronRunRecord>,
+    crons: Vec<clawmaster_cron::types::CronJob>,
+    cron_status: clawmaster_cron::types::CronStatus,
+    heartbeat_config: clawmaster_config::schema::HeartbeatConfig,
+    heartbeat_runs: Vec<clawmaster_cron::types::CronRunRecord>,
     voice_enabled: bool,
     graphql_enabled: bool,
     git_branch: Option<String>,
@@ -70,8 +70,8 @@ pub(crate) struct GonData {
     #[serde(skip_serializing_if = "Option::is_none")]
     deploy_platform: Option<String>,
     channels_offered: Vec<String>,
-    channel_descriptors: Vec<moltis_channels::ChannelDescriptor>,
-    update: moltis_gateway::update_check::UpdateAvailability,
+    channel_descriptors: Vec<clawmaster_channels::ChannelDescriptor>,
+    update: clawmaster_gateway::update_check::UpdateAvailability,
     sandbox: SandboxGonInfo,
     routes: SpaRoutes,
     started_at: u64,
@@ -120,7 +120,7 @@ pub(crate) fn collect_mem_snapshot() -> MemSnapshot {
         .and_then(|p| sys.process(p))
         .map(|p| p.memory())
         .unwrap_or(0);
-    let local_llama_cpp = moltis_gateway::server::local_llama_cpp_bytes_for_ui();
+    let local_llama_cpp = clawmaster_gateway::server::local_llama_cpp_bytes_for_ui();
     let total = sys.total_memory();
     // available_memory() returns 0 on macOS; fall back to total − used.
     let available = match sys.available_memory() {
@@ -185,7 +185,7 @@ async fn build_recent_sessions_snapshot(gw: &GatewayState, limit: usize) -> Vec<
     for entry in metadata.list().await.into_iter().take(limit) {
         let active_channel = if let Some(ref binding_json) = entry.channel_binding {
             if let Ok(target) =
-                serde_json::from_str::<moltis_channels::ChannelReplyTarget>(binding_json)
+                serde_json::from_str::<clawmaster_channels::ChannelReplyTarget>(binding_json)
             {
                 metadata
                     .get_active_session(
@@ -291,8 +291,8 @@ pub(crate) async fn build_nav_counts(gw: &GatewayState) -> NavCounts {
         .unwrap_or(0);
 
     let mut skills = 0usize;
-    if let Ok(path) = moltis_skills::manifest::ManifestStore::default_path() {
-        let store = moltis_skills::manifest::ManifestStore::new(path);
+    if let Ok(path) = clawmaster_skills::manifest::ManifestStore::default_path() {
+        let store = clawmaster_skills::manifest::ManifestStore::new(path);
         if let Ok(m) = store.load() {
             skills = m
                 .repos
@@ -359,11 +359,11 @@ pub(crate) async fn build_gon_data(gw: &GatewayState) -> GonData {
 
     let counts = build_nav_counts(gw).await;
     let (crons, cron_status) = tokio::join!(gw.services.cron.list(), gw.services.cron.status());
-    let crons: Vec<moltis_cron::types::CronJob> = crons
+    let crons: Vec<clawmaster_cron::types::CronJob> = crons
         .ok()
         .and_then(|v| serde_json::from_value(v).ok())
         .unwrap_or_default();
-    let cron_status: moltis_cron::types::CronStatus = cron_status
+    let cron_status: clawmaster_cron::types::CronStatus = cron_status
         .ok()
         .and_then(|v| serde_json::from_value(v).ok())
         .unwrap_or_default();
@@ -374,13 +374,13 @@ pub(crate) async fn build_gon_data(gw: &GatewayState) -> GonData {
             inner.channels_offered.clone(),
         )
     };
-    let channel_descriptors: Vec<moltis_channels::ChannelDescriptor> = channels_offered
+    let channel_descriptors: Vec<clawmaster_channels::ChannelDescriptor> = channels_offered
         .iter()
-        .filter_map(|s| s.parse::<moltis_channels::ChannelType>().ok())
+        .filter_map(|s| s.parse::<clawmaster_channels::ChannelType>().ok())
         .map(|ct| ct.descriptor())
         .collect();
 
-    let heartbeat_runs: Vec<moltis_cron::types::CronRunRecord> = gw
+    let heartbeat_runs: Vec<clawmaster_cron::types::CronRunRecord> = gw
         .services
         .cron
         .runs(serde_json::json!({ "id": "__heartbeat__", "limit": 10 }))
@@ -402,7 +402,7 @@ pub(crate) async fn build_gon_data(gw: &GatewayState) -> GonData {
         SandboxGonInfo {
             backend: "none".to_owned(),
             os: std::env::consts::OS,
-            default_image: moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_owned(),
+            default_image: clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_owned(),
             image_building: false,
         }
     };
@@ -445,7 +445,7 @@ pub(crate) async fn build_gon_data(gw: &GatewayState) -> GonData {
         sandbox,
         routes: SPA_ROUTES.clone(),
         started_at: *PROCESS_STARTED_AT_MS,
-        openclaw_detected: moltis_gateway::server::openclaw_detected_for_ui(),
+        openclaw_detected: clawmaster_gateway::server::openclaw_detected_for_ui(),
         sessions_recent,
         agents,
         #[cfg(feature = "vault")]
@@ -559,7 +559,7 @@ pub(crate) fn script_safe_json<T: serde::Serialize>(value: &T) -> String {
         .replace('\u{2029}', "\\u2029")
 }
 
-pub(crate) fn build_share_meta(identity: &moltis_config::ResolvedIdentity) -> ShareMeta {
+pub(crate) fn build_share_meta(identity: &clawmaster_config::ResolvedIdentity) -> ShareMeta {
     let agent_name = identity_name(identity);
     let user_name = identity
         .user_name
@@ -589,10 +589,10 @@ pub(crate) fn build_share_meta(identity: &moltis_config::ResolvedIdentity) -> Sh
     }
 }
 
-pub(crate) fn identity_name(identity: &moltis_config::ResolvedIdentity) -> &str {
+pub(crate) fn identity_name(identity: &clawmaster_config::ResolvedIdentity) -> &str {
     let name = identity.name.trim();
     if name.is_empty() {
-        "moltis"
+        "clawmaster"
     } else {
         name
     }
@@ -800,7 +800,7 @@ mod tests {
             "should contain the setup-required heading"
         );
         assert!(
-            html.contains("moltis auth reset-password"),
+            html.contains("clawmaster auth reset-password"),
             "should contain the CLI reset command"
         );
         assert!(

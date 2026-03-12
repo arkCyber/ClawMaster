@@ -481,7 +481,7 @@ function CronJobRow(props) {
 	}
 
 	function onDelete() {
-		requestConfirm(`Delete job '${job.name}'?`).then((yes) => {
+		requestConfirm(t("crons:confirmDelete", { name: job.name })).then((yes) => {
 			if (!yes) return;
 			sendRpc("cron.remove", { id: job.id }).then(() => {
 				loadJobs();

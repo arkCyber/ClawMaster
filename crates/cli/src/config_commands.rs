@@ -1,6 +1,6 @@
 use {anyhow::Result, clap::Subcommand};
 
-use moltis_config::validate::{self, Severity};
+use clawmaster_config::validate::{self, Severity};
 
 #[derive(Subcommand)]
 pub enum ConfigAction {

@@ -1,0 +1,25 @@
+package clawmaster:math-stats@0.1.0;
+
+/// Math statistics tool for Moltis AI agents.
+world math-stats {
+    /// Calculate mean (average).
+    export mean: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Calculate median.
+    export median: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Calculate standard deviation.
+    export std-dev: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Calculate variance.
+    export variance: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Find minimum value.
+    export min: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Find maximum value.
+    export max: func(numbers: list<f64>) -> result<f64, string>;
+    
+    /// Calculate sum.
+    export sum: func(numbers: list<f64>) -> f64;
+}

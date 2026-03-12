@@ -28,7 +28,7 @@ pub struct GatewaySystemInfoService {
 }
 
 #[async_trait::async_trait]
-impl moltis_service_traits::SystemInfoService for GatewaySystemInfoService {
+impl clawmaster_service_traits::SystemInfoService for GatewaySystemInfoService {
     async fn health(&self) -> ServiceResult {
         let count = self.state.client_count().await;
         Ok(serde_json::json!({

@@ -62,7 +62,7 @@ extension SettingsSectionContent {
                 steps: [
                     "Create an Azure Bot registration \u{2014} copy the App ID and App Password",
                     "Use Bootstrap Teams to generate the messaging endpoint",
-                    "CLI shortcut: moltis channels teams bootstrap"
+                    "CLI shortcut: clawmaster channels teams bootstrap"
                 ]
             )
             TextField("App ID / Account ID", text: item.accountId, prompt: Text("Azure App ID or alias"))

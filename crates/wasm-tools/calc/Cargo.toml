@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "moltis-wasm-calc"
+name              = "clawmaster-wasm-calc"
 version.workspace = true
 
 [lib]

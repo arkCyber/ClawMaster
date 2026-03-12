@@ -1,11 +1,11 @@
 # Streaming Architecture
 
-This document explains how streaming responses work in Moltis, from the LLM
+This document explains how streaming responses work in ClawMaster, from the LLM
 provider through to the web UI.
 
 ## Overview
 
-Moltis supports real-time token streaming for LLM responses, providing a much
+ClawMaster supports real-time token streaming for LLM responses, providing a much
 better user experience than waiting for the complete response. Streaming works
 even when tools are enabled, allowing users to see text as it arrives while
 tool calls are accumulated and executed.
@@ -122,7 +122,7 @@ Event types broadcast to the UI:
 
 ### 6. Web Crate (`crates/web/`)
 
-The `moltis-web` crate owns the browser-facing layer: HTML templates, static
+The `clawmaster-web` crate owns the browser-facing layer: HTML templates, static
 assets (JS, CSS, icons), and the axum routes that serve them. It injects its
 routes into the gateway via the `RouteEnhancer` composition pattern, keeping
 web UI concerns separate from API and agent logic in the gateway.
@@ -166,7 +166,7 @@ function handleChatDelta(p, isActive, isChatPage) {
                                                                       ▼
 ┌──────────────┐   WebSocket  ┌──────────────┐   Routes/WS   ┌──────────────┐    Callback     ┌──────────────┐
 │   Browser    │◀─────────────│  Web Crate   │◀──────────────│   Gateway    │◀────────────────│   Callback   │
-│              │              │  (moltis-web)│               │              │                 │   (on_event) │
+│              │              │  (clawmaster-web)│               │              │                 │   (on_event) │
 └──────────────┘              └──────────────┘               └──────────────┘                 └──────────────┘
 ```
 

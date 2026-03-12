@@ -573,7 +573,7 @@ export function clearAllSessions() {
 }
 
 // ── Re-render session list on project filter change ─────────
-document.addEventListener("moltis:render-session-list", renderSessionList);
+document.addEventListener("clawmaster:render-session-list", renderSessionList);
 
 // ── MCP toggle restore ──────────────────────────────────────
 function restoreMcpToggle(mcpEnabled) {
@@ -593,13 +593,13 @@ function restoreSessionState(entry, projectId) {
 	projectStore.setActiveProjectId(effectiveProjectId);
 	// Dual-write to state.js for backward compat
 	S.setActiveProjectId(effectiveProjectId);
-	localStorage.setItem("moltis-project", effectiveProjectId);
+	localStorage.setItem("clawmaster-project", effectiveProjectId);
 	updateSessionProjectSelect(effectiveProjectId);
 	if (entry.model) {
 		modelStore.select(entry.model);
 		// Dual-write to state.js for backward compat
 		S.setSelectedModelId(entry.model);
-		localStorage.setItem("moltis-model", entry.model);
+		localStorage.setItem("clawmaster-model", entry.model);
 		var found = modelStore.getById(entry.model);
 		if (S.modelComboLabel) S.modelComboLabel.textContent = found ? found.displayName || found.id : entry.model;
 	}
@@ -1112,7 +1112,7 @@ function showWelcomeCard() {
 	var card = tpl.content.cloneNode(true).firstElementChild;
 	var identity = gon.get("identity");
 	var userName = identity?.user_name;
-	var botName = identity?.name || "moltis";
+	var botName = identity?.name || "clawmaster";
 	var botEmoji = identity?.emoji || "";
 
 	var greetingEl = card.querySelector("[data-welcome-greeting]");
@@ -1358,7 +1358,7 @@ export function switchSession(key, searchContext, projectId) {
 	sessionStore.setActive(key);
 	// Dual-write to state.js for backward compat
 	S.setActiveSessionKey(key);
-	localStorage.setItem("moltis-session", key);
+	localStorage.setItem("clawmaster-session", key);
 	history.replaceState(null, "", sessionPath(key));
 	resetSwitchViewState();
 	var cachedEntry = sessionStore.getByKey(key);

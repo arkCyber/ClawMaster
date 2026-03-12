@@ -2,13 +2,13 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Moltis, please report it responsibly.
+If you discover a security vulnerability in ClawMaster, please report it responsibly.
 
 ### Preferred Methods
 
-1. **GitHub Security Advisories** (recommended): Use [GitHub's private vulnerability reporting](https://github.com/moltis-org/moltis/security/advisories/new) to report issues confidentially.
+1. **GitHub Security Advisories** (recommended): Use [GitHub's private vulnerability reporting](https://github.com/clawmaster-org/clawmaster/security/advisories/new) to report issues confidentially.
 
-2. **Email**: Send details to [moltis AT pen DOT so](mailto:moltis AT pen DOT so)
+2. **Email**: Send details to [clawmaster AT pen DOT so](mailto:clawmaster AT pen DOT so)
 
 ### What to Include
 
@@ -19,7 +19,7 @@ If you discover a security vulnerability in Moltis, please report it responsibly
 
 ### Scope
 
-This policy applies to the Moltis codebase. Third-party dependencies should be reported to their respective maintainers.
+This policy applies to the ClawMaster codebase. Third-party dependencies should be reported to their respective maintainers.
 
 ## Supported Versions
 
@@ -50,17 +50,17 @@ Each release artifact has three companion files:
 
 ```bash
 # Download the artifact and its signature files
-curl -LO https://github.com/moltis-org/moltis/releases/download/v0.1.0/moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz
-curl -LO https://github.com/moltis-org/moltis/releases/download/v0.1.0/moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz.sig
-curl -LO https://github.com/moltis-org/moltis/releases/download/v0.1.0/moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz.crt
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/download/v0.1.0/clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/download/v0.1.0/clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz.sig
+curl -LO https://github.com/clawmaster-org/clawmaster/releases/download/v0.1.0/clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz.crt
 
 # Verify the signature
 cosign verify-blob \
-  --signature moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz.sig \
-  --certificate moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz.crt \
-  --certificate-identity-regexp="https://github.com/moltis-org/moltis/*" \
+  --signature clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz.sig \
+  --certificate clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz.crt \
+  --certificate-identity-regexp="https://github.com/clawmaster-org/clawmaster/*" \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-  moltis-0.1.0-x86_64-unknown-linux-gnu.tar.gz
+  clawmaster-0.1.0-x86_64-unknown-linux-gnu.tar.gz
 
 # Expected output: Verified OK
 ```
@@ -70,24 +70,24 @@ cosign verify-blob \
 ```bash
 # Verify the image signature
 cosign verify \
-  --certificate-identity-regexp="https://github.com/moltis-org/moltis/*" \
+  --certificate-identity-regexp="https://github.com/clawmaster-org/clawmaster/*" \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-  ghcr.io/moltis-org/moltis:latest
+  ghcr.io/clawmaster-org/clawmaster:latest
 
 # View the SBOM attached to the image
-cosign download sbom ghcr.io/moltis-org/moltis:latest
+cosign download sbom ghcr.io/clawmaster-org/clawmaster:latest
 
 # View provenance attestation
 cosign verify-attestation \
   --type slsaprovenance \
-  --certificate-identity-regexp="https://github.com/moltis-org/moltis/*" \
+  --certificate-identity-regexp="https://github.com/clawmaster-org/clawmaster/*" \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-  ghcr.io/moltis-org/moltis:latest
+  ghcr.io/clawmaster-org/clawmaster:latest
 ```
 
 ### What the signature proves
 
-- The artifact was built by GitHub Actions in the `moltis-org/moltis` repository
+- The artifact was built by GitHub Actions in the `clawmaster-org/clawmaster` repository
 - The build was triggered by a specific commit (visible in the certificate)
 - The artifact has not been modified since signing
 - No private keys are involved — signatures use GitHub's OIDC identity
@@ -95,7 +95,7 @@ cosign verify-attestation \
 ### Transparency log
 
 All signatures are recorded in Sigstore's public transparency log (Rekor).
-You can search for moltis signatures at: https://search.sigstore.dev
+You can search for clawmaster signatures at: https://search.sigstore.dev
 
 ## Signed Commits
 

@@ -25,12 +25,12 @@ pub enum AgentError {
     #[error(transparent)]
     Io(#[from] std::io::Error),
     #[error(transparent)]
-    Config(#[from] moltis_config::Error),
+    Config(#[from] clawmaster_config::Error),
 }
 
-impl From<AgentError> for moltis_protocol::ErrorShape {
+impl From<AgentError> for clawmaster_protocol::ErrorShape {
     fn from(err: AgentError) -> Self {
-        use moltis_protocol::error_codes;
+        use clawmaster_protocol::error_codes;
         match &err {
             AgentError::NotFound(_) | AgentError::InvalidRequest(_) => {
                 Self::new(error_codes::INVALID_REQUEST, err.to_string())
@@ -202,7 +202,7 @@ impl AgentPersonaStore {
     /// Ensure the default main workspace exists and is seeded from the root
     /// workspace when files are present there.
     pub fn ensure_main_workspace_seeded(&self) -> Result<PathBuf> {
-        let main_workspace = moltis_config::agent_workspace_dir("main");
+        let main_workspace = clawmaster_config::agent_workspace_dir("main");
         std::fs::create_dir_all(&main_workspace)?;
 
         for file_name in &[
@@ -212,14 +212,14 @@ impl AgentPersonaStore {
             "AGENTS.md",
             "TOOLS.md",
         ] {
-            let src = moltis_config::data_dir().join(file_name);
+            let src = clawmaster_config::data_dir().join(file_name);
             let dst = main_workspace.join(file_name);
             if src.exists() && !dst.exists() {
                 let _ = std::fs::copy(&src, &dst)?;
             }
         }
 
-        let src_memory_dir = moltis_config::data_dir().join("memory");
+        let src_memory_dir = clawmaster_config::data_dir().join("memory");
         let dst_memory_dir = main_workspace.join("memory");
         if src_memory_dir.exists() && src_memory_dir.is_dir() && !dst_memory_dir.exists() {
             copy_dir_recursive(&src_memory_dir, &dst_memory_dir)?;
@@ -281,12 +281,12 @@ impl AgentPersonaStore {
         self.ensure_workspace(&params.id)?;
 
         // Write initial IDENTITY.md and SOUL.md if values provided.
-        let identity = moltis_config::schema::AgentIdentity {
+        let identity = clawmaster_config::schema::AgentIdentity {
             name: Some(params.name.clone()),
             emoji: params.emoji.clone(),
             theme: params.theme.clone(),
         };
-        moltis_config::save_identity_for_agent(&params.id, &identity)?;
+        clawmaster_config::save_identity_for_agent(&params.id, &identity)?;
 
         Ok(AgentPersona {
             id: params.id,
@@ -332,12 +332,12 @@ impl AgentPersonaStore {
         .await?;
 
         // Update workspace IDENTITY.md.
-        let identity = moltis_config::schema::AgentIdentity {
+        let identity = clawmaster_config::schema::AgentIdentity {
             name: Some(name.clone()),
             emoji: emoji.clone(),
             theme: theme.clone(),
         };
-        moltis_config::save_identity_for_agent(id, &identity)?;
+        clawmaster_config::save_identity_for_agent(id, &identity)?;
 
         Ok(AgentPersona {
             id: id.to_string(),
@@ -374,7 +374,7 @@ impl AgentPersonaStore {
         }
 
         // Archive the workspace directory by renaming it.
-        let workspace = moltis_config::agent_workspace_dir(id);
+        let workspace = clawmaster_config::agent_workspace_dir(id);
         if workspace.exists() {
             let archived = workspace.with_file_name(format!("{id}.archived"));
             if let Err(e) = std::fs::rename(&workspace, &archived) {
@@ -392,7 +392,7 @@ impl AgentPersonaStore {
 
     /// Create the workspace directory for an agent.
     pub fn ensure_workspace(&self, agent_id: &str) -> Result<PathBuf> {
-        let dir = moltis_config::agent_workspace_dir(agent_id);
+        let dir = clawmaster_config::agent_workspace_dir(agent_id);
         std::fs::create_dir_all(&dir)?;
         Ok(dir)
     }
@@ -400,13 +400,13 @@ impl AgentPersonaStore {
 
 /// Synthesize the "main" agent persona from the global identity config.
 fn synthesize_main_agent(is_default: bool) -> AgentPersona {
-    let identity = moltis_config::load_identity_for_agent("main");
+    let identity = clawmaster_config::load_identity_for_agent("main");
     AgentPersona {
         id: "main".to_string(),
         name: identity
             .as_ref()
             .and_then(|i| i.name.clone())
-            .unwrap_or_else(|| "moltis".to_string()),
+            .unwrap_or_else(|| "clawmaster".to_string()),
         is_default,
         emoji: identity.as_ref().and_then(|i| i.emoji.clone()),
         theme: identity.as_ref().and_then(|i| i.theme.clone()),

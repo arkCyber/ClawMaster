@@ -9,7 +9,7 @@ use {
     tracing::{debug, error, info, warn},
 };
 
-use moltis_protocol::{
+use clawmaster_protocol::{
     ClientInfo, ConnectAuth, ConnectParamsV4, GatewayFrame, PROTOCOL_VERSION, ProtocolRange,
     RequestFrame, ResponseFrame, roles,
 };
@@ -168,7 +168,7 @@ impl NodeHost {
             extensions: {
                 let mut ext = std::collections::HashMap::new();
                 ext.insert(
-                    "moltis".into(),
+                    "clawmaster".into(),
                     serde_json::json!({
                         "caps": self.config.caps,
                         "commands": self.config.commands,

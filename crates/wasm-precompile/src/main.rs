@@ -17,9 +17,9 @@ fn main() -> Result<()> {
         PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../target/wasm32-wasip2/release");
 
     let components = [
-        "moltis_wasm_calc",
-        "moltis_wasm_web_fetch",
-        "moltis_wasm_web_search",
+        "clawmaster_wasm_calc",
+        "clawmaster_wasm_web_fetch",
+        "clawmaster_wasm_web_search",
     ];
 
     for name in &components {

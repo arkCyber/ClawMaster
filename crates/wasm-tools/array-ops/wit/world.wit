@@ -1,0 +1,28 @@
+package clawmaster:array-ops@0.1.0;
+
+/// Array operations tool for Moltis AI agents.
+world array-ops {
+    /// Sort array (JSON format).
+    export sort: func(input: string) -> result<string, string>;
+    
+    /// Reverse array.
+    export reverse: func(input: string) -> result<string, string>;
+    
+    /// Get unique elements.
+    export unique: func(input: string) -> result<string, string>;
+    
+    /// Flatten nested array.
+    export flatten: func(input: string) -> result<string, string>;
+    
+    /// Get array length.
+    export length: func(input: string) -> result<u32, string>;
+    
+    /// Check if array includes value.
+    export includes: func(input: string, value: string) -> result<bool, string>;
+    
+    /// Get first N elements.
+    export take: func(input: string, n: u32) -> result<string, string>;
+    
+    /// Skip first N elements.
+    export skip: func(input: string, n: u32) -> result<string, string>;
+}

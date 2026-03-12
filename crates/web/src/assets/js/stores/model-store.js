@@ -8,7 +8,7 @@ import { sendRpc } from "../helpers.js";
 
 // ── Signals ──────────────────────────────────────────────────
 export var models = signal([]);
-export var selectedModelId = signal(localStorage.getItem("moltis-model") || "");
+export var selectedModelId = signal(localStorage.getItem("clawmaster-model") || "");
 
 export var selectedModel = computed(() => {
 	var id = selectedModelId.value;
@@ -28,11 +28,11 @@ export function fetch() {
 		if (!res?.ok) return;
 		setAll(res.payload || []);
 		if (models.value.length === 0) return;
-		var saved = localStorage.getItem("moltis-model") || "";
+		var saved = localStorage.getItem("clawmaster-model") || "";
 		var found = models.value.find((m) => m.id === saved);
 		var model = found || models.value[0];
 		select(model.id);
-		if (!found) localStorage.setItem("moltis-model", model.id);
+		if (!found) localStorage.setItem("clawmaster-model", model.id);
 	});
 }
 

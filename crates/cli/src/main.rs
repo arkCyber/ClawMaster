@@ -43,13 +43,13 @@ mod tailscale_commands;
 use {
     anyhow::anyhow,
     clap::{Parser, Subcommand},
-    moltis_gateway::logs::{EnabledLogLevels, LogBroadcastLayer, LogBuffer},
+    clawmaster_gateway::logs::{EnabledLogLevels, LogBroadcastLayer, LogBuffer},
     tracing::info,
     tracing_subscriber::{EnvFilter, fmt, layer::SubscriberExt, util::SubscriberInitExt},
 };
 
 #[derive(Parser)]
-#[command(name = "moltis", about = "Moltis — personal AI gateway", version)]
+#[command(name = "clawmaster", about = "ClawMaster — personal AI gateway", version)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -188,7 +188,7 @@ enum Commands {
         #[command(subcommand)]
         action: tailscale_commands::TailscaleAction,
     },
-    /// Install the Moltis CA certificate into the system trust store.
+    /// Install the ClawMaster CA certificate into the system trust store.
     #[cfg(feature = "tls")]
     TrustCa,
 }
@@ -268,7 +268,7 @@ fn init_telemetry(cli: &Cli, log_buffer: Option<LogBuffer>) {
 
 #[cfg(feature = "tls")]
 async fn trust_ca() -> anyhow::Result<()> {
-    let cert_dir = moltis_gateway::tls::cert_dir()?;
+    let cert_dir = clawmaster_gateway::tls::cert_dir()?;
     let ca_path = cert_dir.join("ca.pem");
 
     if !ca_path.exists() {
@@ -356,24 +356,24 @@ async fn main() -> anyhow::Result<()> {
 
     init_telemetry(&cli, log_buffer.clone());
 
-    info!(version = env!("CARGO_PKG_VERSION"), "moltis starting");
+    info!(version = env!("CARGO_PKG_VERSION"), "clawmaster starting");
 
     // Apply directory overrides before any command so all subcommands
     // (config check, db, sandbox, etc.) respect --config-dir / --data-dir.
     if let Some(ref dir) = cli.config_dir {
-        moltis_config::set_config_dir(dir.clone());
+        clawmaster_config::set_config_dir(dir.clone());
     }
     if let Some(ref dir) = cli.data_dir {
-        moltis_config::set_data_dir(dir.clone());
+        clawmaster_config::set_data_dir(dir.clone());
     }
     if let Some(ref dir) = cli.share_dir {
-        moltis_config::set_share_dir(dir.clone());
+        clawmaster_config::set_share_dir(dir.clone());
     }
 
     // Ensure config/data directories exist for every command path. This is a
     // hard requirement for startup; fail fast if directory initialization fails.
     let config_dir =
-        moltis_config::config_dir().ok_or_else(|| anyhow!("unable to resolve config directory"))?;
+        clawmaster_config::config_dir().ok_or_else(|| anyhow!("unable to resolve config directory"))?;
     std::fs::create_dir_all(&config_dir).unwrap_or_else(|e| {
         panic!(
             "failed to create config directory {}: {e}",
@@ -381,7 +381,7 @@ async fn main() -> anyhow::Result<()> {
         )
     });
 
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
     std::fs::create_dir_all(&data_dir).unwrap_or_else(|e| {
         panic!(
             "failed to create data directory {}: {e}",
@@ -393,7 +393,7 @@ async fn main() -> anyhow::Result<()> {
         // Default: start gateway when no subcommand is provided
         None | Some(Commands::Gateway) => {
             // Load config to get server settings
-            let config = moltis_config::discover_and_load();
+            let config = clawmaster_config::discover_and_load();
 
             // CLI args override config values
             let bind = cli.bind.unwrap_or(config.server.bind);
@@ -407,7 +407,7 @@ async fn main() -> anyhow::Result<()> {
             #[cfg(feature = "tailscale")]
             let tailscale_opts = cli
                 .tailscale
-                .map(|mode| moltis_gateway::server::TailscaleOpts {
+                .map(|mode| clawmaster_gateway::server::TailscaleOpts {
                     mode,
                     reset_on_exit: cli.tailscale_reset_on_exit,
                 });
@@ -415,12 +415,12 @@ async fn main() -> anyhow::Result<()> {
             let tailscale_opts: Option<()> = None;
             let _ = &tailscale_opts; // suppress unused warning when feature disabled
             #[cfg(feature = "web-ui")]
-            let extra_routes: Option<moltis_gateway::server::RouteEnhancer> =
-                Some(moltis_web::web_routes);
+            let extra_routes: Option<clawmaster_gateway::server::RouteEnhancer> =
+                Some(clawmaster_web::web_routes);
             #[cfg(not(feature = "web-ui"))]
-            let extra_routes: Option<moltis_gateway::server::RouteEnhancer> = None;
+            let extra_routes: Option<clawmaster_gateway::server::RouteEnhancer> = None;
 
-            moltis_gateway::server::start_gateway(
+            clawmaster_gateway::server::start_gateway(
                 &bind,
                 port,
                 no_tls,
@@ -434,12 +434,12 @@ async fn main() -> anyhow::Result<()> {
             .await
         },
         Some(Commands::Agent { message, .. }) => {
-            let result = moltis_agents::runner::run_agent("default", "main", &message).await?;
+            let result = clawmaster_agents::runner::run_agent("default", "main", &message).await?;
             println!("{result}");
             Ok(())
         },
         Some(Commands::Onboard) => {
-            moltis_onboarding::wizard::run_onboarding().await?;
+            clawmaster_onboarding::wizard::run_onboarding().await?;
             Ok(())
         },
         Some(Commands::Channels { action }) => channel_commands::handle_channels(action).await,
@@ -468,7 +468,7 @@ async fn main() -> anyhow::Result<()> {
 }
 
 async fn handle_skills(action: SkillAction) -> anyhow::Result<()> {
-    use moltis_skills::{
+    use clawmaster_skills::{
         discover::FsSkillDiscoverer,
         install,
         registry::{InMemoryRegistry, SkillRegistry},

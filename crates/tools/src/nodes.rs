@@ -10,7 +10,7 @@ use {
     serde::{Deserialize, Serialize},
 };
 
-use moltis_agents::tool_registry::AgentTool;
+use clawmaster_agents::tool_registry::AgentTool;
 
 // ── Domain types ────────────────────────────────────────────────────────────
 

@@ -29,9 +29,9 @@ use {
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{gauge, histogram, labels, llm as llm_metrics};
+use clawmaster_metrics::{gauge, histogram, labels, llm as llm_metrics};
 
-use moltis_agents::model::{
+use clawmaster_agents::model::{
     ChatMessage, CompletionResponse, LlmProvider, StreamEvent, ToolCall, Usage,
 };
 
@@ -196,13 +196,13 @@ impl LocalGgufProvider {
         {
             // Use a local-llm specific metric for model loading
             histogram!(
-                "moltis_local_llm_model_load_duration_seconds",
+                "clawmaster_local_llm_model_load_duration_seconds",
                 labels::MODEL => config.model_id.clone()
             )
             .record(load_duration.as_secs_f64());
 
             gauge!(
-                "moltis_local_llm_models_loaded",
+                "clawmaster_local_llm_models_loaded",
                 labels::MODEL => config.model_id.clone()
             )
             .increment(1.0);
@@ -440,7 +440,7 @@ impl LlmProvider for LocalGgufProvider {
 
         // Parse tool calls from the generated text.
         let (parsed_calls, remaining_text) =
-            moltis_agents::tool_parsing::parse_tool_calls_from_text(&text);
+            clawmaster_agents::tool_parsing::parse_tool_calls_from_text(&text);
 
         let tool_calls: Vec<ToolCall> = parsed_calls
             .into_iter()

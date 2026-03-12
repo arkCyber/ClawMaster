@@ -1,0 +1,10 @@
+package clawmaster:file-copy@0.1.0;
+
+/// File copy tool for Moltis AI agents.
+world file-copy {
+    /// Copy file.
+    export copy: func(source: string, dest: string) -> result<u64, string>;
+    
+    /// Copy with overwrite.
+    export copy-overwrite: func(source: string, dest: string) -> result<u64, string>;
+}

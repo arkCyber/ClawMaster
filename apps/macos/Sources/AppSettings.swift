@@ -4,7 +4,7 @@ import Foundation
 
 // swiftlint:disable type_body_length
 final class AppSettings: ObservableObject {
-    @Published var identityName = "Moltis"
+    @Published var identityName = "ClawMaster"
     @Published var identityEmoji = ""
     @Published var identityTheme = ""
     @Published var identityUserName = ""
@@ -85,7 +85,7 @@ final class AppSettings: ObservableObject {
     @Published var debugEnabled = false
 
     @Published var sandboxBackend = "auto"
-    @Published var sandboxImage = "moltis/sandbox:latest"
+    @Published var sandboxImage = "clawmaster/sandbox:latest"
     @Published var sandboxLoading = false
     @Published var sandboxError: String?
     @Published var sandboxRuntimeBackend = "none"
@@ -155,7 +155,7 @@ final class AppSettings: ObservableObject {
 
     // MARK: - Private state
 
-    let client = MoltisClient()
+    let client = ClawMasterClient()
     /// Raw config dictionary for round-tripping. Modified in-place by section
     /// save methods and sent back to Rust as the full config JSON.
     var rawConfig: [String: Any] = [:]
@@ -712,7 +712,7 @@ extension AppSettings {
            let exec = tools["exec"] as? [String: Any],
            let sandbox = exec["sandbox"] as? [String: Any] {
             sandboxBackend = sandbox["backend"] as? String ?? "auto"
-            sandboxImage = sandbox["image"] as? String ?? "moltis/sandbox:latest"
+            sandboxImage = sandbox["image"] as? String ?? "clawmaster/sandbox:latest"
             sandboxRuntimeDefaultImage = sandboxImage
             sandboxDefaultImageDraft = sandboxImage
         }

@@ -428,7 +428,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1e37c5532e4b686acf45e7162bc93da91fc2c702fb0d465efc2c20c8f973795"
 dependencies = [
  "async-graphql",
- "axum",
+ "axum 0.8.8",
  "bytes",
  "futures-util",
  "serde_json",
@@ -656,6 +656,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "auto-future"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c1e7e457ea78e524f48639f551fd79703ac3f2237f5ecccdf4708f8a75ad373"
+
+[[package]]
 name = "auto_enums"
 version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -697,11 +703,45 @@ dependencies = [
 
 [[package]]
 name = "axum"
+version = "0.7.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edca88bc138befd0323b20752846e6587272d3b03b0343c8ea28a6f819e6e71f"
+dependencies = [
+ "async-trait",
+ "axum-core 0.4.5",
+ "bytes",
+ "futures-util",
+ "http 1.4.0",
+ "http-body 1.0.1",
+ "http-body-util",
+ "hyper 1.8.1",
+ "hyper-util",
+ "itoa",
+ "matchit 0.7.3",
+ "memchr",
+ "mime",
+ "percent-encoding",
+ "pin-project-lite",
+ "rustversion",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "serde_urlencoded",
+ "sync_wrapper 1.0.2",
+ "tokio",
+ "tower 0.5.3",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "axum"
 version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b52af3cb4058c895d37317bb27508dccc8e5f2d39454016b297bf4a400597b8"
 dependencies = [
- "axum-core",
+ "axum-core 0.5.6",
  "base64 0.22.1",
  "bytes",
  "form_urlencoded",
@@ -712,7 +752,7 @@ dependencies = [
  "hyper 1.8.1",
  "hyper-util",
  "itoa",
- "matchit",
+ "matchit 0.8.4",
  "memchr",
  "mime",
  "percent-encoding",
@@ -725,7 +765,28 @@ dependencies = [
  "sync_wrapper 1.0.2",
  "tokio",
  "tokio-tungstenite 0.28.0",
- "tower",
+ "tower 0.5.3",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "axum-core"
+version = "0.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09f2bd6146b97ae3359fa0cc6d6b376d9539582c7b4220f041a33ec24c226199"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "futures-util",
+ "http 1.4.0",
+ "http-body 1.0.1",
+ "http-body-util",
+ "mime",
+ "pin-project-lite",
+ "rustversion",
+ "sync_wrapper 1.0.2",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -756,8 +817,8 @@ version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9963ff19f40c6102c76756ef0a46004c0d58957d87259fc9208ff8441c12ab96"
 dependencies = [
- "axum",
- "axum-core",
+ "axum 0.8.8",
+ "axum-core 0.5.6",
  "bytes",
  "cookie",
  "futures-util",
@@ -793,6 +854,35 @@ dependencies = [
  "tokio",
  "tokio-rustls 0.26.4",
  "tower-service",
+]
+
+[[package]]
+name = "axum-test"
+version = "14.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "167294800740b4b6bc7bfbccbf3a1d50a6c6e097342580ec4c11d1672e456292"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "auto-future",
+ "axum 0.7.9",
+ "bytes",
+ "cookie",
+ "http 1.4.0",
+ "http-body-util",
+ "hyper 1.8.1",
+ "hyper-util",
+ "mime",
+ "pretty_assertions",
+ "reserve-port",
+ "rust-multipart-rfc7578_2",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "smallvec",
+ "tokio",
+ "tower 0.4.13",
+ "url",
 ]
 
 [[package]]
@@ -863,11 +953,11 @@ dependencies = [
 name = "benchmarks"
 version = "0.10.18"
 dependencies = [
+ "clawmaster-agents",
+ "clawmaster-config",
+ "clawmaster-providers",
+ "clawmaster-sessions",
  "codspeed-divan-compat",
- "moltis-agents",
- "moltis-config",
- "moltis-providers",
- "moltis-sessions",
  "serde_json",
  "tempfile",
  "toml",
@@ -1380,6 +1470,1171 @@ name = "clap_lex"
 version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3e64b0cc0439b12df2fa678eae89a1c56a529fd067a9115f7827f1fffd22b32"
+
+[[package]]
+name = "clawmaster"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "clap",
+ "clawmaster-agents",
+ "clawmaster-browser",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-cron",
+ "clawmaster-gateway",
+ "clawmaster-memory",
+ "clawmaster-node-host",
+ "clawmaster-oauth",
+ "clawmaster-onboarding",
+ "clawmaster-openclaw-import",
+ "clawmaster-plugins",
+ "clawmaster-projects",
+ "clawmaster-sessions",
+ "clawmaster-skills",
+ "clawmaster-tools",
+ "clawmaster-web",
+ "dotenvy",
+ "open",
+ "rand 0.9.2",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "tikv-jemallocator",
+ "time",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "clawmaster-agents"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-stream",
+ "async-trait",
+ "axum 0.8.8",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "clawmaster-sessions",
+ "clawmaster-skills",
+ "futures",
+ "http 1.4.0",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-auth"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "argon2",
+ "async-trait",
+ "axum 0.8.8",
+ "base64 0.22.1",
+ "clawmaster-config",
+ "clawmaster-tools",
+ "clawmaster-vault",
+ "dashmap 6.1.0",
+ "openssl",
+ "password-hash",
+ "rand 0.9.2",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "webauthn-rs",
+ "webauthn-rs-proto",
+]
+
+[[package]]
+name = "clawmaster-auto-reply"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-agents",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "clawmaster-routing",
+ "clawmaster-sessions",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-browser"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "chromiumoxide",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "futures",
+ "rand 0.9.2",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
+ "uuid",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "clawmaster-caldav"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "clawmaster-agents",
+ "clawmaster-config",
+ "http 1.4.0",
+ "hyper 1.8.1",
+ "hyper-rustls 0.27.7",
+ "hyper-util",
+ "icalendar",
+ "libdav",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tower-http",
+ "tower-service",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-canvas"
+version = "0.10.18"
+dependencies = [
+ "axum 0.8.8",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-channels"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "http 1.4.0",
+ "rand 0.9.2",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-chat"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64 0.22.1",
+ "chrono",
+ "chrono-tz",
+ "clawmaster-agents",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-memory",
+ "clawmaster-metrics",
+ "clawmaster-plugins",
+ "clawmaster-projects",
+ "clawmaster-providers",
+ "clawmaster-service-traits",
+ "clawmaster-sessions",
+ "clawmaster-skills",
+ "clawmaster-telegram",
+ "clawmaster-tools",
+ "clawmaster-voice",
+ "futures",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "toml",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-clawhub"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum 0.8.8",
+ "axum-extra",
+ "axum-test",
+ "clawmaster-config",
+ "ed25519-dalek",
+ "hex",
+ "rstest",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-common"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "clawmaster-metrics",
+ "futures",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-config"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "chrono-tz",
+ "clawmaster-metrics",
+ "directories",
+ "ipnet",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "thiserror 2.0.18",
+ "toml",
+ "toml_edit 0.22.27",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-courier"
+version = "0.10.18"
+dependencies = [
+ "a2",
+ "anyhow",
+ "axum 0.8.8",
+ "clap",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "clawmaster-cron"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "chrono-tz",
+ "clawmaster-agents",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "cron",
+ "rstest",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-discord"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64 0.22.1",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-media",
+ "clawmaster-metrics",
+ "image",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "serenity",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-gateway"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-graphql",
+ "async-graphql-axum",
+ "async-trait",
+ "axum 0.8.8",
+ "axum-extra",
+ "axum-server",
+ "base64 0.22.1",
+ "bytes",
+ "chrono",
+ "chrono-tz",
+ "clawmaster-agents",
+ "clawmaster-auth",
+ "clawmaster-browser",
+ "clawmaster-caldav",
+ "clawmaster-canvas",
+ "clawmaster-channels",
+ "clawmaster-chat",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-cron",
+ "clawmaster-discord",
+ "clawmaster-graphql",
+ "clawmaster-mcp",
+ "clawmaster-media",
+ "clawmaster-memory",
+ "clawmaster-metrics",
+ "clawmaster-msteams",
+ "clawmaster-network-filter",
+ "clawmaster-oauth",
+ "clawmaster-onboarding",
+ "clawmaster-openclaw-import",
+ "clawmaster-plugins",
+ "clawmaster-projects",
+ "clawmaster-protocol",
+ "clawmaster-provider-setup",
+ "clawmaster-providers",
+ "clawmaster-qmd",
+ "clawmaster-routing",
+ "clawmaster-service-traits",
+ "clawmaster-sessions",
+ "clawmaster-skills",
+ "clawmaster-slack",
+ "clawmaster-tailscale",
+ "clawmaster-telegram",
+ "clawmaster-tls",
+ "clawmaster-tools",
+ "clawmaster-vault",
+ "clawmaster-voice",
+ "clawmaster-web",
+ "clawmaster-whatsapp",
+ "dashmap 6.1.0",
+ "futures",
+ "gix",
+ "hostname",
+ "hyper 1.8.1",
+ "hyper-util",
+ "include_dir",
+ "mdns-sd",
+ "p256",
+ "portable-pty",
+ "pulldown-cmark 0.12.2",
+ "qrcode",
+ "rand 0.9.2",
+ "rcgen",
+ "reqwest 0.12.28",
+ "rustls 0.23.36",
+ "rustls-pemfile 2.2.0",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "sysinfo",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tokio-rustls 0.26.4",
+ "tokio-stream",
+ "tokio-tungstenite 0.26.2",
+ "tokio-util",
+ "toml",
+ "tower 0.5.3",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "urlencoding",
+ "uuid",
+ "web-push",
+ "webauthn-rs",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "clawmaster-graphql"
+version = "0.10.18"
+dependencies = [
+ "async-graphql",
+ "async-stream",
+ "async-trait",
+ "bytes",
+ "clawmaster-service-traits",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+]
+
+[[package]]
+name = "clawmaster-mcp"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "clawmaster-oauth",
+ "futures",
+ "mockito",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-test",
+ "tracing",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-media"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "image",
+ "reqwest 0.12.28",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-memory"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytemuck",
+ "chrono",
+ "clawmaster-agents",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "directories",
+ "futures",
+ "llama-cpp-2",
+ "notify-debouncer-full",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "tempfile",
+ "text-splitter",
+ "tokio",
+ "tracing",
+ "tree-sitter-bash",
+ "tree-sitter-c",
+ "tree-sitter-cpp",
+ "tree-sitter-css",
+ "tree-sitter-go",
+ "tree-sitter-html",
+ "tree-sitter-java",
+ "tree-sitter-javascript",
+ "tree-sitter-json",
+ "tree-sitter-md",
+ "tree-sitter-python",
+ "tree-sitter-ruby",
+ "tree-sitter-rust",
+ "tree-sitter-toml-ng",
+ "tree-sitter-typescript",
+ "walkdir",
+]
+
+[[package]]
+name = "clawmaster-metrics"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "metrics 0.24.3",
+ "metrics-exporter-prometheus",
+ "metrics-tracing-context",
+ "once_cell",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "clawmaster-msteams"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64 0.22.1",
+ "bytes",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "http 1.4.0",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "subtle",
+ "tokio",
+ "tracing",
+ "url",
+ "urlencoding",
+]
+
+[[package]]
+name = "clawmaster-network-filter"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "clawmaster-metrics",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-node-host"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "clawmaster-metrics",
+ "clawmaster-protocol",
+ "futures",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tokio",
+ "tokio-tungstenite 0.26.2",
+ "tracing",
+ "url",
+ "uuid",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "clawmaster-oauth"
+version = "0.10.18"
+dependencies = [
+ "axum 0.8.8",
+ "base64 0.22.1",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "mockito",
+ "rand 0.9.2",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-onboarding"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-openclaw-import"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-oauth",
+ "dirs-next",
+ "json5",
+ "notify-debouncer-full",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "toml",
+ "tracing",
+ "walkdir",
+]
+
+[[package]]
+name = "clawmaster-plugins"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "clawmaster-sessions",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-projects"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "clawmaster-metrics",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-protocol"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-metrics",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "clawmaster-provider-setup"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "axum 0.8.8",
+ "clawmaster-agents",
+ "clawmaster-config",
+ "clawmaster-oauth",
+ "clawmaster-providers",
+ "clawmaster-service-traits",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "clawmaster-providers"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-openai",
+ "async-stream",
+ "async-trait",
+ "axum 0.8.8",
+ "base64 0.22.1",
+ "clawmaster-agents",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "clawmaster-oauth",
+ "directories",
+ "encoding_rs",
+ "futures",
+ "genai",
+ "http 1.4.0",
+ "llama-cpp-2",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite 0.26.2",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-qmd"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "clawmaster-memory",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-routing"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "clawmaster-sessions",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-schema-export"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-graphql",
+ "clawmaster-service-traits",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "clawmaster-service-traits"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "clawmaster-protocol",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-sessions"
+version = "0.10.18"
+dependencies = [
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "fd-lock",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-skills"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "clawmaster-config",
+ "clawmaster-metrics",
+ "flate2",
+ "notify-debouncer-full",
+ "reqwest 0.12.28",
+ "rstest",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tar",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-slack"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "bytes",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-metrics",
+ "hmac",
+ "http 1.4.0",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "slack-morphism",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-swift-bridge"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "axum 0.8.8",
+ "clawmaster-agents",
+ "clawmaster-config",
+ "clawmaster-gateway",
+ "clawmaster-network-filter",
+ "clawmaster-projects",
+ "clawmaster-provider-setup",
+ "clawmaster-providers",
+ "clawmaster-sessions",
+ "clawmaster-tools",
+ "clawmaster-web",
+ "metrics 0.24.3",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "sqlx",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "clawmaster-tailscale"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-telegram"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "axum 0.8.8",
+ "base64 0.22.1",
+ "clawmaster-auto-reply",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-media",
+ "clawmaster-metrics",
+ "rand 0.9.2",
+ "reqwest 0.12.28",
+ "rstest",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "teloxide",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-tls"
+version = "0.10.18"
+dependencies = [
+ "axum 0.8.8",
+ "clawmaster-common",
+ "clawmaster-config",
+ "hostname",
+ "hyper-util",
+ "rcgen",
+ "rustls 0.23.36",
+ "rustls-pemfile 2.2.0",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tokio-rustls 0.26.4",
+ "tower 0.5.3",
+ "tracing",
+]
+
+[[package]]
+name = "clawmaster-tools"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64 0.22.1",
+ "bytes",
+ "clawmaster-agents",
+ "clawmaster-browser",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-cron",
+ "clawmaster-metrics",
+ "clawmaster-network-filter",
+ "clawmaster-providers",
+ "clawmaster-sessions",
+ "clawmaster-skills",
+ "futures",
+ "image",
+ "ipnet",
+ "mockito",
+ "regex",
+ "reqwest 0.12.28",
+ "rstest",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "sha2",
+ "shell-words",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "time",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "url",
+ "uuid",
+ "wasmtime",
+ "wasmtime-wasi",
+]
+
+[[package]]
+name = "clawmaster-vault"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "argon2",
+ "base64 0.22.1",
+ "chacha20poly1305",
+ "clawmaster-metrics",
+ "rand 0.9.2",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sqlx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "zeroize",
+]
+
+[[package]]
+name = "clawmaster-voice"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "base64 0.22.1",
+ "bytes",
+ "dirs",
+ "futures",
+ "reqwest 0.12.28",
+ "secrecy 0.8.0",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+ "urlencoding",
+ "which 7.0.3",
+ "wiremock",
+]
+
+[[package]]
+name = "clawmaster-wasm-calc"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "serde_json",
+ "wit-bindgen 0.41.0",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "clawmaster-wasm-precompile"
+version = "0.10.18"
+dependencies = [
+ "anyhow",
+ "wasmtime",
+]
+
+[[package]]
+name = "clawmaster-wasm-web-fetch"
+version = "0.10.18"
+dependencies = [
+ "serde_json",
+ "url",
+ "wit-bindgen 0.41.0",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "clawmaster-wasm-web-search"
+version = "0.10.18"
+dependencies = [
+ "serde_json",
+ "url",
+ "wit-bindgen 0.41.0",
+ "wit-bindgen-rt",
+]
+
+[[package]]
+name = "clawmaster-web"
+version = "0.10.18"
+dependencies = [
+ "askama",
+ "axum 0.8.8",
+ "axum-extra",
+ "base64 0.22.1",
+ "chrono",
+ "clawmaster-channels",
+ "clawmaster-config",
+ "clawmaster-cron",
+ "clawmaster-gateway",
+ "clawmaster-media",
+ "clawmaster-skills",
+ "clawmaster-tools",
+ "futures",
+ "gix",
+ "include_dir",
+ "portable-pty",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+ "uuid",
+ "which 8.0.0",
+]
+
+[[package]]
+name = "clawmaster-whatsapp"
+version = "0.10.18"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "clawmaster-channels",
+ "clawmaster-common",
+ "clawmaster-config",
+ "clawmaster-media",
+ "clawmaster-metrics",
+ "dashmap 6.1.0",
+ "postcard",
+ "rand 0.9.2",
+ "serde",
+ "serde_json",
+ "sled",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "wacore",
+ "wacore-binary",
+ "waproto",
+ "whatsapp-rust",
+ "whatsapp-rust-tokio-transport",
+ "whatsapp-rust-ureq-http-client",
+]
 
 [[package]]
 name = "clru"
@@ -2367,6 +3622,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "diff"
+version = "0.1.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
+
+[[package]]
 name = "digest"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2580,6 +3841,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ed25519"
+version = "2.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53"
+dependencies = [
+ "pkcs8 0.10.2",
+ "signature 2.2.0",
+]
+
+[[package]]
 name = "ed25519-compact"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2587,6 +3858,20 @@ checksum = "33ce99a9e19c84beb4cc35ece85374335ccc398240712114c85038319ed709bd"
 dependencies = [
  "ct-codecs",
  "getrandom 0.3.4",
+]
+
+[[package]]
+name = "ed25519-dalek"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9"
+dependencies = [
+ "curve25519-dalek",
+ "ed25519",
+ "serde",
+ "sha2",
+ "subtle",
+ "zeroize",
 ]
 
 [[package]]
@@ -5493,6 +6778,12 @@ dependencies = [
 
 [[package]]
 name = "matchit"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
+
+[[package]]
+name = "matchit"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
@@ -5764,1147 +7055,6 @@ dependencies = [
  "smallvec",
  "tagptr",
  "uuid",
-]
-
-[[package]]
-name = "moltis"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "clap",
- "dotenvy",
- "moltis-agents",
- "moltis-browser",
- "moltis-common",
- "moltis-config",
- "moltis-cron",
- "moltis-gateway",
- "moltis-memory",
- "moltis-node-host",
- "moltis-oauth",
- "moltis-onboarding",
- "moltis-openclaw-import",
- "moltis-plugins",
- "moltis-projects",
- "moltis-sessions",
- "moltis-skills",
- "moltis-tools",
- "moltis-web",
- "open",
- "rand 0.9.2",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde_json",
- "sqlx",
- "tempfile",
- "tikv-jemallocator",
- "time",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
- "which 8.0.0",
-]
-
-[[package]]
-name = "moltis-agents"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-stream",
- "async-trait",
- "axum",
- "futures",
- "http 1.4.0",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "moltis-sessions",
- "moltis-skills",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-auth"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "argon2",
- "async-trait",
- "axum",
- "base64 0.22.1",
- "dashmap 6.1.0",
- "moltis-config",
- "moltis-tools",
- "moltis-vault",
- "openssl",
- "password-hash",
- "rand 0.9.2",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "sqlx",
- "tempfile",
- "tokio",
- "tracing",
- "webauthn-rs",
- "webauthn-rs-proto",
-]
-
-[[package]]
-name = "moltis-auto-reply"
-version = "0.10.18"
-dependencies = [
- "moltis-agents",
- "moltis-common",
- "moltis-metrics",
- "moltis-routing",
- "moltis-sessions",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-browser"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "chromiumoxide",
- "futures",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "rand 0.9.2",
- "serde",
- "serde_json",
- "sysinfo",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "url",
- "uuid",
- "which 8.0.0",
-]
-
-[[package]]
-name = "moltis-caldav"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "http 1.4.0",
- "hyper 1.8.1",
- "hyper-rustls 0.27.7",
- "hyper-util",
- "icalendar",
- "libdav",
- "moltis-agents",
- "moltis-config",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "tokio",
- "tower-http",
- "tower-service",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-canvas"
-version = "0.10.18"
-dependencies = [
- "axum",
- "moltis-common",
- "moltis-metrics",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-channels"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "bytes",
- "http 1.4.0",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "rand 0.9.2",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-chat"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.22.1",
- "chrono",
- "chrono-tz",
- "futures",
- "moltis-agents",
- "moltis-channels",
- "moltis-common",
- "moltis-config",
- "moltis-memory",
- "moltis-metrics",
- "moltis-plugins",
- "moltis-projects",
- "moltis-providers",
- "moltis-service-traits",
- "moltis-sessions",
- "moltis-skills",
- "moltis-telegram",
- "moltis-tools",
- "moltis-voice",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "toml",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-common"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "futures",
- "moltis-metrics",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-config"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "chrono-tz",
- "directories",
- "ipnet",
- "moltis-metrics",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "serde_yaml",
- "tempfile",
- "thiserror 2.0.18",
- "toml",
- "toml_edit 0.22.27",
- "tracing",
-]
-
-[[package]]
-name = "moltis-courier"
-version = "0.10.18"
-dependencies = [
- "a2",
- "anyhow",
- "axum",
- "clap",
- "serde",
- "serde_json",
- "sha2",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "moltis-cron"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "chrono",
- "chrono-tz",
- "cron",
- "moltis-agents",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "rstest",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-discord"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.22.1",
- "image",
- "moltis-channels",
- "moltis-common",
- "moltis-media",
- "moltis-metrics",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "serenity",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "moltis-gateway"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-graphql",
- "async-graphql-axum",
- "async-trait",
- "axum",
- "axum-extra",
- "axum-server",
- "base64 0.22.1",
- "bytes",
- "chrono",
- "chrono-tz",
- "dashmap 6.1.0",
- "futures",
- "gix",
- "hostname",
- "hyper 1.8.1",
- "hyper-util",
- "include_dir",
- "mdns-sd",
- "moltis-agents",
- "moltis-auth",
- "moltis-browser",
- "moltis-caldav",
- "moltis-canvas",
- "moltis-channels",
- "moltis-chat",
- "moltis-common",
- "moltis-config",
- "moltis-cron",
- "moltis-discord",
- "moltis-graphql",
- "moltis-mcp",
- "moltis-media",
- "moltis-memory",
- "moltis-metrics",
- "moltis-msteams",
- "moltis-network-filter",
- "moltis-oauth",
- "moltis-onboarding",
- "moltis-openclaw-import",
- "moltis-plugins",
- "moltis-projects",
- "moltis-protocol",
- "moltis-provider-setup",
- "moltis-providers",
- "moltis-qmd",
- "moltis-routing",
- "moltis-service-traits",
- "moltis-sessions",
- "moltis-skills",
- "moltis-slack",
- "moltis-tailscale",
- "moltis-telegram",
- "moltis-tls",
- "moltis-tools",
- "moltis-vault",
- "moltis-voice",
- "moltis-web",
- "moltis-whatsapp",
- "p256",
- "portable-pty",
- "pulldown-cmark 0.12.2",
- "qrcode",
- "rand 0.9.2",
- "rcgen",
- "reqwest 0.12.28",
- "rustls 0.23.36",
- "rustls-pemfile 2.2.0",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "sqlx",
- "sysinfo",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "tokio-rustls 0.26.4",
- "tokio-stream",
- "tokio-tungstenite 0.26.2",
- "tokio-util",
- "toml",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "url",
- "urlencoding",
- "uuid",
- "web-push",
- "webauthn-rs",
- "which 8.0.0",
-]
-
-[[package]]
-name = "moltis-graphql"
-version = "0.10.18"
-dependencies = [
- "async-graphql",
- "async-stream",
- "async-trait",
- "bytes",
- "moltis-service-traits",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
-]
-
-[[package]]
-name = "moltis-mcp"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "futures",
- "mockito",
- "moltis-common",
- "moltis-metrics",
- "moltis-oauth",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-test",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "moltis-media"
-version = "0.10.18"
-dependencies = [
- "image",
- "moltis-common",
- "moltis-metrics",
- "reqwest 0.12.28",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-memory"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytemuck",
- "chrono",
- "directories",
- "futures",
- "llama-cpp-2",
- "moltis-agents",
- "moltis-common",
- "moltis-metrics",
- "notify-debouncer-full",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "sqlx",
- "tempfile",
- "text-splitter",
- "tokio",
- "tracing",
- "tree-sitter-bash",
- "tree-sitter-c",
- "tree-sitter-cpp",
- "tree-sitter-css",
- "tree-sitter-go",
- "tree-sitter-html",
- "tree-sitter-java",
- "tree-sitter-javascript",
- "tree-sitter-json",
- "tree-sitter-md",
- "tree-sitter-python",
- "tree-sitter-ruby",
- "tree-sitter-rust",
- "tree-sitter-toml-ng",
- "tree-sitter-typescript",
- "walkdir",
-]
-
-[[package]]
-name = "moltis-metrics"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "metrics 0.24.3",
- "metrics-exporter-prometheus",
- "metrics-tracing-context",
- "once_cell",
- "serde",
- "serde_json",
- "sqlx",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "moltis-msteams"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.22.1",
- "bytes",
- "http 1.4.0",
- "moltis-channels",
- "moltis-common",
- "moltis-metrics",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "subtle",
- "tokio",
- "tracing",
- "url",
- "urlencoding",
-]
-
-[[package]]
-name = "moltis-network-filter"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "moltis-metrics",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-node-host"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "futures",
- "moltis-metrics",
- "moltis-protocol",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "sysinfo",
- "tokio",
- "tokio-tungstenite 0.26.2",
- "tracing",
- "url",
- "uuid",
- "which 8.0.0",
-]
-
-[[package]]
-name = "moltis-oauth"
-version = "0.10.18"
-dependencies = [
- "axum",
- "base64 0.22.1",
- "mockito",
- "moltis-config",
- "moltis-metrics",
- "rand 0.9.2",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "url",
- "uuid",
-]
-
-[[package]]
-name = "moltis-onboarding"
-version = "0.10.18"
-dependencies = [
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "moltis-openclaw-import"
-version = "0.10.18"
-dependencies = [
- "dirs-next",
- "json5",
- "moltis-common",
- "moltis-config",
- "moltis-oauth",
- "notify-debouncer-full",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "serde_yaml",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "toml",
- "tracing",
- "walkdir",
-]
-
-[[package]]
-name = "moltis-plugins"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "moltis-sessions",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "moltis-projects"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "moltis-metrics",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "toml",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-protocol"
-version = "0.10.18"
-dependencies = [
- "moltis-metrics",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "moltis-provider-setup"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "axum",
- "moltis-agents",
- "moltis-config",
- "moltis-oauth",
- "moltis-providers",
- "moltis-service-traits",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "moltis-providers"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-openai",
- "async-stream",
- "async-trait",
- "axum",
- "base64 0.22.1",
- "directories",
- "encoding_rs",
- "futures",
- "genai",
- "http 1.4.0",
- "llama-cpp-2",
- "moltis-agents",
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "moltis-oauth",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sysinfo",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-tungstenite 0.26.2",
- "tracing",
-]
-
-[[package]]
-name = "moltis-qmd"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "moltis-memory",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-routing"
-version = "0.10.18"
-dependencies = [
- "moltis-common",
- "moltis-config",
- "moltis-metrics",
- "moltis-sessions",
- "serde_json",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "moltis-schema-export"
-version = "0.10.18"
-dependencies = [
- "moltis-graphql",
- "moltis-service-traits",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "moltis-service-traits"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "bytes",
- "moltis-protocol",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-sessions"
-version = "0.10.18"
-dependencies = [
- "fd-lock",
- "moltis-common",
- "moltis-metrics",
- "serde",
- "serde_json",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-skills"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "flate2",
- "moltis-config",
- "moltis-metrics",
- "notify-debouncer-full",
- "reqwest 0.12.28",
- "rstest",
- "serde",
- "serde_json",
- "serde_yaml",
- "tar",
- "tempfile",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-slack"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "bytes",
- "hmac",
- "http 1.4.0",
- "moltis-channels",
- "moltis-common",
- "moltis-metrics",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "slack-morphism",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "moltis-swift-bridge"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "axum",
- "metrics 0.24.3",
- "moltis-agents",
- "moltis-config",
- "moltis-gateway",
- "moltis-network-filter",
- "moltis-projects",
- "moltis-provider-setup",
- "moltis-providers",
- "moltis-sessions",
- "moltis-tools",
- "moltis-web",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "serial_test",
- "sqlx",
- "tokio",
- "tokio-stream",
- "tracing",
- "uuid",
-]
-
-[[package]]
-name = "moltis-tailscale"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "moltis-telegram"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "axum",
- "base64 0.22.1",
- "moltis-auto-reply",
- "moltis-channels",
- "moltis-common",
- "moltis-media",
- "moltis-metrics",
- "rand 0.9.2",
- "reqwest 0.12.28",
- "rstest",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "teloxide",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "moltis-tls"
-version = "0.10.18"
-dependencies = [
- "axum",
- "hostname",
- "hyper-util",
- "moltis-common",
- "moltis-config",
- "rcgen",
- "rustls 0.23.36",
- "rustls-pemfile 2.2.0",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "tokio-rustls 0.26.4",
- "tower",
- "tracing",
-]
-
-[[package]]
-name = "moltis-tools"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.22.1",
- "bytes",
- "futures",
- "image",
- "ipnet",
- "mockito",
- "moltis-agents",
- "moltis-browser",
- "moltis-common",
- "moltis-config",
- "moltis-cron",
- "moltis-metrics",
- "moltis-network-filter",
- "moltis-providers",
- "moltis-sessions",
- "moltis-skills",
- "regex",
- "reqwest 0.12.28",
- "rstest",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "sha2",
- "shell-words",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "time",
- "tokio",
- "tokio-stream",
- "tracing",
- "url",
- "uuid",
- "wasmtime",
- "wasmtime-wasi",
-]
-
-[[package]]
-name = "moltis-vault"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "argon2",
- "base64 0.22.1",
- "chacha20poly1305",
- "moltis-metrics",
- "rand 0.9.2",
- "serde",
- "serde_json",
- "sha2",
- "sqlx",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "zeroize",
-]
-
-[[package]]
-name = "moltis-voice"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "async-trait",
- "base64 0.22.1",
- "bytes",
- "dirs",
- "futures",
- "reqwest 0.12.28",
- "secrecy 0.8.0",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
- "urlencoding",
- "which 7.0.3",
- "wiremock",
-]
-
-[[package]]
-name = "moltis-wasm-calc"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "serde_json",
- "wit-bindgen 0.41.0",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "moltis-wasm-precompile"
-version = "0.10.18"
-dependencies = [
- "anyhow",
- "wasmtime",
-]
-
-[[package]]
-name = "moltis-wasm-web-fetch"
-version = "0.10.18"
-dependencies = [
- "serde_json",
- "url",
- "wit-bindgen 0.41.0",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "moltis-wasm-web-search"
-version = "0.10.18"
-dependencies = [
- "serde_json",
- "url",
- "wit-bindgen 0.41.0",
- "wit-bindgen-rt",
-]
-
-[[package]]
-name = "moltis-web"
-version = "0.10.18"
-dependencies = [
- "askama",
- "axum",
- "axum-extra",
- "base64 0.22.1",
- "chrono",
- "futures",
- "gix",
- "include_dir",
- "moltis-channels",
- "moltis-config",
- "moltis-cron",
- "moltis-gateway",
- "moltis-media",
- "moltis-skills",
- "moltis-tools",
- "portable-pty",
- "serde",
- "serde_json",
- "sysinfo",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
- "url",
- "uuid",
- "which 8.0.0",
-]
-
-[[package]]
-name = "moltis-whatsapp"
-version = "0.10.18"
-dependencies = [
- "async-trait",
- "base64 0.22.1",
- "dashmap 6.1.0",
- "moltis-channels",
- "moltis-common",
- "moltis-config",
- "moltis-media",
- "moltis-metrics",
- "postcard",
- "rand 0.9.2",
- "serde",
- "serde_json",
- "sled",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
- "wacore",
- "wacore-binary",
- "waproto",
- "whatsapp-rust",
- "whatsapp-rust-tokio-transport",
- "whatsapp-rust-ureq-http-client",
 ]
 
 [[package]]
@@ -7823,6 +7973,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pretty_assertions"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ae130e2f271fbc2ac3a40fb1d07180839cdbbe443c7a27e1e3c13c5cac0116d"
+dependencies = [
+ "diff",
+ "yansi",
+]
+
+[[package]]
 name = "prettyplease"
 version = "0.2.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8477,7 +8637,7 @@ dependencies = [
  "tokio-native-tls",
  "tokio-rustls 0.26.4",
  "tokio-util",
- "tower",
+ "tower 0.5.3",
  "tower-http",
  "tower-service",
  "url",
@@ -8521,7 +8681,7 @@ dependencies = [
  "tokio",
  "tokio-rustls 0.26.4",
  "tokio-util",
- "tower",
+ "tower 0.5.3",
  "tower-http",
  "tower-service",
  "url",
@@ -8545,6 +8705,15 @@ dependencies = [
  "pin-project-lite",
  "reqwest 0.12.28",
  "thiserror 1.0.69",
+]
+
+[[package]]
+name = "reserve-port"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94070964579245eb2f76e62a7668fe87bd9969ed6c41256f3bf614e3323dd3cc"
+dependencies = [
+ "thiserror 2.0.18",
 ]
 
 [[package]]
@@ -8660,6 +8829,22 @@ dependencies = [
  "rustc_version",
  "syn 2.0.114",
  "unicode-ident",
+]
+
+[[package]]
+name = "rust-multipart-rfc7578_2"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03b748410c0afdef2ebbe3685a6a862e2ee937127cdaae623336a459451c8d57"
+dependencies = [
+ "bytes",
+ "futures-core",
+ "futures-util",
+ "http 0.2.12",
+ "mime",
+ "mime_guess",
+ "rand 0.8.5",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -9459,7 +9644,7 @@ checksum = "19860e4001a02c8f3ab2871fb23cd7f636990e99fc43aacbd9fbb6aff87ec2c9"
 dependencies = [
  "async-recursion",
  "async-trait",
- "axum",
+ "axum 0.8.8",
  "base64 0.22.1",
  "bytes",
  "chrono",
@@ -9490,7 +9675,7 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tokio-tungstenite 0.28.0",
- "tower",
+ "tower 0.5.3",
  "tracing",
  "url",
 ]
@@ -10519,6 +10704,22 @@ checksum = "ea68304e134ecd095ac6c3574494fc62b909f416c4fca77e440530221e549d3d"
 
 [[package]]
 name = "tower"
+version = "0.4.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8fa9be0de6cf49e536ce1851f987bd21a43b771b09473c3549a6c853db37c1c"
+dependencies = [
+ "futures-core",
+ "futures-util",
+ "pin-project",
+ "pin-project-lite",
+ "tokio",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "tower"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebe5ef63511595f1344e2d5cfa636d973292adc0eec1f0ad45fae9f0851ab1d4"
@@ -10553,7 +10754,7 @@ dependencies = [
  "pin-project-lite",
  "tokio",
  "tokio-util",
- "tower",
+ "tower 0.5.3",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -12994,6 +13195,12 @@ dependencies = [
  "libc",
  "rustix 1.1.3",
 ]
+
+[[package]]
+name = "yansi"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049"
 
 [[package]]
 name = "yasna"

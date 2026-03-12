@@ -113,8 +113,12 @@ export default {
 	disableAllThirdParty: "Disable all third-party skills",
 
 	// ── Featured skill descriptions ─────────────────────────
-	featuredOpenClaw: "Community skills from ClawdHub",
-	featuredAnthropic: "Official Anthropic agent skills",
-	featuredVercelAgent: "Vercel agent skills collection",
-	featuredVercelSkills: "Vercel skills toolkit",
+	featuredOpenClaw: "Compétences communautaires de ClawdHub",
+	featuredAnthropic: "Compétences officielles d'agent Anthropic",
+	featuredVercelAgent: "Collection de compétences d'agent Vercel",
+	featuredVercelSkills: "Boîte à outils de compétences Vercel",
+	confirmDisableAll: "Désactiver toutes les compétences tierces maintenant ?",
+	confirmInstall: "Installer la dépendance pour {{name}} ?\n\n{{preview}}\n\nContinuez uniquement si vous faites confiance à cette compétence et à sa source.",
+	confirmTrust: "Faire confiance à la compétence \"{{name}}\" de {{source}} ?",
+	confirmDelete: "Supprimer la compétence \"{{name}}\" ? Cela supprime le fichier SKILL.md.",
 };

@@ -57,7 +57,7 @@ pub trait FromMessage: Sized {
 ///
 /// ```ignore
 /// // in crates/foo/src/error.rs
-/// moltis_common::impl_context!();
+/// clawmaster_common::impl_context!();
 /// ```
 #[macro_export]
 macro_rules! impl_context {

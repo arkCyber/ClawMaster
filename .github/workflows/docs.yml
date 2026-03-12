@@ -54,11 +54,11 @@ jobs:
         run: mdbook build
 
       - name: Add CNAME for custom domain
-        run: echo "docs.moltis.org" > docs/book/CNAME
+        run: echo "docs.clawmaster.org" > docs/book/CNAME
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/book
-          cname: docs.moltis.org
+          cname: docs.clawmaster.org

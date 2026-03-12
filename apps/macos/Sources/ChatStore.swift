@@ -11,13 +11,13 @@ final class ChatStore: ObservableObject {
     @Published var statusText = "Ready"
     @Published var bridgeSummary = "Bridge metadata not loaded"
 
-    private let client: MoltisClient
+    private let client: ClawMasterClient
     let settings: AppSettings
     let providerStore: ProviderStore
     private let logStore: LogStore?
 
     init(
-        client: MoltisClient = MoltisClient(),
+        client: ClawMasterClient = ClawMasterClient(),
         settings: AppSettings,
         providerStore: ProviderStore,
         logStore: LogStore? = nil
@@ -206,12 +206,12 @@ final class ChatStore: ObservableObject {
         logStore?.log(.info, target: "ChatStore", message: "Loading bridge version")
         do {
             let version = try client.version()
-            bridgeSummary = "Bridge \(version.bridgeVersion) - Moltis \(version.moltisVersion)"
+            bridgeSummary = "Bridge \(version.bridgeVersion) - ClawMaster \(version.clawmasterVersion)"
             settings.environmentConfigDir = version.configDir
             statusText = "Loaded version and config directory."
             logStore?.log(.info, target: "ChatStore", message: "Bridge loaded", fields: [
                 "bridge": version.bridgeVersion,
-                "moltis": version.moltisVersion,
+                "clawmaster": version.clawmasterVersion,
                 "configDir": version.configDir
             ])
         } catch {

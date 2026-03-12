@@ -1,6 +1,6 @@
 {
-  "name": "moltis",
-  "short_name": "moltis",
+  "name": "ClawMaster",
+  "short_name": "ClawMaster",
   "description": "AI-powered command gateway",
   "start_url": "/chats",
   "scope": "/",

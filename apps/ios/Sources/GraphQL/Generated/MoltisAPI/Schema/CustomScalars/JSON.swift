@@ -7,7 +7,7 @@
 
 @_spi(Internal) @_spi(Execution) import ApolloAPI
 
-extension MoltisAPI {
+extension ClawMasterAPI {
   typealias JSON = String
 
 }

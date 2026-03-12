@@ -1,7 +1,7 @@
 {
-  "name": "Moltis Install Profile",
-  "description": "Discovery metadata for agents that want to install and bootstrap Moltis.",
-  "url": "https://moltis.org",
+  "name": "ClawMaster Install Profile",
+  "description": "Discovery metadata for agents that want to install and bootstrap ClawMaster.",
+  "url": "https://clawmaster.org",
   "version": "1.1.0",
   "default_input_modes": [
     "text/plain"
@@ -12,23 +12,23 @@
   ],
   "skills": [
     {
-      "id": "install-moltis",
-      "name": "Install Moltis",
-      "description": "Install Moltis via install.sh"
+      "id": "install-clawmaster",
+      "name": "Install ClawMaster",
+      "description": "Install ClawMaster via install.sh"
     },
     {
       "id": "import-openclaw",
       "name": "Import OpenClaw",
-      "description": "Run Moltis OpenClaw import commands and return structured status"
+      "description": "Run ClawMaster OpenClaw import commands and return structured status"
     }
   ],
   "links": {
-    "install_root_manifest": "https://moltis.org/.well-known/moltis-install.json",
-    "install_root_schema": "https://moltis.org/.well-known/moltis-install.schema.json",
-    "install_channel_schema": "https://moltis.org/.well-known/moltis-install.channel.schema.json",
-    "install_release_schema": "https://moltis.org/.well-known/moltis-install.release.schema.json",
-    "install_stable_channel": "https://moltis.org/.well-known/moltis-install/channels/stable.json",
-    "llms_txt": "https://moltis.org/llms.txt",
-    "docs": "https://docs.moltis.org"
+    "install_root_manifest": "https://clawmaster.org/.well-known/clawmaster-install.json",
+    "install_root_schema": "https://clawmaster.org/.well-known/clawmaster-install.schema.json",
+    "install_channel_schema": "https://clawmaster.org/.well-known/clawmaster-install.channel.schema.json",
+    "install_release_schema": "https://clawmaster.org/.well-known/clawmaster-install.release.schema.json",
+    "install_stable_channel": "https://clawmaster.org/.well-known/clawmaster-install/channels/stable.json",
+    "llms_txt": "https://clawmaster.org/llms.txt",
+    "docs": "https://docs.clawmaster.org"
   }
 }

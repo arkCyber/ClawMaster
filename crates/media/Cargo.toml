@@ -1,12 +1,12 @@
 [package]
 edition.workspace = true
-name              = "moltis-media"
+name              = "clawmaster-media"
 version.workspace = true
 
 [dependencies]
 image          = { workspace = true }
-moltis-common  = { workspace = true }
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-common  = { workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 reqwest        = { workspace = true }
 thiserror      = { workspace = true }
 tokio          = { workspace = true }
@@ -15,7 +15,7 @@ uuid           = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [lints]
 workspace = true

@@ -1,0 +1,18 @@
+[package]
+name = "clawmaster-rate-limiter"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+tokio = { features = ["full"], workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+dashmap = "6.1"
+parking_lot = "0.12"
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[lints]
+workspace = true

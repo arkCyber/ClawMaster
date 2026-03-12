@@ -57,7 +57,7 @@ function showToast(message, type) {
 }
 
 function emergencyDisableAllSkills() {
-	requestConfirm("Disable all third-party skills now?", {
+	requestConfirm(t("skills:confirmDisableAll"), {
 		confirmLabel: "Disable All",
 		danger: true,
 	}).then((yes) => {
@@ -173,7 +173,7 @@ function InstallProgressBar() {
 }
 
 function SecurityWarning() {
-	var dismissed = useSignal(!!localStorage.getItem("moltis-skills-warning-dismissed"));
+	var dismissed = useSignal(!!localStorage.getItem("clawmaster-skills-warning-dismissed"));
 	if (dismissed.value) return null;
 	var threats = [
 		"Execute arbitrary shell commands on your machine (install malware, cryptominers, backdoors)",
@@ -182,7 +182,7 @@ function SecurityWarning() {
 		"Send your data to remote servers via curl/wget without your knowledge",
 	];
 	function dismiss() {
-		localStorage.setItem("moltis-skills-warning-dismissed", "1");
+		localStorage.setItem("clawmaster-skills-warning-dismissed", "1");
 		dismissed.value = true;
 	}
 
@@ -303,15 +303,18 @@ function MissingDepsSection(props) {
 			(opt, idx) =>
 				html`<button onClick=${() => {
 					var preview = opt?.label || `Install via ${opt?.kind || "package manager"}`;
-					var confirmed = window.confirm(
-						`Install dependency for ${d.name}?\n\n${preview}\n\nOnly continue if you trust this skill and its source.`,
-					);
-					if (!confirmed) return;
-					sendRpc("skills.install_dep", { skill: d.name, index: idx, confirm: true }).then((r) => {
-						if (r?.ok) {
-							showToast(`Installed dependency for ${d.name}`, "success");
-							props.onReload?.();
-						} else showToast(`Install failed: ${r?.error || "unknown"}`, "error");
+					requestConfirm(t("skills:confirmInstall", { name: d.name, preview: preview })).then((yes) => {
+						if (!yes) return;
+						sendRpc("skills.install_dep", { skill: d.name, index: idx, confirm: true }).then((r) => {
+							if (r?.ok) {
+								showToast(`Installed dependency for ${d.name}`, "success");
+								props.onReload?.();
+							} else showToast(`Install failed: ${r?.error || "unknown"}`, "error");
+						}).catch((e) => {
+							showToast(`Install failed: ${e}`, "error");
+						});
+					}).catch((e) => {
+						showToast(`Install failed: ${e}`, "error");
 					});
 				}} style="margin-left:6px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:.7rem;padding:2px 8px;cursor:pointer">${opt.label || `Install via ${opt.kind}`}</button>`,
 		)}
@@ -390,7 +393,7 @@ function SkillDetail(props) {
 			return;
 		}
 		if (!d.enabled && needsTrust) {
-			requestConfirm(`Trust skill "${d.name}" from ${props.repoSource}?`, {
+			requestConfirm(t("skills:confirmTrust", { name: d.name, source: props.repoSource }), {
 				confirmLabel: "Trust & Enable",
 			}).then((yes) => {
 				if (!yes) return;
@@ -407,7 +410,7 @@ function SkillDetail(props) {
 			return;
 		}
 		if (isDisc && d.enabled) {
-			requestConfirm(`Delete skill "${d.name}"? This removes the SKILL.md file.`, {
+			requestConfirm(t("skills:confirmDelete", { name: d.name }), {
 				confirmLabel: "Delete",
 				danger: true,
 			}).then((yes) => {
@@ -697,7 +700,7 @@ function EnabledSkillsTable() {
 			return;
 		}
 		if (isDiscovered(skill)) {
-			requestConfirm(`Delete skill "${skill.name}"? This removes the SKILL.md file.`, {
+			requestConfirm(t("skills:confirmDelete", { name: skill.name }), {
 				confirmLabel: "Delete",
 				danger: true,
 			}).then((yes) => {

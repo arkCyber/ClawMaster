@@ -8,7 +8,7 @@ use {
     walkdir::WalkDir,
 };
 
-use moltis_agents::memory_writer::{MemoryWriteResult, MemoryWriter};
+use clawmaster_agents::memory_writer::{MemoryWriteResult, MemoryWriter};
 
 use crate::{
     chunker::chunk_content,

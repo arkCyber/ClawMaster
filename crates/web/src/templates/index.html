@@ -14,9 +14,9 @@
 <!-- iOS PWA Meta Tags -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="moltis">
+<meta name="apple-mobile-web-app-title" content="ClawMaster">
 <link rel="apple-touch-icon" href="{{ asset_prefix }}icons/apple-touch-icon.png">
-<script nonce="{{ nonce }}">!function(){var t=localStorage.getItem("moltis-theme")||"system";if(t==="system")t=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.background=t==="dark"?"#0f1115":"#fafafa";document.documentElement.style.color=t==="dark"?"#e0e0e0":"#222"}()</script>
+<script nonce="{{ nonce }}">!function(){var t=localStorage.getItem("clawmaster-theme")||"system";if(t==="system")t=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.background=t==="dark"?"#0f1115":"#fafafa";document.documentElement.style.color=t==="dark"?"#e0e0e0":"#222"}()</script>
 <title>{{ share_site_name }}</title>
 <meta name="description" content="{{ share_description }}">
 <meta property="og:title" content="{{ share_title }}">
@@ -59,10 +59,13 @@
 <link rel="stylesheet" href="{{ asset_prefix }}css/layout.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/chat.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/components.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/language-selector.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/dark-mode-icons.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/mobile.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/vendor/xterm.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/uplot.css">
 <link rel="stylesheet" href="{{ asset_prefix }}style.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/warm-dark-theme.css">
 <link rel="modulepreload" href="{{ asset_prefix }}js/app.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/pwa.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/pwa-install.js">
@@ -113,50 +116,42 @@
 
 <!-- Top bar -->
 <header class="flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface)] shrink-0">
-  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer"><span id="titleEmoji"></span><span id="titleName">moltis</span></a>
-  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;if(!g||!g.identity)return;var i=g.identity;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");if(e&&i.emoji)e.textContent=i.emoji+" ";if(n&&i.name)n.textContent=i.name;var a=(i&&i.name&&String(i.name).trim())||"moltis";document.title=a}()</script>
+  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer"><span id="titleEmoji"></span><span id="titleName">clawmaster</span></a>
+  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;if(!g||!g.identity)return;var i=g.identity;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");if(e&&i.emoji)e.textContent=i.emoji+" ";if(n&&i.name)n.textContent=i.name;var a=(i&&i.name&&String(i.name).trim())||"clawmaster";document.title=a}()</script>
   <span class="status-dot" id="statusDot"></span>
-  <span class="text-xs text-[var(--muted)]" id="statusText">disconnected</span>
+  <span class="text-xs text-[var(--muted)]" id="statusText" data-i18n="common:status.disconnected">disconnected</span>
   <div class="flex-1"></div>
 
   <span id="memoryInfo" class="text-xs text-[var(--muted)]" title="Process memory · System free memory"></span>
 
-  <button id="mobileMenuBtn" class="burger-btn" title="Menu" aria-label="Open menu">
+  <button id="mobileMenuBtn" class="burger-btn" data-i18n-title="common:menu.openMenu" aria-label="Open menu">
     <span class="icon icon-md icon-burger-mobile"></span>
   </button>
 
   <div class="header-actions">
-    <button id="settingsBtn" class="header-link-btn" title="Settings">
-      <span class="icon icon-settings"></span>
-      <span class="header-link-label">Settings</span>
-    </button>
-    <a
-      href="https://github.com/moltis-org/moltis/issues/new"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="header-link-btn"
-      title="Report an issue"
-    >
-      <span class="icon icon-link"></span>
-      <span class="header-link-label">Report issue</span>
-    </a>
+    <button id="settingsBtn" class="header-link-btn" data-i18n-title="common:nav.settings">
+    <span class="icon icon-settings"></span>
+    <span class="header-link-label" data-i18n="common:nav.settings">Settings</span>
+  </button>
+    <!-- Language Selector (replaces Report issue button) -->
+    <div id="languageSelectorContainer"></div>
   </div>
 
   <!-- Theme toggle -->
   <div class="theme-toggle" id="themeToggle">
-    <button class="theme-btn" data-theme-val="light" title="Light theme">
+    <button class="theme-btn" data-theme-val="light" data-i18n-title="common:theme.light">
       <span class="icon icon-sun"></span>
     </button>
-    <button class="theme-btn" data-theme-val="system" title="System theme">
+    <button class="theme-btn" data-theme-val="system" data-i18n-title="common:theme.system">
       <span class="icon icon-monitor"></span>
     </button>
-    <button class="theme-btn" data-theme-val="dark" title="Dark theme">
+    <button class="theme-btn" data-theme-val="dark" data-i18n-title="common:theme.dark">
       <span class="icon icon-moon"></span>
     </button>
   </div>
 
   <!-- Logout button (shown by JS only when auth is active) -->
-  <button id="logoutBtn" class="logout-btn" title="Sign out" style="display:none">
+  <button id="logoutBtn" class="logout-btn" data-i18n-title="common:nav.signOut" style="display:none">
     <span class="icon icon-logout"></span>
   </button>
 
@@ -166,21 +161,21 @@
 <div id="mobileMenuPanel" class="mobile-menu-panel">
   <button id="mobileMenuSessionsBtn" type="button" class="mobile-menu-item">
     <span class="icon icon-chat-dots"></span>
-    <span>Sessions</span>
+    <span data-i18n="common:nav.sessions">Sessions</span>
   </button>
   <button id="mobileMenuSettingsBtn" type="button" class="mobile-menu-item">
     <span class="icon icon-settings"></span>
-    <span>Settings</span>
+    <span data-i18n="common:nav.settings">Settings</span>
   </button>
   <button id="mobileMenuLogoutBtn" type="button" class="mobile-menu-item mobile-menu-item-danger" style="display:none">
     <span class="icon icon-logout"></span>
-    <span>Sign out</span>
+    <span data-i18n="common:nav.signOut">Sign out</span>
   </button>
 </div>
 
 <!-- Auth disabled warning banner (shown by JS when auth is removed) -->
 <div id="authDisabledBanner" class="auth-disabled-banner" style="display:none">
-  <span>Authentication is disabled. Anyone with network access can control moltis and your computer.</span>
+  <span>Authentication is disabled. Anyone with network access can control clawmaster and your computer.</span>
   <a href="{{ routes.security }}" class="auth-disabled-setup">Set up authentication</a>
 </div>
 
@@ -190,14 +185,14 @@
     An update is available
     <strong id="updateLatestVersion"></strong>
   </span>
-  <a id="updateReleaseLink" href="https://github.com/moltis-org/moltis/releases/latest" target="_blank" rel="noopener noreferrer" class="auth-disabled-setup">View release</a>
+  <a id="updateReleaseLink" href="https://github.com/clawmaster-org/clawmaster/releases/latest" target="_blank" rel="noopener noreferrer" class="auth-disabled-setup">View release</a>
   <button id="updateDismissBtn" type="button" class="auth-disabled-setup bg-transparent border-0 p-0 cursor-pointer">Dismiss</button>
 </div>
 
 <!-- PWA Install Banner (shown on mobile when not installed) -->
 <div id="installBanner" class="hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--surface)] border-t border-[var(--border)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-lg flex-col gap-3 md:hidden">
   <div class="flex items-start gap-3">
-    <img src="{{ asset_prefix }}icons/icon-72.png" alt="moltis" class="w-12 h-12 rounded-lg shrink-0">
+    <img src="{{ asset_prefix }}icons/icon-72.png" alt="clawmaster" class="w-12 h-12 rounded-lg shrink-0">
     <div data-instructions class="flex-1 min-w-0"></div>
   </div>
   <div class="flex gap-2 justify-end">
@@ -217,7 +212,7 @@
     <div id="projectSelectWrapper" class="px-3 py-2 border-b border-[var(--border)] hidden">
       <div id="projectFilterCombo" class="model-combo">
         <button id="projectFilterBtn" class="model-combo-btn" type="button" style="width:100%;max-width:none;justify-content:space-between">
-          <span id="projectFilterLabel">All sessions</span>
+          <span id="projectFilterLabel" data-i18n="common:actions.allSessions">All sessions</span>
           <span class="icon icon-sm icon-chevron-down model-combo-chevron"></span>
         </button>
         <div id="projectFilterDropdown" class="model-dropdown hidden" style="width:100%">
@@ -228,15 +223,15 @@
     </div>
     <div class="h-12 px-3 border-b border-[var(--border)] relative flex items-center">
       <div class="w-full flex items-center gap-1">
-        <input id="sessionSearch" type="text" placeholder="Search sessions…"
+        <input id="sessionSearch" type="text" data-i18n-placeholder="common:actions.searchSessions"
                class="flex-1 min-w-0 text-xs bg-[var(--surface2)] border border-[var(--border)] rounded px-2 py-1.5 text-[var(--text)] focus:outline-none focus:border-[var(--border-strong)] font-sans" />
-        <button id="newSessionBtn" class="text-xs text-[var(--muted)] border border-[var(--border)] px-2 py-1.5 rounded hover:text-[var(--text)] hover:border-[var(--border-strong)] transition-colors cursor-pointer bg-transparent" title="New session">+</button>
+        <button id="newSessionBtn" class="text-xs text-[var(--muted)] border border-[var(--border)] px-2 py-1.5 rounded hover:text-[var(--text)] hover:border-[var(--border-strong)] transition-colors cursor-pointer bg-transparent" data-i18n-title="common:actions.newSession">+</button>
       </div>
       <div id="searchResults" class="hidden"></div>
     </div>
     <div id="sessionTabBar" class="flex border-b border-[var(--border)] text-xs" role="tablist">
-      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="sessions" role="tab">Sessions</button>
-      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="cron" role="tab">Cron</button>
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="sessions" role="tab" data-i18n="common:nav.sessions">Sessions</button>
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="cron" role="tab" data-i18n="common:nav.cron">Cron</button>
     </div>
     <div class="flex-1 overflow-y-auto" id="sessionList"></div>
   </div>
@@ -330,7 +325,7 @@
 
 <div id="ts-funnel-security-warning" class="alert-warning-text max-w-form" style="display:none">
   <span class="alert-label-warn">Warning:</span>
-  Enabling Funnel exposes moltis to the public internet. This code has not been security-audited. Use at your own risk.
+  Enabling Funnel exposes clawmaster to the public internet. This code has not been security-audited. Use at your own risk.
 </div>
 <div id="ts-funnel-auth-btn" style="display:none">
   <a href="{{ routes.security }}" class="provider-btn">Set up authentication</a>
@@ -342,24 +337,24 @@
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded">brew install whisper-cpp</code>
   <br />
   <strong>Configuration:</strong><br />
-  Add to your <code class="font-mono text-xs">moltis.toml</code>:
+  Add to your <code class="font-mono text-xs">clawmaster.toml</code>:
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded whitespace-pre-wrap">[voice.stt]
 provider = "whisper-cli"
 
 [voice.stt.whisper_cli]
-model_path = "~/.moltis/models/ggml-base.en.bin"</code>
+model_path = "~/.clawmaster/models/ggml-base.en.bin"</code>
   Download models from <a href="https://huggingface.co/ggerganov/whisper.cpp/tree/main" target="_blank" rel="noopener" class="hover:underline text-[var(--accent)]">Hugging Face</a>.
 </div>
 
 <div id="voice-sherpa-onnx-instructions" class="text-xs text-[var(--muted)]" style="display:none;line-height:1.6;">
   See <a href="https://k2-fsa.github.io/sherpa/onnx/install.html" target="_blank" rel="noopener" class="hover:underline text-[var(--accent)]">sherpa-onnx documentation</a> for installation.<br /><br />
   <strong>Configuration:</strong><br />
-  Add to your <code class="font-mono text-xs">moltis.toml</code>:
+  Add to your <code class="font-mono text-xs">clawmaster.toml</code>:
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded whitespace-pre-wrap">[voice.stt]
 provider = "sherpa-onnx"
 
 [voice.stt.sherpa_onnx]
-model_dir = "~/.moltis/models/sherpa-onnx"</code>
+model_dir = "~/.clawmaster/models/sherpa-onnx"</code>
 </div>
 
 <div id="voice-piper-instructions" class="text-xs text-[var(--muted)]" style="display:none;line-height:1.6;">
@@ -369,12 +364,12 @@ model_dir = "~/.moltis/models/sherpa-onnx"</code>
   <strong>Download a voice model:</strong><br />
   Browse voices at <a href="https://rhasspy.github.io/piper-samples/" target="_blank" rel="noopener" class="hover:underline text-[var(--accent)]">piper-samples</a> and download the .onnx file.<br /><br />
   <strong>Configuration:</strong><br />
-  Add to your <code class="font-mono text-xs">moltis.toml</code>:
+  Add to your <code class="font-mono text-xs">clawmaster.toml</code>:
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded whitespace-pre-wrap">[voice.tts]
 provider = "piper"
 
 [voice.tts.piper]
-model_path = "~/.moltis/models/en_US-lessac-medium.onnx"</code>
+model_path = "~/.clawmaster/models/en_US-lessac-medium.onnx"</code>
 </div>
 
 <div id="voice-coqui-instructions" class="text-xs text-[var(--muted)]" style="display:none;line-height:1.6;">
@@ -387,7 +382,7 @@ model_path = "~/.moltis/models/en_US-lessac-medium.onnx"</code>
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded">docker run -p 5002:5002 ghcr.io/coqui-ai/tts</code>
   <br />
   <strong>Configuration:</strong><br />
-  Add to your <code class="font-mono text-xs">moltis.toml</code>:
+  Add to your <code class="font-mono text-xs">clawmaster.toml</code>:
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded whitespace-pre-wrap">[voice.tts]
 provider = "coqui"
 
@@ -409,7 +404,7 @@ endpoint = "http://localhost:5002"</code>
   --load_format mistral</code>
   3. The model downloads automatically on first run (~3GB)<br /><br />
   <strong>Configuration:</strong><br />
-  Add to your <code class="font-mono text-xs">moltis.toml</code>:
+  Add to your <code class="font-mono text-xs">clawmaster.toml</code>:
   <code class="font-mono text-xs block my-1 p-1.5 bg-[var(--bg)] rounded whitespace-pre-wrap">[voice.stt]
 provider = "voxtral-local"
 

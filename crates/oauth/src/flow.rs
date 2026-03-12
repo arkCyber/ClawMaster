@@ -8,7 +8,7 @@ use {
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, oauth as oauth_metrics};
+use clawmaster_metrics::{counter, oauth as oauth_metrics};
 
 use crate::{
     Error, Result,

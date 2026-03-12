@@ -1,6 +1,6 @@
 [package]
 edition.workspace = true
-name              = "moltis-voice"
+name              = "clawmaster-voice"
 version.workspace = true
 
 [dependencies]

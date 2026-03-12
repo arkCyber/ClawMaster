@@ -51,7 +51,7 @@ Split sections into policy classes:
 - `dynamic_tail`: should be rendered last for cache locality.
 
 ### 2) Profile schema
-Add config schema in `moltis-config` for prompt profiles:
+Add config schema in `clawmaster-config` for prompt profiles:
 - `prompt_profiles.default`: name of default profile.
 - `prompt_profiles.profiles[]`:
   - `name`

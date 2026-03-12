@@ -1,0 +1,16 @@
+package clawmaster:string-replace@0.1.0;
+
+/// String replacement tool for Moltis AI agents.
+world string-replace {
+    /// Replace all occurrences.
+    export replace-all: func(input: string, from: string, to: string) -> string;
+    
+    /// Replace first occurrence.
+    export replace-first: func(input: string, from: string, to: string) -> string;
+    
+    /// Replace last occurrence.
+    export replace-last: func(input: string, from: string, to: string) -> string;
+    
+    /// Replace N occurrences.
+    export replace-n: func(input: string, from: string, to: string, count: u32) -> string;
+}

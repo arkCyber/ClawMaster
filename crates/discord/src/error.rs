@@ -1,4 +1,4 @@
-use moltis_channels::Error as ChannelError;
+use clawmaster_channels::Error as ChannelError;
 
 /// Errors specific to the Discord channel plugin.
 #[derive(Debug, thiserror::Error)]

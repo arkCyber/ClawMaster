@@ -1,12 +1,12 @@
 # Local LLM Support
 
-Moltis can run LLM inference locally on your machine without requiring an API
+ClawMaster can run LLM inference locally on your machine without requiring an API
 key or internet connection. This enables fully offline operation and keeps your
 conversations private.
 
 ## Backends
 
-Moltis supports two backends for local inference:
+ClawMaster supports two backends for local inference:
 
 | Backend | Format | Platform | GPU Acceleration |
 |---------|--------|----------|------------------|
@@ -50,7 +50,7 @@ Models are organized by memory tiers based on your system RAM:
 | **Medium** | 16GB | Qwen 2.5 Coder 7B, Llama 3.1 8B |
 | **Large** | 32GB+ | Qwen 2.5 Coder 14B, DeepSeek Coder V2 Lite |
 
-Moltis automatically detects your system memory and suggests appropriate models
+ClawMaster automatically detects your system memory and suggests appropriate models
 in the UI.
 
 ## Configuration
@@ -65,7 +65,7 @@ in the UI.
 
 ### Via Configuration File
 
-Add to `~/.config/moltis/moltis.toml`:
+Add to `~/.config/clawmaster/clawmaster.toml`:
 
 ```toml
 [providers.local-llm]
@@ -87,12 +87,12 @@ For custom GGUF files:
 }
 ```
 
-Save this as `~/.config/moltis/local-llm.json` (the same file managed by the
+Save this as `~/.config/clawmaster/local-llm.json` (the same file managed by the
 Settings UI).
 
 ## Model Storage
 
-Downloaded models are cached in `~/.cache/moltis/models/` by default. This
+Downloaded models are cached in `~/.cache/clawmaster/models/` by default. This
 directory can grow large (several GB per model).
 
 ## HuggingFace Integration
@@ -164,7 +164,7 @@ Local LLM models have some limitations compared to cloud providers:
 
 ## Chat Templates
 
-Different model families use different chat formatting. Moltis automatically
+Different model families use different chat formatting. ClawMaster automatically
 detects the correct template for registered models:
 
 - **ChatML** — Qwen, many instruction-tuned models

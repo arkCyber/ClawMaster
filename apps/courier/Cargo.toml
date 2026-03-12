@@ -2,13 +2,13 @@
 description            = "Privacy-preserving APNS push relay for Moltis gateways"
 edition.workspace      = true
 license.workspace      = true
-name                   = "moltis-courier"
+name                   = "clawmaster-courier"
 repository.workspace   = true
 rust-version.workspace = true
 version.workspace      = true
 
 [[bin]]
-name = "moltis-courier"
+name = "clawmaster-courier"
 path = "src/main.rs"
 
 [dependencies]

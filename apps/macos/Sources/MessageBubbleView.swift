@@ -2,8 +2,8 @@ import SwiftUI
 
 // MARK: - Theme colors matching the web UI (base.css)
 
-/// Adaptive colors that match the Moltis web UI dark/light theme.
-enum MoltisTheme {
+/// Adaptive colors that match the ClawMaster web UI dark/light theme.
+enum ClawMasterTheme {
     // ── Bubble backgrounds ──
     static let userBg = Color(
         light: Color(red: 0xf0 / 255, green: 0xf0 / 255, blue: 0xf0 / 255),
@@ -100,12 +100,12 @@ struct MessageBubbleView: View {
     /// Speed color matching web UI thresholds (slow < 10, fast >= 25).
     private func speedColor(for message: ChatMessage) -> Color {
         guard let outTok = message.outputTokens, let ms = message.durationMs, ms > 0 else {
-            return MoltisTheme.muted
+            return ClawMasterTheme.muted
         }
         let tokPerSec = Double(outTok) / (Double(ms) / 1000.0)
-        if tokPerSec >= 25 { return MoltisTheme.ok }
-        if tokPerSec < 10 { return MoltisTheme.error }
-        return MoltisTheme.muted
+        if tokPerSec >= 25 { return ClawMasterTheme.ok }
+        if tokPerSec < 10 { return ClawMasterTheme.error }
+        return ClawMasterTheme.muted
     }
 
     // ── Body ──
@@ -151,17 +151,17 @@ struct MessageBubbleView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.caption)
-                .foregroundStyle(MoltisTheme.error)
+                .foregroundStyle(ClawMasterTheme.error)
             Text(message.text)
                 .font(.caption)
-                .foregroundStyle(MoltisTheme.error)
+                .foregroundStyle(ClawMasterTheme.error)
             Text(shortTimeFormatter.string(from: message.createdAt))
                 .font(.caption2)
                 .foregroundStyle(.tertiary)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 4)
-        .background(MoltisTheme.error.opacity(0.08), in: Capsule())
+        .background(ClawMasterTheme.error.opacity(0.08), in: Capsule())
         .frame(maxWidth: .infinity, alignment: .center)
         .padding(.vertical, 4)
     }
@@ -217,11 +217,11 @@ struct MessageBubbleView: View {
             }
             .padding(10)
             .frame(maxWidth: 640, alignment: .leading)
-            .background(isUser ? MoltisTheme.userBg : MoltisTheme.assistantBg)
+            .background(isUser ? ClawMasterTheme.userBg : ClawMasterTheme.assistantBg)
             .overlay {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(
-                        isUser ? MoltisTheme.userBorder : MoltisTheme.assistantBorder,
+                        isUser ? ClawMasterTheme.userBorder : ClawMasterTheme.assistantBorder,
                         lineWidth: 1
                     )
             }
@@ -246,7 +246,7 @@ struct MessageBubbleView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                         .overlay {
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(MoltisTheme.border, lineWidth: 1)
+                                .stroke(ClawMasterTheme.border, lineWidth: 1)
                         }
                 case .file:
                     HStack(spacing: 4) {
@@ -258,11 +258,11 @@ struct MessageBubbleView: View {
                     }
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(MoltisTheme.surface)
+                    .background(ClawMasterTheme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay {
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(MoltisTheme.border, lineWidth: 1)
+                            .stroke(ClawMasterTheme.border, lineWidth: 1)
                     }
                 }
             }

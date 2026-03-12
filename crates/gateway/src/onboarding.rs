@@ -6,18 +6,18 @@ use {async_trait::async_trait, serde_json::Value};
 
 use crate::services::{OnboardingService, ServiceError, ServiceResult};
 
-/// Gateway-side onboarding service backed by `moltis_onboarding::service::LiveOnboardingService`.
+/// Gateway-side onboarding service backed by `clawmaster_onboarding::service::LiveOnboardingService`.
 pub struct GatewayOnboardingService {
-    inner: moltis_onboarding::service::LiveOnboardingService,
-    session_metadata: Arc<moltis_sessions::metadata::SqliteSessionMetadata>,
+    inner: clawmaster_onboarding::service::LiveOnboardingService,
+    session_metadata: Arc<clawmaster_sessions::metadata::SqliteSessionMetadata>,
     agent_persona_store: Arc<crate::agent_persona::AgentPersonaStore>,
     gateway_state: Arc<tokio::sync::OnceCell<Arc<crate::state::GatewayState>>>,
 }
 
 impl GatewayOnboardingService {
     pub fn new(
-        inner: moltis_onboarding::service::LiveOnboardingService,
-        session_metadata: Arc<moltis_sessions::metadata::SqliteSessionMetadata>,
+        inner: clawmaster_onboarding::service::LiveOnboardingService,
+        session_metadata: Arc<clawmaster_sessions::metadata::SqliteSessionMetadata>,
         agent_persona_store: Arc<crate::agent_persona::AgentPersonaStore>,
         gateway_state: Arc<tokio::sync::OnceCell<Arc<crate::state::GatewayState>>>,
     ) -> Self {
@@ -35,7 +35,7 @@ impl GatewayOnboardingService {
     #[cfg(feature = "openclaw-import")]
     async fn create_imported_agents(
         &self,
-        agents: &moltis_openclaw_import::agents::ImportedAgents,
+        agents: &clawmaster_openclaw_import::agents::ImportedAgents,
     ) -> Result<(), String> {
         for agent in &agents.agents {
             if agent.is_default {
@@ -43,17 +43,17 @@ impl GatewayOnboardingService {
             }
 
             // Skip if already exists
-            match self.agent_persona_store.get(&agent.moltis_id).await {
+            match self.agent_persona_store.get(&agent.clawmaster_id).await {
                 Ok(Some(_)) => {
                     tracing::debug!(
-                        id = %agent.moltis_id,
+                        id = %agent.clawmaster_id,
                         "openclaw import: agent already exists, skipping"
                     );
                     continue;
                 },
                 Err(e) => {
                     tracing::warn!(
-                        id = %agent.moltis_id,
+                        id = %agent.clawmaster_id,
                         error = %e,
                         "openclaw import: failed to check agent existence"
                     );
@@ -65,10 +65,10 @@ impl GatewayOnboardingService {
             let name = agent
                 .name
                 .clone()
-                .unwrap_or_else(|| agent.moltis_id.clone());
+                .unwrap_or_else(|| agent.clawmaster_id.clone());
 
             let params = crate::agent_persona::CreateAgentParams {
-                id: agent.moltis_id.clone(),
+                id: agent.clawmaster_id.clone(),
                 name,
                 emoji: None,
                 theme: agent.theme.clone(),
@@ -78,13 +78,13 @@ impl GatewayOnboardingService {
             match self.agent_persona_store.create(params).await {
                 Ok(_) => {
                     tracing::info!(
-                        id = %agent.moltis_id,
+                        id = %agent.clawmaster_id,
                         "openclaw import: created agent persona"
                     );
                 },
                 Err(e) => {
                     tracing::warn!(
-                        id = %agent.moltis_id,
+                        id = %agent.clawmaster_id,
                         error = %e,
                         "openclaw import: failed to create agent persona"
                     );
@@ -101,7 +101,7 @@ impl GatewayOnboardingService {
             return Ok(());
         }
 
-        let legacy_metadata = moltis_sessions::metadata::SessionMetadata::load(metadata_path)
+        let legacy_metadata = clawmaster_sessions::metadata::SessionMetadata::load(metadata_path)
             .map_err(|e| format!("failed to load imported metadata.json: {e}"))?;
 
         for entry in legacy_metadata.list() {
@@ -223,10 +223,10 @@ impl OnboardingService for GatewayOnboardingService {
 
     #[cfg(feature = "openclaw-import")]
     async fn openclaw_detect(&self) -> ServiceResult {
-        let detection = moltis_openclaw_import::detect();
+        let detection = clawmaster_openclaw_import::detect();
         match detection {
             Some(d) => {
-                let scan = moltis_openclaw_import::scan(&d);
+                let scan = clawmaster_openclaw_import::scan(&d);
                 tracing::info!(
                     home_dir = %d.home_dir.display(),
                     identity = scan.identity_available,
@@ -289,10 +289,10 @@ impl OnboardingService for GatewayOnboardingService {
 
     #[cfg(feature = "openclaw-import")]
     async fn openclaw_import(&self, params: Value) -> ServiceResult {
-        let detection = moltis_openclaw_import::detect()
+        let detection = clawmaster_openclaw_import::detect()
             .ok_or_else(|| "no OpenClaw installation found".to_string())?;
 
-        let selection = moltis_openclaw_import::ImportSelection {
+        let selection = clawmaster_openclaw_import::ImportSelection {
             identity: params
                 .get("identity")
                 .and_then(|v| v.as_bool())
@@ -323,11 +323,11 @@ impl OnboardingService for GatewayOnboardingService {
                 .unwrap_or(false),
         };
 
-        let config_dir = moltis_config::config_dir()
+        let config_dir = clawmaster_config::config_dir()
             .ok_or_else(|| "could not determine config directory".to_string())?;
-        let data_dir = moltis_config::data_dir();
+        let data_dir = clawmaster_config::data_dir();
 
-        let report = moltis_openclaw_import::import(&detection, &selection, &config_dir, &data_dir);
+        let report = clawmaster_openclaw_import::import(&detection, &selection, &config_dir, &data_dir);
 
         // Create imported agent personas (non-default agents)
         if let Some(ref agents) = report.imported_agents
@@ -363,7 +363,7 @@ impl OnboardingService for GatewayOnboardingService {
     }
 }
 
-fn parse_geo_location(value: &Value) -> Option<moltis_config::GeoLocation> {
+fn parse_geo_location(value: &Value) -> Option<clawmaster_config::GeoLocation> {
     let latitude = value.get("latitude").and_then(|v| v.as_f64())?;
     let longitude = value.get("longitude").and_then(|v| v.as_f64())?;
     let place = value
@@ -372,7 +372,7 @@ fn parse_geo_location(value: &Value) -> Option<moltis_config::GeoLocation> {
         .map(|v| v.to_string());
     let updated_at = value.get("updated_at").and_then(|v| v.as_i64());
 
-    Some(moltis_config::GeoLocation {
+    Some(clawmaster_config::GeoLocation {
         latitude,
         longitude,
         place,
@@ -438,7 +438,7 @@ mod tests {
             .execute(&pool)
             .await
             .unwrap();
-        moltis_sessions::metadata::SqliteSessionMetadata::init(&pool)
+        clawmaster_sessions::metadata::SqliteSessionMetadata::init(&pool)
             .await
             .unwrap();
         sqlx::query(
@@ -458,8 +458,8 @@ mod tests {
         .unwrap();
 
         let service = GatewayOnboardingService::new(
-            moltis_onboarding::service::LiveOnboardingService::new(dir.path().join("moltis.toml")),
-            Arc::new(moltis_sessions::metadata::SqliteSessionMetadata::new(
+            clawmaster_onboarding::service::LiveOnboardingService::new(dir.path().join("clawmaster.toml")),
+            Arc::new(clawmaster_sessions::metadata::SqliteSessionMetadata::new(
                 pool.clone(),
             )),
             Arc::new(crate::agent_persona::AgentPersonaStore::new(pool)),

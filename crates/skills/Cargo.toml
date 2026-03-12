@@ -1,14 +1,14 @@
 [package]
 edition.workspace = true
-name              = "moltis-skills"
+name              = "clawmaster-skills"
 version.workspace = true
 
 [dependencies]
 anyhow                = { workspace = true }
 async-trait           = { workspace = true }
 flate2                = { workspace = true }
-moltis-config         = { workspace = true }
-moltis-metrics        = { optional = true, workspace = true }
+clawmaster-config         = { workspace = true }
+clawmaster-metrics        = { optional = true, workspace = true }
 notify-debouncer-full = { optional = true, workspace = true }
 reqwest               = { workspace = true }
 serde                 = { workspace = true }
@@ -21,7 +21,7 @@ tracing               = { workspace = true }
 [features]
 default      = []
 file-watcher = ["dep:notify-debouncer-full"]
-metrics      = ["dep:moltis-metrics"]
+metrics      = ["dep:clawmaster-metrics"]
 
 [dev-dependencies]
 rstest   = { workspace = true }

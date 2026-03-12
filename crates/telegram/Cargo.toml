@@ -1,16 +1,16 @@
 [package]
 edition.workspace = true
-name              = "moltis-telegram"
+name              = "clawmaster-telegram"
 version.workspace = true
 
 [dependencies]
 async-trait       = { workspace = true }
 base64            = { workspace = true }
-moltis-auto-reply = { workspace = true }
-moltis-channels   = { workspace = true }
-moltis-common     = { workspace = true }
-moltis-media      = { workspace = true }
-moltis-metrics    = { optional = true, workspace = true }
+clawmaster-auto-reply = { workspace = true }
+clawmaster-channels   = { workspace = true }
+clawmaster-common     = { workspace = true }
+clawmaster-media      = { workspace = true }
+clawmaster-metrics    = { optional = true, workspace = true }
 rand              = { workspace = true }
 reqwest           = { workspace = true }
 secrecy           = { workspace = true }
@@ -24,7 +24,7 @@ tracing           = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dev-dependencies]
 axum   = { workspace = true }

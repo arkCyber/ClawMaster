@@ -21,7 +21,7 @@ use crate::{detect::OpenClawDetection, identity, types::OpenClawConfig};
 pub struct ImportedAgent {
     pub openclaw_id: String,
     /// Sanitized Moltis-side agent ID; `"main"` for the default agent.
-    pub moltis_id: String,
+    pub clawmaster_id: String,
     pub is_default: bool,
     pub name: Option<String>,
     /// Agent theme (composed from creature/vibe, or explicit theme).
@@ -98,7 +98,7 @@ pub fn sanitize_agent_id(raw: &str, existing_ids: &HashSet<String>) -> String {
 /// Extract agent metadata from an OpenClaw installation.
 ///
 /// Reads `openclaw.json` and resolves each agent's workspace, identity,
-/// theme. The default agent gets `moltis_id = "main"`.
+/// theme. The default agent gets `clawmaster_id = "main"`.
 pub fn import_agents(detection: &OpenClawDetection) -> ImportedAgents {
     let config = identity::load_config(&detection.home_dir);
     let mut agents = Vec::new();
@@ -137,7 +137,7 @@ fn extract_from_config_list(
             || (config.agents.list.len() == 1)
             || (agents.is_empty() && entry.id == "main");
 
-        let moltis_id = if is_default {
+        let clawmaster_id = if is_default {
             "main".to_string()
         } else {
             let id = sanitize_agent_id(&entry.id, used_ids);
@@ -152,7 +152,7 @@ fn extract_from_config_list(
 
         debug!(
             openclaw_id = %entry.id,
-            moltis_id = %moltis_id,
+            clawmaster_id = %clawmaster_id,
             is_default,
             name = ?entry.name,
             theme = ?theme,
@@ -162,7 +162,7 @@ fn extract_from_config_list(
 
         agents.push(ImportedAgent {
             openclaw_id: entry.id.clone(),
-            moltis_id,
+            clawmaster_id,
             is_default,
             name: entry.name.clone(),
             theme,
@@ -185,7 +185,7 @@ fn synthesize_from_detection(
         let is_default =
             oc_id == "main" || (i == 0 && !detection.agent_ids.contains(&"main".to_string()));
 
-        let moltis_id = if is_default {
+        let clawmaster_id = if is_default {
             "main".to_string()
         } else {
             let id = sanitize_agent_id(oc_id, used_ids);
@@ -199,14 +199,14 @@ fn synthesize_from_detection(
 
         debug!(
             openclaw_id = %oc_id,
-            moltis_id = %moltis_id,
+            clawmaster_id = %clawmaster_id,
             is_default,
             "openclaw agents: synthesized agent from filesystem"
         );
 
         agents.push(ImportedAgent {
             openclaw_id: oc_id.clone(),
-            moltis_id,
+            clawmaster_id,
             is_default,
             name: None,
             theme: None,
@@ -401,7 +401,7 @@ mod tests {
 
         let result = import_agents(&detection);
         assert_eq!(result.agents.len(), 1);
-        assert_eq!(result.agents[0].moltis_id, "main");
+        assert_eq!(result.agents[0].clawmaster_id, "main");
         assert!(result.agents[0].is_default);
         assert_eq!(result.agents[0].name.as_deref(), Some("Claude"));
     }
@@ -437,9 +437,9 @@ mod tests {
 
         let result = import_agents(&detection);
         assert_eq!(result.agents.len(), 2);
-        assert_eq!(result.agents[0].moltis_id, "main");
+        assert_eq!(result.agents[0].clawmaster_id, "main");
         assert!(result.agents[0].is_default);
-        assert_eq!(result.agents[1].moltis_id, "research");
+        assert_eq!(result.agents[1].clawmaster_id, "research");
         assert!(!result.agents[1].is_default);
     }
 
@@ -512,9 +512,9 @@ mod tests {
 
         let result = import_agents(&detection);
         assert_eq!(result.agents.len(), 2);
-        assert_eq!(result.agents[0].moltis_id, "main");
+        assert_eq!(result.agents[0].clawmaster_id, "main");
         assert!(result.agents[0].is_default);
-        assert_eq!(result.agents[1].moltis_id, "helper");
+        assert_eq!(result.agents[1].clawmaster_id, "helper");
         assert!(!result.agents[1].is_default);
     }
 

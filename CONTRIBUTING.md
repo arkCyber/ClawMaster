@@ -1,4 +1,4 @@
-# Contributing to Moltis
+# Contributing to ClawMaster
 
 Thanks for contributing. This project is a local-first AI gateway written in Rust, and we welcome fixes, features, docs improvements, and test coverage.
 
@@ -26,8 +26,8 @@ Prerequisites:
 Quick start:
 
 ```bash
-git clone https://github.com/moltis-org/moltis.git
-cd moltis
+git clone https://github.com/clawmaster-org/clawmaster.git
+cd clawmaster
 cargo build
 cargo run
 ```

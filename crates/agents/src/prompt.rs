@@ -1,7 +1,7 @@
 use {
     crate::tool_registry::ToolRegistry,
-    moltis_config::{AgentIdentity, DEFAULT_SOUL, UserProfile},
-    moltis_skills::types::SkillMetadata,
+    clawmaster_config::{AgentIdentity, DEFAULT_SOUL, UserProfile},
+    clawmaster_skills::types::SkillMetadata,
 };
 
 // ── Model family detection ──────────────────────────────────────────────────
@@ -551,7 +551,7 @@ fn append_runtime_section(
 
 fn append_skills_section(prompt: &mut String, include_tools: bool, skills: &[SkillMetadata]) {
     if include_tools && !skills.is_empty() {
-        prompt.push_str(&moltis_skills::prompt_gen::generate_skills_prompt(skills));
+        prompt.push_str(&clawmaster_skills::prompt_gen::generate_skills_prompt(skills));
     }
 }
 
@@ -1048,7 +1048,7 @@ mod tests {
         let tools = ToolRegistry::new();
         let runtime = PromptRuntimeContext {
             host: PromptHostRuntimeContext {
-                host: Some("moltis-devbox".into()),
+                host: Some("clawmaster-devbox".into()),
                 os: Some("macos".into()),
                 arch: Some("aarch64".into()),
                 shell: Some("zsh".into()),
@@ -1076,7 +1076,7 @@ mod tests {
                 mode: Some("all".into()),
                 backend: Some("docker".into()),
                 scope: Some("session".into()),
-                image: Some("moltis-sandbox:abc123".into()),
+                image: Some("clawmaster-sandbox:abc123".into()),
                 home: Some("/home/sandbox".into()),
                 workspace_mount: Some("ro".into()),
                 workspace_path: Some("/home/moltis/.moltis".into()),
@@ -1342,7 +1342,7 @@ mod tests {
     fn test_minimal_prompt_runtime_does_not_add_exec_routing_block() {
         let runtime = PromptRuntimeContext {
             host: PromptHostRuntimeContext {
-                host: Some("moltis-devbox".into()),
+                host: Some("clawmaster-devbox".into()),
                 ..Default::default()
             },
             sandbox: None,

@@ -75,9 +75,9 @@ Each preset can have persistent memory loaded from a `MEMORY.md` file at spawn
 time. The memory content is injected into the sub-agent system prompt.
 
 - `memory.scope` determines where the file is stored:
-  - `user` (default): `~/.moltis/agent-memory/<preset>/MEMORY.md`
-  - `project`: `.moltis/agent-memory/<preset>/MEMORY.md`
-  - `local`: `.moltis/agent-memory-local/<preset>/MEMORY.md`
+  - `user` (default): `~/.clawmaster/agent-memory/<preset>/MEMORY.md`
+  - `project`: `.clawmaster/agent-memory/<preset>/MEMORY.md`
+  - `local`: `.clawmaster/agent-memory-local/<preset>/MEMORY.md`
 - `memory.max_lines` limits how much is injected (default: 200).
 
 The directory is created automatically so agents can write to it.
@@ -100,13 +100,13 @@ When `spawn_agent` runs, model choice is:
 
 Presets can also be defined as markdown files with YAML frontmatter, discovered from:
 
-- `~/.moltis/agents/*.md` (user-global)
-- `.moltis/agents/*.md` (project-local)
+- `~/.clawmaster/agents/*.md` (user-global)
+- `.clawmaster/agents/*.md` (project-local)
 
 Project-local files override user-global files with the same `name`.
 TOML presets always take precedence over markdown definitions.
 
-Example `~/.moltis/agents/reviewer.md`:
+Example `~/.clawmaster/agents/reviewer.md`:
 
 ```markdown
 ---

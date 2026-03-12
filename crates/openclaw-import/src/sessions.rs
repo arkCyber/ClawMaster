@@ -121,7 +121,7 @@ pub fn import_sessions(
     let existing_metadata = load_session_metadata(&metadata_path);
 
     for openclaw_agent_id in &detection.agent_ids {
-        let moltis_agent_id = agent_id_mapping
+        let clawmaster_agent_id = agent_id_mapping
             .get(openclaw_agent_id.as_str())
             .cloned()
             .unwrap_or_else(|| openclaw_agent_id.clone());
@@ -149,7 +149,7 @@ pub fn import_sessions(
                 .file_stem()
                 .and_then(|s| s.to_str())
                 .unwrap_or("unknown");
-            let dest_key = format!("oc:{moltis_agent_id}:{stem}");
+            let dest_key = format!("oc:{clawmaster_agent_id}:{stem}");
             let dest_file =
                 dest_sessions_dir.join(format!("{}.jsonl", sanitize_session_key(&dest_key)));
 
@@ -209,10 +209,10 @@ pub fn import_sessions(
                     };
 
                     // Set agent_id for non-default agents
-                    let agent_id = if moltis_agent_id == "main" {
+                    let agent_id = if clawmaster_agent_id == "main" {
                         None
                     } else {
-                        Some(moltis_agent_id.clone())
+                        Some(clawmaster_agent_id.clone())
                     };
 
                     entries.push(ImportedSessionEntry {

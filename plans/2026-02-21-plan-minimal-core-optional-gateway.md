@@ -1,6 +1,6 @@
 # Plan: Minimal Core with Optional Gateway
 
-**Goal**: Make `moltis-gateway` optional so the CLI can run a headless agent loop
+**Goal**: Make `clawmaster-gateway` optional so the CLI can run a headless agent loop
 (or a TUI client) without compiling 50.9K lines of gateway code and its 20
 workspace dependencies. Cut the default binary from 44 MB / ~150K LoC to
 ~20 MB / ~70K LoC for constrained devices and headless deployments.
@@ -12,27 +12,27 @@ workspace dependencies. Cut the default binary from 44 MB / ~150K LoC to
 ### Dependency graph (simplified)
 
 ```
-moltis (cli) 3.0K
-├── moltis-gateway 50.9K ← THE BOTTLENECK (20 workspace deps)
+clawmaster (cli) 3.0K
+├── clawmaster-gateway 50.9K ← THE BOTTLENECK (20 workspace deps)
 │   ├── agents, tools, config, sessions, plugins, common, skills
 │   ├── browser, canvas, channels, cron, mcp, media, memory
 │   ├── oauth, onboarding, projects, protocol, routing, telegram
 │   └── optional: metrics, qmd, voice
-├── moltis-agents 24.8K
-├── moltis-tools 15.9K
+├── clawmaster-agents 24.8K
+├── clawmaster-tools 15.9K
 │   ├── agents, browser*, cron*, common, config, sessions, skills
 │   └── optional: metrics
-├── moltis-plugins 1.8K
-├── moltis-sessions 3.2K
-├── moltis-memory 5.1K
-├── moltis-config 6.1K
-├── moltis-common 1.0K
-├── moltis-skills 3.7K
-├── moltis-browser 4.8K
-├── moltis-cron 3.8K
-├── moltis-oauth 2.1K
-├── moltis-onboarding 0.8K
-└── moltis-projects 1.6K
+├── clawmaster-plugins 1.8K
+├── clawmaster-sessions 3.2K
+├── clawmaster-memory 5.1K
+├── clawmaster-config 6.1K
+├── clawmaster-common 1.0K
+├── clawmaster-skills 3.7K
+├── clawmaster-browser 4.8K
+├── clawmaster-cron 3.8K
+├── clawmaster-oauth 2.1K
+├── clawmaster-onboarding 0.8K
+└── clawmaster-projects 1.6K
 ```
 
 ### What the TUI branch does
@@ -41,8 +41,8 @@ moltis (cli) 3.0K
 that connects to a running gateway. It does NOT replace the gateway; it replaces
 the web UI as the user interface. The TUI depends on:
 
-- `moltis-config` (resolve gateway URL)
-- `moltis-protocol` (message types)
+- `clawmaster-config` (resolve gateway URL)
+- `clawmaster-protocol` (message types)
 - ratatui, crossterm, tokio-tungstenite
 
 This means the TUI still needs a gateway process running somewhere. However, it
@@ -54,8 +54,8 @@ opens the door to a split architecture: headless gateway + TUI client.
 
 ### Two binary profiles
 
-1. **`moltis`** (full, default) — everything as today
-2. **`moltis --no-default-features --features headless`** — agent loop + tools,
+1. **`clawmaster`** (full, default) — everything as today
+2. **`clawmaster --no-default-features --features headless`** — agent loop + tools,
    no HTTP server, no web UI, no TLS stack
 
 ### Three build tiers
@@ -72,8 +72,8 @@ opens the door to a split architecture: headless gateway + TUI client.
 
 ### Phase 1: Decouple tools from browser and cron
 
-**Why**: `moltis-tools` is core, but it hard-depends on `moltis-browser` (4.8K)
-and `moltis-cron` (3.8K). These are only used in `browser.rs` and
+**Why**: `clawmaster-tools` is core, but it hard-depends on `clawmaster-browser` (4.8K)
+and `clawmaster-cron` (3.8K). These are only used in `browser.rs` and
 `cron_tool.rs` respectively — easy to feature-gate.
 
 **Files**:
@@ -83,16 +83,16 @@ and `moltis-cron` (3.8K). These are only used in `browser.rs` and
 - `crates/tools/src/lib.rs` (conditional module inclusion)
 
 **Changes**:
-1. Make `moltis-browser` and `moltis-cron` optional deps in tools:
+1. Make `clawmaster-browser` and `clawmaster-cron` optional deps in tools:
    ```toml
    [dependencies]
-   moltis-browser = { workspace = true, optional = true }
-   moltis-cron    = { workspace = true, optional = true }
+   clawmaster-browser = { workspace = true, optional = true }
+   clawmaster-cron    = { workspace = true, optional = true }
 
    [features]
    default = ["browser", "cron"]
-   browser = ["dep:moltis-browser"]
-   cron    = ["dep:moltis-cron"]
+   browser = ["dep:clawmaster-browser"]
+   cron    = ["dep:clawmaster-cron"]
    ```
 2. Gate `mod browser` and `mod cron_tool` with `#[cfg(feature = "browser")]` /
    `#[cfg(feature = "cron")]`
@@ -100,13 +100,13 @@ and `moltis-cron` (3.8K). These are only used in `browser.rs` and
    tools are registered)
 4. Propagate features from gateway and cli Cargo.toml
 
-**Tests**: `cargo test -p moltis-tools --no-default-features` must pass.
+**Tests**: `cargo test -p clawmaster-tools --no-default-features` must pass.
 
 ---
 
 ### Phase 2: Make gateway optional in the CLI
 
-**Why**: The CLI currently hard-depends on `moltis-gateway`. Making it optional
+**Why**: The CLI currently hard-depends on `clawmaster-gateway`. Making it optional
 lets us build without the entire HTTP/WS/web-UI stack.
 
 **Files**:
@@ -115,18 +115,18 @@ lets us build without the entire HTTP/WS/web-UI stack.
 - `crates/cli/src/lib.rs` (if exists)
 
 **Changes**:
-1. Make `moltis-gateway` optional:
+1. Make `clawmaster-gateway` optional:
    ```toml
    [dependencies]
-   moltis-gateway = { workspace = true, optional = true }
+   clawmaster-gateway = { workspace = true, optional = true }
 
    [features]
    default = ["gateway", "browser", "cron", ...]
    gateway = [
-     "dep:moltis-gateway",
-     "moltis-gateway/voice",
-     "moltis-gateway/web-ui",
-     "moltis-gateway/tls",
+     "dep:clawmaster-gateway",
+     "clawmaster-gateway/voice",
+     "clawmaster-gateway/web-ui",
+     "clawmaster-gateway/tls",
      ...
    ]
    headless = []  # intentionally empty — it's the absence of gateway
@@ -143,7 +143,7 @@ lets us build without the entire HTTP/WS/web-UI stack.
    - With `gateway` feature: default to `gateway` (current behavior)
    - Without `gateway` feature: default to `agent` REPL
 
-**Tests**: `cargo build -p moltis --no-default-features --features headless`
+**Tests**: `cargo build -p clawmaster --no-default-features --features headless`
 must compile and produce a working binary.
 
 ---
@@ -154,11 +154,11 @@ must compile and produce a working binary.
 the gateway, the CLI doesn't need them directly.
 
 **Crates to make optional (dep of gateway, not core)**:
-- `moltis-onboarding` — only used by gateway for web onboarding wizard
-- `moltis-oauth` — needed by agents (for Copilot/Codex providers) but could be
+- `clawmaster-onboarding` — only used by gateway for web onboarding wizard
+- `clawmaster-oauth` — needed by agents (for Copilot/Codex providers) but could be
   feature-gated if those providers aren't needed
-- `moltis-browser` — only for browser automation tool
-- `moltis-projects` — only for project UI in gateway
+- `clawmaster-browser` — only for browser automation tool
+- `clawmaster-projects` — only for project UI in gateway
 
 **Files**: `crates/cli/Cargo.toml`
 
@@ -177,10 +177,10 @@ plugins, common, skills, memory.
 
 **Design**:
 ```
-moltis agent "What is 2+2?"              # one-shot
-moltis agent --session my-session        # resume session
-echo "Fix the bug" | moltis agent        # pipe stdin
-moltis agent --repl                      # interactive REPL
+clawmaster agent "What is 2+2?"              # one-shot
+clawmaster agent --session my-session        # resume session
+echo "Fix the bug" | clawmaster agent        # pipe stdin
+clawmaster agent --repl                      # interactive REPL
 ```
 
 **Implementation**:
@@ -205,8 +205,8 @@ This is the most significant refactoring. Options:
 - **B**: Duplicate the minimal path in the CLI (simpler, less clean)
 - **C**: Make gateway's chat service usable without HTTP (extract from axum)
 
-Option A is cleanest long-term. Create `moltis-engine` or put it in
-`moltis-agents` as a higher-level `AgentSession` that handles the full
+Option A is cleanest long-term. Create `clawmaster-engine` or put it in
+`clawmaster-agents` as a higher-level `AgentSession` that handles the full
 orchestration without any HTTP dependency.
 
 ---
@@ -224,12 +224,12 @@ becomes a natural middle-ground tier.
 **Changes**:
 1. Add `tui` feature in cli:
    ```toml
-   tui = ["dep:moltis-tui"]
+   tui = ["dep:clawmaster-tui"]
    ```
 2. Add `tui` subcommand gated behind the feature
-3. The TUI still connects to a gateway — so `moltis tui` is a client command,
-   not a replacement for `moltis gateway`
-4. For fully headless + interactive: `moltis agent --repl` (no gateway needed)
+3. The TUI still connects to a gateway — so `clawmaster tui` is a client command,
+   not a replacement for `clawmaster gateway`
+4. For fully headless + interactive: `clawmaster agent --repl` (no gateway needed)
 
 ---
 
@@ -252,8 +252,8 @@ Current TUI state (`origin/tui-interface`, 7.7K LoC):
 - [ ] Error handling polish
 
 This is a separate workstream but becomes more valuable once the headless tier
-exists — users on constrained devices can run `moltis gateway --headless` +
-`moltis tui` for a lightweight full experience.
+exists — users on constrained devices can run `clawmaster gateway --headless` +
+`clawmaster tui` for a lightweight full experience.
 
 ---
 
@@ -262,44 +262,44 @@ exists — users on constrained devices can run `moltis gateway --headless` +
 ### Headless tier (~55K LoC)
 
 ```
-moltis (cli)
-├── moltis-agents      24.8K  (providers, agent loop)
-├── moltis-tools       15.9K  (tool exec, sandbox — no browser/cron)
-├── moltis-config       6.1K  (configuration)
-├── moltis-memory       5.1K  (embeddings, search)
-├── moltis-skills       3.7K  (skill loading)
-├── moltis-sessions     3.2K  (persistence)
-├── moltis-plugins      1.8K  (hook dispatch)
-└── moltis-common       1.0K  (shared utils)
+clawmaster (cli)
+├── clawmaster-agents      24.8K  (providers, agent loop)
+├── clawmaster-tools       15.9K  (tool exec, sandbox — no browser/cron)
+├── clawmaster-config       6.1K  (configuration)
+├── clawmaster-memory       5.1K  (embeddings, search)
+├── clawmaster-skills       3.7K  (skill loading)
+├── clawmaster-sessions     3.2K  (persistence)
+├── clawmaster-plugins      1.8K  (hook dispatch)
+└── clawmaster-common       1.0K  (shared utils)
 ```
 
 ### TUI tier (~63K LoC) — adds:
 
 ```
-├── moltis-tui          7.7K  (terminal UI client)
-└── moltis-protocol     0.3K  (message types)
+├── clawmaster-tui          7.7K  (terminal UI client)
+└── clawmaster-protocol     0.3K  (message types)
 ```
 
 ### Full tier (~150K LoC) — adds:
 
 ```
-├── moltis-gateway     50.9K  (HTTP/WS server, web UI, auth)
-├── moltis-browser      4.8K
-├── moltis-cron         3.8K
-├── moltis-telegram     5.7K
-├── moltis-channels     0.7K
-├── moltis-voice        6.0K
-├── moltis-mcp          3.7K
-├── moltis-oauth        2.1K
-├── moltis-onboarding   0.8K
-├── moltis-qmd          0.7K
-├── moltis-routing      0.03K
-├── moltis-projects     1.6K
-├── moltis-media        0.4K
-├── moltis-canvas       0.01K
-├── moltis-auto-reply   0.1K
-├── moltis-metrics      1.7K
-└── moltis-protocol     0.3K
+├── clawmaster-gateway     50.9K  (HTTP/WS server, web UI, auth)
+├── clawmaster-browser      4.8K
+├── clawmaster-cron         3.8K
+├── clawmaster-telegram     5.7K
+├── clawmaster-channels     0.7K
+├── clawmaster-voice        6.0K
+├── clawmaster-mcp          3.7K
+├── clawmaster-oauth        2.1K
+├── clawmaster-onboarding   0.8K
+├── clawmaster-qmd          0.7K
+├── clawmaster-routing      0.03K
+├── clawmaster-projects     1.6K
+├── clawmaster-media        0.4K
+├── clawmaster-canvas       0.01K
+├── clawmaster-auto-reply   0.1K
+├── clawmaster-metrics      1.7K
+└── clawmaster-protocol     0.3K
 ```
 
 ---

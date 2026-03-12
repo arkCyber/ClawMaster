@@ -8,11 +8,11 @@ export default {
 	introDescription:
 		"tools extend the AI agent with external capabilities \u2014 file access, web fetch, database queries, code search, and more.",
 	flowAgent: "Agent",
-	flowMoltis: "Moltis",
+	flowClawMaster: "ClawMaster",
 	flowLocalProcess: "Local MCP process",
 	flowExternalApi: "External API",
 	introDetail:
-		"Each tool runs as a <strong>local process</strong> on your machine (spawned via npm/uvx). Moltis connects to it over stdio and the process makes outbound API calls on your behalf using your tokens. No data is sent to third-party MCP hosts.",
+		"Each tool runs as a <strong>local process</strong> on your machine (spawned via npm/uvx). ClawMaster connects to it over stdio and the process makes outbound API calls on your behalf using your tokens. No data is sent to third-party MCP hosts.",
 
 	// ── Security warning ────────────────────────────────────
 	securityTitle: "\u26a0\ufe0f MCP servers run as local processes \u2014 review before enabling",
@@ -38,6 +38,7 @@ export default {
 		githubDesc: "GitHub API integration \u2014 repos, issues, PRs, code search",
 		githubHint: "Requires a GitHub personal access token",
 	},
+	confirmRemove: "This will stop and remove the \"{{name}}\" MCP tool. This action cannot be undone.",
 
 	// ── Config form ─────────────────────────────────────────
 	argumentsLabel: "Arguments",

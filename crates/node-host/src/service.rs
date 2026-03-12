@@ -65,7 +65,7 @@ impl ServiceConfig {
 const LAUNCHD_LABEL: &str = "org.moltis.node";
 
 /// systemd user unit name.
-const SYSTEMD_UNIT: &str = "moltis-node.service";
+const SYSTEMD_UNIT: &str = "clawmaster-node.service";
 
 // ── Service actions ────────────────────────────────────────────────────────
 
@@ -75,13 +75,13 @@ const SYSTEMD_UNIT: &str = "moltis-node.service";
 pub fn install(data_dir: &Path, config: &ServiceConfig) -> anyhow::Result<()> {
     config.save(data_dir)?;
 
-    let moltis_bin = resolve_binary()?;
+    let clawmaster_bin = resolve_binary()?;
     let log_path = data_dir.join("node.log");
 
     if cfg!(target_os = "macos") {
-        install_launchd(&moltis_bin, config, &log_path)
+        install_launchd(&clawmaster_bin, config, &log_path)
     } else if cfg!(target_os = "linux") {
-        install_systemd(&moltis_bin, config, &log_path)
+        install_systemd(&clawmaster_bin, config, &log_path)
     } else {
         anyhow::bail!("service install not supported on {}", std::env::consts::OS)
     }
@@ -176,13 +176,13 @@ fn resolve_binary() -> anyhow::Result<PathBuf> {
     // Prefer the running binary if it looks right.
     if let Ok(exe) = std::env::current_exe() {
         let name = exe.file_name().unwrap_or_default().to_string_lossy();
-        if name == "moltis" || name.starts_with("moltis-") {
+        if name == "clawmaster" || name.starts_with("clawmaster-") {
             return Ok(exe);
         }
     }
 
     // Fall back to PATH lookup.
-    which::which("moltis").map_err(|_| {
+    which::which("clawmaster").map_err(|_| {
         anyhow::anyhow!("cannot find 'moltis' binary; ensure it is installed and in PATH")
     })
 }
@@ -211,11 +211,11 @@ fn xml_escape(s: &str) -> String {
 /// from `~/.moltis/node.json` at runtime, so only `--timeout` is passed as
 /// a CLI flag here.
 pub fn generate_launchd_plist(
-    moltis_bin: &Path,
+    clawmaster_bin: &Path,
     config: &ServiceConfig,
     log_path: &Path,
 ) -> String {
-    let bin = xml_escape(&moltis_bin.display().to_string());
+    let bin = xml_escape(&clawmaster_bin.display().to_string());
     let log = xml_escape(&log_path.display().to_string());
 
     let args = [
@@ -261,7 +261,7 @@ pub fn generate_launchd_plist(
 }
 
 fn install_launchd(
-    moltis_bin: &Path,
+    clawmaster_bin: &Path,
     config: &ServiceConfig,
     log_path: &Path,
 ) -> anyhow::Result<()> {
@@ -276,7 +276,7 @@ fn install_launchd(
         ])
         .output();
 
-    let plist = generate_launchd_plist(moltis_bin, config, log_path);
+    let plist = generate_launchd_plist(clawmaster_bin, config, log_path);
 
     if let Some(parent) = plist_path.parent() {
         fs::create_dir_all(parent)?;
@@ -405,8 +405,8 @@ fn systemd_unit_path() -> anyhow::Result<PathBuf> {
 }
 
 /// Generate a systemd user unit file.
-pub fn generate_systemd_unit(moltis_bin: &Path, config: &ServiceConfig, log_path: &Path) -> String {
-    let bin = moltis_bin.display();
+pub fn generate_systemd_unit(clawmaster_bin: &Path, config: &ServiceConfig, log_path: &Path) -> String {
+    let bin = clawmaster_bin.display();
     let log = log_path.display();
 
     // `moltis node run` reads connection details from node.json; only
@@ -435,7 +435,7 @@ WantedBy=default.target
 }
 
 fn install_systemd(
-    moltis_bin: &Path,
+    clawmaster_bin: &Path,
     config: &ServiceConfig,
     log_path: &Path,
 ) -> anyhow::Result<()> {
@@ -446,7 +446,7 @@ fn install_systemd(
         .args(["--user", "stop", SYSTEMD_UNIT])
         .output();
 
-    let unit = generate_systemd_unit(moltis_bin, config, log_path);
+    let unit = generate_systemd_unit(clawmaster_bin, config, log_path);
 
     if let Some(parent) = unit_path.parent() {
         fs::create_dir_all(parent)?;
@@ -598,7 +598,7 @@ mod tests {
 
     #[test]
     fn service_config_save_and_load() {
-        let dir = std::env::temp_dir().join("moltis-service-test");
+        let dir = std::env::temp_dir().join("clawmaster-service-test");
         let _ = fs::remove_dir_all(&dir);
 
         let config = ServiceConfig {

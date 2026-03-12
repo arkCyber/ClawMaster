@@ -1,6 +1,6 @@
 # End-to-End Testing
 
-This project uses Playwright to run browser-level tests against a real `moltis` gateway process.
+This project uses Playwright to run browser-level tests against a real `clawmaster` gateway process.
 
 The goal is simple: catch web UI regressions before they ship.
 
@@ -28,7 +28,7 @@ The e2e harness lives in `crates/web/ui`:
 4. Starts the gateway with:
 
 ```bash
-cargo run --bin moltis -- --no-tls --bind 127.0.0.1 --port <PORT>
+cargo run --bin clawmaster -- --no-tls --bind 127.0.0.1 --port <PORT>
 ```
 
 `--no-tls` is intentional here so Playwright can probe `http://.../health` during readiness checks.

@@ -1,21 +1,21 @@
 [package]
 edition.workspace = true
-name              = "moltis-agents"
+name              = "clawmaster-agents"
 version.workspace = true
 
 [features]
 default = ["metrics"]
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [dependencies]
 anyhow          = { workspace = true }
 async-stream    = { workspace = true }
 async-trait     = { workspace = true }
 futures         = { workspace = true }
-moltis-common   = { workspace = true }
-moltis-config   = { workspace = true }
-moltis-sessions = { workspace = true }
-moltis-skills   = { workspace = true }
+clawmaster-common   = { workspace = true }
+clawmaster-config   = { workspace = true }
+clawmaster-sessions = { workspace = true }
+clawmaster-skills   = { workspace = true }
 reqwest         = { workspace = true }
 secrecy         = { workspace = true }
 serde           = { workspace = true }
@@ -27,7 +27,7 @@ tracing         = { workspace = true }
 uuid            = { workspace = true }
 
 # Optional
-moltis-metrics = { optional = true, workspace = true }
+clawmaster-metrics = { optional = true, workspace = true }
 
 [dev-dependencies]
 axum     = { workspace = true }

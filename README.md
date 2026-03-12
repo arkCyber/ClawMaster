@@ -1,138 +1,86 @@
 <div align="center">
 
-<a href="https://moltis.org"><img src="https://raw.githubusercontent.com/moltis-org/moltis/main/website/favicon.svg" alt="Moltis" width="64"></a>
+# 🦾 ClawMaster
 
-# Moltis — A Rust-native claw you can trust
+**一个你可以信赖的 Rust 原生 AI 智能体 | A Rust-native AI Agent You Can Trust**
 
-One binary — sandboxed, secure, yours.
-
-[![CI](https://github.com/moltis-org/moltis/actions/workflows/ci.yml/badge.svg)](https://github.com/moltis-org/moltis/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/moltis-org/moltis/graph/badge.svg)](https://codecov.io/gh/moltis-org/moltis)
-[![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json&style=flat&label=CodSpeed)](https://codspeed.io/moltis-org/moltis)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 [![Rust](https://img.shields.io/badge/Rust-1.91%2B-orange.svg)](https://www.rust-lang.org)
-[![Discord](https://img.shields.io/discord/1469505370169933837?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/XnmrepsXp5)
+[![GitHub](https://img.shields.io/github/stars/arksong/ClawMaster?style=social)](https://github.com/arksong/ClawMaster)
 
-[Installation](#installation) • [Comparison](#comparison) • [Architecture](#architecture--crate-map) • [Security](#security) • [Features](#features) • [How It Works](#how-it-works) • [Contributing](CONTRIBUTING.md)
+[English](#english) | [中文](#中文)
 
 </div>
 
 ---
 
-Moltis recently hit [the front page of Hacker News](https://news.ycombinator.com/item?id=46993587). Please [open an issue](https://github.com/moltis-org/moltis/issues) for any friction at all. I'm focused on making Moltis excellent.
+## 中文
 
-**Secure by design** — Your keys never leave your machine. Every command runs in a sandboxed container, never on your host.
+### 📖 简介
 
-**Your hardware** — Runs on a Mac Mini, a Raspberry Pi, or any server you own. One Rust binary, no Node.js, no npm, no runtime.
+ClawMaster 是一个**本地优先的 AI 智能网关**，使用 Rust 编写的单一二进制文件，可在你自己的硬件上运行。它在你和多个 LLM 提供商之间架起桥梁，所有数据都保存在本地，无需云端中继。
 
-**Full-featured** — Voice, memory, scheduling, Telegram, Discord, browser automation, MCP servers — all built-in. No plugin marketplace to get supply-chain attacked through.
+### ✨ 核心特性
 
-**Auditable** — The agent loop + provider model fits in ~5K lines. The core (excluding the optional web UI) is ~196K lines across 46 modular crates you can audit independently, with 3,100+ tests and zero `unsafe` code\*.
+- **🔒 安全设计** — 密钥永不离开你的机器，每个命令都在沙箱容器中运行
+- **💻 自主硬件** — 可在 Mac Mini、树莓派或任何你拥有的服务器上运行
+- **🎯 功能完整** — 内置语音、记忆、调度、Telegram、Discord、浏览器自动化、MCP 服务器
+- **🔍 可审计** — 核心代码约 19.6 万行，分布在 46 个模块化 crate 中，3100+ 测试，零 `unsafe` 代码*
 
-## Installation
+### 🚀 快速开始
+
+#### 安装
 
 ```bash
-# One-liner install script (macOS / Linux)
-curl -fsSL https://www.moltis.org/install.sh | sh
+# macOS / Linux 一键安装
+curl -fsSL https://raw.githubusercontent.com/arksong/ClawMaster/main/install.sh | sh
 
-# macOS / Linux via Homebrew
-brew install moltis-org/tap/moltis
+# 或使用 Homebrew
+brew tap arksong/clawmaster
+brew install clawmaster
 
-# Docker (multi-arch: amd64/arm64)
-docker pull ghcr.io/moltis-org/moltis:latest
+# Docker 运行
+docker pull ghcr.io/arksong/clawmaster:latest
 
-# Or build from source
-cargo install moltis --git https://github.com/moltis-org/moltis
+# 从源码构建
+cargo install --git https://github.com/arksong/ClawMaster
 ```
 
-## Comparison
+#### 从源码构建
 
-| | OpenClaw | PicoClaw | NanoClaw | ZeroClaw | **Moltis** |
-|---|---|---|---|---|---|
-| Language | TypeScript | Go | TypeScript | Rust | **Rust** |
-| Agent loop | ~430K LoC | Small | ~500 LoC | ~3.4K LoC | **~5K LoC** (`runner.rs` + `model.rs`) |
-| Full codebase | — | — | — | 1,000+ tests | **~124K LoC** (2,300+ tests) |
-| Runtime | Node.js + npm | Single binary | Node.js | Single binary (3.4 MB) | **Single binary (44 MB)** |
-| Sandbox | App-level | — | Docker | Docker | **Docker + Apple Container** |
-| Memory safety | GC | GC | GC | Ownership | **Ownership, zero `unsafe`\*** |
-| Auth | Basic | API keys | None | Token + OAuth | **Password + Passkey + API keys + Vault** |
-| Voice I/O | Plugin | — | — | — | **Built-in (15+ providers)** |
-| MCP | Yes | — | — | — | **Yes (stdio + HTTP/SSE)** |
-| Hooks | Yes (limited) | — | — | — | **15 event types** |
-| Skills | Yes (store) | Yes | Yes | Yes | **Yes (+ OpenClaw Store)** |
-| Memory/RAG | Plugin | — | Per-group | SQLite + FTS | **SQLite + FTS + vector** |
+```bash
+git clone https://github.com/arksong/ClawMaster.git
+cd ClawMaster
 
-\* `unsafe` is denied workspace-wide. The only exceptions are opt-in FFI wrappers behind the `local-embeddings` feature flag, not part of the core.
+# 构建 WASM 组件（可选，用于沙箱工具）
+cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc \
+  -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+cargo run -p clawmaster-wasm-precompile --release
 
-> [Full comparison with benchmarks →](https://docs.moltis.org/comparison.html)
+# 构建主程序
+cargo build --release
 
-## Architecture — Crate Map
+# 运行
+./target/release/clawmaster
+```
 
-**Core** (always compiled):
+首次运行时，终端会打印设置代码，在 Web UI 中输入以设置密码或注册 Passkey。
 
-| Crate | LoC | Role |
-|-------|-----|------|
-| `moltis` (cli) | 4.0K | Entry point, CLI commands |
-| `moltis-agents` | 9.6K | Agent loop, streaming, prompt assembly |
-| `moltis-providers` | 17.6K | LLM provider implementations |
-| `moltis-gateway` | 36.1K | HTTP/WS server, RPC, auth |
-| `moltis-chat` | 11.5K | Chat engine, agent orchestration |
-| `moltis-tools` | 21.9K | Tool execution, sandbox |
-| `moltis-config` | 7.0K | Configuration, validation |
-| `moltis-sessions` | 3.8K | Session persistence |
-| `moltis-plugins` | 1.9K | Hook dispatch, plugin formats |
-| `moltis-service-traits` | 1.3K | Shared service interfaces |
-| `moltis-common` | 1.1K | Shared utilities |
-| `moltis-protocol` | 0.8K | Wire protocol types |
+#### Docker 部署
 
-**Optional** (feature-gated or additive):
+```bash
+docker run -d \
+  --name clawmaster \
+  -p 13131:13131 \
+  -v clawmaster-config:/root/.config/clawmaster \
+  -v clawmaster-data:/root/.clawmaster \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  ghcr.io/arksong/clawmaster:latest
+```
 
-| Category | Crates | Combined LoC |
-|----------|--------|-------------|
-| Web UI | `moltis-web` | 4.5K |
-| GraphQL | `moltis-graphql` | 4.8K |
-| Voice | `moltis-voice` | 6.0K |
-| Memory | `moltis-memory`, `moltis-qmd` | 5.9K |
-| Channels | `moltis-telegram`, `moltis-whatsapp`, `moltis-discord`, `moltis-msteams`, `moltis-channels` | 14.9K |
-| Browser | `moltis-browser` | 5.1K |
-| Scheduling | `moltis-cron`, `moltis-caldav` | 5.2K |
-| Extensibility | `moltis-mcp`, `moltis-skills`, `moltis-wasm-tools` | 9.1K |
-| Auth & Security | `moltis-auth`, `moltis-oauth`, `moltis-onboarding`, `moltis-vault` | 6.6K |
-| Networking | `moltis-network-filter`, `moltis-tls`, `moltis-tailscale` | 3.5K |
-| Provider setup | `moltis-provider-setup` | 4.3K |
-| Import | `moltis-openclaw-import` | 7.6K |
-| Apple native | `moltis-swift-bridge` | 2.1K |
-| Metrics | `moltis-metrics` | 1.7K |
-| Other | `moltis-projects`, `moltis-media`, `moltis-routing`, `moltis-canvas`, `moltis-auto-reply`, `moltis-schema-export`, `moltis-benchmarks` | 2.5K |
+访问 `https://localhost:13131` 完成设置。
 
-Use `--no-default-features --features lightweight` for constrained devices (Raspberry Pi, etc.).
-
-## Security
-
-- **Zero `unsafe` code\*** — denied workspace-wide; only opt-in FFI behind `local-embeddings` flag
-- **Sandboxed execution** — Docker + Apple Container, per-session isolation
-- **Secret handling** — `secrecy::Secret`, zeroed on drop, redacted from tool output
-- **Authentication** — password + passkey (WebAuthn), rate-limited, per-IP throttle
-- **SSRF protection** — DNS-resolved, blocks loopback/private/link-local
-- **Origin validation** — rejects cross-origin WebSocket upgrades
-- **Hook gating** — `BeforeToolCall` hooks can inspect/block any tool invocation
-
-See [Security Architecture](https://docs.moltis.org/security.html) for details.
-
-## Features
-
-- **AI Gateway** — Multi-provider LLM support (OpenAI Codex, GitHub Copilot, Local), streaming responses, agent loop with sub-agent delegation, parallel tool execution
-- **Communication** — Web UI, Telegram, Microsoft Teams, Discord, API access, voice I/O (8 TTS + 7 STT providers), mobile PWA with push notifications
-- **Memory & Context** — Per-agent memory workspaces, embeddings-powered long-term memory, hybrid vector + full-text search, session persistence with auto-compaction, project context
-- **Extensibility** — MCP servers (stdio + HTTP/SSE), skill system, 15 lifecycle hook events with circuit breaker, destructive command guard
-- **Security** — Encryption-at-rest vault (XChaCha20-Poly1305 + Argon2id), password + passkey + API key auth, sandbox isolation, SSRF/CSWSH protection
-- **Operations** — Cron scheduling, OpenTelemetry tracing, Prometheus metrics, cloud deploy (Fly.io, DigitalOcean), Tailscale integration
-
-## How It Works
-
-Moltis is a **local-first AI gateway** — a single Rust binary that sits
-between you and multiple LLM providers. Everything runs on your machine; no
-cloud relay required.
+### 🏗️ 架构概览
 
 ```
 ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
@@ -143,7 +91,7 @@ cloud relay required.
                 │   WebSocket    │
                 ▼                ▼
         ┌─────────────────────────────────┐
-        │          Gateway Server         │
+        │       Gateway Server            │
         │   (Axum · HTTP · WS · Auth)     │
         ├─────────────────────────────────┤
         │        Chat Service             │
@@ -154,8 +102,7 @@ cloud relay required.
         │        │                        │
         │  ┌─────▼─────────────────────┐  │
         │  │    Provider Registry      │  │
-        │  │  Multiple providers       │  │
-        │  │  (Codex · Copilot · Local)│  │
+        │  │  (OpenAI · Copilot · 本地) │  │
         │  └───────────────────────────┘  │
         ├─────────────────────────────────┤
         │  Sessions  │ Memory  │  Hooks   │
@@ -169,71 +116,198 @@ cloud relay required.
                └───────────────┘
 ```
 
-See [Quickstart](https://docs.moltis.org/quickstart.html) for gateway startup, message flow, sessions, and memory details.
+### 📦 核心 Crates
 
-## Getting Started
+| Crate | 代码行数 | 功能 |
+|-------|---------|------|
+| `clawmaster` (cli) | 4.0K | 入口点、CLI 命令 |
+| `clawmaster-agents` | 9.6K | 智能体循环、流式处理、提示组装 |
+| `clawmaster-providers` | 17.6K | LLM 提供商实现 |
+| `clawmaster-gateway` | 36.1K | HTTP/WS 服务器、RPC、认证 |
+| `clawmaster-chat` | 11.5K | 聊天引擎、智能体编排 |
+| `clawmaster-tools` | 21.9K | 工具执行、沙箱 |
+| `clawmaster-config` | 7.0K | 配置、验证 |
 
-### Build & Run
+### 🔐 安全特性
 
-Requires [just](https://github.com/casey/just) (command runner) and Node.js (for Tailwind CSS).
+- **零 `unsafe` 代码*** — 工作区范围禁用；仅在 `local-embeddings` 特性标志后的可选 FFI
+- **沙箱执行** — Docker + Apple Container，每会话隔离
+- **密钥处理** — `secrecy::Secret`，销毁时清零，从工具输出中隐藏
+- **身份验证** — 密码 + Passkey (WebAuthn)，速率限制，按 IP 节流
+- **SSRF 保护** — DNS 解析，阻止回环/私有/链路本地地址
+- **源验证** — 拒绝跨源 WebSocket 升级
+
+### 🎯 主要功能
+
+- **AI 网关** — 多提供商 LLM 支持、流式响应、智能体循环、并行工具执行
+- **通信** — Web UI、Telegram、Teams、Discord、API 访问、语音 I/O、移动 PWA
+- **记忆与上下文** — 每智能体记忆工作区、嵌入式长期记忆、混合向量+全文搜索
+- **可扩展性** — MCP 服务器、技能系统、15 种生命周期钩子事件
+- **安全** — 静态加密保险库、密码+Passkey+API 密钥认证、沙箱隔离
+- **运维** — Cron 调度、OpenTelemetry 追踪、Prometheus 指标
+
+### 📝 许可证
+
+MIT License - 详见 [LICENSE.md](LICENSE.md)
+
+### 👤 作者
+
+**arksong** - [arksong2018@gmail.com](mailto:arksong2018@gmail.com)
+
+### 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+## English
+
+### 📖 Introduction
+
+ClawMaster is a **local-first AI gateway** — a single Rust binary that runs on your own hardware. It sits between you and multiple LLM providers, keeping all data local with no cloud relay required.
+
+### ✨ Key Features
+
+- **🔒 Secure by Design** — Your keys never leave your machine. Every command runs in a sandboxed container
+- **💻 Your Hardware** — Runs on Mac Mini, Raspberry Pi, or any server you own
+- **🎯 Full-Featured** — Built-in voice, memory, scheduling, Telegram, Discord, browser automation, MCP servers
+- **🔍 Auditable** — ~196K lines of code across 46 modular crates, 3,100+ tests, zero `unsafe` code*
+
+### 🚀 Quick Start
+
+#### Installation
 
 ```bash
-git clone https://github.com/moltis-org/moltis.git
-cd moltis
-just build-css                  # Build Tailwind CSS for the web UI
-just build-release              # Build in release mode
-cargo run --release --bin moltis
+# One-liner install (macOS / Linux)
+curl -fsSL https://raw.githubusercontent.com/arksong/ClawMaster/main/install.sh | sh
+
+# Homebrew
+brew tap arksong/clawmaster
+brew install clawmaster
+
+# Docker
+docker pull ghcr.io/arksong/clawmaster:latest
+
+# Build from source
+cargo install --git https://github.com/arksong/ClawMaster
 ```
 
-For a full release build including WASM sandbox tools:
+#### Build from Source
 
 ```bash
-just build-release-with-wasm    # Builds WASM artifacts + release binary
-cargo run --release --bin moltis
+git clone https://github.com/arksong/ClawMaster.git
+cd ClawMaster
+
+# Build WASM components (optional, for sandbox tools)
+cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc \
+  -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+cargo run -p clawmaster-wasm-precompile --release
+
+# Build main binary
+cargo build --release
+
+# Run
+./target/release/clawmaster
 ```
 
-Open `https://moltis.localhost:3000`. On first run, a setup code is printed to
-the terminal — enter it in the web UI to set your password or register a passkey.
+On first run, a setup code is printed to the terminal — enter it in the Web UI to set your password or register a passkey.
 
-Optional flags: `--config-dir /path/to/config --data-dir /path/to/data`
-
-### Docker
+#### Docker Deployment
 
 ```bash
-# Docker / OrbStack
 docker run -d \
-  --name moltis \
+  --name clawmaster \
   -p 13131:13131 \
-  -p 13132:13132 \
-  -p 1455:1455 \
-  -v moltis-config:/home/moltis/.config/moltis \
-  -v moltis-data:/home/moltis/.moltis \
+  -v clawmaster-config:/root/.config/clawmaster \
+  -v clawmaster-data:/root/.clawmaster \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  ghcr.io/moltis-org/moltis:latest
+  ghcr.io/arksong/clawmaster:latest
 ```
 
-Open `https://localhost:13131` and complete the setup. See [Docker docs](https://docs.moltis.org/docker.html) for Podman, OrbStack, TLS trust, and persistence details.
+Open `https://localhost:13131` to complete setup.
 
-### Cloud Deployment
+### 🏗️ Architecture Overview
 
-| Provider | Deploy |
-|----------|--------|
-| DigitalOcean | [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/moltis-org/moltis/tree/main) |
-
-**Fly.io** (CLI):
-
-```bash
-fly launch --image ghcr.io/moltis-org/moltis:latest
-fly secrets set MOLTIS_PASSWORD="your-password"
+```
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│   Web UI    │  │  Telegram   │  │  Discord    │
+└──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+       │                │                │
+       └────────┬───────┴────────┬───────┘
+                │   WebSocket    │
+                ▼                ▼
+        ┌─────────────────────────────────┐
+        │       Gateway Server            │
+        │   (Axum · HTTP · WS · Auth)     │
+        ├─────────────────────────────────┤
+        │        Chat Service             │
+        │  ┌───────────┐ ┌─────────────┐  │
+        │  │   Agent   │ │    Tool     │  │
+        │  │   Runner  │◄┤   Registry  │  │
+        │  └─────┬─────┘ └─────────────┘  │
+        │        │                        │
+        │  ┌─────▼─────────────────────┐  │
+        │  │    Provider Registry      │  │
+        │  │  (OpenAI · Copilot · Local)│  │
+        │  └───────────────────────────┘  │
+        ├─────────────────────────────────┤
+        │  Sessions  │ Memory  │  Hooks   │
+        │  (JSONL)   │ (SQLite)│ (events) │
+        └─────────────────────────────────┘
+                       │
+               ┌───────▼───────┐
+               │    Sandbox    │
+               │ Docker/Apple  │
+               │  Container    │
+               └───────────────┘
 ```
 
-All cloud configs use `--no-tls` because the provider handles TLS termination.
-See [Cloud Deploy docs](https://docs.moltis.org/cloud-deploy.html) for details.
+### 📦 Core Crates
 
-## Star History
+| Crate | Lines | Role |
+|-------|-------|------|
+| `clawmaster` (cli) | 4.0K | Entry point, CLI commands |
+| `clawmaster-agents` | 9.6K | Agent loop, streaming, prompt assembly |
+| `clawmaster-providers` | 17.6K | LLM provider implementations |
+| `clawmaster-gateway` | 36.1K | HTTP/WS server, RPC, auth |
+| `clawmaster-chat` | 11.5K | Chat engine, agent orchestration |
+| `clawmaster-tools` | 21.9K | Tool execution, sandbox |
+| `clawmaster-config` | 7.0K | Configuration, validation |
 
-[![Star History Chart](https://api.star-history.com/svg?repos=moltis-org/moltis&type=date&legend=top-left)](https://www.star-history.com/#moltis-org/moltis&type=date&legend=top-left)
+### 🔐 Security Features
 
-## License
+- **Zero `unsafe` code*** — Workspace-wide denial; only opt-in FFI behind `local-embeddings` flag
+- **Sandboxed execution** — Docker + Apple Container, per-session isolation
+- **Secret handling** — `secrecy::Secret`, zeroed on drop, redacted from tool output
+- **Authentication** — Password + Passkey (WebAuthn), rate-limited, per-IP throttle
+- **SSRF protection** — DNS-resolved, blocks loopback/private/link-local
+- **Origin validation** — Rejects cross-origin WebSocket upgrades
 
-MIT
+### 🎯 Main Features
+
+- **AI Gateway** — Multi-provider LLM support, streaming responses, agent loop, parallel tool execution
+- **Communication** — Web UI, Telegram, Teams, Discord, API access, voice I/O, mobile PWA
+- **Memory & Context** — Per-agent memory workspaces, embeddings-powered long-term memory, hybrid vector + full-text search
+- **Extensibility** — MCP servers, skill system, 15 lifecycle hook events
+- **Security** — Encryption-at-rest vault, password + passkey + API key auth, sandbox isolation
+- **Operations** — Cron scheduling, OpenTelemetry tracing, Prometheus metrics
+
+### 📝 License
+
+MIT License - See [LICENSE.md](LICENSE.md)
+
+### 👤 Author
+
+**arksong** - [arksong2018@gmail.com](mailto:arksong2018@gmail.com)
+
+### 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+---
+
+<div align="center">
+
+**Made with ❤️ by arksong**
+
+</div>

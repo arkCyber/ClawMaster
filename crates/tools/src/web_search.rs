@@ -14,8 +14,8 @@ use {
 use crate::error::Error;
 
 use {
-    moltis_agents::tool_registry::AgentTool,
-    moltis_config::schema::{SearchProvider as ConfigSearchProvider, WebSearchConfig},
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_config::schema::{SearchProvider as ConfigSearchProvider, WebSearchConfig},
 };
 
 use crate::exec::EnvVarProvider;

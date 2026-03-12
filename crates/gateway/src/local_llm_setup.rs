@@ -13,7 +13,7 @@ use {
     tracing::info,
 };
 
-use moltis_providers::{ProviderRegistry, local_gguf, local_llm, raw_model_id};
+use clawmaster_providers::{ProviderRegistry, local_gguf, local_llm, raw_model_id};
 
 use crate::{
     broadcast::{BroadcastOpts, broadcast},
@@ -110,7 +110,7 @@ async fn download_unified_model(
     cache_dir: &std::path::Path,
     state: &Arc<GatewayState>,
 ) -> LocalModelCacheResult<bool> {
-    use moltis_providers::local_llm::models as llm_models;
+    use clawmaster_providers::local_llm::models as llm_models;
 
     let model_id = model.id.to_string();
     let display_name = model.display_name.to_string();
@@ -557,7 +557,7 @@ impl LocalLlmConfig {
     /// Load config from the config directory.
     /// Handles migration from legacy single-model format.
     pub fn load() -> Option<Self> {
-        let config_dir = moltis_config::config_dir()?;
+        let config_dir = clawmaster_config::config_dir()?;
         let config_path = config_dir.join("local-llm.json");
         let content = std::fs::read_to_string(&config_path).ok()?;
 
@@ -587,7 +587,7 @@ impl LocalLlmConfig {
     /// Save config to the config directory.
     pub fn save(&self) -> anyhow::Result<()> {
         let config_dir =
-            moltis_config::config_dir().ok_or_else(|| anyhow::anyhow!("no config directory"))?;
+            clawmaster_config::config_dir().ok_or_else(|| anyhow::anyhow!("no config directory"))?;
         std::fs::create_dir_all(&config_dir)?;
         let config_path = config_dir.join("local-llm.json");
         let content = serde_json::to_string_pretty(self)?;
@@ -981,7 +981,7 @@ impl LocalLlmService for LiveLocalLlmService {
 
                     let mut reg = registry.write().await;
                     reg.register(
-                        moltis_providers::ModelInfo {
+                        clawmaster_providers::ModelInfo {
                             id: model_id_clone.clone(),
                             provider: "local-llm".into(),
                             display_name,
@@ -1213,7 +1213,7 @@ async fn search_huggingface(
 
     let response = client
         .get(&url)
-        .header("User-Agent", "moltis/1.0")
+        .header("User-Agent", "clawmaster/1.0")
         .send()
         .await
         .map_err(|e| format!("HuggingFace API request failed: {e}"))?;

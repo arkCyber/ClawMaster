@@ -6,10 +6,10 @@ import os
 final class LiveActivityManager {
     static let shared = LiveActivityManager()
 
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "live-activity")
-    private var currentActivity: Activity<MoltisActivityAttributes>?
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "live-activity")
+    private var currentActivity: Activity<ClawMasterActivityAttributes>?
     private var lastUpdateDate = Date.distantPast
-    private var pendingUpdate: MoltisActivityAttributes.ContentState?
+    private var pendingUpdate: ClawMasterActivityAttributes.ContentState?
     private var debounceTask: Task<Void, Never>?
 
     /// Minimum interval between Live Activity updates (Apple recommends >= 1s).
@@ -31,12 +31,12 @@ final class LiveActivityManager {
         // End any existing activity
         endExistingActivity()
 
-        let attributes = MoltisActivityAttributes(
+        let attributes = ClawMasterActivityAttributes(
             agentName: agentName,
             userMessage: String(userMessage.prefix(100))
         )
 
-        let initialState = MoltisActivityAttributes.ContentState(
+        let initialState = ClawMasterActivityAttributes.ContentState(
             currentStep: "Starting...",
             currentStepIcon: "sparkles",
             stepStartDate: Date(),
@@ -75,7 +75,7 @@ final class LiveActivityManager {
             stepHistory.append(label)
         }
 
-        let state = MoltisActivityAttributes.ContentState(
+        let state = ClawMasterActivityAttributes.ContentState(
             currentStep: label,
             currentStepIcon: icon,
             previousStep: previousStep,
@@ -99,7 +99,7 @@ final class LiveActivityManager {
         let finalStep = success ? "Complete" : "Error"
         let finalIcon = success ? "checkmark.circle" : "exclamationmark.triangle"
 
-        let finalState = MoltisActivityAttributes.ContentState(
+        let finalState = ClawMasterActivityAttributes.ContentState(
             currentStep: finalStep,
             currentStepIcon: finalIcon,
             previousStep: stepHistory.last,
@@ -126,7 +126,7 @@ final class LiveActivityManager {
 
     // MARK: - Private
 
-    private func debouncedUpdate(_ state: MoltisActivityAttributes.ContentState) {
+    private func debouncedUpdate(_ state: ClawMasterActivityAttributes.ContentState) {
         pendingUpdate = state
 
         let now = Date()
@@ -145,7 +145,7 @@ final class LiveActivityManager {
         }
     }
 
-    private func performUpdate(_ state: MoltisActivityAttributes.ContentState) {
+    private func performUpdate(_ state: ClawMasterActivityAttributes.ContentState) {
         guard let activity = currentActivity else { return }
         lastUpdateDate = Date()
         pendingUpdate = nil

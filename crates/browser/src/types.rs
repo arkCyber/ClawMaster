@@ -456,7 +456,7 @@ fn default_sandbox_image() -> String {
 }
 
 fn default_container_prefix() -> String {
-    "moltis-browser".to_string()
+    "clawmaster-browser".to_string()
 }
 
 impl Default for BrowserConfig {
@@ -495,15 +495,15 @@ impl BrowserConfig {
         if let Some(ref dir) = self.profile_dir {
             Some(std::path::PathBuf::from(dir))
         } else if self.persist_profile {
-            Some(moltis_config::data_dir().join("browser").join("profile"))
+            Some(clawmaster_config::data_dir().join("browser").join("profile"))
         } else {
             None
         }
     }
 }
 
-impl From<&moltis_config::schema::BrowserConfig> for BrowserConfig {
-    fn from(cfg: &moltis_config::schema::BrowserConfig) -> Self {
+impl From<&clawmaster_config::schema::BrowserConfig> for BrowserConfig {
+    fn from(cfg: &clawmaster_config::schema::BrowserConfig) -> Self {
         Self {
             enabled: cfg.enabled,
             chrome_path: cfg.chrome_path.clone(),

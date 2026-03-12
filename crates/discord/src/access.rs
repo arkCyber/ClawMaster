@@ -1,6 +1,6 @@
 use {
-    moltis_channels::gating::{self, DmPolicy, GroupPolicy, MentionMode},
-    moltis_common::types::ChatType,
+    clawmaster_channels::gating::{self, DmPolicy, GroupPolicy, MentionMode},
+    clawmaster_common::types::ChatType,
 };
 
 use crate::config::DiscordAccountConfig;

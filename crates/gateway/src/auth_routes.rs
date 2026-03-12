@@ -223,7 +223,7 @@ async fn setup_handler(
                     run_vault_env_migration(&state).await;
                     Some(rk.phrase().to_owned())
                 },
-                Err(moltis_vault::VaultError::AlreadyInitialized) => {
+                Err(clawmaster_vault::VaultError::AlreadyInitialized) => {
                     tracing::debug!("vault already initialized, skipping");
                     None
                 },
@@ -391,7 +391,7 @@ async fn change_password_handler(
                             run_vault_env_migration(&state).await;
                             Some(rk.phrase().to_owned())
                         },
-                        Err(moltis_vault::VaultError::AlreadyInitialized) => {
+                        Err(clawmaster_vault::VaultError::AlreadyInitialized) => {
                             tracing::debug!("vault already initialized, unsealing");
                             let _ = vault.unseal(&body.new_password).await;
                             None
@@ -1002,7 +1002,7 @@ async fn vault_unlock_handler(
             run_vault_env_migration(&state).await;
             Json(serde_json::json!({ "ok": true })).into_response()
         },
-        Err(moltis_vault::VaultError::BadCredential) => {
+        Err(clawmaster_vault::VaultError::BadCredential) => {
             (StatusCode::LOCKED, "invalid password").into_response()
         },
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
@@ -1028,7 +1028,7 @@ async fn vault_recovery_handler(
             run_vault_env_migration(&state).await;
             Json(serde_json::json!({ "ok": true })).into_response()
         },
-        Err(moltis_vault::VaultError::BadCredential) => {
+        Err(clawmaster_vault::VaultError::BadCredential) => {
             (StatusCode::LOCKED, "invalid recovery key").into_response()
         },
         Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
@@ -1040,7 +1040,7 @@ async fn vault_recovery_handler(
 async fn run_vault_env_migration(state: &AuthState) {
     if let Some(vault) = state.credential_store.vault() {
         let pool = state.credential_store.db_pool();
-        match moltis_vault::migration::migrate_env_vars(vault, pool).await {
+        match clawmaster_vault::migration::migrate_env_vars(vault, pool).await {
             Ok(n) if n > 0 => {
                 tracing::info!(count = n, "migrated env vars to encrypted");
             },
@@ -1073,8 +1073,8 @@ mod tests {
     }
 
     #[test]
-    fn localhost_cookie_domain_moltis_subdomain() {
-        let h = headers_with_host("moltis.localhost:59263");
+    fn localhost_cookie_domain_clawmaster_subdomain() {
+        let h = headers_with_host("clawmaster.localhost:59263");
         assert_eq!(localhost_cookie_domain(&h, false), "; Domain=localhost");
     }
 
@@ -1124,13 +1124,13 @@ mod tests {
     #[test]
     fn localhost_cookie_domain_proxy_mode_supports_forwarded_localhost_subdomain() {
         let mut h = headers_with_host("localhost:13131");
-        h.insert("x-forwarded-host", "moltis.localhost:8080".parse().unwrap());
+        h.insert("x-forwarded-host", "clawmaster.localhost:8080".parse().unwrap());
         assert_eq!(localhost_cookie_domain(&h, true), "; Domain=localhost");
     }
 
     #[test]
     fn session_response_includes_domain_for_localhost() {
-        let h = headers_with_host("moltis.localhost:8080");
+        let h = headers_with_host("clawmaster.localhost:8080");
         let resp = session_response("test-token".into(), &h, false);
         let cookie = resp
             .headers()
@@ -1142,7 +1142,7 @@ mod tests {
             cookie.contains("; Domain=localhost"),
             "cookie should include Domain=localhost for .localhost host, got: {cookie}"
         );
-        assert!(cookie.contains("moltis_session=test-token"));
+        assert!(cookie.contains("clawmaster_session=test-token"));
     }
 
     #[test]

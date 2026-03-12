@@ -3,7 +3,7 @@
 
 import ApolloAPI
 
-extension MoltisAPI.Objects {
+extension ClawMasterAPI.Objects {
   /// Generic boolean result for mutations that return `{ "ok": true }`.
   static let BoolResult = ApolloAPI.Object(
     typename: "BoolResult",

@@ -7,7 +7,7 @@
 //! # Usage
 //!
 //! ```rust,ignore
-//! use moltis_metrics::{counter, gauge, histogram};
+//! use clawmaster_metrics::{counter, gauge, histogram};
 //!
 //! // Record metrics using the facade macros
 //! counter!("http_requests_total", "endpoint" => "/api/chat").increment(1);

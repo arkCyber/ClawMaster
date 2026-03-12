@@ -56,7 +56,7 @@ var RECONNECT_DELAY_MS = 800;
 var INPUT_FLUSH_MS = 16;
 var WINDOW_REFRESH_MS = 2000;
 var MAX_INPUT_CHUNK = 512;
-var TmuxInstallPromptStorageKey = "moltis.settings.terminal.tmuxInstallPromptSeen.v1";
+var TmuxInstallPromptStorageKey = "clawmaster.settings.terminal.tmuxInstallPromptSeen.v1";
 
 function readTmuxInstallPromptSeen() {
 	try {

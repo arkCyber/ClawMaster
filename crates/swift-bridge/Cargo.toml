@@ -1,7 +1,7 @@
 [package]
 edition.workspace      = true
 license.workspace      = true
-name                   = "moltis-swift-bridge"
+name                   = "clawmaster-swift-bridge"
 repository.workspace   = true
 rust-version.workspace = true
 version.workspace      = true
@@ -12,23 +12,23 @@ crate-type = ["staticlib"]
 [features]
 default = ["metrics", "qmd", "tracing"]
 metrics = ["dep:metrics"]
-qmd     = ["moltis-gateway/qmd"]
+qmd     = ["clawmaster-gateway/qmd"]
 tracing = ["dep:tracing"]
 
 [dependencies]
 anyhow                = { workspace = true }
 axum                  = { workspace = true }
 metrics               = { optional = true, workspace = true }
-moltis-agents         = { workspace = true }
-moltis-config         = { workspace = true }
-moltis-gateway        = { default-features = true, features = ["file-watcher", "metrics", "voice", "web-ui"], workspace = true }
-moltis-network-filter = { features = ["proxy", "service"], workspace = true }
-moltis-projects       = { workspace = true }
-moltis-provider-setup = { workspace = true }
-moltis-providers      = { workspace = true }
-moltis-sessions       = { workspace = true }
-moltis-tools          = { features = ["embedded-wasm"], workspace = true }
-moltis-web            = { workspace = true }
+clawmaster-agents         = { workspace = true }
+clawmaster-config         = { workspace = true }
+clawmaster-gateway        = { default-features = true, features = ["file-watcher", "metrics", "voice", "web-ui"], workspace = true }
+clawmaster-network-filter = { features = ["proxy", "service"], workspace = true }
+clawmaster-projects       = { workspace = true }
+clawmaster-provider-setup = { workspace = true }
+clawmaster-providers      = { workspace = true }
+clawmaster-sessions       = { workspace = true }
+clawmaster-tools          = { features = ["embedded-wasm"], workspace = true }
+clawmaster-web            = { workspace = true }
 secrecy               = { workspace = true }
 serde                 = { features = ["derive"], workspace = true }
 serde_json            = { workspace = true }

@@ -1,13 +1,13 @@
 [package]
-description       = "QMD memory backend for moltis - optional sidecar-based hybrid search"
+description       = "QMD memory backend for clawmaster - optional sidecar-based hybrid search"
 edition.workspace = true
-name              = "moltis-qmd"
+name              = "clawmaster-qmd"
 version.workspace = true
 
 [dependencies]
 anyhow        = { workspace = true }
 async-trait   = { workspace = true }
-moltis-memory = { workspace = true }
+clawmaster-memory = { workspace = true }
 serde         = { workspace = true }
 serde_json    = { workspace = true }
 tokio         = { workspace = true }

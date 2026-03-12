@@ -1,6 +1,6 @@
 # Local Validation
 
-Moltis provides a local validation script that runs the same checks as CI
+ClawMaster provides a local validation script that runs the same checks as CI
 (format, lint, test, e2e), plus a native macOS app build check on macOS hosts.
 
 ## Why this exists

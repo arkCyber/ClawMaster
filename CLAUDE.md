@@ -1,5 +1,5 @@
 ---
-description: "Moltis engineering guide for Claude/Codex agents: Rust architecture, testing, security, and release workflows"
+description: "ClawMaster engineering guide for Claude/Codex agents: Rust architecture, testing, security, and release workflows"
 alwaysApply: true
 ---
 
@@ -14,7 +14,7 @@ Enable new feature flags **by default** in `crates/cli/Cargo.toml` (opt-out, not
 ```toml
 [features]
 default = ["foo", ...]
-foo = ["moltis-gateway/foo"]
+foo = ["clawmaster-gateway/foo"]
 ```
 
 ## Workspace Dependencies
@@ -24,7 +24,7 @@ Never add versions directly in crate `Cargo.toml`. Use latest stable crates.io v
 
 ## Config Schema and Validation
 
-When adding/renaming fields in `MoltisConfig` (`crates/config/src/schema.rs`), also update
+When adding/renaming fields in `ClawMasterConfig` (`crates/config/src/schema.rs`), also update
 `build_schema_map()` in `crates/config/src/validate.rs`. New enum variants for string-typed
 fields need updates in `check_semantic_warnings()`.
 
@@ -84,7 +84,7 @@ States: `.selected`, `.disabled`, default. Badges: `.recommended-badge`, `.tier-
 
 ### Provider Config Storage
 
-Provider keys in `~/.config/moltis/provider_keys.json` via `KeyStore` in `provider_setup.rs`.
+Provider keys in `~/.config/clawmaster/provider_keys.json` via `KeyStore` in `provider_setup.rs`.
 When adding fields, update: `ProviderConfig` struct, `available()` response, `save_key()`.
 
 ### Server-Injected Data (gon pattern)
@@ -116,7 +116,7 @@ middleware in `auth_middleware.rs`. Setup code printed to terminal on first run.
 `RequireAuth` middleware protects `/api/*` except `/api/auth/*` and `/api/gon`.
 `CredentialStore` persists argon2-hashed passwords, passkeys, API keys, sessions to JSON.
 
-CLI: `moltis auth reset-password`, `moltis auth reset-identity`.
+CLI: `clawmaster auth reset-password`, `clawmaster auth reset-identity`.
 
 ## Testing
 
@@ -160,7 +160,7 @@ Containers (Docker or Apple Container) in `crates/tools/src/sandbox.rs` (trait +
 `exec.rs` (ExecTool), `crates/cli/src/sandbox_commands.rs` (CLI), `crates/config/src/schema.rs` (config).
 
 Pre-built images use deterministic hash tags from base image + packages. Default packages
-in `default_sandbox_packages()`. CLI: `moltis sandbox {list,build,remove,clean}`.
+in `default_sandbox_packages()`. CLI: `clawmaster sandbox {list,build,remove,clean}`.
 
 ## Logging Levels
 
@@ -178,9 +178,9 @@ in `default_sandbox_packages()`. CLI: `moltis sandbox {list,build,remove,clean}`
 
 ## Data and Config Directories
 
-- **Config**: `moltis_config::config_dir()` (`~/.moltis/`). Contains `moltis.toml`, `credentials.json`, `mcp-servers.json`.
-- **Data**: `moltis_config::data_dir()` (`~/.moltis/`). Contains DBs, sessions, logs, memory files.
-- **Never** use `directories::BaseDirs` outside `moltis-config`. Never use `std::env::current_dir()` for storage.
+- **Config**: `clawmaster_config::config_dir()` (`~/.clawmaster/`). Contains `clawmaster.toml`, `credentials.json`, `mcp-servers.json`.
+- **Data**: `clawmaster_config::data_dir()` (`~/.clawmaster/`). Contains DBs, sessions, logs, memory files.
+- **Never** use `directories::BaseDirs` outside `clawmaster-config`. Never use `std::env::current_dir()` for storage.
 - Workspace-scoped files (`MEMORY.md`, `memory/*.md`, etc.) resolve relative to `data_dir()`.
 - Gateway resolves `data_dir` once at startup; prefer that value over repeated calls.
 
@@ -190,11 +190,11 @@ sqlx migrations, each crate owns its `migrations/` directory. See `docs/sqlite-m
 
 | Crate | Tables |
 |-------|--------|
-| `moltis-projects` | `projects` |
-| `moltis-sessions` | `sessions`, `channel_sessions` |
-| `moltis-cron` | `cron_jobs`, `cron_runs` |
-| `moltis-gateway` | `auth_*`, `passkeys`, `api_keys`, `env_variables`, `message_log`, `channels` |
-| `moltis-memory` | `files`, `chunks`, `embedding_cache`, `chunks_fts` |
+| `clawmaster-projects` | `projects` |
+| `clawmaster-sessions` | `sessions`, `channel_sessions` |
+| `clawmaster-cron` | `cron_jobs`, `cron_runs` |
+| `clawmaster-gateway` | `auth_*`, `passkeys`, `api_keys`, `env_variables`, `message_log`, `channels` |
+| `clawmaster-memory` | `files`, `chunks`, `embedding_cache`, `chunks_fts` |
 
 New migration: `crates/<crate>/migrations/YYYYMMDDHHMMSS_description.sql` (use `IF NOT EXISTS`).
 New crate: add `run_migrations()` to `lib.rs`, call from `server.rs` in dependency order.
@@ -241,8 +241,8 @@ Exact commands (must match `local-validate.sh`):
 - Fmt: `cargo +nightly-2025-11-30 fmt --all -- --check`
 - Clippy: `cargo +nightly-2025-11-30 clippy -Z unstable-options --workspace --all-features --all-targets --timings -- -D warnings`
 - macOS without `nvcc`: clippy without `--all-features`
-- macOS app (Darwin hosts): `./scripts/build-swift-bridge.sh && ./scripts/generate-swift-project.sh && ./scripts/lint-swift.sh && xcodebuild -project apps/macos/Moltis.xcodeproj -scheme Moltis -configuration Release -destination "platform=macOS" -derivedDataPath apps/macos/.derivedData-local-validate build`
-- iOS app (Darwin hosts): `cargo run -p moltis-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls && ./scripts/generate-ios-graphql.sh && ./scripts/generate-ios-project.sh && xcodebuild -project apps/ios/Moltis.xcodeproj -scheme Moltis -configuration Debug -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO build`
+- macOS app (Darwin hosts): `./scripts/build-swift-bridge.sh && ./scripts/generate-swift-project.sh && ./scripts/lint-swift.sh && xcodebuild -project apps/macos/ClawMaster.xcodeproj -scheme ClawMaster -configuration Release -destination "platform=macOS" -derivedDataPath apps/macos/.derivedData-local-validate build`
+- iOS app (Darwin hosts): `cargo run -p clawmaster-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls && ./scripts/generate-ios-graphql.sh && ./scripts/generate-ios-project.sh && xcodebuild -project apps/ios/ClawMaster.xcodeproj -scheme ClawMaster -configuration Debug -destination "generic/platform=iOS" CODE_SIGNING_ALLOWED=NO build`
 
 ### PR Descriptions
 
@@ -264,7 +264,7 @@ with exact commands), `## Manual QA`. Include concrete test steps.
 
 ## Documentation
 
-Source in `docs/src/` (mdBook). Auto-deployed to docs.moltis.org on push to main.
+Source in `docs/src/` (mdBook). Auto-deployed to docs.clawmaster.org on push to main.
 Update `docs/src/SUMMARY.md` when adding pages. Preview: `cd docs && mdbook serve`.
 
 ## Session Completion

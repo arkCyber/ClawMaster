@@ -17,7 +17,7 @@ use tokio_tungstenite::{connect_async, tungstenite::client::IntoClientRequest};
 
 use async_trait::async_trait;
 
-use moltis_gateway::{
+use clawmaster_gateway::{
     auth::{self, CredentialStore},
     methods::MethodRegistry,
     server::{build_gateway_base, finalize_gateway_app},
@@ -54,13 +54,13 @@ async fn start_auth_server_impl(
     // Isolate each test process with its own config/data directory so
     // concurrent nextest processes don't race on shared config files.
     let tmp = tempfile::tempdir().unwrap();
-    moltis_config::set_config_dir(tmp.path().to_path_buf());
-    moltis_config::set_data_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_config_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_data_dir(tmp.path().to_path_buf());
     // Leak the TempDir so it outlives the test (cleaned up on process exit).
     std::mem::forget(tmp);
 
     let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
-    let auth_config = moltis_config::AuthConfig::default();
+    let auth_config = clawmaster_config::AuthConfig::default();
     let cred_store = Arc::new(
         CredentialStore::with_config(pool, &auth_config)
             .await
@@ -98,7 +98,7 @@ async fn start_auth_server_impl(
     #[cfg(not(feature = "push-notifications"))]
     let (router, app_state) = build_gateway_base(state, methods, None);
 
-    let router = router.merge(moltis_web::web_routes());
+    let router = router.merge(clawmaster_web::web_routes());
     let app = finalize_gateway_app(router, app_state, false);
 
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -120,17 +120,17 @@ async fn start_localhost_server_with_vault() -> (
     SocketAddr,
     Arc<CredentialStore>,
     Arc<GatewayState>,
-    Arc<moltis_vault::Vault>,
+    Arc<clawmaster_vault::Vault>,
 ) {
     let tmp = tempfile::tempdir().unwrap();
-    moltis_config::set_config_dir(tmp.path().to_path_buf());
-    moltis_config::set_data_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_config_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_data_dir(tmp.path().to_path_buf());
     std::mem::forget(tmp);
 
     let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
-    moltis_vault::run_migrations(&pool).await.unwrap();
-    let auth_config = moltis_config::AuthConfig::default();
-    let vault = Arc::new(moltis_vault::Vault::new(pool.clone()).await.unwrap());
+    clawmaster_vault::run_migrations(&pool).await.unwrap();
+    let auth_config = clawmaster_config::AuthConfig::default();
+    let vault = Arc::new(clawmaster_vault::Vault::new(pool.clone()).await.unwrap());
     let cred_store = Arc::new(
         CredentialStore::with_vault(pool, &auth_config, Some(Arc::clone(&vault)))
             .await
@@ -168,7 +168,7 @@ async fn start_localhost_server_with_vault() -> (
     #[cfg(not(feature = "push-notifications"))]
     let (router, app_state) = build_gateway_base(state, methods, None);
 
-    let router = router.merge(moltis_web::web_routes());
+    let router = router.merge(clawmaster_web::web_routes());
     let app = finalize_gateway_app(router, app_state, false);
 
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -187,8 +187,8 @@ async fn start_localhost_server_with_vault() -> (
 /// Start a test server without a credential store (no auth).
 async fn start_noauth_server() -> SocketAddr {
     let tmp = tempfile::tempdir().unwrap();
-    moltis_config::set_config_dir(tmp.path().to_path_buf());
-    moltis_config::set_data_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_config_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_data_dir(tmp.path().to_path_buf());
     std::mem::forget(tmp);
 
     let resolved_auth = auth::resolve_auth(None, None);
@@ -200,7 +200,7 @@ async fn start_noauth_server() -> SocketAddr {
     #[cfg(not(feature = "push-notifications"))]
     let (router, app_state) = build_gateway_base(state, methods, None);
 
-    let router = router.merge(moltis_web::web_routes());
+    let router = router.merge(clawmaster_web::web_routes());
     let app = finalize_gateway_app(router, app_state, false);
 
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -267,7 +267,7 @@ async fn session_cookie_auth_succeeds() {
     let client = reqwest::Client::new();
     let resp = client
         .get(format!("http://{addr}/api/bootstrap"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -386,7 +386,7 @@ async fn graphql_runtime_toggle_applies_immediately() {
     let token = store.create_session().await.unwrap();
 
     let client = reqwest::Client::new();
-    let auth_header = format!("moltis_session={token}");
+    let auth_header = format!("clawmaster_session={token}");
 
     let resp = client
         .get(format!("http://{addr}/graphql"))
@@ -430,7 +430,7 @@ async fn graphql_status_includes_uptime_ms() {
     let client = reqwest::Client::new();
     let resp = client
         .post(format!("http://{addr}/graphql"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .header("Content-Type", "application/json")
         .body(serde_json::json!({ "query": "{ status { uptimeMs } }" }).to_string())
         .send()
@@ -498,7 +498,7 @@ async fn invalid_session_cookie_returns_401() {
     let client = reqwest::Client::new();
     let resp = client
         .get(format!("http://{addr}/api/bootstrap"))
-        .header("Cookie", "moltis_session=invalid_token")
+        .header("Cookie", "clawmaster_session=invalid_token")
         .send()
         .await
         .unwrap();
@@ -523,7 +523,7 @@ async fn reset_auth_removes_all_authentication() {
     let client = reqwest::Client::new();
     let resp = client
         .post(format!("http://{addr}/api/auth/reset"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -571,7 +571,7 @@ async fn reenable_auth_after_reset() {
     let client = reqwest::Client::new();
     let resp = client
         .post(format!("http://{addr}/api/auth/reset"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -763,7 +763,7 @@ async fn setup_code_not_required_when_auth_disabled() {
     let client = reqwest::Client::new();
     let resp = client
         .post(format!("http://{addr}/api/auth/reset"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -868,7 +868,7 @@ async fn upload_endpoint_requires_auth() {
     let token = store.create_session().await.unwrap();
     let resp = client
         .post(format!("http://{addr}/api/sessions/main/upload"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .header("Content-Type", "audio/webm")
         .body(vec![0u8; 100])
         .send()
@@ -895,7 +895,7 @@ async fn media_endpoint_requires_auth() {
     let client = reqwest::Client::new();
     let resp = client
         .get(format!("http://{addr}/api/sessions/main/media/test.png"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -1021,7 +1021,7 @@ async fn proxied_with_password_requires_auth() {
     let client = reqwest::Client::new();
     let resp = client
         .get(format!("http://{addr}/api/bootstrap"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -1046,7 +1046,7 @@ async fn login_cookie_includes_domain_for_localhost_subdomain() {
 
     let resp = client
         .post(format!("http://{addr}/api/auth/login"))
-        .header("Host", "moltis.localhost:18080")
+        .header("Host", "clawmaster.localhost:18080")
         .header("Content-Type", "application/json")
         .body(r#"{"password":"testpass123"}"#)
         .send()
@@ -1065,7 +1065,7 @@ async fn login_cookie_includes_domain_for_localhost_subdomain() {
         cookie_header.contains("Domain=localhost"),
         "session cookie should include Domain=localhost for .localhost host, got: {cookie_header}"
     );
-    assert!(cookie_header.contains("moltis_session="));
+    assert!(cookie_header.contains("clawmaster_session="));
 }
 
 /// Login with a plain localhost Host should also include Domain=localhost
@@ -1428,7 +1428,7 @@ async fn onboarding_accessible_with_session_after_setup() {
 
     let resp = client
         .get(format!("http://{addr}/onboarding"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .send()
         .await
         .unwrap();
@@ -1460,7 +1460,7 @@ async fn setup_endpoint_rejected_after_setup_complete() {
     // Even with a valid session, /api/auth/setup must reject once setup is done.
     let resp = client
         .post(format!("http://{addr}/api/auth/setup"))
-        .header("Cookie", format!("moltis_session={token}"))
+        .header("Cookie", format!("clawmaster_session={token}"))
         .header("Content-Type", "application/json")
         .body(r#"{"password":"evil-new-password"}"#)
         .send()
@@ -1486,7 +1486,7 @@ async fn authenticated_api_endpoint_not_rate_limited() {
     for _ in 0..220 {
         let resp = client
             .get(format!("http://{addr}/api/bootstrap"))
-            .header("Cookie", format!("moltis_session={token}"))
+            .header("Cookie", format!("clawmaster_session={token}"))
             .send()
             .await
             .unwrap();
@@ -1508,7 +1508,7 @@ async fn password_change_initializes_vault() {
     // Vault starts uninitialized.
     assert_eq!(
         vault.status().await.unwrap(),
-        moltis_vault::VaultStatus::Uninitialized
+        clawmaster_vault::VaultStatus::Uninitialized
     );
 
     // Set password via the change endpoint (no current password — first time).
@@ -1536,7 +1536,7 @@ async fn password_change_initializes_vault() {
     // Vault should now be unsealed.
     assert_eq!(
         vault.status().await.unwrap(),
-        moltis_vault::VaultStatus::Unsealed
+        clawmaster_vault::VaultStatus::Unsealed
     );
 
     // Password should be set.
@@ -1555,7 +1555,7 @@ async fn password_change_on_initialized_vault_no_recovery_key() {
     let _rk = vault.initialize("oldpass123").await.unwrap();
     assert_eq!(
         vault.status().await.unwrap(),
-        moltis_vault::VaultStatus::Unsealed
+        clawmaster_vault::VaultStatus::Unsealed
     );
 
     // Set a password (first credential store password, but vault already initialized).
@@ -1608,7 +1608,7 @@ impl OnboardingService for MockOnboardingService {
     }
 
     async fn identity_get(&self) -> ServiceResult {
-        Ok(serde_json::json!({ "name": "moltis", "avatar": null }))
+        Ok(serde_json::json!({ "name": "clawmaster", "avatar": null }))
     }
 
     async fn identity_update(&self, _params: serde_json::Value) -> ServiceResult {
@@ -1641,12 +1641,12 @@ async fn start_server_with_onboarding(
     behind_proxy: bool,
 ) -> (SocketAddr, Arc<CredentialStore>, Arc<GatewayState>) {
     let tmp = tempfile::tempdir().unwrap();
-    moltis_config::set_config_dir(tmp.path().to_path_buf());
-    moltis_config::set_data_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_config_dir(tmp.path().to_path_buf());
+    clawmaster_config::set_data_dir(tmp.path().to_path_buf());
     std::mem::forget(tmp);
 
     let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
-    let auth_config = moltis_config::AuthConfig::default();
+    let auth_config = clawmaster_config::AuthConfig::default();
     let cred_store = Arc::new(
         CredentialStore::with_config(pool, &auth_config)
             .await
@@ -1688,7 +1688,7 @@ async fn start_server_with_onboarding(
     #[cfg(not(feature = "push-notifications"))]
     let (router, app_state) = build_gateway_base(state, methods, None);
 
-    let router = router.merge(moltis_web::web_routes());
+    let router = router.merge(clawmaster_web::web_routes());
     let app = finalize_gateway_app(router, app_state, false);
 
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();

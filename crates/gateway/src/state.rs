@@ -11,11 +11,11 @@ use std::{
 use std::sync::atomic::AtomicBool;
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::MetricsHandle;
+use clawmaster_metrics::MetricsHandle;
 
 // Re-export for use by other modules
 #[cfg(feature = "metrics")]
-pub use moltis_metrics::{MetricsHistoryPoint, MetricsStore, ProviderTokens, SqliteMetricsStore};
+pub use clawmaster_metrics::{MetricsHistoryPoint, MetricsStore, ProviderTokens, SqliteMetricsStore};
 
 use tokio::sync::{RwLock, mpsc, oneshot};
 
@@ -70,16 +70,16 @@ impl Default for MetricsHistory {
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct MetricsUpdatePayload {
     /// Current metrics snapshot.
-    pub snapshot: moltis_metrics::MetricsSnapshot,
+    pub snapshot: clawmaster_metrics::MetricsSnapshot,
     /// Latest history point for charts.
     pub point: MetricsHistoryPoint,
 }
 
-use moltis_protocol::{ConnectParams, EventFrame};
+use clawmaster_protocol::{ConnectParams, EventFrame};
 
-use moltis_tools::sandbox::SandboxRouter;
+use clawmaster_tools::sandbox::SandboxRouter;
 
-use {moltis_channels::ChannelReplyTarget, moltis_sessions::session_events::SessionEventBus};
+use {clawmaster_channels::ChannelReplyTarget, clawmaster_sessions::session_events::SessionEventBus};
 
 use crate::{
     auth::{CredentialStore, ResolvedAuth},
@@ -142,7 +142,7 @@ impl ConnectedClient {
     pub fn has_scope(&self, scope: &str) -> bool {
         self.scopes()
             .iter()
-            .any(|s| *s == moltis_protocol::scopes::ADMIN || *s == scope)
+            .any(|s| *s == clawmaster_protocol::scopes::ADMIN || *s == scope)
     }
 
     /// Check whether this client is subscribed to the given event.
@@ -151,7 +151,7 @@ impl ConnectedClient {
         match &self.subscriptions {
             None => true,
             Some(set) => {
-                set.contains(moltis_protocol::subscriptions::WILDCARD) || set.contains(event)
+                set.contains(clawmaster_protocol::subscriptions::WILDCARD) || set.contains(event)
             },
         }
     }
@@ -189,7 +189,7 @@ pub struct PendingInvoke {
 /// A server-initiated RPC request waiting for a client response.
 pub struct PendingClientRequest {
     pub method: String,
-    pub sender: oneshot::Sender<Result<serde_json::Value, moltis_protocol::ErrorShape>>,
+    pub sender: oneshot::Sender<Result<serde_json::Value, clawmaster_protocol::ErrorShape>>,
     pub created_at: Instant,
 }
 
@@ -243,7 +243,7 @@ pub struct GatewayInner {
     /// Active project id per connection (conn_id → project id).
     pub active_projects: HashMap<String, String>,
     /// Heartbeat configuration (for gon data and RPC methods).
-    pub heartbeat_config: moltis_config::schema::HeartbeatConfig,
+    pub heartbeat_config: clawmaster_config::schema::HeartbeatConfig,
     /// Pending channel reply targets: when a channel message triggers a chat
     /// send, we queue the reply target so the "final" response can be routed
     /// back to the originating channel.
@@ -253,7 +253,7 @@ pub struct GatewayInner {
     /// Per-channel-account TTS runtime overrides ((channel, account) -> override).
     pub tts_channel_overrides: HashMap<String, TtsRuntimeOverride>,
     /// Hook registry for dispatching lifecycle events.
-    pub hook_registry: Option<Arc<moltis_common::hooks::HookRegistry>>,
+    pub hook_registry: Option<Arc<clawmaster_common::hooks::HookRegistry>>,
     /// Discovered hook metadata for the web UI.
     pub discovered_hooks: Vec<DiscoveredHookInfo>,
     /// Hook names that have been manually disabled via the UI.
@@ -273,9 +273,9 @@ pub struct GatewayInner {
     #[cfg(feature = "push-notifications")]
     pub push_service: Option<Arc<crate::push::PushService>>,
     /// LLM provider registry for lightweight generation (e.g. TTS phrases).
-    pub llm_providers: Option<Arc<RwLock<moltis_providers::ProviderRegistry>>>,
+    pub llm_providers: Option<Arc<RwLock<clawmaster_providers::ProviderRegistry>>>,
     /// Cached user geolocation from browser Geolocation API, persisted to `USER.md`.
-    pub cached_location: Option<moltis_config::GeoLocation>,
+    pub cached_location: Option<clawmaster_config::GeoLocation>,
     /// Per-session buffer for channel status messages (tool use, model selection).
     /// Drained when the final response is delivered to the channel.
     pub channel_status_log: HashMap<String, Vec<String>>,
@@ -291,7 +291,7 @@ pub struct GatewayInner {
 }
 
 impl GatewayInner {
-    fn new(hook_registry: Option<Arc<moltis_common::hooks::HookRegistry>>) -> Self {
+    fn new(hook_registry: Option<Arc<clawmaster_common::hooks::HookRegistry>>) -> Self {
         Self {
             clients: HashMap::new(),
             nodes: NodeRegistry::new(),
@@ -301,7 +301,7 @@ impl GatewayInner {
             chat_override: None,
             active_sessions: HashMap::new(),
             active_projects: HashMap::new(),
-            heartbeat_config: moltis_config::schema::HeartbeatConfig::default(),
+            heartbeat_config: clawmaster_config::schema::HeartbeatConfig::default(),
             channel_reply_queue: HashMap::new(),
             tts_session_overrides: HashMap::new(),
             tts_channel_overrides: HashMap::new(),
@@ -316,7 +316,7 @@ impl GatewayInner {
             #[cfg(feature = "push-notifications")]
             push_service: None,
             llm_providers: None,
-            cached_location: moltis_config::load_user().and_then(|u| u.location),
+            cached_location: clawmaster_config::load_user().and_then(|u| u.location),
             channel_status_log: HashMap::new(),
             channel_command_mode_sessions: HashSet::new(),
             channels_offered: vec!["telegram".into()],
@@ -367,7 +367,7 @@ pub struct GatewayState {
     pub pairing_store: Option<Arc<PairingStore>>,
     /// Memory manager for long-term memory search (None if no embedding provider).
     /// `Arc` because it is cloned into background tokio tasks.
-    pub memory_manager: Option<Arc<moltis_memory::manager::MemoryManager>>,
+    pub memory_manager: Option<Arc<clawmaster_memory::manager::MemoryManager>>,
     /// Whether the server is bound to a loopback address (localhost/127.0.0.1/::1).
     pub localhost_only: bool,
     /// Whether the server is known to be behind a reverse proxy.
@@ -401,7 +401,7 @@ pub struct GatewayState {
     pub metrics_store: Option<Arc<dyn MetricsStore>>,
     /// Encryption-at-rest vault for environment variables.
     #[cfg(feature = "vault")]
-    pub vault: Option<Arc<moltis_vault::Vault>>,
+    pub vault: Option<Arc<clawmaster_vault::Vault>>,
 
     // ── Channel webhook deduplication (separate lock) ──────────────────────
     /// Idempotency dedup store for channel webhooks. Uses its own
@@ -459,15 +459,15 @@ impl GatewayState {
         localhost_only: bool,
         behind_proxy: bool,
         tls_active: bool,
-        hook_registry: Option<Arc<moltis_common::hooks::HookRegistry>>,
-        memory_manager: Option<Arc<moltis_memory::manager::MemoryManager>>,
+        hook_registry: Option<Arc<clawmaster_common::hooks::HookRegistry>>,
+        memory_manager: Option<Arc<clawmaster_memory::manager::MemoryManager>>,
         port: u16,
         ws_request_logs: bool,
         deploy_platform: Option<String>,
         session_event_bus: Option<SessionEventBus>,
         #[cfg(feature = "metrics")] metrics_handle: Option<MetricsHandle>,
         #[cfg(feature = "metrics")] metrics_store: Option<Arc<dyn MetricsStore>>,
-        #[cfg(feature = "vault")] vault: Option<Arc<moltis_vault::Vault>>,
+        #[cfg(feature = "vault")] vault: Option<Arc<clawmaster_vault::Vault>>,
     ) -> Arc<Self> {
         let hostname = hostname::get()
             .ok()
@@ -572,7 +572,7 @@ impl GatewayState {
         let count = self.inner.write().await.register_client(client);
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::gauge!(moltis_metrics::system::CONNECTED_CLIENTS).set(count as f64);
+        clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS).set(count as f64);
     }
 
     /// Remove a client by conn_id. Returns the removed client if found.
@@ -582,7 +582,7 @@ impl GatewayState {
         #[cfg(feature = "metrics")]
         {
             let _ = count;
-            moltis_metrics::gauge!(moltis_metrics::system::CONNECTED_CLIENTS).set(count as f64);
+            clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS).set(count as f64);
         }
         #[cfg(not(feature = "metrics"))]
         let _ = count;
@@ -753,9 +753,9 @@ impl GatewayState {
         method: &str,
         params: serde_json::Value,
         timeout: std::time::Duration,
-    ) -> Result<serde_json::Value, moltis_protocol::ErrorShape> {
+    ) -> Result<serde_json::Value, clawmaster_protocol::ErrorShape> {
         let request_id = uuid::Uuid::new_v4().to_string();
-        let req_frame = moltis_protocol::RequestFrame {
+        let req_frame = clawmaster_protocol::RequestFrame {
             r#type: "req".into(),
             id: request_id.clone(),
             method: method.into(),
@@ -763,7 +763,7 @@ impl GatewayState {
             channel: None,
         };
         let json = serde_json::to_string(&req_frame).map_err(|e| {
-            moltis_protocol::ErrorShape::new(moltis_protocol::error_codes::INTERNAL, e.to_string())
+            clawmaster_protocol::ErrorShape::new(clawmaster_protocol::error_codes::INTERNAL, e.to_string())
         })?;
 
         let (tx, rx) = oneshot::channel();
@@ -773,8 +773,8 @@ impl GatewayState {
         {
             let mut inner = self.inner.write().await;
             if !inner.clients.contains_key(conn_id) {
-                return Err(moltis_protocol::ErrorShape::new(
-                    moltis_protocol::error_codes::UNAVAILABLE,
+                return Err(clawmaster_protocol::ErrorShape::new(
+                    clawmaster_protocol::error_codes::UNAVAILABLE,
                     "client not connected",
                 ));
             }
@@ -792,8 +792,8 @@ impl GatewayState {
                 .unwrap_or(false);
             if !sent {
                 inner.pending_client_requests.remove(&request_id);
-                return Err(moltis_protocol::ErrorShape::new(
-                    moltis_protocol::error_codes::UNAVAILABLE,
+                return Err(clawmaster_protocol::ErrorShape::new(
+                    clawmaster_protocol::error_codes::UNAVAILABLE,
                     "client send failed",
                 ));
             }
@@ -801,8 +801,8 @@ impl GatewayState {
 
         match tokio::time::timeout(timeout, rx).await {
             Ok(Ok(result)) => result,
-            Ok(Err(_)) => Err(moltis_protocol::ErrorShape::new(
-                moltis_protocol::error_codes::UNAVAILABLE,
+            Ok(Err(_)) => Err(clawmaster_protocol::ErrorShape::new(
+                clawmaster_protocol::error_codes::UNAVAILABLE,
                 "client request cancelled",
             )),
             Err(_) => {
@@ -811,8 +811,8 @@ impl GatewayState {
                     .await
                     .pending_client_requests
                     .remove(&request_id);
-                Err(moltis_protocol::ErrorShape::new(
-                    moltis_protocol::error_codes::TIMEOUT,
+                Err(clawmaster_protocol::ErrorShape::new(
+                    clawmaster_protocol::error_codes::TIMEOUT,
                     "client request timeout",
                 ))
             },
@@ -827,7 +827,7 @@ impl GatewayState {
         drop(inner);
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::gauge!(moltis_metrics::system::CONNECTED_CLIENTS).set(count as f64);
+        clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS).set(count as f64);
         #[cfg(not(feature = "metrics"))]
         let _ = count;
 
@@ -861,7 +861,7 @@ impl GatewayState {
         drop(inner);
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::gauge!(moltis_metrics::system::CONNECTED_CLIENTS).set(0.0);
+        clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS).set(0.0);
 
         tracing::info!(
             reason,
@@ -900,7 +900,7 @@ mod tests {
             connect_params: ConnectParams {
                 min_protocol: 1,
                 max_protocol: 1,
-                client: moltis_protocol::ClientInfo {
+                client: clawmaster_protocol::ClientInfo {
                     id: "test".into(),
                     display_name: None,
                     version: "0.0.0".into(),
@@ -930,7 +930,7 @@ mod tests {
             timezone: None,
             subscriptions: None,
             joined_channels: HashSet::new(),
-            negotiated_protocol: moltis_protocol::PROTOCOL_VERSION,
+            negotiated_protocol: clawmaster_protocol::PROTOCOL_VERSION,
         };
         (client, rx)
     }

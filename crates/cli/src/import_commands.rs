@@ -47,7 +47,7 @@ pub async fn handle_import(action: ImportAction) -> anyhow::Result<()> {
 }
 
 fn handle_detect(json_output: bool) -> anyhow::Result<()> {
-    let Some(detection) = moltis_openclaw_import::detect() else {
+    let Some(detection) = clawmaster_openclaw_import::detect() else {
         if json_output {
             return print_json(serde_json::json!({
                 "detected": false,
@@ -59,7 +59,7 @@ fn handle_detect(json_output: bool) -> anyhow::Result<()> {
         return Ok(());
     };
 
-    let scan = moltis_openclaw_import::scan(&detection);
+    let scan = clawmaster_openclaw_import::scan(&detection);
     if json_output {
         return print_json(serde_json::json!({
             "detected": true,
@@ -128,7 +128,7 @@ fn handle_detect(json_output: bool) -> anyhow::Result<()> {
 }
 
 fn handle_import_all(dry_run: bool, json_output: bool) -> anyhow::Result<()> {
-    let Some(detection) = moltis_openclaw_import::detect() else {
+    let Some(detection) = clawmaster_openclaw_import::detect() else {
         if json_output {
             return print_json(serde_json::json!({ "detected": false }));
         }
@@ -137,7 +137,7 @@ fn handle_import_all(dry_run: bool, json_output: bool) -> anyhow::Result<()> {
     };
 
     if dry_run {
-        let scan = moltis_openclaw_import::scan(&detection);
+        let scan = clawmaster_openclaw_import::scan(&detection);
         if json_output {
             return print_json(serde_json::json!({
                 "detected": true,
@@ -160,13 +160,13 @@ fn handle_import_all(dry_run: bool, json_output: bool) -> anyhow::Result<()> {
         println!();
     }
 
-    let config_dir = moltis_config::config_dir()
+    let config_dir = clawmaster_config::config_dir()
         .ok_or_else(|| anyhow::anyhow!("could not determine config directory"))?;
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
 
-    let report = moltis_openclaw_import::import(
+    let report = clawmaster_openclaw_import::import(
         &detection,
-        &moltis_openclaw_import::ImportSelection::all(),
+        &clawmaster_openclaw_import::ImportSelection::all(),
         &config_dir,
         &data_dir,
     );
@@ -191,7 +191,7 @@ fn handle_import_select(
     dry_run: bool,
     json_output: bool,
 ) -> anyhow::Result<()> {
-    let Some(detection) = moltis_openclaw_import::detect() else {
+    let Some(detection) = clawmaster_openclaw_import::detect() else {
         if json_output {
             return print_json(serde_json::json!({ "detected": false }));
         }
@@ -223,12 +223,12 @@ fn handle_import_select(
         println!();
     }
 
-    let config_dir = moltis_config::config_dir()
+    let config_dir = clawmaster_config::config_dir()
         .ok_or_else(|| anyhow::anyhow!("could not determine config directory"))?;
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
 
     let report =
-        moltis_openclaw_import::import(&detection, &parsed.selection, &config_dir, &data_dir);
+        clawmaster_openclaw_import::import(&detection, &parsed.selection, &config_dir, &data_dir);
 
     if json_output {
         return print_json(serde_json::json!({
@@ -247,12 +247,12 @@ fn handle_import_select(
 }
 
 struct ParsedSelection {
-    selection: moltis_openclaw_import::ImportSelection,
+    selection: clawmaster_openclaw_import::ImportSelection,
     unknown_categories: Vec<String>,
 }
 
 fn parse_selection(categories: &[String], warn_unknown: bool) -> ParsedSelection {
-    let mut sel = moltis_openclaw_import::ImportSelection::default();
+    let mut sel = clawmaster_openclaw_import::ImportSelection::default();
     let mut unknown_categories = Vec::new();
     for cat in categories {
         match cat.trim().to_lowercase().as_str() {
@@ -294,7 +294,7 @@ fn print_scan_item(name: &str, available: bool, detail: Option<String>) {
     }
 }
 
-fn print_scan_summary(scan: &moltis_openclaw_import::ImportScan) {
+fn print_scan_summary(scan: &clawmaster_openclaw_import::ImportScan) {
     print_scan_item("Identity", scan.identity_available, None);
     print_scan_item("Providers", scan.providers_available, None);
     print_scan_item(
@@ -328,7 +328,7 @@ fn print_scan_summary(scan: &moltis_openclaw_import::ImportScan) {
     );
 }
 
-fn print_selection(sel: &moltis_openclaw_import::ImportSelection) {
+fn print_selection(sel: &clawmaster_openclaw_import::ImportSelection) {
     let items = [
         ("Identity", sel.identity),
         ("Providers", sel.providers),
@@ -348,7 +348,7 @@ fn print_selection(sel: &moltis_openclaw_import::ImportSelection) {
     }
 }
 
-fn format_channel_scan_detail(scan: &moltis_openclaw_import::ImportScan) -> Option<String> {
+fn format_channel_scan_detail(scan: &clawmaster_openclaw_import::ImportScan) -> Option<String> {
     let mut parts = Vec::new();
     if scan.telegram_accounts > 0 {
         parts.push(format!("{} Telegram account(s)", scan.telegram_accounts));
@@ -363,8 +363,8 @@ fn format_channel_scan_detail(scan: &moltis_openclaw_import::ImportScan) -> Opti
     }
 }
 
-fn print_report(report: &moltis_openclaw_import::report::ImportReport) {
-    use moltis_openclaw_import::report::ImportStatus;
+fn print_report(report: &clawmaster_openclaw_import::report::ImportReport) {
+    use clawmaster_openclaw_import::report::ImportStatus;
 
     println!("Import complete! Your OpenClaw installation was not modified.");
     println!();
@@ -397,7 +397,7 @@ fn print_report(report: &moltis_openclaw_import::report::ImportReport) {
 
     if !report.todos.is_empty() {
         println!();
-        println!("TODO (not yet supported in Moltis):");
+        println!("TODO (not yet supported in ClawMaster):");
         for todo in &report.todos {
             println!("  - {}: {}", todo.feature, todo.description);
         }

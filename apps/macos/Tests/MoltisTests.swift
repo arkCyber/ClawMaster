@@ -1,7 +1,7 @@
-@testable import Moltis
+@testable import ClawMaster
 import XCTest
 
-final class MoltisTests: XCTestCase {
+final class ClawMasterTests: XCTestCase {
     private func localizedStringsDictionary(for localization: String) throws -> [String: String] {
         guard
             let path = Bundle.main.path(
@@ -12,7 +12,7 @@ final class MoltisTests: XCTestCase {
             )
         else {
             throw NSError(
-                domain: "MoltisTests.Localization",
+                domain: "ClawMasterTests.Localization",
                 code: 1,
                 userInfo: [NSLocalizedDescriptionKey: "Missing \(localization).lproj/Localizable.strings"]
             )
@@ -20,7 +20,7 @@ final class MoltisTests: XCTestCase {
 
         guard let dict = NSDictionary(contentsOfFile: path) as? [String: String] else {
             throw NSError(
-                domain: "MoltisTests.Localization",
+                domain: "ClawMasterTests.Localization",
                 code: 2,
                 userInfo: [NSLocalizedDescriptionKey: "Failed to parse \(path)"]
             )
@@ -29,16 +29,16 @@ final class MoltisTests: XCTestCase {
     }
 
     func testVersionPayloadDecodesCoreFields() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.version()
 
         XCTAssertFalse(payload.bridgeVersion.isEmpty)
-        XCTAssertFalse(payload.moltisVersion.isEmpty)
+        XCTAssertFalse(payload.clawmasterVersion.isEmpty)
         XCTAssertFalse(payload.configDir.isEmpty)
     }
 
     func testChatPayloadReturnsReplyAndValidation() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.chat(
             message: "swift test",
             configToml: "[server]\nport = \"invalid\""
@@ -82,7 +82,7 @@ final class MoltisTests: XCTestCase {
     }
 
     func testOnboardingStatePersistsCompletion() throws {
-        let suiteName = "moltis.tests.\(UUID().uuidString)"
+        let suiteName = "clawmaster.tests.\(UUID().uuidString)"
         guard let defaults = UserDefaults(suiteName: suiteName) else {
             XCTFail("Failed to create isolated UserDefaults suite")
             return
@@ -141,7 +141,7 @@ final class MoltisTests: XCTestCase {
     // MARK: - Provider bridge tests
 
     func testKnownProvidersReturnsNonEmptyArray() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let providers = try client.knownProviders()
 
         XCTAssertFalse(providers.isEmpty)
@@ -152,7 +152,7 @@ final class MoltisTests: XCTestCase {
     }
 
     func testDetectProvidersReturnsArray() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         // Should return an array (may be empty if no providers are configured)
         let sources = try client.detectProviders()
         // Just verify it doesn't throw and returns a valid array
@@ -160,27 +160,27 @@ final class MoltisTests: XCTestCase {
     }
 
     func testListModelsReturnsArray() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let models = try client.listModels()
         // Just verify it doesn't throw and returns a valid array
         _ = models
     }
 
     func testRefreshRegistrySucceeds() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         // Should not throw
         try client.refreshRegistry()
     }
 
     func testListEnvVarsReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.listEnvVars()
         XCTAssertFalse(payload.vaultStatus.isEmpty)
         _ = payload.envVars
     }
 
     func testMemoryStatusReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.memoryStatus()
         _ = payload.available
         _ = payload.totalFiles
@@ -188,21 +188,21 @@ final class MoltisTests: XCTestCase {
     }
 
     func testMemoryConfigGetReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.memoryConfigGet()
         XCTAssertFalse(payload.backend.isEmpty)
         XCTAssertFalse(payload.citations.isEmpty)
     }
 
     func testMemoryQmdStatusReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.memoryQmdStatus()
         _ = payload.featureEnabled
         _ = payload.available
     }
 
     func testSandboxStatusReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.sandboxStatus()
         XCTAssertFalse(payload.backend.isEmpty)
         XCTAssertFalse(payload.os.isEmpty)
@@ -210,14 +210,14 @@ final class MoltisTests: XCTestCase {
     }
 
     func testSandboxSharedHomeReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let payload = try client.sandboxGetSharedHome()
         XCTAssertFalse(payload.mode.isEmpty)
         XCTAssertFalse(payload.path.isEmpty)
     }
 
     func testAuthStatusReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let status = try client.authStatus()
         _ = status.authDisabled
         _ = status.hasPassword
@@ -226,17 +226,17 @@ final class MoltisTests: XCTestCase {
     }
 
     func testAuthPasskeyListReturnsPayload() throws {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         let passkeys = try client.authListPasskeys()
         _ = passkeys
     }
 
     func testAuthPasswordChangeRejectsShortPassword() {
-        let client = MoltisClient()
+        let client = ClawMasterClient()
         XCTAssertThrowsError(
             try client.authPasswordChange(currentPassword: nil, newPassword: "short")
         ) { error in
-            guard case let MoltisClientError.bridgeError(code, _) = error else {
+            guard case let ClawMasterClientError.bridgeError(code, _) = error else {
                 XCTFail("Expected bridgeError for short password")
                 return
             }

@@ -11,7 +11,7 @@ use axum::{
 use axum::{http::header, response::Response};
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::MetricsSnapshot;
+use clawmaster_metrics::MetricsSnapshot;
 
 #[cfg(feature = "metrics")]
 use crate::server::AppState;

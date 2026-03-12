@@ -35,7 +35,7 @@ pub enum TeamsAction {
 
 #[derive(Args, Clone)]
 pub struct TeamsBootstrapArgs {
-    /// Local account key used by Moltis and in the webhook path.
+    /// Local account key used by ClawMaster and in the webhook path.
     #[arg(long)]
     account_id: Option<String>,
     /// Azure Bot App ID (client ID).
@@ -44,7 +44,7 @@ pub struct TeamsBootstrapArgs {
     /// Azure Bot App Password (client secret).
     #[arg(long)]
     app_password: Option<String>,
-    /// Public base URL of your Moltis instance (for webhook endpoint generation).
+    /// Public base URL of your ClawMaster instance (for webhook endpoint generation).
     #[arg(long)]
     base_url: Option<String>,
     /// Optional webhook shared secret. If omitted, a random value is generated.
@@ -84,7 +84,7 @@ fn handle_teams(action: TeamsAction) -> Result<()> {
 }
 
 fn run_teams_bootstrap(args: TeamsBootstrapArgs) -> Result<()> {
-    let config = moltis_config::discover_and_load();
+    let config = clawmaster_config::discover_and_load();
     let default_base_url = default_gateway_base_url(&config);
 
     let app_id = required_value(
@@ -114,7 +114,7 @@ fn run_teams_bootstrap(args: TeamsBootstrapArgs) -> Result<()> {
     let raw_base_url = match args.base_url {
         Some(value) if !value.trim().is_empty() => value.trim().to_string(),
         _ => prompt_required(
-            "Public base URL for this Moltis instance",
+            "Public base URL for this ClawMaster instance",
             Some(default_base_url.as_str()),
         )?,
     };
@@ -182,14 +182,14 @@ fn run_teams_bootstrap(args: TeamsBootstrapArgs) -> Result<()> {
 
     let account_id_for_save = account_id.clone();
     let value_for_save = config_value;
-    let path = moltis_config::update_config(move |cfg| {
+    let path = clawmaster_config::update_config(move |cfg| {
         cfg.channels
             .msteams
             .insert(account_id_for_save, value_for_save);
     })?;
 
     println!("Saved Teams channel config to {}", path.display());
-    println!("Restart Moltis gateway to apply channel changes.");
+    println!("Restart ClawMaster gateway to apply channel changes.");
     println!();
     print_setup_links();
     println!("Set your Azure Bot messaging endpoint to:");
@@ -318,7 +318,7 @@ fn build_channel_config(
     Value::Object(map)
 }
 
-fn default_gateway_base_url(config: &moltis_config::MoltisConfig) -> String {
+fn default_gateway_base_url(config: &clawmaster_config::MoltisConfig) -> String {
     let scheme = if config.tls.enabled {
         "https"
     } else {

@@ -119,4 +119,6 @@ export default {
 		deleteAfterRun: "Delete after run",
 		create: "Create",
 	},
+	confirmDelete: "Delete job '{{name}}'?",
+	confirmDeleteMessage: "This will permanently remove the cron job.",
 };

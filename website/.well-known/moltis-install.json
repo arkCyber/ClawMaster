@@ -1,29 +1,29 @@
 {
   "manifest_version": "1",
-  "id": "moltis.org/install",
-  "name": "Moltis",
-  "homepage": "https://moltis.org",
-  "docs": "https://docs.moltis.org",
+  "id": "clawmaster.org/install",
+  "name": "ClawMaster",
+  "homepage": "https://clawmaster.org",
+  "docs": "https://docs.clawmaster.org",
   "discovery": {
-    "llms_txt_uri": "https://moltis.org/llms.txt",
-    "agent_card_uri": "https://moltis.org/.well-known/agent-card.json",
-    "api_catalog_uri": "https://moltis.org/.well-known/api-catalog"
+    "llms_txt_uri": "https://clawmaster.org/llms.txt",
+    "agent_card_uri": "https://clawmaster.org/.well-known/agent-card.json",
+    "api_catalog_uri": "https://clawmaster.org/.well-known/api-catalog"
   },
   "release_channels": {
     "default_channel": "stable",
     "channels": {
       "stable": {
-        "manifest": "https://moltis.org/.well-known/moltis-install/channels/stable.json"
+        "manifest": "https://clawmaster.org/.well-known/clawmaster-install/channels/stable.json"
       }
     }
   },
   "install": {
     "strategy": "shell_script",
-    "script_url": "https://www.moltis.org/install.sh",
-    "command_preview": "curl -fsSL https://www.moltis.org/install.sh | sh",
-    "release_manifest_schema": "https://moltis.org/.well-known/moltis-install.release.schema.json",
+    "script_url": "https://www.clawmaster.org/install.sh",
+    "command_preview": "curl -fsSL https://www.clawmaster.org/install.sh | sh",
+    "release_manifest_schema": "https://clawmaster.org/.well-known/clawmaster-install.release.schema.json",
     "verify": {
-      "release_page_url": "https://github.com/moltis-org/moltis/releases"
+      "release_page_url": "https://github.com/clawmaster-org/clawmaster/releases"
     }
   },
   "post_install": [
@@ -31,7 +31,7 @@
       "id": "openclaw-detect",
       "description": "Detect an OpenClaw installation and collect import inventory",
       "run": [
-        "moltis",
+        "clawmaster",
         "import",
         "detect",
         "--json"
@@ -42,7 +42,7 @@
       "id": "openclaw-import",
       "description": "Import OpenClaw identity/providers/skills/memory/channels/sessions/mcp",
       "run": [
-        "moltis",
+        "clawmaster",
         "import",
         "all",
         "--json"
@@ -52,7 +52,7 @@
   ],
   "start": {
     "run": [
-      "moltis",
+      "clawmaster",
       "gateway",
       "--bind",
       "0.0.0.0",
@@ -69,6 +69,6 @@
     ]
   },
   "handoff": {
-    "user_message_template": "Moltis is ready. Please visit {url} to complete setup and sign in."
+    "user_message_template": "ClawMaster is ready. Please visit {url} to complete setup and sign in."
   }
 }

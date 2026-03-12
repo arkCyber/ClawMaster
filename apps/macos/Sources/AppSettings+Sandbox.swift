@@ -292,7 +292,7 @@ extension AppSettings {
                 path: path.isEmpty ? nil : path
             )
             applySandboxSharedHome(config)
-            sandboxSharedHomeMessage = "Saved. Restart Moltis to apply shared folder changes."
+            sandboxSharedHomeMessage = "Saved. Restart ClawMaster to apply shared folder changes."
         } catch {
             sandboxSharedHomeError = error.localizedDescription
             logSettingsError("save sandbox shared home", error)

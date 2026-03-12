@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-final class MoltisUITests: XCTestCase {
+final class ClawMasterUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
@@ -83,7 +83,7 @@ final class MoltisUITests: XCTestCase {
     }
 }
 
-private extension MoltisUITests {
+private extension ClawMasterUITests {
     func openSettingsWindow(in app: XCUIApplication) -> XCUIElement {
         let settingsWindow = settingsWindow(in: app)
         if settingsWindow.exists {
@@ -129,7 +129,7 @@ private extension MoltisUITests {
 
     func makeRuntimeRoot() throws -> URL {
         let root = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appendingPathComponent("moltis-ui-tests-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("clawmaster-ui-tests-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         return root
     }

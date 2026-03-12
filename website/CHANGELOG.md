@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Machine-readable install discovery files under `/.well-known/` for agent-driven Moltis setup.
-- Stable channel pointer at `/.well-known/moltis-install/channels/stable.json` and immutable per-release manifests at `/.well-known/moltis-install/releases/<version>.json`.
+- Machine-readable install discovery files under `/.well-known/` for agent-driven ClawMaster setup.
+- Stable channel pointer at `/.well-known/clawmaster-install/channels/stable.json` and immutable per-release manifests at `/.well-known/clawmaster-install/releases/<version>.json`.
 - JSON schemas for root, channel, and release install manifests.
 - Agent discovery docs: `/.well-known/agent-card.json`, `/.well-known/api-catalog`, and `/llms.txt`.
 - Release-manifest generator script at `scripts/generate-install-release-manifest.mjs`.

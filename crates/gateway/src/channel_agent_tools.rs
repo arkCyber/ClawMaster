@@ -1,7 +1,7 @@
 use {
     anyhow::Result,
     async_trait::async_trait,
-    moltis_agents::tool_registry::AgentTool,
+    clawmaster_agents::tool_registry::AgentTool,
     serde_json::{Value, json},
     std::sync::Arc,
 };

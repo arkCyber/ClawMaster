@@ -10,8 +10,8 @@ use std::sync::Arc;
 use {async_trait::async_trait, futures::future::BoxFuture, serde_json::Value};
 
 use {
-    moltis_agents::tool_registry::AgentTool,
-    moltis_sessions::{metadata::SqliteSessionMetadata, store::SessionStore},
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_sessions::{metadata::SqliteSessionMetadata, store::SessionStore},
 };
 
 use crate::{
@@ -63,8 +63,8 @@ impl SessionAccessPolicy {
     }
 }
 
-impl From<&moltis_config::SessionAccessPolicyConfig> for SessionAccessPolicy {
-    fn from(config: &moltis_config::SessionAccessPolicyConfig) -> Self {
+impl From<&clawmaster_config::SessionAccessPolicyConfig> for SessionAccessPolicy {
+    fn from(config: &clawmaster_config::SessionAccessPolicyConfig) -> Self {
         Self {
             key_prefix: config.key_prefix.clone(),
             allowed_keys: config.allowed_keys.clone(),

@@ -1,0 +1,13 @@
+package clawmaster:datetime-format@0.1.0;
+
+/// DateTime formatting tool for Moltis AI agents.
+world datetime-format {
+    /// Format Unix timestamp to string.
+    export format-timestamp: func(timestamp: s64, format: string) -> result<string, string>;
+    
+    /// Format ISO8601 to custom format.
+    export format-iso: func(iso: string, format: string) -> result<string, string>;
+    
+    /// Parse datetime string.
+    export parse-datetime: func(input: string, format: string) -> result<s64, string>;
+}

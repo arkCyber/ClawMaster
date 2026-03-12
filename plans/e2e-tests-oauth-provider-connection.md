@@ -60,7 +60,7 @@ New startup script (similar to existing `start-gateway.sh`) that:
   export MOLTIS_OAUTH_OPENAI_CODEX_CLIENT_ID="test-client-id"
   export MOLTIS_OAUTH_OPENAI_CODEX_REDIRECT_URI="http://localhost:1455/auth/callback"
   ```
-- Starts the moltis gateway as usual (isolated data dir, no TLS)
+- Starts the clawmaster gateway as usual (isolated data dir, no TLS)
 - Seeds identity/user files like the default script
 
 #### 3. Add Playwright project in `playwright.config.js`
@@ -158,9 +158,9 @@ Create a GitHub Environment called `e2e-oauth` with **required reviewers**
 
 #### Obtaining test tokens
 
-1. Run moltis locally: `cargo run -- serve`
+1. Run clawmaster locally: `cargo run -- serve`
 2. Connect the provider via the UI (triggers real OAuth flow)
-3. Copy tokens from `~/.config/moltis/oauth_tokens.json`
+3. Copy tokens from `~/.config/clawmaster/oauth_tokens.json`
 4. Store in GitHub Secrets
 
 Tokens will need periodic rotation when the refresh token expires (provider
@@ -179,7 +179,7 @@ e2e-oauth-integration:
   steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: cargo build --bin moltis
+      run: cargo build --bin clawmaster
     - name: Setup Node
       uses: actions/setup-node@v4
       with: { node-version: 22 }
@@ -191,8 +191,8 @@ e2e-oauth-integration:
       working-directory: crates/gateway/ui
     - name: Seed OAuth tokens
       run: |
-        mkdir -p target/e2e-runtime-oauth/.config/moltis
-        cat > target/e2e-runtime-oauth/.config/moltis/oauth_tokens.json << 'SEED'
+        mkdir -p target/e2e-runtime-oauth/.config/clawmaster
+        cat > target/e2e-runtime-oauth/.config/clawmaster/oauth_tokens.json << 'SEED'
         {
           "openai-codex": {
             "access_token": "${{ secrets.MOLTIS_OAUTH_OPENAI_CODEX_ACCESS_TOKEN }}",

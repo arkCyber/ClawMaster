@@ -20,7 +20,7 @@ use {
 
 use {
     crate::hooks::{HookAction, HookEvent, HookHandler, HookPayload, ShellHookConfig},
-    moltis_common::{Error as HookError, Result as HookResult},
+    clawmaster_common::{Error as HookError, Result as HookResult},
 };
 
 /// Response format expected from shell hooks on stdout.
@@ -363,7 +363,7 @@ mod tests {
 
     #[tokio::test]
     async fn shell_hook_working_dir() {
-        let tmp = std::env::temp_dir().join("moltis_hook_wd_test");
+        let tmp = std::env::temp_dir().join("clawmaster_hook_wd_test");
         std::fs::create_dir_all(&tmp).unwrap();
 
         let handler = ShellHookHandler::new(

@@ -34,7 +34,7 @@ targets:
       - path: Assets.xcassets
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: org.moltis.ios
+        PRODUCT_BUNDLE_IDENTIFIER: org.clawmaster.ios
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: Info.plist
         SWIFT_EMIT_LOC_STRINGS: NO
@@ -65,7 +65,7 @@ targets:
       - path: Sources/LiveActivity/MoltisActivityAttributes.swift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: org.moltis.ios.widget
+        PRODUCT_BUNDLE_IDENTIFIER: org.clawmaster.ios.widget
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: Widget/Info.plist
         SWIFT_EMIT_LOC_STRINGS: NO

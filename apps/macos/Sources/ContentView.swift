@@ -316,11 +316,11 @@ private struct ChatDetailView: View {
     private var tokenBar: some View {
         Text(tokenBarText)
             .font(.system(size: 10))
-            .foregroundStyle(MoltisTheme.muted)
+            .foregroundStyle(ClawMasterTheme.muted)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 12)
             .padding(.vertical, 2)
-            .background(MoltisTheme.surface)
+            .background(ClawMasterTheme.surface)
     }
 
     private var inputBar: some View {

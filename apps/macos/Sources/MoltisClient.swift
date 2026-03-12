@@ -12,7 +12,7 @@ private struct BridgeLogPayload: Decodable {
 }
 
 /// Global reference to the `LogStore` used by the Rust log callback.
-/// Set once during app startup via `MoltisClient.installLogCallback`.
+/// Set once during app startup via `ClawMasterClient.installLogCallback`.
 private var globalLogStore: LogStore?
 private let logDecoder = JSONDecoder()
 
@@ -55,7 +55,7 @@ struct BridgeSessionEventPayload: Decodable {
 }
 
 /// Global reference to the `ChatStore` used by the Rust session event callback.
-/// Set once during app startup via `MoltisClient.installSessionEventCallback`.
+/// Set once during app startup via `ClawMasterClient.installSessionEventCallback`.
 private var globalChatStore: ChatStore?
 private let sessionEventDecoder = JSONDecoder()
 
@@ -94,7 +94,7 @@ private struct BridgeNetworkAuditPayload: Decodable {
 }
 
 /// Global reference to the `NetworkAuditStore` used by the Rust network audit callback.
-/// Set once during app startup via `MoltisClient.installNetworkAuditCallback`.
+/// Set once during app startup via `ClawMasterClient.installNetworkAuditCallback`.
 private var globalNetworkAuditStore: NetworkAuditStore?
 private let networkAuditDecoder = JSONDecoder()
 
@@ -126,7 +126,7 @@ private func rustNetworkAuditCallbackHandler(eventJson: UnsafePointer<CChar>?) {
 
 // MARK: - Client Errors
 
-enum MoltisClientError: Error, LocalizedError {
+enum ClawMasterClientError: Error, LocalizedError {
     case nilResponsePointer
     case jsonEncodingFailed
     case bridgeError(code: String, message: String)
@@ -147,7 +147,7 @@ enum MoltisClientError: Error, LocalizedError {
 
 struct BridgeVersionPayload: Decodable {
     let bridgeVersion: String
-    let moltisVersion: String
+    let clawmasterVersion: String
     let configDir: String
 }
 
@@ -643,23 +643,23 @@ private func streamCallbackHandler(
 
 // MARK: - Client
 
-struct MoltisClient {
+struct ClawMasterClient {
     /// Install the Rust→Swift log bridge. Call once at app startup.
     static func installLogCallback(logStore: LogStore) {
         globalLogStore = logStore
-        moltis_set_log_callback(rustLogCallbackHandler)
+        clawmaster_set_log_callback(rustLogCallbackHandler)
     }
 
     /// Install the Rust→Swift session event bridge. Call once at app startup.
     static func installSessionEventCallback(chatStore: ChatStore) {
         globalChatStore = chatStore
-        moltis_set_session_event_callback(rustSessionEventCallbackHandler)
+        clawmaster_set_session_event_callback(rustSessionEventCallbackHandler)
     }
 
     /// Install the Rust→Swift network audit bridge. Call once at app startup.
     static func installNetworkAuditCallback(store: NetworkAuditStore) {
         globalNetworkAuditStore = store
-        moltis_set_network_audit_callback(rustNetworkAuditCallbackHandler)
+        clawmaster_set_network_audit_callback(rustNetworkAuditCallbackHandler)
     }
 
     private let decoder: JSONDecoder = {
@@ -675,12 +675,12 @@ struct MoltisClient {
     }()
 
     func version() throws -> BridgeVersionPayload {
-        let payload = try consumeCStringPointer(moltis_version())
+        let payload = try consumeCStringPointer(clawmaster_version())
         return try decode(payload, as: BridgeVersionPayload.self)
     }
 
     func getIdentity() throws -> BridgeIdentityPayload {
-        let payload = try consumeCStringPointer(moltis_get_identity())
+        let payload = try consumeCStringPointer(clawmaster_get_identity())
         return try decode(payload, as: BridgeIdentityPayload.self)
     }
 
@@ -697,17 +697,17 @@ struct MoltisClient {
                 provider: provider,
                 configToml: configToml
             ),
-            via: moltis_chat_json
+            via: clawmaster_chat_json
         )
     }
 
     func knownProviders() throws -> [BridgeKnownProvider] {
-        let payload = try consumeCStringPointer(moltis_known_providers())
+        let payload = try consumeCStringPointer(clawmaster_known_providers())
         return try decode(payload, as: [BridgeKnownProvider].self)
     }
 
     func detectProviders() throws -> [BridgeDetectedSource] {
-        let payload = try consumeCStringPointer(moltis_detect_providers())
+        let payload = try consumeCStringPointer(clawmaster_detect_providers())
         return try decode(payload, as: [BridgeDetectedSource].self)
     }
 
@@ -724,34 +724,34 @@ struct MoltisClient {
                 baseUrl: baseUrl,
                 models: models
             ),
-            via: moltis_save_provider_config
+            via: clawmaster_save_provider_config
         )
     }
 
     func listModels() throws -> [BridgeModelInfo] {
-        let payload = try consumeCStringPointer(moltis_list_models())
+        let payload = try consumeCStringPointer(clawmaster_list_models())
         return try decode(payload, as: [BridgeModelInfo].self)
     }
 
     func refreshRegistry() throws {
-        let payload = try consumeCStringPointer(moltis_refresh_registry())
+        let payload = try consumeCStringPointer(clawmaster_refresh_registry())
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
 
     func startHttpd(host: String, port: UInt16) throws -> BridgeHttpdStatus {
         try callBridge(
             StartHttpdRequest(host: host, port: port),
-            via: moltis_start_httpd
+            via: clawmaster_start_httpd
         )
     }
 
     func stopHttpd() throws -> BridgeHttpdStatus {
-        let payload = try consumeCStringPointer(moltis_stop_httpd())
+        let payload = try consumeCStringPointer(clawmaster_stop_httpd())
         return try decode(payload, as: BridgeHttpdStatus.self)
     }
 
     func httpdStatus() throws -> BridgeHttpdStatus {
-        let payload = try consumeCStringPointer(moltis_httpd_status())
+        let payload = try consumeCStringPointer(clawmaster_httpd_status())
         return try decode(payload, as: BridgeHttpdStatus.self)
     }
 
@@ -759,14 +759,14 @@ struct MoltisClient {
 
     func abortSession(key: String) throws -> BridgeAbortResult {
         let payload = try key.withCString { ptr in
-            try consumeCStringPointer(moltis_abort_session(ptr))
+            try consumeCStringPointer(clawmaster_abort_session(ptr))
         }
         return try decode(payload, as: BridgeAbortResult.self)
     }
 
     func peekSession(key: String) throws -> BridgePeekResult {
         let payload = try key.withCString { ptr in
-            try consumeCStringPointer(moltis_peek_session(ptr))
+            try consumeCStringPointer(clawmaster_peek_session(ptr))
         }
         return try decode(payload, as: BridgePeekResult.self)
     }
@@ -774,21 +774,21 @@ struct MoltisClient {
     // MARK: - Session operations
 
     func listSessions() throws -> [BridgeSessionEntry] {
-        let payload = try consumeCStringPointer(moltis_list_sessions())
+        let payload = try consumeCStringPointer(clawmaster_list_sessions())
         return try decode(payload, as: [BridgeSessionEntry].self)
     }
 
     func switchSession(key: String) throws -> BridgeSessionHistory {
         try callBridge(
             SwitchSessionRequest(key: key),
-            via: moltis_switch_session
+            via: clawmaster_switch_session
         )
     }
 
     func createSession(label: String?) throws -> BridgeSessionEntry {
         try callBridge(
             CreateSessionRequest(label: label),
-            via: moltis_create_session
+            via: clawmaster_create_session
         )
     }
 
@@ -814,7 +814,7 @@ struct MoltisClient {
         let retained = Unmanaged.passRetained(context).toOpaque()
 
         json.withCString { ptr in
-            moltis_session_chat_stream(ptr, streamCallbackHandler, retained)
+            clawmaster_session_chat_stream(ptr, streamCallbackHandler, retained)
         }
     }
 
@@ -840,7 +840,7 @@ struct MoltisClient {
         let retained = Unmanaged.passRetained(context).toOpaque()
 
         json.withCString { ptr in
-            moltis_chat_stream(ptr, streamCallbackHandler, retained)
+            clawmaster_chat_stream(ptr, streamCallbackHandler, retained)
         }
     }
 
@@ -852,7 +852,7 @@ struct MoltisClient {
     ) throws -> Response {
         let data = try encoder.encode(request)
         guard let json = String(data: data, encoding: .utf8) else {
-            throw MoltisClientError.jsonEncodingFailed
+            throw ClawMasterClientError.jsonEncodingFailed
         }
         let payload = try json.withCString { ptr in
             try consumeCStringPointer(ffiCall(ptr))
@@ -866,7 +866,7 @@ struct MoltisClient {
         // Check for bridge error envelope first (distinct shape with required
         // "error.code" + "error.message"). If present, surface it immediately.
         if let bridgeError = try? decoder.decode(BridgeErrorEnvelope.self, from: data) {
-            throw MoltisClientError.bridgeError(
+            throw ClawMasterClientError.bridgeError(
                 code: bridgeError.error.code,
                 message: bridgeError.error.message
             )
@@ -881,11 +881,11 @@ struct MoltisClient {
         _ value: UnsafeMutablePointer<CChar>?
     ) throws -> String {
         guard let value else {
-            throw MoltisClientError.nilResponsePointer
+            throw ClawMasterClientError.nilResponsePointer
         }
 
         defer {
-            moltis_free_string(value)
+            clawmaster_free_string(value)
         }
 
         return String(cString: value)
@@ -894,13 +894,13 @@ struct MoltisClient {
 
 // MARK: - Config / Identity / Soul
 
-extension MoltisClient {
+extension ClawMasterClient {
     /// Loads the full config as a raw dictionary, plus config_dir and data_dir.
     func getConfig() throws -> BridgeGetConfigResult {
-        let payload = try consumeCStringPointer(moltis_get_config())
+        let payload = try consumeCStringPointer(clawmaster_get_config())
         let parsed = try decode(payload, as: BridgeGetConfigPayload.self)
         guard let dict = parsed.config.value as? [String: Any] else {
-            throw MoltisClientError.bridgeError(
+            throw ClawMasterClientError.bridgeError(
                 code: "decode_error",
                 message: "Config is not a JSON object"
             )
@@ -913,25 +913,25 @@ extension MoltisClient {
     }
 
     /// Saves the full config from a raw dictionary. The Rust side deserializes
-    /// to `MoltisConfig` and writes TOML preserving comments.
+    /// to `ClawMasterConfig` and writes TOML preserving comments.
     func saveConfig(_ config: [String: Any]) throws {
         let data = try JSONSerialization.data(withJSONObject: config)
         guard let json = String(data: data, encoding: .utf8) else {
-            throw MoltisClientError.jsonEncodingFailed
+            throw ClawMasterClientError.jsonEncodingFailed
         }
         let payload = try json.withCString { ptr in
-            try consumeCStringPointer(moltis_save_config(ptr))
+            try consumeCStringPointer(clawmaster_save_config(ptr))
         }
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
 
     func memoryStatus() throws -> BridgeMemoryStatusPayload {
-        let payload = try consumeCStringPointer(moltis_memory_status())
+        let payload = try consumeCStringPointer(clawmaster_memory_status())
         return try decode(payload, as: BridgeMemoryStatusPayload.self)
     }
 
     func memoryConfigGet() throws -> BridgeMemoryConfigPayload {
-        let payload = try consumeCStringPointer(moltis_memory_config_get())
+        let payload = try consumeCStringPointer(clawmaster_memory_config_get())
         return try decode(payload, as: BridgeMemoryConfigPayload.self)
     }
 
@@ -949,16 +949,16 @@ extension MoltisClient {
             disableRag: disableRag,
             sessionExport: sessionExport
         )
-        return try callBridge(request, via: moltis_memory_config_update)
+        return try callBridge(request, via: clawmaster_memory_config_update)
     }
 
     func memoryQmdStatus() throws -> BridgeMemoryQmdStatusPayload {
-        let payload = try consumeCStringPointer(moltis_memory_qmd_status())
+        let payload = try consumeCStringPointer(clawmaster_memory_qmd_status())
         return try decode(payload, as: BridgeMemoryQmdStatusPayload.self)
     }
 
     func authStatus() throws -> BridgeAuthStatusPayload {
-        let payload = try consumeCStringPointer(moltis_auth_status())
+        let payload = try consumeCStringPointer(clawmaster_auth_status())
         return try decode(payload, as: BridgeAuthStatusPayload.self)
     }
 
@@ -970,48 +970,48 @@ extension MoltisClient {
             currentPassword: currentPassword,
             newPassword: newPassword
         )
-        return try callBridge(request, via: moltis_auth_password_change)
+        return try callBridge(request, via: clawmaster_auth_password_change)
     }
 
     func authReset() throws {
-        let payload = try consumeCStringPointer(moltis_auth_reset())
+        let payload = try consumeCStringPointer(clawmaster_auth_reset())
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
 
     func authListPasskeys() throws -> [BridgeAuthPasskeyEntry] {
-        let payload = try consumeCStringPointer(moltis_auth_list_passkeys())
+        let payload = try consumeCStringPointer(clawmaster_auth_list_passkeys())
         let parsed = try decode(payload, as: BridgeAuthPasskeysPayload.self)
         return parsed.passkeys
     }
 
     func authRemovePasskey(id: Int64) throws {
         let request = AuthPasskeyIdRequest(id: id)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_auth_remove_passkey)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_auth_remove_passkey)
     }
 
     func authRenamePasskey(id: Int64, name: String) throws {
         let request = AuthPasskeyRenameRequest(id: id, name: name)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_auth_rename_passkey)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_auth_rename_passkey)
     }
 
     func sandboxStatus() throws -> BridgeSandboxStatusPayload {
-        let payload = try consumeCStringPointer(moltis_sandbox_status())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_status())
         return try decode(payload, as: BridgeSandboxStatusPayload.self)
     }
 
     func sandboxListImages() throws -> [BridgeSandboxImageEntry] {
-        let payload = try consumeCStringPointer(moltis_sandbox_list_images())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_list_images())
         let parsed = try decode(payload, as: BridgeSandboxImagesPayload.self)
         return parsed.images
     }
 
     func sandboxDeleteImage(tag: String) throws {
         let request = SandboxDeleteImageRequest(tag: tag)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_sandbox_delete_image)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_sandbox_delete_image)
     }
 
     func sandboxPruneImages() throws -> Int {
-        let payload = try consumeCStringPointer(moltis_sandbox_prune_images())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_prune_images())
         let parsed = try decode(payload, as: BridgeSandboxPrunePayload.self)
         return parsed.pruned
     }
@@ -1020,7 +1020,7 @@ extension MoltisClient {
         let request = SandboxCheckPackagesRequest(base: base, packages: packages)
         let parsed: BridgeSandboxCheckPackagesPayload = try callBridge(
             request,
-            via: moltis_sandbox_check_packages
+            via: clawmaster_sandbox_check_packages
         )
         return parsed.found
     }
@@ -1029,13 +1029,13 @@ extension MoltisClient {
         let request = SandboxBuildImageRequest(name: name, base: base, packages: packages)
         let parsed: BridgeSandboxBuildImagePayload = try callBridge(
             request,
-            via: moltis_sandbox_build_image
+            via: clawmaster_sandbox_build_image
         )
         return parsed.tag
     }
 
     func sandboxGetDefaultImage() throws -> String {
-        let payload = try consumeCStringPointer(moltis_sandbox_get_default_image())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_get_default_image())
         let parsed = try decode(payload, as: BridgeSandboxDefaultImagePayload.self)
         return parsed.image
     }
@@ -1044,13 +1044,13 @@ extension MoltisClient {
         let request = SandboxSetDefaultImageRequest(image: image)
         let parsed: BridgeSandboxDefaultImagePayload = try callBridge(
             request,
-            via: moltis_sandbox_set_default_image
+            via: clawmaster_sandbox_set_default_image
         )
         return parsed.image
     }
 
     func sandboxGetSharedHome() throws -> BridgeSandboxSharedHomePayload {
-        let payload = try consumeCStringPointer(moltis_sandbox_get_shared_home())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_get_shared_home())
         return try decode(payload, as: BridgeSandboxSharedHomePayload.self)
     }
 
@@ -1058,7 +1058,7 @@ extension MoltisClient {
         let request = SandboxSetSharedHomeRequest(enabled: enabled, path: path)
         let parsed: BridgeSandboxSharedHomeSavePayload = try callBridge(
             request,
-            via: moltis_sandbox_set_shared_home
+            via: clawmaster_sandbox_set_shared_home
         )
         _ = parsed.ok
         _ = parsed.restartRequired
@@ -1067,42 +1067,42 @@ extension MoltisClient {
     }
 
     func sandboxListContainers() throws -> [BridgeSandboxContainerEntry] {
-        let payload = try consumeCStringPointer(moltis_sandbox_list_containers())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_list_containers())
         let parsed = try decode(payload, as: BridgeSandboxContainersPayload.self)
         return parsed.containers
     }
 
     func sandboxStopContainer(name: String) throws {
         let request = SandboxContainerNameRequest(name: name)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_sandbox_stop_container)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_sandbox_stop_container)
     }
 
     func sandboxRemoveContainer(name: String) throws {
         let request = SandboxContainerNameRequest(name: name)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_sandbox_remove_container)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_sandbox_remove_container)
     }
 
     func sandboxCleanContainers() throws -> Int {
-        let payload = try consumeCStringPointer(moltis_sandbox_clean_containers())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_clean_containers())
         let parsed = try decode(payload, as: BridgeSandboxCleanContainersPayload.self)
         _ = parsed.ok
         return parsed.removed
     }
 
     func sandboxDiskUsage() throws -> BridgeSandboxDiskUsagePayload {
-        let payload = try consumeCStringPointer(moltis_sandbox_disk_usage())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_disk_usage())
         let parsed = try decode(payload, as: BridgeSandboxDiskUsageEnvelope.self)
         return parsed.usage
     }
 
     func sandboxRestartDaemon() throws {
-        let payload = try consumeCStringPointer(moltis_sandbox_restart_daemon())
+        let payload = try consumeCStringPointer(clawmaster_sandbox_restart_daemon())
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
 
     /// Returns the soul text from SOUL.md, or nil if empty/missing.
     func getSoul() throws -> String? {
-        let payload = try consumeCStringPointer(moltis_get_soul())
+        let payload = try consumeCStringPointer(clawmaster_get_soul())
         let parsed = try decode(payload, as: BridgeGetSoulPayload.self)
         return parsed.soul
     }
@@ -1114,10 +1114,10 @@ extension MoltisClient {
             withJSONObject: request.compactMapValues { $0 ?? NSNull() }
         )
         guard let json = String(data: data, encoding: .utf8) else {
-            throw MoltisClientError.jsonEncodingFailed
+            throw ClawMasterClientError.jsonEncodingFailed
         }
         let payload = try json.withCString { ptr in
-            try consumeCStringPointer(moltis_save_soul(ptr))
+            try consumeCStringPointer(clawmaster_save_soul(ptr))
         }
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
@@ -1132,10 +1132,10 @@ extension MoltisClient {
         let dict = request.compactMapValues { $0 }
         let data = try JSONSerialization.data(withJSONObject: dict)
         guard let json = String(data: data, encoding: .utf8) else {
-            throw MoltisClientError.jsonEncodingFailed
+            throw ClawMasterClientError.jsonEncodingFailed
         }
         let payload = try json.withCString { ptr in
-            try consumeCStringPointer(moltis_save_identity(ptr))
+            try consumeCStringPointer(clawmaster_save_identity(ptr))
         }
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
@@ -1146,10 +1146,10 @@ extension MoltisClient {
         let dict = request.compactMapValues { $0 }
         let data = try JSONSerialization.data(withJSONObject: dict)
         guard let json = String(data: data, encoding: .utf8) else {
-            throw MoltisClientError.jsonEncodingFailed
+            throw ClawMasterClientError.jsonEncodingFailed
         }
         let payload = try json.withCString { ptr in
-            try consumeCStringPointer(moltis_save_user_profile(ptr))
+            try consumeCStringPointer(clawmaster_save_user_profile(ptr))
         }
         _ = try decode(payload, as: BridgeOkPayload.self)
     }
@@ -1157,20 +1157,20 @@ extension MoltisClient {
 
 // MARK: - Environment Variables
 
-extension MoltisClient {
+extension ClawMasterClient {
     func listEnvVars() throws -> BridgeListEnvVarsPayload {
-        let payload = try consumeCStringPointer(moltis_list_env_vars())
+        let payload = try consumeCStringPointer(clawmaster_list_env_vars())
         return try decode(payload, as: BridgeListEnvVarsPayload.self)
     }
 
     func setEnvVar(key: String, value: String) throws {
         let request = SetEnvVarRequest(key: key, value: value)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_set_env_var)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_set_env_var)
     }
 
     func deleteEnvVar(id: Int64) throws {
         let request = DeleteEnvVarRequest(id: id)
-        let _: BridgeOkPayload = try callBridge(request, via: moltis_delete_env_var)
+        let _: BridgeOkPayload = try callBridge(request, via: clawmaster_delete_env_var)
     }
 }
 

@@ -1,7 +1,7 @@
 /// Agent tools for memory search, retrieval, and persistence.
 use std::sync::Arc;
 
-use {async_trait::async_trait, moltis_agents::tool_registry::AgentTool, serde_json::json};
+use {async_trait::async_trait, clawmaster_agents::tool_registry::AgentTool, serde_json::json};
 
 use crate::manager::MemoryManager;
 
@@ -190,7 +190,7 @@ impl AgentTool for MemorySaveTool {
         let file = params["file"].as_str().unwrap_or("MEMORY.md");
         let append = params["append"].as_bool().unwrap_or(true);
 
-        use moltis_agents::memory_writer::MemoryWriter;
+        use clawmaster_agents::memory_writer::MemoryWriter;
         let result = self.manager.write_memory(file, content, append).await?;
 
         Ok(json!({

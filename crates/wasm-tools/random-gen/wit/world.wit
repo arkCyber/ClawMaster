@@ -1,0 +1,16 @@
+package clawmaster:random-gen@0.1.0;
+
+/// Random generation tool for Moltis AI agents.
+world random-gen {
+    /// Generate random integer in range [min, max).
+    export random-int: func(min: s32, max: s32) -> result<s32, string>;
+    
+    /// Generate random float in range [0, 1).
+    export random-float: func() -> f64;
+    
+    /// Generate random bytes.
+    export random-bytes: func(length: u32) -> result<list<u8>, string>;
+    
+    /// Generate random string (alphanumeric).
+    export random-string: func(length: u32) -> result<string, string>;
+}

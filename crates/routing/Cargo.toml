@@ -1,20 +1,20 @@
 [package]
 edition.workspace = true
-name              = "moltis-routing"
+name              = "clawmaster-routing"
 version.workspace = true
 
 [dependencies]
-moltis-common   = { workspace = true }
-moltis-config   = { workspace = true }
-moltis-metrics  = { optional = true, workspace = true }
-moltis-sessions = { workspace = true }
+clawmaster-common   = { workspace = true }
+clawmaster-config   = { workspace = true }
+clawmaster-metrics  = { optional = true, workspace = true }
+clawmaster-sessions = { workspace = true }
 serde_json      = { workspace = true }
 thiserror       = { workspace = true }
 tracing         = { workspace = true }
 
 [features]
 default = []
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 
 [lints]
 workspace = true

@@ -18,7 +18,7 @@ use {
 
 use crate::error::{Context, Error, Result};
 
-use moltis_oauth::{
+use clawmaster_oauth::{
     OAuthConfig, OAuthFlow, OAuthTokens, RegistrationStore, StoredRegistration, TokenStore,
     fetch_as_metadata, fetch_resource_metadata, parse_www_authenticate, register_client,
 };
@@ -462,7 +462,7 @@ impl McpOAuthProvider {
                 &self.http_client,
                 reg_endpoint,
                 vec![redirect_uri.to_string()],
-                &format!("moltis ({})", self.server_name),
+                &format!("clawmaster ({})", self.server_name),
             )
             .await
             .context("failed to register OAuth client")?;

@@ -9,6 +9,7 @@ import { SessionList } from "./components/session-list.js";
 import { onEvent } from "./events.js";
 import * as gon from "./gon.js";
 import { init as initI18n, translateStaticElements } from "./i18n.js";
+import { LanguageSelector } from "./language-selector.js";
 import { initMobile, toggleSessions } from "./mobile.js";
 import { fetchModels } from "./models.js";
 import { updateNavCounts } from "./nav-counts.js";
@@ -28,7 +29,7 @@ import { initTheme, injectMarkdownStyles } from "./theme.js";
 import { connect } from "./websocket.js";
 
 // Expose stores on window for E2E test access.
-window.__moltis_stores = { sessionStore, modelStore, projectStore };
+window.__clawmaster_stores = { sessionStore, modelStore, projectStore };
 
 // Import page modules to register their routes
 import "./page-chat.js";
@@ -44,7 +45,7 @@ import "./session-search.js";
 import "./time-format.js";
 
 function preferredChatPath() {
-	var key = localStorage.getItem("moltis-session") || "main";
+	var key = localStorage.getItem("clawmaster-session") || "main";
 	return sessionPath(key);
 }
 
@@ -65,6 +66,11 @@ initMobile();
 var i18nReady = initI18n()
 	.then(() => {
 		translateStaticElements(document.documentElement);
+		// Render language selector in header
+		var languageSelectorContainer = document.getElementById("languageSelectorContainer");
+		if (languageSelectorContainer) {
+			render(html`<${LanguageSelector} />`, languageSelectorContainer);
+		}
 	})
 	.catch((err) => {
 		console.warn("[i18n] failed to initialize", err);
@@ -79,7 +85,7 @@ function startAppAfterI18n() {
 	});
 }
 
-var UPDATE_DISMISS_KEY = "moltis-update-dismissed-version";
+var UPDATE_DISMISS_KEY = "clawmaster-update-dismissed-version";
 var currentUpdateVersion = null;
 
 // Apply server-injected identity immediately (no async wait), and
@@ -299,7 +305,7 @@ function refreshAuthChrome() {
 		.catch(() => null);
 }
 
-window.addEventListener("moltis:auth-status-changed", () => {
+window.addEventListener("clawmaster:auth-status-changed", () => {
 	refreshAuthChrome().then((auth) => {
 		if (!auth) return;
 		if (auth.setup_required) {
@@ -412,7 +418,7 @@ function applyIdentity(identity) {
 	var emojiEl = document.getElementById("titleEmoji");
 	var nameEl = document.getElementById("titleName");
 	if (emojiEl) emojiEl.textContent = identity?.emoji ? `${identity.emoji} ` : "";
-	if (nameEl) nameEl.textContent = identity?.name || "moltis";
+	if (nameEl) nameEl.textContent = identity?.name || "ClawMaster";
 	applyIdentityFavicon(identity);
 	var branch = gon.get("git_branch");
 
@@ -431,7 +437,7 @@ function applyModels(models) {
 	// Dual-write to state.js for backward compat
 	S.setModels(arr);
 	if (arr.length === 0) return;
-	var saved = localStorage.getItem("moltis-model") || "";
+	var saved = localStorage.getItem("clawmaster-model") || "";
 	var found = arr.find((m) => m.id === saved);
 	if (found) {
 		modelStore.select(found.id);
@@ -439,7 +445,7 @@ function applyModels(models) {
 	} else {
 		modelStore.select(arr[0].id);
 		S.setSelectedModelId(arr[0].id);
-		localStorage.setItem("moltis-model", modelStore.selectedModelId.value);
+		localStorage.setItem("clawmaster-model", modelStore.selectedModelId.value);
 	}
 }
 

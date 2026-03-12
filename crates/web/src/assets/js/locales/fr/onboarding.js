@@ -19,7 +19,7 @@ export default {
 		chooseHowToSecureRequired: "Choose how to secure your instance.",
 		setupCode: "Setup code",
 		setupCodePlaceholder: "6-digit code from terminal",
-		setupCodeHint: "Find this code in the moltis process log (stdout).",
+		setupCodeHint: "Find this code in the clawmaster process log (stdout).",
 		enterSetupCode: "Enter the setup code shown in the process log (stdout).",
 		setupFailed: "Setup failed",
 		passkey: "Passkey",

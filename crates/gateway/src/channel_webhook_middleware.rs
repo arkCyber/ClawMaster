@@ -13,7 +13,7 @@ use axum::{
     response::{IntoResponse as _, Response},
 };
 
-use moltis_channels::channel_webhook_middleware::{
+use clawmaster_channels::channel_webhook_middleware::{
     ChannelWebhookDedupeResult, ChannelWebhookRejection, ChannelWebhookVerifier, TimestampGuard,
     VerifiedChannelWebhook,
 };
@@ -46,9 +46,9 @@ pub fn channel_webhook_gate(
 
     #[cfg(feature = "metrics")]
     {
-        use moltis_metrics::{counter, labels};
+        use clawmaster_metrics::{counter, labels};
         counter!(
-            moltis_metrics::channel_webhook::REQUESTS_TOTAL,
+            clawmaster_metrics::channel_webhook::REQUESTS_TOTAL,
             labels::CHANNEL => verifier.channel_type().as_str()
         )
         .increment(1);
@@ -59,14 +59,14 @@ pub fn channel_webhook_gate(
         Ok(env) => {
             #[cfg(feature = "metrics")]
             {
-                use moltis_metrics::{counter, histogram, labels};
+                use clawmaster_metrics::{counter, histogram, labels};
                 counter!(
-                    moltis_metrics::channel_webhook::VERIFIED_TOTAL,
+                    clawmaster_metrics::channel_webhook::VERIFIED_TOTAL,
                     labels::CHANNEL => verifier.channel_type().as_str()
                 )
                 .increment(1);
                 histogram!(
-                    moltis_metrics::channel_webhook::VERIFY_DURATION_SECONDS,
+                    clawmaster_metrics::channel_webhook::VERIFY_DURATION_SECONDS,
                     labels::CHANNEL => verifier.channel_type().as_str()
                 )
                 .record(start.elapsed().as_secs_f64());
@@ -76,9 +76,9 @@ pub fn channel_webhook_gate(
         Err(rejection) => {
             #[cfg(feature = "metrics")]
             {
-                use moltis_metrics::{counter, labels};
+                use clawmaster_metrics::{counter, labels};
                 counter!(
-                    moltis_metrics::channel_webhook::REJECTED_TOTAL,
+                    clawmaster_metrics::channel_webhook::REJECTED_TOTAL,
                     labels::CHANNEL => verifier.channel_type().as_str(),
                     labels::REJECTION_REASON => rejection.reason_label()
                 )
@@ -94,9 +94,9 @@ pub fn channel_webhook_gate(
     {
         #[cfg(feature = "metrics")]
         {
-            use moltis_metrics::{counter, labels};
+            use clawmaster_metrics::{counter, labels};
             counter!(
-                moltis_metrics::channel_webhook::REJECTED_TOTAL,
+                clawmaster_metrics::channel_webhook::REJECTED_TOTAL,
                 labels::CHANNEL => verifier.channel_type().as_str(),
                 labels::REJECTION_REASON => rejection.reason_label()
             )
@@ -113,9 +113,9 @@ pub fn channel_webhook_gate(
     ) {
         #[cfg(feature = "metrics")]
         {
-            use moltis_metrics::{counter, labels};
+            use clawmaster_metrics::{counter, labels};
             counter!(
-                moltis_metrics::channel_webhook::RATE_LIMITED_TOTAL,
+                clawmaster_metrics::channel_webhook::RATE_LIMITED_TOTAL,
                 labels::CHANNEL => verifier.channel_type().as_str()
             )
             .increment(1);
@@ -129,9 +129,9 @@ pub fn channel_webhook_gate(
         if store.check_and_insert(key) {
             #[cfg(feature = "metrics")]
             {
-                use moltis_metrics::{counter, labels};
+                use clawmaster_metrics::{counter, labels};
                 counter!(
-                    moltis_metrics::channel_webhook::DEDUPED_TOTAL,
+                    clawmaster_metrics::channel_webhook::DEDUPED_TOTAL,
                     labels::CHANNEL => verifier.channel_type().as_str()
                 )
                 .increment(1);
@@ -204,7 +204,7 @@ pub fn rejection_into_response(rejection: ChannelWebhookRejection) -> Response {
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
-    use {super::*, bytes::Bytes, moltis_channels::plugin::ChannelType};
+    use {super::*, bytes::Bytes, clawmaster_channels::plugin::ChannelType};
 
     /// Dummy verifier that always passes for testing the pipeline.
     struct PassVerifier;
@@ -384,8 +384,8 @@ mod tests {
                 })
             }
 
-            fn rate_policy(&self) -> moltis_channels::ChannelWebhookRatePolicy {
-                moltis_channels::ChannelWebhookRatePolicy {
+            fn rate_policy(&self) -> clawmaster_channels::ChannelWebhookRatePolicy {
+                clawmaster_channels::ChannelWebhookRatePolicy {
                     max_requests_per_minute: 6,
                     burst: 0,
                 }

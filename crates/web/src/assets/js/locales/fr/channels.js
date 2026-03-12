@@ -88,6 +88,8 @@ export default {
 		defaultModelLabel: "Default Model",
 		modelDefault: "(default: {{model}})",
 		modelServerDefault: "(server default)",
-		dmAllowlistLabel: "DM Allowlist",
+		dmAllowlistLabel: "Allowlist pour DM",
 	},
+	confirmRemove: "Supprimer {{name}} ?",
+	confirmRemoveMessage: "Cette action ne peut pas être annulée.",
 };

@@ -40,8 +40,8 @@ final class LocationSharingStore: NSObject, ObservableObject {
     @Published private(set) var isTracking = false
     @Published private(set) var lastError: String?
 
-    private static let enabledKey = "shareLocationWithMoltis"
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "location")
+    private static let enabledKey = "shareLocationWithClawMaster"
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "location")
     private let locationManager = CLLocationManager()
 
     private weak var connectionStore: ConnectionStore?

@@ -1,0 +1,16 @@
+package clawmaster:string-length@0.1.0;
+
+/// String length tool for Moltis AI agents.
+world string-length {
+    /// Get byte length.
+    export byte-length: func(input: string) -> u32;
+    
+    /// Get character count.
+    export char-count: func(input: string) -> u32;
+    
+    /// Get word count.
+    export word-count: func(input: string) -> u32;
+    
+    /// Get line count.
+    export line-count: func(input: string) -> u32;
+}

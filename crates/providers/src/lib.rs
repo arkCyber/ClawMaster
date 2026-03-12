@@ -36,12 +36,12 @@ use std::{
 };
 
 use {
-    moltis_config::schema::{ProviderStreamTransport, ProvidersConfig},
+    clawmaster_config::schema::{ProviderStreamTransport, ProvidersConfig},
     secrecy::ExposeSecret,
     tokio_stream::Stream,
 };
 
-use moltis_agents::model::{ChatMessage, LlmProvider, StreamEvent};
+use clawmaster_agents::model::{ChatMessage, LlmProvider, StreamEvent};
 
 /// Shared HTTP client for LLM providers.
 ///
@@ -95,15 +95,15 @@ pub fn namespaced_model_id(provider: &str, model_id: &str) -> String {
 const REASONING_SUFFIX_SEP: char = '@';
 
 /// Reasoning effort suffixes appended to model IDs.
-const REASONING_SUFFIXES: &[(&str, moltis_agents::model::ReasoningEffort)] = &[
-    ("reasoning-low", moltis_agents::model::ReasoningEffort::Low),
+const REASONING_SUFFIXES: &[(&str, clawmaster_agents::model::ReasoningEffort)] = &[
+    ("reasoning-low", clawmaster_agents::model::ReasoningEffort::Low),
     (
         "reasoning-medium",
-        moltis_agents::model::ReasoningEffort::Medium,
+        clawmaster_agents::model::ReasoningEffort::Medium,
     ),
     (
         "reasoning-high",
-        moltis_agents::model::ReasoningEffort::High,
+        clawmaster_agents::model::ReasoningEffort::High,
     ),
 ];
 
@@ -115,7 +115,7 @@ const REASONING_SUFFIXES: &[(&str, moltis_agents::model::ReasoningEffort)] = &[
 #[must_use]
 pub fn split_reasoning_suffix(
     model_id: &str,
-) -> (&str, Option<moltis_agents::model::ReasoningEffort>) {
+) -> (&str, Option<clawmaster_agents::model::ReasoningEffort>) {
     if let Some((base, suffix)) = model_id.rsplit_once(REASONING_SUFFIX_SEP) {
         for &(tag, effort) in REASONING_SUFFIXES {
             if suffix == tag {
@@ -445,11 +445,11 @@ async fn probe_ollama_model_info(
 /// - Fall back to the hardcoded family whitelist only when capabilities are
 ///   unavailable (pre-0.5.x Ollama).
 fn resolve_ollama_tool_mode(
-    config_tool_mode: moltis_config::ToolMode,
+    config_tool_mode: clawmaster_config::ToolMode,
     model_name: &str,
     probe_result: Option<&OllamaShowResponse>,
-) -> moltis_config::ToolMode {
-    use moltis_config::ToolMode;
+) -> clawmaster_config::ToolMode {
+    use clawmaster_config::ToolMode;
 
     match config_tool_mode {
         ToolMode::Native | ToolMode::Text | ToolMode::Off => config_tool_mode,
@@ -544,7 +544,7 @@ impl LlmProvider for RegistryModelProvider {
         &self,
         messages: &[ChatMessage],
         tools: &[serde_json::Value],
-    ) -> anyhow::Result<moltis_agents::model::CompletionResponse> {
+    ) -> anyhow::Result<clawmaster_agents::model::CompletionResponse> {
         self.inner.complete(messages, tools).await
     }
 
@@ -552,7 +552,7 @@ impl LlmProvider for RegistryModelProvider {
         self.inner.supports_tools()
     }
 
-    fn tool_mode(&self) -> Option<moltis_config::ToolMode> {
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
         self.inner.tool_mode()
     }
 
@@ -579,13 +579,13 @@ impl LlmProvider for RegistryModelProvider {
         self.inner.stream_with_tools(messages, tools)
     }
 
-    fn reasoning_effort(&self) -> Option<moltis_agents::model::ReasoningEffort> {
+    fn reasoning_effort(&self) -> Option<clawmaster_agents::model::ReasoningEffort> {
         self.inner.reasoning_effort()
     }
 
     fn with_reasoning_effort(
         self: Arc<Self>,
-        effort: moltis_agents::model::ReasoningEffort,
+        effort: clawmaster_agents::model::ReasoningEffort,
     ) -> Option<Arc<dyn LlmProvider>> {
         let new_inner = Arc::clone(&self.inner).with_reasoning_effort(effort)?;
         Some(Arc::new(RegistryModelProvider {
@@ -2195,11 +2195,11 @@ impl ProviderRegistry {
                         &model_id,
                         ollama_probes.get(&model_id),
                     )
-                } else if !matches!(config_tool_mode, moltis_config::ToolMode::Auto) {
+                } else if !matches!(config_tool_mode, clawmaster_config::ToolMode::Auto) {
                     config_tool_mode
                 } else {
                     // Non-Ollama providers: let OpenAiProvider use its default logic.
-                    moltis_config::ToolMode::Auto
+                    clawmaster_config::ToolMode::Auto
                 };
 
                 let mut oai = openai::OpenAiProvider::new_with_name(
@@ -2210,7 +2210,7 @@ impl ProviderRegistry {
                 )
                 .with_stream_transport(stream_transport);
 
-                if !matches!(effective_tool_mode, moltis_config::ToolMode::Auto) {
+                if !matches!(effective_tool_mode, clawmaster_config::ToolMode::Auto) {
                     oai = oai.with_tool_mode(effective_tool_mode);
                 }
 
@@ -2287,7 +2287,7 @@ impl ProviderRegistry {
                     name.clone(),
                 )
                 .with_stream_transport(entry.stream_transport);
-                if !matches!(custom_tool_mode, moltis_config::ToolMode::Auto) {
+                if !matches!(custom_tool_mode, clawmaster_config::ToolMode::Auto) {
                     oai = oai.with_tool_mode(custom_tool_mode);
                 }
                 let provider = Arc::new(oai);
@@ -2543,14 +2543,14 @@ mod tests {
         };
         config.providers.insert(
             "openai-codex".into(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 ..Default::default()
             },
         );
         config.providers.insert(
             "github-copilot".into(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 ..Default::default()
             },
@@ -2924,7 +2924,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config.providers.insert(
             "openai-codex".into(),
-            moltis_config::schema::ProviderEntry {
+            clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 ..Default::default()
             },
@@ -2944,7 +2944,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("mistral".into(), moltis_config::schema::ProviderEntry {
+            .insert("mistral".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-mistral".into())),
                 ..Default::default()
             });
@@ -2971,7 +2971,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("cerebras".into(), moltis_config::schema::ProviderEntry {
+            .insert("cerebras".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-cerebras".into())),
                 ..Default::default()
             });
@@ -2990,7 +2990,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("minimax".into(), moltis_config::schema::ProviderEntry {
+            .insert("minimax".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-minimax".into())),
                 ..Default::default()
             });
@@ -3016,7 +3016,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("zai".into(), moltis_config::schema::ProviderEntry {
+            .insert("zai".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-zai".into())),
                 ..Default::default()
             });
@@ -3030,7 +3030,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("moonshot".into(), moltis_config::schema::ProviderEntry {
+            .insert("moonshot".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-moonshot".into())),
                 ..Default::default()
             });
@@ -3044,7 +3044,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("deepseek".into(), moltis_config::schema::ProviderEntry {
+            .insert("deepseek".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-deepseek".into())),
                 ..Default::default()
             });
@@ -3076,7 +3076,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("openrouter".into(), moltis_config::schema::ProviderEntry {
+            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 ..Default::default()
             });
@@ -3090,7 +3090,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("openrouter".into(), moltis_config::schema::ProviderEntry {
+            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 models: vec!["anthropic/claude-3-haiku".into()],
                 ..Default::default()
@@ -3114,7 +3114,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("openrouter".into(), moltis_config::schema::ProviderEntry {
+            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 models: vec!["openai::gpt-5.2".into()],
                 ..Default::default()
@@ -3139,7 +3139,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("ollama".into(), moltis_config::schema::ProviderEntry {
+            .insert("ollama".into(), clawmaster_config::schema::ProviderEntry {
                 models: vec!["llama3".into()],
                 ..Default::default()
             });
@@ -3154,7 +3154,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("venice".into(), moltis_config::schema::ProviderEntry {
+            .insert("venice".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-venice".into())),
                 ..Default::default()
             });
@@ -3168,7 +3168,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("mistral".into(), moltis_config::schema::ProviderEntry {
+            .insert("mistral".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test".into())),
                 enabled: false,
                 ..Default::default()
@@ -3194,7 +3194,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("mistral".into(), moltis_config::schema::ProviderEntry {
+            .insert("mistral".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test".into())),
                 base_url: Some("https://custom.mistral.example.com/v1".into()),
                 ..Default::default()
@@ -3209,7 +3209,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("mistral".into(), moltis_config::schema::ProviderEntry {
+            .insert("mistral".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test".into())),
                 models: vec!["mistral-small-latest".into()],
                 fetch_models: false,
@@ -3232,7 +3232,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("mistral".into(), moltis_config::schema::ProviderEntry {
+            .insert("mistral".into(), clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test".into())),
                 models: vec!["codestral-latest".into()],
                 ..Default::default()
@@ -3420,7 +3420,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("local".into(), moltis_config::schema::ProviderEntry {
+            .insert("local".into(), clawmaster_config::schema::ProviderEntry {
                 ..Default::default()
             });
 
@@ -3434,7 +3434,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("local".into(), moltis_config::schema::ProviderEntry {
+            .insert("local".into(), clawmaster_config::schema::ProviderEntry {
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
             });
@@ -3455,7 +3455,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("local".into(), moltis_config::schema::ProviderEntry {
+            .insert("local".into(), clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
@@ -3471,7 +3471,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("local-llm".into(), moltis_config::schema::ProviderEntry {
+            .insert("local-llm".into(), clawmaster_config::schema::ProviderEntry {
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
             });
@@ -3489,7 +3489,7 @@ mod tests {
         let mut config = ProvidersConfig::default();
         config
             .providers
-            .insert("local-llm".into(), moltis_config::schema::ProviderEntry {
+            .insert("local-llm".into(), clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
@@ -3685,7 +3685,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_explicit_override() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // Explicit modes are passed through regardless of probe result.
         assert_eq!(
             resolve_ollama_tool_mode(ToolMode::Native, "anything", None),
@@ -3703,7 +3703,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_auto_with_probe() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
                 family: Some("llama3.1".into()),
@@ -3719,7 +3719,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_auto_unknown_model() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
                 family: Some("starcoder2".into()),
@@ -3755,7 +3755,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_capabilities_override_family() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // Model is NOT in the family whitelist but Ollama reports "tools" capability.
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
@@ -3772,7 +3772,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_capabilities_no_tools() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // Model has capabilities but "tools" is not among them.
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
@@ -3790,7 +3790,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_empty_capabilities_falls_back_to_family() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // Empty capabilities (pre-0.5.x Ollama) — falls back to family whitelist.
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
@@ -3807,7 +3807,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_no_probe_result_falls_back_to_name_heuristic() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // No probe result at all — falls back to model name matching.
         assert_eq!(
             resolve_ollama_tool_mode(ToolMode::Auto, "llama3.1:8b", None),
@@ -3821,7 +3821,7 @@ mod tests {
 
     #[test]
     fn resolve_ollama_tool_mode_explicit_overrides_capabilities() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         // Even with capabilities saying "tools", explicit Text override wins.
         let show_resp = OllamaShowResponse {
             details: OllamaModelDetails {
@@ -3873,7 +3873,7 @@ mod tests {
 
     #[test]
     fn openai_provider_supports_tools_respects_override() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         let make = |mode: ToolMode| {
             openai::OpenAiProvider::new(secret("key"), "gpt-4o".into(), "http://x".into())
                 .with_tool_mode(mode)
@@ -3887,7 +3887,7 @@ mod tests {
 
     #[test]
     fn openai_provider_tool_mode_returns_override() {
-        use moltis_config::ToolMode;
+        use clawmaster_config::ToolMode;
         let p = openai::OpenAiProvider::new(secret("key"), "gpt-4o".into(), "http://x".into())
             .with_tool_mode(ToolMode::Text);
         assert_eq!(p.tool_mode(), Some(ToolMode::Text));
@@ -3901,7 +3901,7 @@ mod tests {
 
     #[test]
     fn split_reasoning_suffix_parses_effort_levels() {
-        use moltis_agents::model::ReasoningEffort;
+        use clawmaster_agents::model::ReasoningEffort;
         assert_eq!(
             split_reasoning_suffix("anthropic::claude-opus-4-5@reasoning-high"),
             ("anthropic::claude-opus-4-5", Some(ReasoningEffort::High))
@@ -3954,7 +3954,7 @@ mod tests {
         assert!(p.is_some());
         assert_eq!(
             p.unwrap().reasoning_effort(),
-            Some(moltis_agents::model::ReasoningEffort::High)
+            Some(clawmaster_agents::model::ReasoningEffort::High)
         );
     }
 

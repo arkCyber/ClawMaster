@@ -35,12 +35,12 @@ build-release:
 
 # Build embedded WASM guest tools and pre-compile to .cwasm for AOT loading.
 wasm-tools:
-    cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
-    cargo run -p moltis-wasm-precompile --release
+    cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
+    cargo run -p clawmaster-wasm-precompile --release
 
 # Build just the release WASM artifacts expected by embedded-wasm builds.
 build-wasm-artifacts: wasm-tools
-    @echo "Built target/wasm32-wasip2/release/{moltis_wasm_calc,moltis_wasm_web_fetch,moltis_wasm_web_search}.{wasm,cwasm}"
+    @echo "Built target/wasm32-wasip2/release/{clawmaster_wasm_calc,clawmaster_wasm_web_fetch,clawmaster_wasm_web_search}.{wasm,cwasm}"
 
 # Build release after ensuring embedded WASM artifacts are present.
 build-release-with-wasm: build-wasm-artifacts
@@ -48,24 +48,24 @@ build-release-with-wasm: build-wasm-artifacts
 
 # Run local dev server with workspace-local config/data dirs.
 dev-server:
-    MOLTIS_CONFIG_DIR=.moltis/config MOLTIS_DATA_DIR=.moltis/ cargo run --bin moltis
+    MOLTIS_CONFIG_DIR=.clawmaster/config MOLTIS_DATA_DIR=.clawmaster/ cargo run --bin clawmaster
 
 # Build Debian package for the current architecture
 deb: build-release build-wasm-artifacts
     bash ./scripts/stage-wasm-package-assets.sh target/release
-    cargo deb -p moltis --no-build
+    cargo deb -p clawmaster --no-build
 
 # Build Debian package for amd64
 deb-amd64: build-wasm-artifacts
     cargo build --release --target x86_64-unknown-linux-gnu
     bash ./scripts/stage-wasm-package-assets.sh target/x86_64-unknown-linux-gnu/release
-    cargo deb -p moltis --no-build --target x86_64-unknown-linux-gnu
+    cargo deb -p clawmaster --no-build --target x86_64-unknown-linux-gnu
 
 # Build Debian package for arm64
 deb-arm64: build-wasm-artifacts
     cargo build --release --target aarch64-unknown-linux-gnu
     bash ./scripts/stage-wasm-package-assets.sh target/aarch64-unknown-linux-gnu/release
-    cargo deb -p moltis --no-build --target aarch64-unknown-linux-gnu
+    cargo deb -p clawmaster --no-build --target aarch64-unknown-linux-gnu
 
 # Build Debian packages for all architectures
 deb-all: deb-amd64 deb-arm64
@@ -79,19 +79,19 @@ arch-pkg: build-release
     PKG_DIR="target/arch-pkg"
     rm -rf "$PKG_DIR"
     mkdir -p "$PKG_DIR/usr/bin"
-    cp target/release/moltis "$PKG_DIR/usr/bin/moltis"
-    chmod 755 "$PKG_DIR/usr/bin/moltis"
+    cp target/release/clawmaster "$PKG_DIR/usr/bin/clawmaster"
+    chmod 755 "$PKG_DIR/usr/bin/clawmaster"
     cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-    pkgname = moltis
+    pkgname = clawmaster
     pkgver = ${VERSION}-1
     pkgdesc = Personal AI gateway inspired by OpenClaw
-    url = https://www.moltis.org/
+    url = https://www.clawmaster.org/
     arch = ${ARCH}
     license = MIT
     PKGINFO
     cd "$PKG_DIR"
-    fakeroot -- tar --zstd -cf "../../moltis-${VERSION}-1-${ARCH}.pkg.tar.zst" .PKGINFO usr/
-    echo "Built moltis-${VERSION}-1-${ARCH}.pkg.tar.zst"
+    fakeroot -- tar --zstd -cf "../../clawmaster-${VERSION}-1-${ARCH}.pkg.tar.zst" .PKGINFO usr/
+    echo "Built clawmaster-${VERSION}-1-${ARCH}.pkg.tar.zst"
 
 # Build Arch package for x86_64
 arch-pkg-x86_64:
@@ -102,19 +102,19 @@ arch-pkg-x86_64:
     PKG_DIR="target/arch-pkg-x86_64"
     rm -rf "$PKG_DIR"
     mkdir -p "$PKG_DIR/usr/bin"
-    cp target/x86_64-unknown-linux-gnu/release/moltis "$PKG_DIR/usr/bin/moltis"
-    chmod 755 "$PKG_DIR/usr/bin/moltis"
+    cp target/x86_64-unknown-linux-gnu/release/clawmaster "$PKG_DIR/usr/bin/clawmaster"
+    chmod 755 "$PKG_DIR/usr/bin/clawmaster"
     cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-    pkgname = moltis
+    pkgname = clawmaster
     pkgver = ${VERSION}-1
     pkgdesc = Personal AI gateway inspired by OpenClaw
-    url = https://www.moltis.org/
+    url = https://www.clawmaster.org/
     arch = x86_64
     license = MIT
     PKGINFO
     cd "$PKG_DIR"
-    fakeroot -- tar --zstd -cf "../../moltis-${VERSION}-1-x86_64.pkg.tar.zst" .PKGINFO usr/
-    echo "Built moltis-${VERSION}-1-x86_64.pkg.tar.zst"
+    fakeroot -- tar --zstd -cf "../../clawmaster-${VERSION}-1-x86_64.pkg.tar.zst" .PKGINFO usr/
+    echo "Built clawmaster-${VERSION}-1-x86_64.pkg.tar.zst"
 
 # Build Arch package for aarch64
 arch-pkg-aarch64:
@@ -125,19 +125,19 @@ arch-pkg-aarch64:
     PKG_DIR="target/arch-pkg-aarch64"
     rm -rf "$PKG_DIR"
     mkdir -p "$PKG_DIR/usr/bin"
-    cp target/aarch64-unknown-linux-gnu/release/moltis "$PKG_DIR/usr/bin/moltis"
-    chmod 755 "$PKG_DIR/usr/bin/moltis"
+    cp target/aarch64-unknown-linux-gnu/release/clawmaster "$PKG_DIR/usr/bin/clawmaster"
+    chmod 755 "$PKG_DIR/usr/bin/clawmaster"
     cat > "$PKG_DIR/.PKGINFO" <<PKGINFO
-    pkgname = moltis
+    pkgname = clawmaster
     pkgver = ${VERSION}-1
     pkgdesc = Personal AI gateway inspired by OpenClaw
-    url = https://www.moltis.org/
+    url = https://www.clawmaster.org/
     arch = aarch64
     license = MIT
     PKGINFO
     cd "$PKG_DIR"
-    fakeroot -- tar --zstd -cf "../../moltis-${VERSION}-1-aarch64.pkg.tar.zst" .PKGINFO usr/
-    echo "Built moltis-${VERSION}-1-aarch64.pkg.tar.zst"
+    fakeroot -- tar --zstd -cf "../../clawmaster-${VERSION}-1-aarch64.pkg.tar.zst" .PKGINFO usr/
+    echo "Built clawmaster-${VERSION}-1-aarch64.pkg.tar.zst"
 
 # Build Arch packages for all architectures
 arch-pkg-all: arch-pkg-x86_64 arch-pkg-aarch64
@@ -165,37 +165,37 @@ appimage: build-release
     set -euo pipefail
     VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
     ARCH=$(uname -m)
-    APP_DIR="target/moltis.AppDir"
+    APP_DIR="target/clawmaster.AppDir"
     rm -rf "$APP_DIR"
     mkdir -p "$APP_DIR/usr/bin"
-    cp target/release/moltis "$APP_DIR/usr/bin/moltis"
-    chmod 755 "$APP_DIR/usr/bin/moltis"
-    cat > "$APP_DIR/moltis.desktop" <<DESKTOP
+    cp target/release/clawmaster "$APP_DIR/usr/bin/clawmaster"
+    chmod 755 "$APP_DIR/usr/bin/clawmaster"
+    cat > "$APP_DIR/clawmaster.desktop" <<DESKTOP
     [Desktop Entry]
     Type=Application
     Name=Moltis
-    Exec=moltis
-    Icon=moltis
+    Exec=clawmaster
+    Icon=clawmaster
     Categories=Network;
     Terminal=true
     DESKTOP
-    cat > "$APP_DIR/moltis.svg" <<SVG
+    cat > "$APP_DIR/clawmaster.svg" <<SVG
     <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#333"/><text x="128" y="140" font-size="120" text-anchor="middle" fill="white">M</text></svg>
     SVG
-    ln -sf moltis.svg "$APP_DIR/.DirIcon"
+    ln -sf clawmaster.svg "$APP_DIR/.DirIcon"
     cat > "$APP_DIR/AppRun" <<'APPRUN'
     #!/bin/sh
     SELF=$(readlink -f "$0")
     HERE=${SELF%/*}
-    exec "$HERE/usr/bin/moltis" "$@"
+    exec "$HERE/usr/bin/clawmaster" "$@"
     APPRUN
     chmod +x "$APP_DIR/AppRun"
     if [ ! -f target/appimagetool ]; then
         wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage" -O target/appimagetool
         chmod +x target/appimagetool
     fi
-    ARCH=${ARCH} target/appimagetool --appimage-extract-and-run "$APP_DIR" "moltis-${VERSION}-${ARCH}.AppImage"
-    echo "Built moltis-${VERSION}-${ARCH}.AppImage"
+    ARCH=${ARCH} target/appimagetool --appimage-extract-and-run "$APP_DIR" "clawmaster-${VERSION}-${ARCH}.AppImage"
+    echo "Built clawmaster-${VERSION}-${ARCH}.AppImage"
 
 # Build Snap package
 snap:
@@ -297,10 +297,10 @@ test:
 
 # Run contract test suites (channel, provider, memory, tools)
 contract-tests:
-    cargo test -p moltis-channels contract
-    cargo test -p moltis-providers contract
-    cargo test -p moltis-memory contract
-    cargo test -p moltis-tools contract
+    cargo test -p clawmaster-channels contract
+    cargo test -p clawmaster-providers contract
+    cargo test -p clawmaster-memory contract
+    cargo test -p clawmaster-tools contract
 
 # Verify locale key parity across frontend i18n bundles.
 i18n-check:
@@ -312,12 +312,12 @@ ui-e2e-install:
 
 # Run gateway web UI e2e tests (Playwright).
 ui-e2e:
-    cargo +{{nightly_toolchain}} build --bin moltis
+    cargo +{{nightly_toolchain}} build --bin clawmaster
     cd crates/web/ui && npm run e2e
 
 # Run gateway web UI e2e tests with headed browser.
 ui-e2e-headed:
-    cargo +{{nightly_toolchain}} build --bin moltis
+    cargo +{{nightly_toolchain}} build --bin clawmaster
     cd crates/web/ui && npm run e2e:headed
 
 # Build all Linux packages (deb + rpm + arch + appimage) for all architectures
@@ -357,7 +357,7 @@ ios-generate:
 
 # Generate Apollo GraphQL types for iOS.
 ios-graphql:
-    cargo run -p moltis-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls
+    cargo run -p clawmaster-schema-export -- apps/ios/GraphQL/Schema/schema.graphqls
     ./scripts/generate-ios-graphql.sh
 
 # Build iOS app (generic iOS destination, no signing).
@@ -374,11 +374,11 @@ ios-open: ios-graphql ios-generate
 
 # Build the APNS push relay.
 courier-build:
-    cargo build -p moltis-courier --release
+    cargo build -p clawmaster-courier --release
 
 # Cross-compile courier for linux/x86_64.
 courier-cross:
-    cargo build -p moltis-courier --release --target x86_64-unknown-linux-gnu
+    cargo build -p clawmaster-courier --release --target x86_64-unknown-linux-gnu
 
 # Deploy courier to remote server(s) via Ansible.
 courier-deploy:
@@ -386,4 +386,4 @@ courier-deploy:
 
 # Run the APNS push relay (dev).
 courier-run *ARGS:
-    cargo run -p moltis-courier -- {{ARGS}}
+    cargo run -p clawmaster-courier -- {{ARGS}}

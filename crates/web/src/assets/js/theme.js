@@ -20,11 +20,11 @@ function updateThemeButtons(activeMode) {
 }
 
 export function initTheme() {
-	var saved = localStorage.getItem("moltis-theme") || "system";
+	var saved = localStorage.getItem("clawmaster-theme") || "system";
 	applyTheme(saved);
 	var mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 	var onSystemThemeChange = () => {
-		var current = localStorage.getItem("moltis-theme") || "system";
+		var current = localStorage.getItem("clawmaster-theme") || "system";
 		if (current === "system") applyTheme("system");
 	};
 	if (typeof mediaQuery.addEventListener === "function") {
@@ -40,7 +40,7 @@ export function initTheme() {
 		var btn = e.target.closest(".theme-btn");
 		if (!btn) return;
 		var mode = btn.getAttribute("data-theme-val");
-		localStorage.setItem("moltis-theme", mode);
+		localStorage.setItem("clawmaster-theme", mode);
 		applyTheme(mode);
 	});
 }

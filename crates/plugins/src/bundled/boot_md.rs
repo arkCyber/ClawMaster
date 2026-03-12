@@ -8,7 +8,7 @@ use {
     tracing::{debug, info},
 };
 
-use moltis_common::{
+use clawmaster_common::{
     Result,
     hooks::{HookAction, HookEvent, HookHandler, HookPayload},
 };

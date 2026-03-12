@@ -3,7 +3,7 @@
 **Status:** Nearly Complete (Phase 5 UI metadata remaining)
 **Priority:** High
 **Complexity:** High
-**Goal:** Refactor Moltis channel handling so adding channel `N+1` is mostly adapter work, not gateway surgery.
+**Goal:** Refactor ClawMaster channel handling so adding channel `N+1` is mostly adapter work, not gateway surgery.
 
 ## Why This Rewrite
 

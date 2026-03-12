@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use {
     async_trait::async_trait,
-    moltis_agents::tool_registry::AgentTool,
+    clawmaster_agents::tool_registry::AgentTool,
     serde_json::{Value, json},
 };
 
@@ -87,7 +87,7 @@ impl AgentTool for CreateSkillTool {
             })
             .unwrap_or_default();
 
-        if !moltis_skills::parse::validate_name(name) {
+        if !clawmaster_skills::parse::validate_name(name) {
             return Err(Error::message(format!(
                 "invalid skill name '{name}': must be 1-64 lowercase alphanumeric/hyphen chars"
             ))
@@ -186,7 +186,7 @@ impl AgentTool for UpdateSkillTool {
             })
             .unwrap_or_default();
 
-        if !moltis_skills::parse::validate_name(name) {
+        if !clawmaster_skills::parse::validate_name(name) {
             return Err(Error::message(format!(
                 "invalid skill name '{name}': must be 1-64 lowercase alphanumeric/hyphen chars"
             ))
@@ -255,7 +255,7 @@ impl AgentTool for DeleteSkillTool {
             .and_then(|v| v.as_str())
             .ok_or_else(|| Error::message("missing 'name'"))?;
 
-        if !moltis_skills::parse::validate_name(name) {
+        if !clawmaster_skills::parse::validate_name(name) {
             return Err(Error::message(format!("invalid skill name '{name}'")).into());
         }
 

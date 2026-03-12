@@ -29,11 +29,11 @@ use {
     tracing::{Level, debug, info, warn},
 };
 
-use {moltis_channels::ChannelPlugin, moltis_protocol::TICK_INTERVAL_MS};
+use {clawmaster_channels::ChannelPlugin, clawmaster_protocol::TICK_INTERVAL_MS};
 
-use moltis_providers::ProviderRegistry;
+use clawmaster_providers::ProviderRegistry;
 
-use moltis_tools::{
+use clawmaster_tools::{
     approval::{ApprovalManager, ApprovalMode, SecurityLevel},
     exec::EnvVarProvider,
     sessions_communicate::{
@@ -47,8 +47,8 @@ use moltis_tools::{
 };
 
 use {
-    moltis_projects::ProjectStore,
-    moltis_sessions::{
+    clawmaster_projects::ProjectStore,
+    clawmaster_sessions::{
         metadata::{SessionMetadata, SqliteSessionMetadata},
         session_events::{SessionEvent, SessionEventBus},
         store::SessionStore,
@@ -87,7 +87,7 @@ pub struct TailscaleOpts {
 
 // ── Location requester ───────────────────────────────────────────────────────
 
-/// Gateway implementation of [`moltis_tools::location::LocationRequester`].
+/// Gateway implementation of [`clawmaster_tools::location::LocationRequester`].
 ///
 /// Uses the `PendingInvoke` + oneshot pattern to request the user's browser
 /// geolocation and waits for `location.result` RPC to resolve it.
@@ -96,19 +96,19 @@ struct GatewayLocationRequester {
 }
 
 #[async_trait::async_trait]
-impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
+impl clawmaster_tools::location::LocationRequester for GatewayLocationRequester {
     async fn request_location(
         &self,
         conn_id: &str,
-        precision: moltis_tools::location::LocationPrecision,
-    ) -> moltis_tools::Result<moltis_tools::location::LocationResult> {
-        use moltis_tools::location::{LocationError, LocationResult};
+        precision: clawmaster_tools::location::LocationPrecision,
+    ) -> clawmaster_tools::Result<clawmaster_tools::location::LocationResult> {
+        use clawmaster_tools::location::{LocationError, LocationResult};
 
         let request_id = uuid::Uuid::new_v4().to_string();
 
         // Send a location.request event to the browser client, including
         // the requested precision so JS can adjust geolocation options.
-        let event = moltis_protocol::EventFrame::new(
+        let event = clawmaster_protocol::EventFrame::new(
             "location.request",
             serde_json::json!({ "requestId": request_id, "precision": precision }),
             self.state.next_seq(),
@@ -119,10 +119,10 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
             let inner = self.state.inner.read().await;
             let clients = &inner.clients;
             let client = clients.get(conn_id).ok_or_else(|| {
-                moltis_tools::Error::message(format!("no client connection for conn_id {conn_id}"))
+                clawmaster_tools::Error::message(format!("no client connection for conn_id {conn_id}"))
             })?;
             if !client.send(&event_json) {
-                return Err(moltis_tools::Error::message(format!(
+                return Err(clawmaster_tools::Error::message(format!(
                     "failed to send location request to client {conn_id}"
                 )));
             }
@@ -177,7 +177,7 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
             let lon = loc.get("longitude").and_then(|v| v.as_f64()).unwrap_or(0.0);
             let accuracy = loc.get("accuracy").and_then(|v| v.as_f64()).unwrap_or(0.0);
             Ok(LocationResult {
-                location: Some(moltis_tools::location::BrowserLocation {
+                location: Some(clawmaster_tools::location::BrowserLocation {
                     latitude: lat,
                     longitude: lon,
                     accuracy,
@@ -204,15 +204,15 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
         }
     }
 
-    fn cached_location(&self) -> Option<moltis_config::GeoLocation> {
+    fn cached_location(&self) -> Option<clawmaster_config::GeoLocation> {
         self.state.inner.try_read().ok()?.cached_location.clone()
     }
 
     async fn request_channel_location(
         &self,
         session_key: &str,
-    ) -> moltis_tools::Result<moltis_tools::location::LocationResult> {
-        use moltis_tools::location::{LocationError, LocationResult};
+    ) -> clawmaster_tools::Result<clawmaster_tools::location::LocationResult> {
+        use clawmaster_tools::location::{LocationError, LocationResult};
 
         // Look up channel binding from session metadata.
         let session_meta = self
@@ -220,14 +220,14 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
             .services
             .session_metadata
             .as_ref()
-            .ok_or_else(|| moltis_tools::Error::message("session metadata not available"))?;
+            .ok_or_else(|| clawmaster_tools::Error::message("session metadata not available"))?;
         let entry = session_meta.get(session_key).await.ok_or_else(|| {
-            moltis_tools::Error::message(format!("no session metadata for key {session_key}"))
+            clawmaster_tools::Error::message(format!("no session metadata for key {session_key}"))
         })?;
         let binding_json = entry.channel_binding.ok_or_else(|| {
-            moltis_tools::Error::message(format!("no channel binding for session {session_key}"))
+            clawmaster_tools::Error::message(format!("no channel binding for session {session_key}"))
         })?;
-        let reply_target: moltis_channels::ChannelReplyTarget =
+        let reply_target: clawmaster_channels::ChannelReplyTarget =
             serde_json::from_str(&binding_json)?;
 
         // Send a message asking the user to share their location.
@@ -235,7 +235,7 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
             .state
             .services
             .channel_outbound_arc()
-            .ok_or_else(|| moltis_tools::Error::message("no channel outbound available"))?;
+            .ok_or_else(|| clawmaster_tools::Error::message("no channel outbound available"))?;
         outbound
             .send_text(
                 &reply_target.account_id,
@@ -244,7 +244,7 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
                 None,
             )
             .await
-            .map_err(|e| moltis_tools::Error::external("send location request", e))?;
+            .map_err(|e| clawmaster_tools::Error::external("send location request", e))?;
 
         // Create a pending invoke keyed by session.
         let pending_key = format!("channel_location:{session_key}");
@@ -295,7 +295,7 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
             let lon = loc.get("longitude").and_then(|v| v.as_f64()).unwrap_or(0.0);
             let accuracy = loc.get("accuracy").and_then(|v| v.as_f64()).unwrap_or(0.0);
             Ok(LocationResult {
-                location: Some(moltis_tools::location::BrowserLocation {
+                location: Some(clawmaster_tools::location::BrowserLocation {
                     latitude: lat,
                     longitude: lon,
                     accuracy,
@@ -312,22 +312,22 @@ impl moltis_tools::location::LocationRequester for GatewayLocationRequester {
 }
 
 fn should_prebuild_sandbox_image(
-    mode: &moltis_tools::sandbox::SandboxMode,
+    mode: &clawmaster_tools::sandbox::SandboxMode,
     packages: &[String],
 ) -> bool {
-    !matches!(mode, moltis_tools::sandbox::SandboxMode::Off) && !packages.is_empty()
+    !matches!(mode, clawmaster_tools::sandbox::SandboxMode::Off) && !packages.is_empty()
 }
 
-fn instance_slug(config: &moltis_config::MoltisConfig) -> String {
+fn instance_slug(config: &clawmaster_config::MoltisConfig) -> String {
     let mut raw_name = config.identity.name.clone();
-    if let Some(file_identity) = moltis_config::load_identity_for_agent("main")
+    if let Some(file_identity) = clawmaster_config::load_identity_for_agent("main")
         && file_identity.name.is_some()
     {
         raw_name = file_identity.name;
     }
 
     let base = raw_name
-        .unwrap_or_else(|| "moltis".to_string())
+        .unwrap_or_else(|| "clawmaster".to_string())
         .to_lowercase();
     let mut out = String::new();
     let mut last_dash = false;
@@ -349,18 +349,18 @@ fn instance_slug(config: &moltis_config::MoltisConfig) -> String {
     }
     let out = out.trim_matches('-').to_string();
     if out.is_empty() {
-        "moltis".to_string()
+        "clawmaster".to_string()
     } else {
         out
     }
 }
 
 fn sandbox_container_prefix(instance_slug: &str) -> String {
-    format!("moltis-{instance_slug}-sandbox")
+    format!("clawmaster-{instance_slug}-sandbox")
 }
 
 fn browser_container_prefix(instance_slug: &str) -> String {
-    format!("moltis-{instance_slug}-browser")
+    format!("clawmaster-{instance_slug}-browser")
 }
 
 fn env_value_with_overrides(env_overrides: &HashMap<String, String>, key: &str) -> Option<String> {
@@ -515,7 +515,7 @@ async fn ensure_ollama_model(base_url: &str, model: &str) {
     }
 }
 
-fn approval_manager_from_config(config: &moltis_config::MoltisConfig) -> ApprovalManager {
+fn approval_manager_from_config(config: &clawmaster_config::MoltisConfig) -> ApprovalManager {
     let mut manager = ApprovalManager::default();
 
     manager.mode = ApprovalMode::parse(&config.tools.exec.approval_mode).unwrap_or_else(|| {
@@ -550,7 +550,7 @@ pub struct AppState {
     #[cfg(feature = "push-notifications")]
     pub push_service: Option<Arc<crate::push::PushService>>,
     #[cfg(feature = "graphql")]
-    pub graphql_schema: moltis_graphql::MoltisSchema,
+    pub graphql_schema: clawmaster_graphql::MoltisSchema,
 }
 
 /// Function signature for adding extra routes (e.g. web-UI) to the gateway.
@@ -722,7 +722,7 @@ pub fn build_gateway_base(
             state: Arc::clone(&state),
         });
         let services = state.services.to_services(system_info);
-        moltis_graphql::build_schema(services, state.graphql_broadcast.clone())
+        clawmaster_graphql::build_schema(services, state.graphql_broadcast.clone())
     };
 
     let app_state = AppState {
@@ -788,7 +788,7 @@ pub fn build_gateway_base(
             state: Arc::clone(&state),
         });
         let services = state.services.to_services(system_info);
-        moltis_graphql::build_schema(services, state.graphql_broadcast.clone())
+        clawmaster_graphql::build_schema(services, state.graphql_broadcast.clone())
     };
 
     let app_state = AppState {
@@ -1022,8 +1022,8 @@ fn log_directory_write_probe(dir: &FsPath) {
 }
 
 #[cfg(feature = "openclaw-import")]
-fn detect_openclaw_with_startup_logs() -> Option<moltis_openclaw_import::OpenClawDetection> {
-    match moltis_openclaw_import::detect() {
+fn detect_openclaw_with_startup_logs() -> Option<clawmaster_openclaw_import::OpenClawDetection> {
+    match clawmaster_openclaw_import::detect() {
         Some(detection) => {
             info!(
                 openclaw_home = %detection.home_dir.display(),
@@ -1096,7 +1096,7 @@ fn spawn_openclaw_background_init(data_dir: PathBuf) {
                 .join("agent")
                 .join("sessions");
             if sessions_dir.is_dir() {
-                match moltis_openclaw_import::watcher::ImportWatcher::start(sessions_dir) {
+                match clawmaster_openclaw_import::watcher::ImportWatcher::start(sessions_dir) {
                     Ok((_watcher, mut rx)) => {
                         info!("openclaw: session watcher started");
                         let watcher_data_dir = data_dir;
@@ -1109,7 +1109,7 @@ fn spawn_openclaw_background_init(data_dir: PathBuf) {
                                 tokio::select! {
                                     Some(_event) = rx.recv() => {
                                         debug!("openclaw: session change detected, running incremental import");
-                                        let report = moltis_openclaw_import::import_sessions_only(
+                                        let report = clawmaster_openclaw_import::import_sessions_only(
                                             &detection, &watcher_data_dir,
                                         );
                                         if report.items_imported > 0 || report.items_updated > 0 {
@@ -1123,7 +1123,7 @@ fn spawn_openclaw_background_init(data_dir: PathBuf) {
                                     }
                                     _ = interval.tick() => {
                                         debug!("openclaw: periodic session sync");
-                                        let report = moltis_openclaw_import::import_sessions_only(
+                                        let report = clawmaster_openclaw_import::import_sessions_only(
                                             &detection, &watcher_data_dir,
                                         );
                                         if report.items_imported > 0 || report.items_updated > 0 {
@@ -1153,7 +1153,7 @@ fn spawn_openclaw_background_init(_data_dir: PathBuf) {}
 
 fn spawn_post_listener_warmups(
     browser_service: Arc<dyn crate::services::BrowserService>,
-    browser_tool: Option<Arc<dyn moltis_agents::tool_registry::AgentTool>>,
+    browser_tool: Option<Arc<dyn clawmaster_agents::tool_registry::AgentTool>>,
 ) {
     if !env_flag_enabled("MOLTIS_BROWSER_WARMUP") {
         debug!("startup browser warmup disabled (set MOLTIS_BROWSER_WARMUP=1 to enable)");
@@ -1256,7 +1256,7 @@ fn spawn_webauthn_tailscale_registration(
 
 #[cfg(feature = "openclaw-import")]
 pub fn openclaw_detected_for_ui() -> bool {
-    moltis_openclaw_import::detect().is_some()
+    clawmaster_openclaw_import::detect().is_some()
 }
 
 #[cfg(not(feature = "openclaw-import"))]
@@ -1267,7 +1267,7 @@ pub fn openclaw_detected_for_ui() -> bool {
 #[cfg(feature = "local-llm")]
 #[must_use]
 pub fn local_llama_cpp_bytes_for_ui() -> u64 {
-    moltis_providers::local_llm::loaded_llama_model_bytes()
+    clawmaster_providers::local_llm::loaded_llama_model_bytes()
 }
 
 #[cfg(not(feature = "local-llm"))]
@@ -1277,9 +1277,9 @@ pub const fn local_llama_cpp_bytes_for_ui() -> u64 {
 }
 
 fn log_startup_config_storage_diagnostics() {
-    let config_dir = moltis_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
-    let discovered_config = moltis_config::loader::find_config_file();
-    let expected_config = moltis_config::find_or_default_config_path();
+    let config_dir = clawmaster_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
+    let discovered_config = clawmaster_config::loader::find_config_file();
+    let expected_config = clawmaster_config::find_or_default_config_path();
     let provider_keys_path = config_dir.join("provider_keys.json");
 
     let discovered_display = discovered_config
@@ -1386,8 +1386,8 @@ pub(crate) struct BannerMeta {
     pub setup_code_display: Option<String>,
     pub webauthn_registry: Option<SharedWebAuthnRegistry>,
     pub browser_for_lifecycle: Arc<dyn crate::services::BrowserService>,
-    pub browser_tool_for_warmup: Option<Arc<dyn moltis_agents::tool_registry::AgentTool>>,
-    pub config: moltis_config::schema::MoltisConfig,
+    pub browser_tool_for_warmup: Option<Arc<dyn clawmaster_agents::tool_registry::AgentTool>>,
+    pub config: clawmaster_config::schema::MoltisConfig,
     #[cfg(feature = "tailscale")]
     pub tailscale_mode: TailscaleMode,
     #[cfg(feature = "tailscale")]
@@ -1418,10 +1418,10 @@ pub async fn prepare_gateway(
 
     // Apply directory overrides before loading config.
     if let Some(dir) = config_dir {
-        moltis_config::set_config_dir(dir);
+        clawmaster_config::set_config_dir(dir);
     }
     if let Some(ref dir) = data_dir {
-        moltis_config::set_data_dir(dir.clone());
+        clawmaster_config::set_data_dir(dir.clone());
     }
 
     // Resolve auth from environment (MOLTIS_TOKEN / MOLTIS_PASSWORD).
@@ -1433,7 +1433,7 @@ pub async fn prepare_gateway(
     let resolved_auth = auth::resolve_auth(token, password.clone());
 
     // Load config file (moltis.toml / .yaml / .json) if present.
-    let mut config = moltis_config::discover_and_load();
+    let mut config = clawmaster_config::discover_and_load();
     let config_env_overrides = config.env.clone();
     let instance_slug_value = instance_slug(&config);
     let browser_container_prefix = browser_container_prefix(&instance_slug_value);
@@ -1517,8 +1517,8 @@ pub async fn prepare_gateway(
         (reg.provider_summary(), !reg.is_empty())
     };
     if !providers_available_at_startup {
-        let config_path = moltis_config::find_or_default_config_path();
-        let provider_keys_path = moltis_config::config_dir()
+        let config_path = clawmaster_config::find_or_default_config_path();
+        let provider_keys_path = clawmaster_config::config_dir()
             .unwrap_or_else(|| PathBuf::from(".moltis"))
             .join("provider_keys.json");
         warn!(
@@ -1542,7 +1542,7 @@ pub async fn prepare_gateway(
             }
             // Import external tokens (e.g. Codex CLI auth.json) into the
             // token store so all providers read from a single location.
-            let import_token_store = moltis_oauth::TokenStore::new();
+            let import_token_store = clawmaster_oauth::TokenStore::new();
             crate::provider_setup::import_detected_oauth_tokens(
                 &auto_detected_provider_sources,
                 &import_token_store,
@@ -1604,9 +1604,9 @@ pub async fn prepare_gateway(
     }
 
     // Wire live onboarding service.
-    let onboarding_config_path = moltis_config::find_or_default_config_path();
+    let onboarding_config_path = clawmaster_config::find_or_default_config_path();
     let live_onboarding =
-        moltis_onboarding::service::LiveOnboardingService::new(onboarding_config_path);
+        clawmaster_onboarding::service::LiveOnboardingService::new(onboarding_config_path);
     // Wire live local-llm service when the feature is enabled.
     #[cfg(feature = "local-llm")]
     let local_llm_service: Option<Arc<crate::local_llm_setup::LiveLocalLlmService>> = {
@@ -1627,7 +1627,7 @@ pub async fn prepare_gateway(
 
         // Services read fresh config from disk on each operation,
         // so we just need to create the instances here.
-        services.tts = Arc::new(LiveTtsService::new(moltis_voice::TtsConfig::default()));
+        services.tts = Arc::new(LiveTtsService::new(clawmaster_voice::TtsConfig::default()));
         services.stt = Arc::new(LiveSttService::new(SttServiceConfig::default()));
     }
 
@@ -1662,20 +1662,20 @@ pub async fn prepare_gateway(
     let mcp_configured_count;
     let live_mcp: Arc<crate::mcp_service::LiveMcpService>;
     {
-        let mcp_registry_path = moltis_config::data_dir().join("mcp-servers.json");
-        let mcp_reg = moltis_mcp::McpRegistry::load(&mcp_registry_path).unwrap_or_default();
+        let mcp_registry_path = clawmaster_config::data_dir().join("mcp-servers.json");
+        let mcp_reg = clawmaster_mcp::McpRegistry::load(&mcp_registry_path).unwrap_or_default();
         // Seed from config file servers that aren't already in the registry.
         let mut merged = mcp_reg;
         for (name, entry) in &config.mcp.servers {
             if !merged.servers.contains_key(name) {
                 let transport = match entry.transport.as_str() {
-                    "sse" => moltis_mcp::registry::TransportType::Sse,
-                    _ => moltis_mcp::registry::TransportType::Stdio,
+                    "sse" => clawmaster_mcp::registry::TransportType::Sse,
+                    _ => clawmaster_mcp::registry::TransportType::Stdio,
                 };
                 let oauth = entry
                     .oauth
                     .as_ref()
-                    .map(|o| moltis_mcp::registry::McpOAuthConfig {
+                    .map(|o| clawmaster_mcp::registry::McpOAuthConfig {
                         client_id: o.client_id.clone(),
                         auth_url: o.auth_url.clone(),
                         token_url: o.token_url.clone(),
@@ -1683,7 +1683,7 @@ pub async fn prepare_gateway(
                     });
                 merged
                     .servers
-                    .insert(name.clone(), moltis_mcp::McpServerConfig {
+                    .insert(name.clone(), clawmaster_mcp::McpServerConfig {
                         command: entry.command.clone(),
                         args: entry.args.clone(),
                         env: entry.env.clone(),
@@ -1695,7 +1695,7 @@ pub async fn prepare_gateway(
             }
         }
         mcp_configured_count = merged.servers.values().filter(|s| s.enabled).count();
-        let mcp_manager = Arc::new(moltis_mcp::McpManager::new(merged));
+        let mcp_manager = Arc::new(clawmaster_mcp::McpManager::new(merged));
         live_mcp = Arc::new(crate::mcp_service::LiveMcpService::new(Arc::clone(
             &mcp_manager,
         )));
@@ -1715,7 +1715,7 @@ pub async fn prepare_gateway(
     startup_mem_probe.checkpoint("services.core_wired");
 
     // Initialize data directory and SQLite database.
-    let data_dir = data_dir.unwrap_or_else(moltis_config::data_dir);
+    let data_dir = data_dir.unwrap_or_else(clawmaster_config::data_dir);
     std::fs::create_dir_all(&data_dir).unwrap_or_else(|e| {
         panic!(
             "failed to create data directory {}: {e}",
@@ -1723,7 +1723,7 @@ pub async fn prepare_gateway(
         )
     });
 
-    let config_dir = moltis_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
+    let config_dir = clawmaster_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
     std::fs::create_dir_all(&config_dir).unwrap_or_else(|e| {
         panic!(
             "failed to create config directory {}: {e}",
@@ -1762,7 +1762,7 @@ pub async fn prepare_gateway(
             }
         });
     }
-    let db_path = data_dir.join("moltis.db");
+    let db_path = data_dir.join("clawmaster.db");
     let db_pool = {
         use {
             sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqliteSynchronous},
@@ -1797,13 +1797,13 @@ pub async fn prepare_gateway(
 
     // Run database migrations from each crate in dependency order.
     // Order matters: sessions depends on projects (FK reference).
-    moltis_projects::run_migrations(&db_pool)
+    clawmaster_projects::run_migrations(&db_pool)
         .await
         .expect("failed to run projects migrations");
-    moltis_sessions::run_migrations(&db_pool)
+    clawmaster_sessions::run_migrations(&db_pool)
         .await
         .expect("failed to run sessions migrations");
-    moltis_cron::run_migrations(&db_pool)
+    clawmaster_cron::run_migrations(&db_pool)
         .await
         .expect("failed to run cron migrations");
     // Gateway's own tables (auth, message_log, channels).
@@ -1813,18 +1813,18 @@ pub async fn prepare_gateway(
 
     // Vault migrations (vault_metadata table).
     #[cfg(feature = "vault")]
-    moltis_vault::run_migrations(&db_pool)
+    clawmaster_vault::run_migrations(&db_pool)
         .await
         .expect("failed to run vault migrations");
 
     // Migrate plugins data into unified skills system (idempotent, non-fatal).
-    moltis_skills::migration::migrate_plugins_to_skills(&data_dir).await;
+    clawmaster_skills::migration::migrate_plugins_to_skills(&data_dir).await;
     startup_mem_probe.checkpoint("sqlite.migrations.complete");
 
     // Initialize vault for encryption-at-rest.
     #[cfg(feature = "vault")]
-    let vault: Option<Arc<moltis_vault::Vault>> = {
-        match moltis_vault::Vault::new(db_pool.clone()).await {
+    let vault: Option<Arc<clawmaster_vault::Vault>> = {
+        match clawmaster_vault::Vault::new(db_pool.clone()).await {
             Ok(v) => {
                 info!(status = ?v.status().await, "vault ready");
                 Some(Arc::new(v))
@@ -1915,13 +1915,13 @@ pub async fn prepare_gateway(
         } else {
             // Local: register localhost + moltis.localhost as extras.
             let localhost_origin = format!("{default_scheme}://localhost:{port}");
-            let moltis_localhost: Vec<webauthn_rs::prelude::Url> =
+            let clawmaster_localhost: Vec<webauthn_rs::prelude::Url> =
                 webauthn_rs::prelude::Url::parse(&format!(
                     "{default_scheme}://moltis.localhost:{port}"
                 ))
                 .into_iter()
                 .collect();
-            try_add("localhost", &localhost_origin, &moltis_localhost);
+            try_add("localhost", &localhost_origin, &clawmaster_localhost);
 
             // Register identity-derived host aliases (`<bot-name>` and
             // `<bot-name>.local`) so passkeys work when clients connect using
@@ -1988,19 +1988,19 @@ pub async fn prepare_gateway(
         }
     }
 
-    let message_log: Arc<dyn moltis_channels::message_log::MessageLog> = Arc::new(
+    let message_log: Arc<dyn clawmaster_channels::message_log::MessageLog> = Arc::new(
         crate::message_log_store::SqliteMessageLog::new(db_pool.clone()),
     );
 
     // Migrate from projects.toml if it exists.
-    let config_dir = moltis_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
+    let config_dir = clawmaster_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
     let projects_toml_path = config_dir.join("projects.toml");
     if projects_toml_path.exists() {
         info!("migrating projects.toml to SQLite");
-        let old_store = moltis_projects::TomlProjectStore::new(projects_toml_path.clone());
-        let sqlite_store = moltis_projects::SqliteProjectStore::new(db_pool.clone());
+        let old_store = clawmaster_projects::TomlProjectStore::new(projects_toml_path.clone());
+        let sqlite_store = clawmaster_projects::SqliteProjectStore::new(db_pool.clone());
         if let Ok(projects) =
-            <moltis_projects::TomlProjectStore as ProjectStore>::list(&old_store).await
+            <clawmaster_projects::TomlProjectStore as ProjectStore>::list(&old_store).await
         {
             for p in projects {
                 if let Err(e) = sqlite_store.upsert(p).await {
@@ -2040,7 +2040,7 @@ pub async fn prepare_gateway(
 
     // Wire stores.
     let project_store: Arc<dyn ProjectStore> =
-        Arc::new(moltis_projects::SqliteProjectStore::new(db_pool.clone()));
+        Arc::new(clawmaster_projects::SqliteProjectStore::new(db_pool.clone()));
     let session_store = Arc::new(SessionStore::new(sessions_dir));
     let event_bus_for_metadata = session_event_bus.clone();
     let session_metadata = Arc::new(SqliteSessionMetadata::with_event_bus(
@@ -2048,7 +2048,7 @@ pub async fn prepare_gateway(
         event_bus_for_metadata,
     ));
     let session_share_store = Arc::new(crate::share_store::ShareStore::new(db_pool.clone()));
-    let session_state_store = Arc::new(moltis_sessions::state_store::SessionStateStore::new(
+    let session_state_store = Arc::new(clawmaster_sessions::state_store::SessionStateStore::new(
         db_pool.clone(),
     ));
 
@@ -2080,18 +2080,18 @@ pub async fn prepare_gateway(
     )));
 
     // Initialize cron service with file-backed store.
-    let cron_store: Arc<dyn moltis_cron::store::CronStore> =
-        match moltis_cron::store_file::FileStore::default_path() {
+    let cron_store: Arc<dyn clawmaster_cron::store::CronStore> =
+        match clawmaster_cron::store_file::FileStore::default_path() {
             Ok(fs) => Arc::new(fs),
             Err(e) => {
                 tracing::warn!("cron file store unavailable ({e}), using in-memory");
-                Arc::new(moltis_cron::store_memory::InMemoryStore::new())
+                Arc::new(clawmaster_cron::store_memory::InMemoryStore::new())
             },
         };
 
     // System event: inject text into the main session and trigger an agent response.
     let sys_state = Arc::clone(&deferred_state);
-    let on_system_event: moltis_cron::service::SystemEventFn = Arc::new(move |text| {
+    let on_system_event: clawmaster_cron::service::SystemEventFn = Arc::new(move |text| {
         let st = Arc::clone(&sys_state);
         tokio::spawn(async move {
             if let Some(state) = st.get() {
@@ -2105,25 +2105,25 @@ pub async fn prepare_gateway(
     });
 
     // Create the system events queue before the callbacks so it can be shared.
-    let events_queue = moltis_cron::system_events::SystemEventsQueue::new();
+    let events_queue = clawmaster_cron::system_events::SystemEventsQueue::new();
 
     // Agent turn: run an LLM turn in a session determined by the job's session_target.
     let agent_state = Arc::clone(&deferred_state);
     let agent_events_queue = Arc::clone(&events_queue);
-    let on_agent_turn: moltis_cron::service::AgentTurnFn = Arc::new(move |req| {
+    let on_agent_turn: clawmaster_cron::service::AgentTurnFn = Arc::new(move |req| {
         let st = Arc::clone(&agent_state);
         let eq = Arc::clone(&agent_events_queue);
         Box::pin(async move {
             let state = st
                 .get()
-                .ok_or_else(|| moltis_cron::Error::message("gateway not ready"))?;
+                .ok_or_else(|| clawmaster_cron::Error::message("gateway not ready"))?;
 
             // OpenClaw-style cost guard: if HEARTBEAT.md exists but is effectively
             // empty (comments/blank scaffold) and there's no explicit
             // heartbeat.prompt override, skip the LLM turn entirely.
             let is_heartbeat_turn = matches!(
                 &req.session_target,
-                moltis_cron::types::SessionTarget::Named(name) if name == "heartbeat"
+                clawmaster_cron::types::SessionTarget::Named(name) if name == "heartbeat"
             );
             // Check for pending system events (used to bypass the empty-content guard).
             let has_pending_events = is_heartbeat_turn && !eq.is_empty().await;
@@ -2133,16 +2133,16 @@ pub async fn prepare_gateway(
                     .prompt
                     .as_deref()
                     .is_some_and(|p| !p.trim().is_empty());
-                let heartbeat_path = moltis_config::heartbeat_path();
+                let heartbeat_path = clawmaster_config::heartbeat_path();
                 let heartbeat_file_exists = heartbeat_path.exists();
-                let heartbeat_md = moltis_config::load_heartbeat_md();
+                let heartbeat_md = clawmaster_config::load_heartbeat_md();
                 if heartbeat_file_exists && heartbeat_md.is_none() && !has_prompt_override {
                     tracing::info!(
                         path = %heartbeat_path.display(),
                         "skipping heartbeat LLM turn: HEARTBEAT.md is empty"
                     );
-                    return Ok(moltis_cron::service::AgentTurnResult {
-                        output: moltis_cron::heartbeat::HEARTBEAT_OK.to_string(),
+                    return Ok(clawmaster_cron::service::AgentTurnResult {
+                        output: clawmaster_cron::heartbeat::HEARTBEAT_OK.to_string(),
                         input_tokens: None,
                         output_tokens: None,
                     });
@@ -2151,7 +2151,7 @@ pub async fn prepare_gateway(
 
             let chat = state.chat().await;
             let session_key = match &req.session_target {
-                moltis_cron::types::SessionTarget::Named(name) => {
+                clawmaster_cron::types::SessionTarget::Named(name) => {
                     format!("cron:{name}")
                 },
                 _ => format!("cron:{}", uuid::Uuid::new_v4()),
@@ -2161,7 +2161,7 @@ pub async fn prepare_gateway(
             // so the run starts fresh but the history remains readable for debugging.
             if matches!(
                 req.session_target,
-                moltis_cron::types::SessionTarget::Named(_)
+                clawmaster_cron::types::SessionTarget::Named(_)
             ) {
                 let _ = chat
                     .clear(serde_json::json!({ "_session_key": session_key }))
@@ -2187,7 +2187,7 @@ pub async fn prepare_gateway(
                         event_count = events.len(),
                         "enriching heartbeat prompt with system events"
                     );
-                    moltis_cron::heartbeat::build_event_enriched_prompt(&events, &req.message)
+                    clawmaster_cron::heartbeat::build_event_enriched_prompt(&events, &req.message)
                 }
             } else {
                 req.message.clone()
@@ -2215,7 +2215,7 @@ pub async fn prepare_gateway(
             let result = chat
                 .send_sync(params)
                 .await
-                .map_err(|e| moltis_cron::Error::message(e.to_string()));
+                .map_err(|e| clawmaster_cron::Error::message(e.to_string()));
 
             // Clean up sandbox overrides.
             if let Some(ref router) = state.sandbox_router {
@@ -2233,9 +2233,9 @@ pub async fn prepare_gateway(
                 .to_string();
             let delivery_text = if is_heartbeat_turn {
                 let hb_cfg = state.inner.read().await.heartbeat_config.clone();
-                moltis_cron::heartbeat::strip_heartbeat_token(
+                clawmaster_cron::heartbeat::strip_heartbeat_token(
                     &text,
-                    moltis_cron::heartbeat::StripMode::Trim,
+                    clawmaster_cron::heartbeat::StripMode::Trim,
                     hb_cfg.ack_max_chars,
                 )
                 .text
@@ -2267,7 +2267,7 @@ pub async fn prepare_gateway(
                 }
             }
 
-            Ok(moltis_cron::service::AgentTurnResult {
+            Ok(clawmaster_cron::service::AgentTurnResult {
                 output: text,
                 input_tokens,
                 output_tokens,
@@ -2277,20 +2277,20 @@ pub async fn prepare_gateway(
 
     // Build cron notification callback that broadcasts job changes.
     let deferred_for_cron = Arc::clone(&deferred_state);
-    let on_cron_notify: moltis_cron::service::NotifyFn =
-        Arc::new(move |notification: moltis_cron::types::CronNotification| {
+    let on_cron_notify: clawmaster_cron::service::NotifyFn =
+        Arc::new(move |notification: clawmaster_cron::types::CronNotification| {
             let state_opt = deferred_for_cron.get();
             let Some(state) = state_opt else {
                 return;
             };
             let (event, payload) = match &notification {
-                moltis_cron::types::CronNotification::Created { job } => {
+                clawmaster_cron::types::CronNotification::Created { job } => {
                     ("cron.job.created", serde_json::json!({ "job": job }))
                 },
-                moltis_cron::types::CronNotification::Updated { job } => {
+                clawmaster_cron::types::CronNotification::Updated { job } => {
                     ("cron.job.updated", serde_json::json!({ "job": job }))
                 },
-                moltis_cron::types::CronNotification::Removed { job_id } => {
+                clawmaster_cron::types::CronNotification::Removed { job_id } => {
                     ("cron.job.removed", serde_json::json!({ "jobId": job_id }))
                 },
             };
@@ -2306,12 +2306,12 @@ pub async fn prepare_gateway(
         });
 
     // Build rate limit config from moltis config.
-    let rate_limit_config = moltis_cron::service::RateLimitConfig {
+    let rate_limit_config = clawmaster_cron::service::RateLimitConfig {
         max_per_window: config.cron.rate_limit_max,
         window_ms: config.cron.rate_limit_window_secs * 1000,
     };
 
-    let cron_service = moltis_cron::service::CronService::with_events_queue(
+    let cron_service = clawmaster_cron::service::CronService::with_events_queue(
         cron_store,
         on_system_event,
         on_agent_turn,
@@ -2325,14 +2325,14 @@ pub async fn prepare_gateway(
     services = services.with_cron(live_cron);
 
     // Build sandbox router from config (shared across sessions).
-    let mut sandbox_config = moltis_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+    let mut sandbox_config = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
     sandbox_config.container_prefix = Some(sandbox_container_prefix);
     sandbox_config.timezone = config
         .user
         .timezone
         .as_ref()
         .map(|tz| tz.name().to_string());
-    let sandbox_router = Arc::new(moltis_tools::sandbox::SandboxRouter::new(
+    let sandbox_router = Arc::new(clawmaster_tools::sandbox::SandboxRouter::new(
         sandbox_config.clone(),
     ));
 
@@ -2346,7 +2346,7 @@ pub async fn prepare_gateway(
     #[cfg(feature = "trusted-network")]
     {
         let (audit_tx, audit_rx) =
-            tokio::sync::mpsc::channel::<moltis_network_filter::NetworkAuditEntry>(1024);
+            tokio::sync::mpsc::channel::<clawmaster_network_filter::NetworkAuditEntry>(1024);
 
         info!(
             network_policy = ?sandbox_config.network,
@@ -2354,16 +2354,16 @@ pub async fn prepare_gateway(
             "trusted-network: evaluating network policy"
         );
 
-        if sandbox_config.network == moltis_network_filter::NetworkPolicy::Trusted {
+        if sandbox_config.network == clawmaster_network_filter::NetworkPolicy::Trusted {
             let domain_mgr = Arc::new(
-                moltis_network_filter::domain_approval::DomainApprovalManager::new(
+                clawmaster_network_filter::domain_approval::DomainApprovalManager::new(
                     &sandbox_config.trusted_domains,
                     std::time::Duration::from_secs(30),
                 ),
             );
             let proxy_addr: SocketAddr =
-                ([0, 0, 0, 0], moltis_network_filter::DEFAULT_PROXY_PORT).into();
-            let proxy = moltis_network_filter::proxy::NetworkProxyServer::new(
+                ([0, 0, 0, 0], clawmaster_network_filter::DEFAULT_PROXY_PORT).into();
+            let proxy = clawmaster_network_filter::proxy::NetworkProxyServer::new(
                 proxy_addr,
                 Arc::clone(&domain_mgr),
                 Some(audit_tx.clone()),
@@ -2376,13 +2376,13 @@ pub async fn prepare_gateway(
             });
             let url = format!(
                 "http://127.0.0.1:{}",
-                moltis_network_filter::DEFAULT_PROXY_PORT
+                clawmaster_network_filter::DEFAULT_PROXY_PORT
             );
             info!(
                 proxy_url = %url,
                 "trusted-network proxy started, routing all HTTP tools through proxy"
             );
-            moltis_tools::init_shared_http_client(Some(&url));
+            clawmaster_tools::init_shared_http_client(Some(&url));
             proxy_url_for_tools = Some(url);
             proxy_shutdown_tx = Some(shutdown_tx);
         } else {
@@ -2413,7 +2413,7 @@ pub async fn prepare_gateway(
             .config()
             .image
             .clone()
-            .unwrap_or_else(|| moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string());
+            .unwrap_or_else(|| clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string());
 
         if should_prebuild_sandbox_image(router.mode(), &packages) {
             let deferred_for_build = Arc::clone(&deferred_state);
@@ -2507,7 +2507,7 @@ pub async fn prepare_gateway(
         let packages = sandbox_router.config().packages.clone();
         if sandbox_router.backend_name() == "none"
             && !packages.is_empty()
-            && moltis_tools::sandbox::is_debian_host()
+            && clawmaster_tools::sandbox::is_debian_host()
         {
             let deferred_for_host = Arc::clone(&deferred_state);
             let pkg_count = packages.len();
@@ -2528,7 +2528,7 @@ pub async fn prepare_gateway(
                     .await;
                 }
 
-                match moltis_tools::sandbox::provision_host_packages(&packages).await {
+                match clawmaster_tools::sandbox::provision_host_packages(&packages).await {
                     Ok(Some(result)) => {
                         info!(
                             installed = result.installed.len(),
@@ -2585,7 +2585,7 @@ pub async fn prepare_gateway(
         let prefix = sandbox_router.config().container_prefix.clone();
         tokio::spawn(async move {
             if let Some(prefix) = prefix {
-                match moltis_tools::sandbox::clean_all_containers(&prefix).await {
+                match clawmaster_tools::sandbox::clean_all_containers(&prefix).await {
                     Ok(0) => {},
                     Ok(n) => info!(
                         removed = n,
@@ -2603,7 +2603,7 @@ pub async fn prepare_gateway(
     if config.tools.browser.enabled
         && !matches!(
             sandbox_router.config().mode,
-            moltis_tools::sandbox::SandboxMode::Off
+            clawmaster_tools::sandbox::SandboxMode::Off
         )
         && sandbox_router.backend_name() != "none"
     {
@@ -2627,7 +2627,7 @@ pub async fn prepare_gateway(
                 .await;
             }
 
-            match moltis_browser::container::ensure_image(&sandbox_image) {
+            match clawmaster_browser::container::ensure_image(&sandbox_image) {
                 Ok(()) => {
                     info!(image = %sandbox_image, "browser container image ready");
                     if let Some(state) = deferred_for_browser.get() {
@@ -2685,13 +2685,13 @@ pub async fn prepare_gateway(
 
     // Session service is wired after hook registry is built (below).
 
-    let msteams_webhook_plugin: Arc<tokio::sync::RwLock<moltis_msteams::MsTeamsPlugin>>;
+    let msteams_webhook_plugin: Arc<tokio::sync::RwLock<clawmaster_msteams::MsTeamsPlugin>>;
     #[cfg(feature = "slack")]
-    let slack_webhook_plugin: Arc<tokio::sync::RwLock<moltis_slack::SlackPlugin>>;
+    let slack_webhook_plugin: Arc<tokio::sync::RwLock<clawmaster_slack::SlackPlugin>>;
 
     // Wire channel store, registry, and channel plugins.
     {
-        use moltis_channels::{
+        use clawmaster_channels::{
             registry::{ChannelRegistry, RegistryOutboundRouter},
             store::ChannelStore,
         };
@@ -2700,7 +2700,7 @@ pub async fn prepare_gateway(
             crate::channel_store::SqliteChannelStore::new(db_pool.clone()),
         );
 
-        let channel_sink: Arc<dyn moltis_channels::ChannelEventSink> = Arc::new(
+        let channel_sink: Arc<dyn clawmaster_channels::ChannelEventSink> = Arc::new(
             crate::channel_events::GatewayChannelEventSink::new(Arc::clone(&deferred_state)),
         );
 
@@ -2708,7 +2708,7 @@ pub async fn prepare_gateway(
         let mut registry = ChannelRegistry::new();
 
         let tg_plugin = Arc::new(tokio::sync::RwLock::new(
-            moltis_telegram::TelegramPlugin::new()
+            clawmaster_telegram::TelegramPlugin::new()
                 .with_message_log(Arc::clone(&message_log))
                 .with_event_sink(Arc::clone(&channel_sink)),
         ));
@@ -2717,7 +2717,7 @@ pub async fn prepare_gateway(
             .await;
 
         let msteams_plugin = Arc::new(tokio::sync::RwLock::new(
-            moltis_msteams::MsTeamsPlugin::new()
+            clawmaster_msteams::MsTeamsPlugin::new()
                 .with_message_log(Arc::clone(&message_log))
                 .with_event_sink(Arc::clone(&channel_sink)),
         ));
@@ -2727,7 +2727,7 @@ pub async fn prepare_gateway(
             .await;
 
         let discord_plugin = Arc::new(tokio::sync::RwLock::new(
-            moltis_discord::DiscordPlugin::new()
+            clawmaster_discord::DiscordPlugin::new()
                 .with_message_log(Arc::clone(&message_log))
                 .with_event_sink(Arc::clone(&channel_sink)),
         ));
@@ -2742,7 +2742,7 @@ pub async fn prepare_gateway(
                 tracing::warn!("failed to create whatsapp data dir: {e}");
             }
             let whatsapp_plugin = Arc::new(tokio::sync::RwLock::new(
-                moltis_whatsapp::WhatsAppPlugin::new(wa_data_dir)
+                clawmaster_whatsapp::WhatsAppPlugin::new(wa_data_dir)
                     .with_message_log(Arc::clone(&message_log))
                     .with_event_sink(Arc::clone(&channel_sink)),
             ));
@@ -2756,7 +2756,7 @@ pub async fn prepare_gateway(
         #[cfg(feature = "slack")]
         {
             let slack_plugin = Arc::new(tokio::sync::RwLock::new(
-                moltis_slack::SlackPlugin::new()
+                clawmaster_slack::SlackPlugin::new()
                     .with_message_log(Arc::clone(&message_log))
                     .with_event_sink(Arc::clone(&channel_sink)),
             ));
@@ -2856,10 +2856,10 @@ pub async fn prepare_gateway(
         let router = Arc::new(RegistryOutboundRouter::new(Arc::clone(&registry)));
 
         services = services.with_channel_registry(Arc::clone(&registry));
-        let outbound_router = Arc::clone(&router) as Arc<dyn moltis_channels::ChannelOutbound>;
+        let outbound_router = Arc::clone(&router) as Arc<dyn clawmaster_channels::ChannelOutbound>;
         services = services.with_channel_outbound(Arc::clone(&outbound_router));
         services = services.with_channel_stream_outbound(
-            router as Arc<dyn moltis_channels::ChannelStreamOutbound>,
+            router as Arc<dyn clawmaster_channels::ChannelStreamOutbound>,
         );
 
         services.channel = Arc::new(crate::channel::LiveChannelService::new(
@@ -2924,11 +2924,11 @@ pub async fn prepare_gateway(
     }
 
     // ── Memory system initialization ─────────────────────────────────────
-    let memory_manager: Option<Arc<moltis_memory::manager::MemoryManager>> = {
+    let memory_manager: Option<Arc<clawmaster_memory::manager::MemoryManager>> = {
         // Build embedding provider(s) for the fallback chain.
         let mut embedding_providers: Vec<(
             String,
-            Box<dyn moltis_memory::embeddings::EmbeddingProvider>,
+            Box<dyn clawmaster_memory::embeddings::EmbeddingProvider>,
         )> = Vec::new();
 
         let mem_cfg = &config.memory;
@@ -2948,15 +2948,15 @@ pub async fn prepare_gateway(
                                 .as_ref()
                                 .map(PathBuf::from)
                                 .unwrap_or_else(
-                                    moltis_memory::embeddings_local::LocalGgufEmbeddingProvider::default_cache_dir,
+                                    clawmaster_memory::embeddings_local::LocalGgufEmbeddingProvider::default_cache_dir,
                                 );
-                            match moltis_memory::embeddings_local::LocalGgufEmbeddingProvider::ensure_model(
+                            match clawmaster_memory::embeddings_local::LocalGgufEmbeddingProvider::ensure_model(
                                 cache_dir,
                             )
                             .await
                             {
                                 Ok(path) => {
-                                    match moltis_memory::embeddings_local::LocalGgufEmbeddingProvider::new(
+                                    match clawmaster_memory::embeddings_local::LocalGgufEmbeddingProvider::new(
                                         path,
                                     ) {
                                         Ok(p) => embedding_providers.push(("local-gguf".into(), Box::new(p))),
@@ -2991,7 +2991,7 @@ pub async fn prepare_gateway(
                             })
                             .unwrap_or_default();
                         let mut e =
-                            moltis_memory::embeddings_openai::OpenAiEmbeddingProvider::new(api_key);
+                            clawmaster_memory::embeddings_openai::OpenAiEmbeddingProvider::new(api_key);
                         if base_url != "https://api.openai.com" {
                             e = e.with_base_url(base_url);
                         }
@@ -3015,7 +3015,7 @@ pub async fn prepare_gateway(
                     .is_ok();
                 if ollama_ok {
                     ensure_ollama_model("http://localhost:11434", "nomic-embed-text").await;
-                    let e = moltis_memory::embeddings_openai::OpenAiEmbeddingProvider::new(
+                    let e = clawmaster_memory::embeddings_openai::OpenAiEmbeddingProvider::new(
                         String::new(),
                     )
                     .with_base_url("http://localhost:11434".into())
@@ -3055,7 +3055,7 @@ pub async fn prepare_gateway(
                         .and_then(|e| e.base_url.clone())
                         .unwrap_or_else(|| default_base.to_string());
                     let mut e =
-                        moltis_memory::embeddings_openai::OpenAiEmbeddingProvider::new(api_key);
+                        clawmaster_memory::embeddings_openai::OpenAiEmbeddingProvider::new(api_key);
                     if base != "https://api.openai.com" {
                         e = e.with_base_url(base);
                     }
@@ -3065,7 +3065,7 @@ pub async fn prepare_gateway(
         }
 
         // Build the final embedder: fallback chain, single provider, or keyword-only.
-        let embedder: Option<Box<dyn moltis_memory::embeddings::EmbeddingProvider>> = if mem_cfg
+        let embedder: Option<Box<dyn clawmaster_memory::embeddings::EmbeddingProvider>> = if mem_cfg
             .disable_rag
         {
             None
@@ -3087,7 +3087,7 @@ pub async fn prepare_gateway(
             } else {
                 info!(providers = ?names, active = names[0], "memory: fallback chain configured");
                 Some(Box::new(
-                    moltis_memory::embeddings_fallback::FallbackEmbeddingProvider::new(
+                    clawmaster_memory::embeddings_fallback::FallbackEmbeddingProvider::new(
                         embedding_providers,
                     ),
                 ))
@@ -3114,7 +3114,7 @@ pub async fn prepare_gateway(
         };
         match memory_pool_result {
             Ok(memory_pool) => {
-                if let Err(e) = moltis_memory::schema::run_migrations(&memory_pool).await {
+                if let Err(e) = clawmaster_memory::schema::run_migrations(&memory_pool).await {
                     tracing::warn!("memory migration failed: {e}");
                     None
                 } else {
@@ -3125,7 +3125,7 @@ pub async fn prepare_gateway(
                     let data_memory_sub = data_dir.join("memory");
                     let agents_root = data_dir.join("agents");
 
-                    let config = moltis_memory::config::MemoryConfig {
+                    let config = clawmaster_memory::config::MemoryConfig {
                         db_path: memory_db_path.to_string_lossy().into(),
                         data_dir: Some(data_dir.clone()),
                         memory_dirs: vec![
@@ -3139,7 +3139,7 @@ pub async fn prepare_gateway(
                         ..Default::default()
                     };
 
-                    let store = Box::new(moltis_memory::store_sqlite::SqliteMemoryStore::new(
+                    let store = Box::new(clawmaster_memory::store_sqlite::SqliteMemoryStore::new(
                         memory_pool,
                     ));
                     // Map file entries to their parent directory so that
@@ -3160,9 +3160,9 @@ pub async fn prepare_gateway(
                         .into_iter()
                         .collect();
                     let manager = Arc::new(if let Some(embedder) = embedder {
-                        moltis_memory::manager::MemoryManager::new(config, store, embedder)
+                        clawmaster_memory::manager::MemoryManager::new(config, store, embedder)
                     } else {
-                        moltis_memory::manager::MemoryManager::keyword_only(config, store)
+                        clawmaster_memory::manager::MemoryManager::keyword_only(config, store)
                     });
 
                     // Initial sync + periodic re-sync (15min with watcher, 5min without).
@@ -3197,17 +3197,17 @@ pub async fn prepare_gateway(
                         #[cfg(feature = "file-watcher")]
                         {
                             let watcher_manager = Arc::clone(&sync_manager);
-                            match moltis_memory::watcher::MemoryFileWatcher::start(watch_dirs) {
+                            match clawmaster_memory::watcher::MemoryFileWatcher::start(watch_dirs) {
                                 Ok((_watcher, mut rx)) => {
                                     info!("memory: file watcher started");
                                     tokio::spawn(async move {
                                         while let Some(event) = rx.recv().await {
                                             let path = match &event {
-                                                moltis_memory::watcher::WatchEvent::Created(p)
-                                                | moltis_memory::watcher::WatchEvent::Modified(p) => {
+                                                clawmaster_memory::watcher::WatchEvent::Created(p)
+                                                | clawmaster_memory::watcher::WatchEvent::Modified(p) => {
                                                     Some(p.clone())
                                                 },
-                                                moltis_memory::watcher::WatchEvent::Removed(p) => {
+                                                clawmaster_memory::watcher::WatchEvent::Removed(p) => {
                                                     // For removed files, trigger a full sync
                                                     if let Err(e) = watcher_manager.sync().await {
                                                         tracing::warn!(
@@ -3275,15 +3275,15 @@ pub async fn prepare_gateway(
     // Initialize metrics system.
     #[cfg(feature = "metrics")]
     let metrics_handle = {
-        let metrics_config = moltis_metrics::MetricsRecorderConfig {
+        let metrics_config = clawmaster_metrics::MetricsRecorderConfig {
             enabled: config.metrics.enabled,
             prefix: None,
             global_labels: vec![
-                ("service".to_string(), "moltis-gateway".to_string()),
+                ("service".to_string(), "clawmaster-gateway".to_string()),
                 ("version".to_string(), env!("CARGO_PKG_VERSION").to_string()),
             ],
         };
-        match moltis_metrics::init_metrics(metrics_config) {
+        match clawmaster_metrics::init_metrics(metrics_config) {
             Ok(handle) => {
                 if config.metrics.enabled {
                     info!("Metrics collection enabled");
@@ -3301,7 +3301,7 @@ pub async fn prepare_gateway(
     #[cfg(feature = "metrics")]
     let metrics_store: Option<Arc<dyn crate::state::MetricsStore>> = {
         let metrics_db_path = data_dir.join("metrics.db");
-        match moltis_metrics::SqliteMetricsStore::new(&metrics_db_path).await {
+        match clawmaster_metrics::SqliteMetricsStore::new(&metrics_db_path).await {
             Ok(store) => {
                 info!(
                     "Metrics history store initialized at {}",
@@ -3502,7 +3502,7 @@ pub async fn prepare_gateway(
     #[cfg(feature = "graphql")]
     state.set_graphql_enabled(config.graphql.enabled);
 
-    let browser_tool_for_warmup: Option<Arc<dyn moltis_agents::tool_registry::AgentTool>>;
+    let browser_tool_for_warmup: Option<Arc<dyn clawmaster_agents::tool_registry::AgentTool>>;
 
     // Wire live chat service (needs state reference, so done after state creation).
     {
@@ -3510,7 +3510,7 @@ pub async fn prepare_gateway(
         let env_provider: Arc<dyn EnvVarProvider> = credential_store.clone();
         let eq = cron_service.events_queue().clone();
         let cs = Arc::clone(&cron_service);
-        let exec_cb: moltis_tools::exec::ExecCompletionFn = Arc::new(move |event| {
+        let exec_cb: clawmaster_tools::exec::ExecCompletionFn = Arc::new(move |event| {
             let summary = format!("Command `{}` exited {}", event.command, event.exit_code);
             let eq = Arc::clone(&eq);
             let cs = Arc::clone(&cs);
@@ -3519,7 +3519,7 @@ pub async fn prepare_gateway(
                 cs.wake("exec-event").await;
             });
         });
-        let mut exec_tool = moltis_tools::exec::ExecTool::default()
+        let mut exec_tool = clawmaster_tools::exec::ExecTool::default()
             .with_approval(Arc::clone(&approval_manager), broadcaster)
             .with_sandbox_router(Arc::clone(&sandbox_router))
             .with_env_provider(Arc::clone(&env_provider))
@@ -3540,17 +3540,17 @@ pub async fn prepare_gateway(
             exec_tool = exec_tool.with_node_provider(provider, default_node);
         }
 
-        let cron_tool = moltis_tools::cron_tool::CronTool::new(Arc::clone(&cron_service));
+        let cron_tool = clawmaster_tools::cron_tool::CronTool::new(Arc::clone(&cron_service));
 
-        let mut tool_registry = moltis_agents::tool_registry::ToolRegistry::new();
-        let process_tool = moltis_tools::process::ProcessTool::new()
+        let mut tool_registry = clawmaster_agents::tool_registry::ToolRegistry::new();
+        let process_tool = clawmaster_tools::process::ProcessTool::new()
             .with_sandbox_router(Arc::clone(&sandbox_router));
 
-        let sandbox_packages_tool = moltis_tools::sandbox_packages::SandboxPackagesTool::new()
+        let sandbox_packages_tool = clawmaster_tools::sandbox_packages::SandboxPackagesTool::new()
             .with_sandbox_router(Arc::clone(&sandbox_router));
 
         tool_registry.register(Box::new(exec_tool));
-        tool_registry.register(Box::new(moltis_tools::calc::CalcTool::new()));
+        tool_registry.register(Box::new(clawmaster_tools::calc::CalcTool::new()));
         #[cfg(feature = "wasm")]
         {
             let wasm_limits = sandbox_router
@@ -3571,7 +3571,7 @@ pub async fn prepare_gateway(
                 .map(|s| s.expose_secret().clone())
                 .or_else(|| env_value_with_overrides(&runtime_env_overrides, "BRAVE_API_KEY"))
                 .filter(|k| !k.trim().is_empty());
-            if let Err(e) = moltis_tools::wasm_tool_runner::register_wasm_tools(
+            if let Err(e) = clawmaster_tools::wasm_tool_runner::register_wasm_tools(
                 &mut tool_registry,
                 &wasm_limits,
                 epoch_interval_ms,
@@ -3591,16 +3591,16 @@ pub async fn prepare_gateway(
             Arc::clone(&state.services.channel),
         )));
         tool_registry.register(Box::new(
-            moltis_tools::send_image::SendImageTool::new()
+            clawmaster_tools::send_image::SendImageTool::new()
                 .with_sandbox_router(Arc::clone(&sandbox_router)),
         ));
-        if let Some(t) = moltis_tools::web_search::WebSearchTool::from_config_with_env_overrides(
+        if let Some(t) = clawmaster_tools::web_search::WebSearchTool::from_config_with_env_overrides(
             &config.tools.web.search,
             &runtime_env_overrides,
         ) {
             tool_registry.register(Box::new(t.with_env_provider(Arc::clone(&env_provider))));
         }
-        if let Some(t) = moltis_tools::web_fetch::WebFetchTool::from_config(&config.tools.web.fetch)
+        if let Some(t) = clawmaster_tools::web_fetch::WebFetchTool::from_config(&config.tools.web.fetch)
         {
             #[cfg(feature = "trusted-network")]
             let t = if let Some(ref url) = proxy_url_for_tools {
@@ -3610,7 +3610,7 @@ pub async fn prepare_gateway(
             };
             tool_registry.register(Box::new(t));
         }
-        if let Some(t) = moltis_tools::browser::BrowserTool::from_config(&config.tools.browser) {
+        if let Some(t) = clawmaster_tools::browser::BrowserTool::from_config(&config.tools.browser) {
             let t = if sandbox_router.backend_name() != "none" {
                 t.with_sandbox_router(Arc::clone(&sandbox_router))
             } else {
@@ -3621,43 +3621,43 @@ pub async fn prepare_gateway(
 
         #[cfg(feature = "caldav")]
         {
-            if let Some(t) = moltis_caldav::tool::CalDavTool::from_config(&config.caldav) {
+            if let Some(t) = clawmaster_caldav::tool::CalDavTool::from_config(&config.caldav) {
                 tool_registry.register(Box::new(t));
             }
         }
 
         // Register memory tools if the memory system is available.
         if let Some(ref mm) = memory_manager {
-            tool_registry.register(Box::new(moltis_memory::tools::MemorySearchTool::new(
+            tool_registry.register(Box::new(clawmaster_memory::tools::MemorySearchTool::new(
                 Arc::clone(mm),
             )));
-            tool_registry.register(Box::new(moltis_memory::tools::MemoryGetTool::new(
+            tool_registry.register(Box::new(clawmaster_memory::tools::MemoryGetTool::new(
                 Arc::clone(mm),
             )));
-            tool_registry.register(Box::new(moltis_memory::tools::MemorySaveTool::new(
+            tool_registry.register(Box::new(clawmaster_memory::tools::MemorySaveTool::new(
                 Arc::clone(mm),
             )));
         }
 
         // Register node info tools (list, describe, select).
         {
-            let node_info_provider: Arc<dyn moltis_tools::nodes::NodeInfoProvider> = Arc::new(
+            let node_info_provider: Arc<dyn clawmaster_tools::nodes::NodeInfoProvider> = Arc::new(
                 crate::node_exec::GatewayNodeInfoProvider::new(Arc::clone(&state)),
             );
-            tool_registry.register(Box::new(moltis_tools::nodes::NodesListTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::nodes::NodesListTool::new(
                 Arc::clone(&node_info_provider),
             )));
-            tool_registry.register(Box::new(moltis_tools::nodes::NodesDescribeTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::nodes::NodesDescribeTool::new(
                 Arc::clone(&node_info_provider),
             )));
-            tool_registry.register(Box::new(moltis_tools::nodes::NodesSelectTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::nodes::NodesSelectTool::new(
                 Arc::clone(&node_info_provider),
             )));
         }
 
         // Register session state tool for per-session persistent KV store.
         tool_registry.register(Box::new(
-            moltis_tools::session_state::SessionStateTool::new(Arc::clone(&session_state_store)),
+            clawmaster_tools::session_state::SessionStateTool::new(Arc::clone(&session_state_store)),
         ));
 
         // Register session lifecycle tools for explicit session creation/deletion.
@@ -3678,7 +3678,7 @@ pub async fn prepare_gateway(
                     .session
                     .resolve(resolve_params)
                     .await
-                    .map_err(|e| moltis_tools::Error::message(e.to_string()))?;
+                    .map_err(|e| clawmaster_tools::Error::message(e.to_string()))?;
 
                 let mut patch = serde_json::Map::new();
                 patch.insert("key".to_string(), serde_json::json!(key.clone()));
@@ -3697,11 +3697,11 @@ pub async fn prepare_gateway(
                         .session
                         .patch(serde_json::Value::Object(patch))
                         .await
-                        .map_err(|e| moltis_tools::Error::message(e.to_string()))?;
+                        .map_err(|e| clawmaster_tools::Error::message(e.to_string()))?;
                 }
 
                 let entry = metadata.get(&key).await.ok_or_else(|| {
-                    moltis_tools::Error::message(format!("session '{key}' not found after create"))
+                    clawmaster_tools::Error::message(format!("session '{key}' not found after create"))
                 })?;
                 Ok(serde_json::json!({
                     "entry": {
@@ -3733,7 +3733,7 @@ pub async fn prepare_gateway(
                         "force": req.force,
                     }))
                     .await
-                    .map_err(|e| moltis_tools::Error::message(e.to_string()))
+                    .map_err(|e| clawmaster_tools::Error::message(e.to_string()))
             })
         });
 
@@ -3770,11 +3770,11 @@ pub async fn prepare_gateway(
                 if req.wait_for_reply {
                     chat.send_sync(params)
                         .await
-                        .map_err(|e| moltis_tools::Error::message(e.to_string()))
+                        .map_err(|e| clawmaster_tools::Error::message(e.to_string()))
                 } else {
                     chat.send(params)
                         .await
-                        .map_err(|e| moltis_tools::Error::message(e.to_string()))
+                        .map_err(|e| clawmaster_tools::Error::message(e.to_string()))
                 }
             })
         });
@@ -3784,7 +3784,7 @@ pub async fn prepare_gateway(
         )));
 
         // Register shared task coordination tool for multi-agent workflows.
-        tool_registry.register(Box::new(moltis_tools::task_list::TaskListTool::new(
+        tool_registry.register(Box::new(clawmaster_tools::task_list::TaskListTool::new(
             &data_dir,
         )));
 
@@ -3799,20 +3799,20 @@ pub async fn prepare_gateway(
         // Register skill management tools for agent self-extension.
         // Use data_dir so created skills land in the configured workspace root.
         {
-            tool_registry.register(Box::new(moltis_tools::skill_tools::CreateSkillTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::skill_tools::CreateSkillTool::new(
                 data_dir.clone(),
             )));
-            tool_registry.register(Box::new(moltis_tools::skill_tools::UpdateSkillTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::skill_tools::UpdateSkillTool::new(
                 data_dir.clone(),
             )));
-            tool_registry.register(Box::new(moltis_tools::skill_tools::DeleteSkillTool::new(
+            tool_registry.register(Box::new(clawmaster_tools::skill_tools::DeleteSkillTool::new(
                 data_dir.clone(),
             )));
         }
 
         // Register branch session tool for session forking.
         tool_registry.register(Box::new(
-            moltis_tools::branch_session::BranchSessionTool::new(
+            clawmaster_tools::branch_session::BranchSessionTool::new(
                 Arc::clone(&session_store),
                 Arc::clone(&session_metadata),
             ),
@@ -3822,23 +3822,23 @@ pub async fn prepare_gateway(
         let location_requester = Arc::new(GatewayLocationRequester {
             state: Arc::clone(&state),
         });
-        tool_registry.register(Box::new(moltis_tools::location::LocationTool::new(
+        tool_registry.register(Box::new(clawmaster_tools::location::LocationTool::new(
             location_requester,
         )));
 
         // Register map tool for showing static map images with links.
         let map_provider = match config.tools.maps.provider {
-            moltis_config::schema::MapProvider::GoogleMaps => {
-                moltis_tools::map::MapProvider::GoogleMaps
+            clawmaster_config::schema::MapProvider::GoogleMaps => {
+                clawmaster_tools::map::MapProvider::GoogleMaps
             },
-            moltis_config::schema::MapProvider::AppleMaps => {
-                moltis_tools::map::MapProvider::AppleMaps
+            clawmaster_config::schema::MapProvider::AppleMaps => {
+                clawmaster_tools::map::MapProvider::AppleMaps
             },
-            moltis_config::schema::MapProvider::OpenStreetMap => {
-                moltis_tools::map::MapProvider::OpenStreetMap
+            clawmaster_config::schema::MapProvider::OpenStreetMap => {
+                clawmaster_tools::map::MapProvider::OpenStreetMap
             },
         };
-        tool_registry.register(Box::new(moltis_tools::map::ShowMapTool::with_provider(
+        tool_registry.register(Box::new(clawmaster_tools::map::ShowMapTool::with_provider(
             map_provider,
         )));
 
@@ -3848,8 +3848,8 @@ pub async fn prepare_gateway(
         if let Some(default_provider) = registry.read().await.first_with_tools() {
             let base_tools = Arc::new(tool_registry.clone_without(&[]));
             let state_for_spawn = Arc::clone(&state);
-            let on_spawn_event: moltis_tools::spawn_agent::OnSpawnEvent = Arc::new(move |event| {
-                use moltis_agents::runner::RunnerEvent;
+            let on_spawn_event: clawmaster_tools::spawn_agent::OnSpawnEvent = Arc::new(move |event| {
+                use clawmaster_agents::runner::RunnerEvent;
                 let state = Arc::clone(&state_for_spawn);
                 let payload = match &event {
                     RunnerEvent::SubAgentStart { task, model, depth } => {
@@ -3880,7 +3880,7 @@ pub async fn prepare_gateway(
                     broadcast(&state, "chat", payload, BroadcastOpts::default()).await;
                 });
             });
-            let spawn_tool = moltis_tools::spawn_agent::SpawnAgentTool::new(
+            let spawn_tool = clawmaster_tools::spawn_agent::SpawnAgentTool::new(
                 Arc::clone(&registry),
                 default_provider,
                 base_tools,
@@ -3925,9 +3925,9 @@ pub async fn prepare_gateway(
     // Spawn skill file watcher for hot-reload.
     #[cfg(feature = "file-watcher")]
     {
-        let search_paths = moltis_skills::discover::FsSkillDiscoverer::default_paths();
+        let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
         let watch_dirs: Vec<PathBuf> = search_paths.into_iter().map(|(p, _)| p).collect();
-        if let Ok((_watcher, mut rx)) = moltis_skills::watcher::SkillWatcher::start(watch_dirs) {
+        if let Ok((_watcher, mut rx)) = clawmaster_skills::watcher::SkillWatcher::start(watch_dirs) {
             let watcher_state = Arc::clone(&state);
             tokio::spawn(async move {
                 let _watcher = _watcher; // keep alive
@@ -4041,12 +4041,12 @@ pub async fn prepare_gateway(
                             Err(rejection) => {
                                 crate::channel_webhook_middleware::rejection_into_response(rejection)
                             },
-                            Ok((_, moltis_channels::ChannelWebhookDedupeResult::Duplicate)) => (
+                            Ok((_, clawmaster_channels::ChannelWebhookDedupeResult::Duplicate)) => (
                                 StatusCode::OK,
                                 Json(serde_json::json!({ "ok": true, "deduplicated": true })),
                             )
                                 .into_response(),
-                            Ok((verified, moltis_channels::ChannelWebhookDedupeResult::New)) => {
+                            Ok((verified, clawmaster_channels::ChannelWebhookDedupeResult::New)) => {
                                 // Parse verified body and dispatch.
                                 let payload: serde_json::Value =
                                     match serde_json::from_slice(&verified.body) {
@@ -4135,12 +4135,12 @@ pub async fn prepare_gateway(
                             Err(rejection) => {
                                 crate::channel_webhook_middleware::rejection_into_response(rejection)
                             },
-                            Ok((_, moltis_channels::ChannelWebhookDedupeResult::Duplicate)) => (
+                            Ok((_, clawmaster_channels::ChannelWebhookDedupeResult::Duplicate)) => (
                                 StatusCode::OK,
                                 Json(serde_json::json!({ "ok": true, "deduplicated": true })),
                             )
                                 .into_response(),
-                            Ok((verified, moltis_channels::ChannelWebhookDedupeResult::New)) => {
+                            Ok((verified, clawmaster_channels::ChannelWebhookDedupeResult::New)) => {
                                 // Dispatch to Slack plugin with verified body.
                                 let result = {
                                     let p = plugin.read().await;
@@ -4219,12 +4219,12 @@ pub async fn prepare_gateway(
                             Err(rejection) => {
                                 crate::channel_webhook_middleware::rejection_into_response(rejection)
                             },
-                            Ok((_, moltis_channels::ChannelWebhookDedupeResult::Duplicate)) => (
+                            Ok((_, clawmaster_channels::ChannelWebhookDedupeResult::Duplicate)) => (
                                 StatusCode::OK,
                                 Json(serde_json::json!({ "ok": true, "deduplicated": true })),
                             )
                                 .into_response(),
-                            Ok((verified, moltis_channels::ChannelWebhookDedupeResult::New)) => {
+                            Ok((verified, clawmaster_channels::ChannelWebhookDedupeResult::New)) => {
                                 // Dispatch to Slack plugin with verified body.
                                 let result = {
                                     let p = plugin.read().await;
@@ -4293,7 +4293,7 @@ pub async fn prepare_gateway(
                                 ("content-type", "application/x-pem-file"),
                                 (
                                     "content-disposition",
-                                    "attachment; filename=\"moltis-ca.pem\"",
+                                    "attachment; filename=\"clawmaster-ca.pem\"",
                                 ),
                             ],
                             data.as_ref().clone(),
@@ -4385,7 +4385,7 @@ pub async fn prepare_gateway(
                                 entry.channel_binding
                             {
                                 if let Ok(target) = serde_json::from_str::<
-                                    moltis_channels::ChannelReplyTarget,
+                                    clawmaster_channels::ChannelReplyTarget,
                                 >(binding_json)
                                 {
                                     metadata
@@ -4458,7 +4458,7 @@ pub async fn prepare_gateway(
     let releases_url = resolve_releases_url(config.server.update_releases_url.as_deref());
     tokio::spawn(async move {
         let client = match reqwest::Client::builder()
-            .user_agent(format!("moltis-gateway/{}", update_state.version))
+            .user_agent(format!("clawmaster-gateway/{}", update_state.version))
             .timeout(std::time::Duration::from_secs(12))
             .build()
         {
@@ -4566,15 +4566,15 @@ pub async fn prepare_gateway(
                 interval.tick().await;
                 if let Some(ref handle) = metrics_state.metrics_handle {
                     // Update gauges that are derived from server state, not events.
-                    moltis_metrics::gauge!(moltis_metrics::system::UPTIME_SECONDS)
+                    clawmaster_metrics::gauge!(clawmaster_metrics::system::UPTIME_SECONDS)
                         .set(server_start.elapsed().as_secs_f64());
                     let session_count =
                         metrics_state.inner.read().await.active_sessions.len() as f64;
-                    moltis_metrics::gauge!(moltis_metrics::session::ACTIVE).set(session_count);
+                    clawmaster_metrics::gauge!(clawmaster_metrics::session::ACTIVE).set(session_count);
 
                     let prometheus_text = handle.render();
                     let snapshot =
-                        moltis_metrics::MetricsSnapshot::from_prometheus_text(&prometheus_text);
+                        clawmaster_metrics::MetricsSnapshot::from_prometheus_text(&prometheus_text);
                     // Convert per-provider metrics to history format.
                     let by_provider = snapshot
                         .categories
@@ -4582,7 +4582,7 @@ pub async fn prepare_gateway(
                         .by_provider
                         .iter()
                         .map(|(name, metrics)| {
-                            (name.clone(), moltis_metrics::ProviderTokens {
+                            (name.clone(), clawmaster_metrics::ProviderTokens {
                                 input_tokens: metrics.input_tokens,
                                 output_tokens: metrics.output_tokens,
                                 completions: metrics.completions,
@@ -4675,7 +4675,7 @@ pub async fn prepare_gateway(
                 match event_rx.recv().await {
                     Ok(event) => {
                         let (event_name, payload) = match event {
-                            moltis_tools::sandbox::SandboxEvent::Preparing {
+                            clawmaster_tools::sandbox::SandboxEvent::Preparing {
                                 session_key,
                                 backend,
                                 image,
@@ -4688,7 +4688,7 @@ pub async fn prepare_gateway(
                                     "image": image,
                                 }),
                             ),
-                            moltis_tools::sandbox::SandboxEvent::Prepared {
+                            clawmaster_tools::sandbox::SandboxEvent::Prepared {
                                 session_key,
                                 backend,
                                 image,
@@ -4701,7 +4701,7 @@ pub async fn prepare_gateway(
                                     "image": image,
                                 }),
                             ),
-                            moltis_tools::sandbox::SandboxEvent::PrepareFailed {
+                            clawmaster_tools::sandbox::SandboxEvent::PrepareFailed {
                                 session_key,
                                 backend,
                                 image,
@@ -4716,7 +4716,7 @@ pub async fn prepare_gateway(
                                     "error": error,
                                 }),
                             ),
-                            moltis_tools::sandbox::SandboxEvent::Provisioning {
+                            clawmaster_tools::sandbox::SandboxEvent::Provisioning {
                                 container,
                                 packages,
                             } => (
@@ -4727,14 +4727,14 @@ pub async fn prepare_gateway(
                                     "packages": packages,
                                 }),
                             ),
-                            moltis_tools::sandbox::SandboxEvent::Provisioned { container } => (
+                            clawmaster_tools::sandbox::SandboxEvent::Provisioned { container } => (
                                 "sandbox.image.provision",
                                 serde_json::json!({
                                     "phase": "done",
                                     "container": container,
                                 }),
                             ),
-                            moltis_tools::sandbox::SandboxEvent::ProvisionFailed {
+                            clawmaster_tools::sandbox::SandboxEvent::ProvisionFailed {
                                 container,
                                 error,
                             } => (
@@ -4800,7 +4800,7 @@ pub async fn prepare_gateway(
                         // feedback loop: broadcasting a log entry emits a debug
                         // log which would be re-captured and re-broadcast
                         // infinitely, pegging the CPU.
-                        if entry.target.starts_with("moltis_gateway::broadcast") {
+                        if entry.target.starts_with("clawmaster_gateway::broadcast") {
                             continue;
                         }
                         if let Ok(payload) = serde_json::to_value(&entry) {
@@ -4826,7 +4826,7 @@ pub async fn prepare_gateway(
     // Upsert the built-in heartbeat job from config.
     // Use a fixed ID so run history persists across restarts.
     {
-        use moltis_cron::{
+        use clawmaster_cron::{
             heartbeat::{
                 DEFAULT_INTERVAL_MS, HeartbeatPromptSource, parse_interval_ms,
                 resolve_heartbeat_prompt,
@@ -4837,7 +4837,7 @@ pub async fn prepare_gateway(
 
         let hb = &config.heartbeat;
         let interval_ms = parse_interval_ms(&hb.every).unwrap_or(DEFAULT_INTERVAL_MS);
-        let heartbeat_md = moltis_config::load_heartbeat_md();
+        let heartbeat_md = clawmaster_config::load_heartbeat_md();
         let (prompt, prompt_source) =
             resolve_heartbeat_prompt(hb.prompt.as_deref(), heartbeat_md.as_deref());
         if prompt_source == HeartbeatPromptSource::HeartbeatMd {
@@ -4880,7 +4880,7 @@ pub async fn prepare_gateway(
                         to: hb.to.clone(),
                     }),
                     enabled: Some(true),
-                    sandbox: Some(moltis_cron::types::CronSandboxConfig {
+                    sandbox: Some(clawmaster_cron::types::CronSandboxConfig {
                         enabled: hb.sandbox_enabled,
                         image: hb.sandbox_image.clone(),
                     }),
@@ -4911,11 +4911,11 @@ pub async fn prepare_gateway(
                     delete_after_run: false,
                     enabled: true,
                     system: true,
-                    sandbox: moltis_cron::types::CronSandboxConfig {
+                    sandbox: clawmaster_cron::types::CronSandboxConfig {
                         enabled: hb.sandbox_enabled,
                         image: hb.sandbox_image.clone(),
                     },
-                    wake_mode: moltis_cron::types::CronWakeMode::default(),
+                    wake_mode: clawmaster_cron::types::CronWakeMode::default(),
                 };
                 match cron_service.add(create).await {
                     Ok(job) => tracing::info!(id = %job.id, "heartbeat job created"),
@@ -5046,7 +5046,7 @@ pub async fn start_gateway(
         let host = hostname::get()
             .ok()
             .and_then(|h| h.into_string().ok())
-            .unwrap_or_else(|| "moltis".to_string());
+            .unwrap_or_else(|| "clawmaster".to_string());
         let instance = format!("Moltis on {host}");
         match crate::mdns::register(
             &instance,
@@ -5108,13 +5108,13 @@ pub async fn start_gateway(
 
     // Count enabled skills and repos for startup banner.
     let (skill_count, repo_count) = {
-        use moltis_skills::discover::{FsSkillDiscoverer, SkillDiscoverer};
+        use clawmaster_skills::discover::{FsSkillDiscoverer, SkillDiscoverer};
         let discoverer = FsSkillDiscoverer::new(FsSkillDiscoverer::default_paths());
         let sc = discoverer.discover().await.map(|s| s.len()).unwrap_or(0);
-        let rc = moltis_skills::manifest::ManifestStore::default_path()
+        let rc = clawmaster_skills::manifest::ManifestStore::default_path()
             .ok()
             .map(|p| {
-                let store = moltis_skills::manifest::ManifestStore::new(p);
+                let store = clawmaster_skills::manifest::ManifestStore::new(p);
                 store.load().map(|m| m.repos.len()).unwrap_or(0)
             })
             .unwrap_or(0);
@@ -5152,10 +5152,10 @@ pub async fn start_gateway(
     };
     #[cfg_attr(not(feature = "tls"), allow(unused_mut))]
     let mut lines = vec![
-        format!("moltis gateway v{}", state.version),
+        format!("clawmaster gateway v{}", state.version),
         format!(
             "protocol v{}, listening on {}://{} ({})",
-            moltis_protocol::PROTOCOL_VERSION,
+            clawmaster_protocol::PROTOCOL_VERSION,
             scheme,
             display_host,
             if tls_active {
@@ -5189,7 +5189,7 @@ pub async fn start_gateway(
         format!("sandbox: {} backend", banner.sandbox_backend_name),
         format!(
             "config: {}",
-            moltis_config::find_or_default_config_path().display()
+            clawmaster_config::find_or_default_config_path().display()
         ),
         format!("data: {}", banner.data_dir.display()),
         format!("openclaw: {}", banner.openclaw_status),
@@ -5262,7 +5262,7 @@ pub async fn start_gateway(
 
     // Dispatch GatewayStart hook.
     if let Some(ref hooks) = state.inner.read().await.hook_registry {
-        let payload = moltis_common::hooks::HookPayload::GatewayStart {
+        let payload = clawmaster_common::hooks::HookPayload::GatewayStart {
             address: addr.to_string(),
         };
         if let Err(e) = hooks.dispatch(&payload).await {
@@ -5378,7 +5378,7 @@ async fn health_handler(State(state): State<AppState>) -> impl IntoResponse {
     Json(serde_json::json!({
         "status": "ok",
         "version": state.gateway.version,
-        "protocol": moltis_protocol::PROTOCOL_VERSION,
+        "protocol": clawmaster_protocol::PROTOCOL_VERSION,
         "connections": count,
     }))
 }
@@ -5526,7 +5526,7 @@ fn is_public_ip(ip: &str) -> bool {
     }
 }
 
-pub(crate) use moltis_auth::locality::is_local_connection;
+pub(crate) use clawmaster_auth::locality::is_local_connection;
 
 async fn websocket_header_authenticated(
     headers: &axum::http::HeaderMap,
@@ -5649,10 +5649,10 @@ fn is_same_origin(origin: &str, host: &str) -> bool {
 fn builtin_hook_metadata() -> Vec<(
     &'static str,
     &'static str,
-    Vec<moltis_common::hooks::HookEvent>,
+    Vec<clawmaster_common::hooks::HookEvent>,
     &'static str,
 )> {
-    use moltis_common::hooks::HookEvent;
+    use clawmaster_common::hooks::HookEvent;
     vec![
         (
             "boot-md",
@@ -5680,7 +5680,7 @@ fn builtin_hook_metadata() -> Vec<(
 /// The hook has no command, so it won't execute — it's a template showing
 /// users what's possible. If the directory already exists it's a no-op.
 fn seed_example_hook() {
-    let hook_dir = moltis_config::data_dir().join("hooks/example");
+    let hook_dir = clawmaster_config::data_dir().join("hooks/example");
     let hook_md = hook_dir.join("HOOK.md");
     if hook_md.exists() {
         return;
@@ -5699,7 +5699,7 @@ fn seed_example_hook() {
 /// Writes both `HOOK.md` and `handler.sh`. The handler gracefully no-ops when
 /// `dcg` is not installed, so the hook is always eligible.
 fn seed_dcg_guard_hook() {
-    let hook_dir = moltis_config::data_dir().join("hooks/dcg-guard");
+    let hook_dir = clawmaster_config::data_dir().join("hooks/dcg-guard");
     let hook_md = hook_dir.join("HOOK.md");
     if hook_md.exists() {
         return;
@@ -5734,7 +5734,7 @@ fn seed_example_skill() {
 /// Write a skill's `SKILL.md` into `<data_dir>/skills/<name>/` if it doesn't
 /// already exist.
 fn seed_skill_if_missing(name: &str, content: &str) {
-    let skill_dir = moltis_config::data_dir().join(format!("skills/{name}"));
+    let skill_dir = clawmaster_config::data_dir().join(format!("skills/{name}"));
     let skill_md = skill_dir.join("SKILL.md");
     if skill_md.exists() {
         return;
@@ -5754,10 +5754,10 @@ fn seed_skill_if_missing(name: &str, content: &str) {
 /// take precedence (name/emoji/theme) while TOML-defined fields (model, tools,
 /// timeout, etc.) are preserved. The soul is synced into `system_prompt_suffix`.
 pub(crate) fn sync_persona_into_preset(
-    agents: &mut moltis_config::AgentsConfig,
+    agents: &mut clawmaster_config::AgentsConfig,
     persona: &crate::agent_persona::AgentPersona,
 ) {
-    let soul = moltis_config::load_soul_for_agent(&persona.id);
+    let soul = clawmaster_config::load_soul_for_agent(&persona.id);
 
     let entry = agents.presets.entry(persona.id.clone()).or_default();
 
@@ -5776,7 +5776,7 @@ pub(crate) fn sync_persona_into_preset(
 
 /// Seed default workspace markdown files in workspace root on first run.
 fn seed_default_workspace_markdown_files() {
-    let data_dir = moltis_config::data_dir();
+    let data_dir = clawmaster_config::data_dir();
     seed_file_if_missing(data_dir.join("BOOT.md"), DEFAULT_BOOT_MD);
     seed_file_if_missing(data_dir.join("AGENTS.md"), DEFAULT_WORKSPACE_AGENTS_MD);
     seed_file_if_missing(data_dir.join("TOOLS.md"), DEFAULT_TOOLS_MD);
@@ -6147,10 +6147,10 @@ pub(crate) async fn discover_and_build_hooks(
     disabled: &HashSet<String>,
     session_store: Option<&Arc<SessionStore>>,
 ) -> (
-    Option<Arc<moltis_common::hooks::HookRegistry>>,
+    Option<Arc<clawmaster_common::hooks::HookRegistry>>,
     Vec<crate::state::DiscoveredHookInfo>,
 ) {
-    use moltis_plugins::{
+    use clawmaster_plugins::{
         bundled::{
             boot_md::BootMdHook, command_logger::CommandLoggerHook,
             session_memory::SessionMemoryHook,
@@ -6163,7 +6163,7 @@ pub(crate) async fn discover_and_build_hooks(
     let discoverer = FsHookDiscoverer::new(FsHookDiscoverer::default_paths());
     let discovered = discoverer.discover().await.unwrap_or_default();
 
-    let mut registry = moltis_common::hooks::HookRegistry::new();
+    let mut registry = clawmaster_common::hooks::HookRegistry::new();
     let mut info_list = Vec::with_capacity(discovered.len());
 
     for (parsed, source) in &discovered {
@@ -6231,7 +6231,7 @@ pub(crate) async fn discover_and_build_hooks(
 
     // ── Built-in hooks (compiled Rust, always active) ──────────────────
     {
-        let data = moltis_config::data_dir();
+        let data = clawmaster_config::data_dir();
 
         // boot-md: inject BOOT.md content on GatewayStart.
         let boot = BootMdHook::new(data.clone());
@@ -6327,7 +6327,7 @@ mod tests {
 
     #[test]
     fn approval_manager_uses_config_values() {
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.tools.exec.approval_mode = "always".into();
         cfg.tools.exec.security_level = "strict".into();
         cfg.tools.exec.allowlist = vec!["git*".into()];
@@ -6340,7 +6340,7 @@ mod tests {
 
     #[test]
     fn approval_manager_falls_back_for_invalid_values() {
-        let mut cfg = moltis_config::MoltisConfig::default();
+        let mut cfg = clawmaster_config::MoltisConfig::default();
         cfg.tools.exec.approval_mode = "bogus".into();
         cfg.tools.exec.security_level = "bogus".into();
 
@@ -6401,21 +6401,21 @@ mod tests {
             .await
             .unwrap();
 
-        let mut registry = moltis_common::hooks::HookRegistry::new();
+        let mut registry = clawmaster_common::hooks::HookRegistry::new();
         registry.register(Arc::new(
-            moltis_plugins::bundled::session_memory::SessionMemoryHook::new(
+            clawmaster_plugins::bundled::session_memory::SessionMemoryHook::new(
                 tmp.path().to_path_buf(),
                 Arc::clone(&session_store),
             ),
         ));
 
-        let payload = moltis_common::hooks::HookPayload::Command {
+        let payload = clawmaster_common::hooks::HookPayload::Command {
             session_key: "smoke-session".into(),
             action: "new".into(),
             sender_id: None,
         };
         let result = registry.dispatch(&payload).await.unwrap();
-        assert!(matches!(result, moltis_common::hooks::HookAction::Continue));
+        assert!(matches!(result, clawmaster_common::hooks::HookAction::Continue));
 
         let memory_dir = tmp.path().join("memory");
         assert!(memory_dir.is_dir());
@@ -6433,7 +6433,7 @@ mod tests {
     async fn websocket_header_auth_accepts_valid_session_cookie() {
         let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
         let store = Arc::new(
-            auth::CredentialStore::with_config(pool, &moltis_config::AuthConfig::default())
+            auth::CredentialStore::with_config(pool, &clawmaster_config::AuthConfig::default())
                 .await
                 .unwrap(),
         );
@@ -6451,7 +6451,7 @@ mod tests {
     async fn websocket_header_auth_accepts_valid_bearer_api_key() {
         let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
         let store = Arc::new(
-            auth::CredentialStore::with_config(pool, &moltis_config::AuthConfig::default())
+            auth::CredentialStore::with_config(pool, &clawmaster_config::AuthConfig::default())
                 .await
                 .unwrap(),
         );
@@ -6472,7 +6472,7 @@ mod tests {
     async fn websocket_header_auth_rejects_missing_credentials_when_setup_complete() {
         let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
         let store = Arc::new(
-            auth::CredentialStore::with_config(pool, &moltis_config::AuthConfig::default())
+            auth::CredentialStore::with_config(pool, &clawmaster_config::AuthConfig::default())
                 .await
                 .unwrap(),
         );
@@ -6493,7 +6493,7 @@ mod tests {
     async fn websocket_header_auth_rejects_local_when_password_set() {
         let pool = sqlx::SqlitePool::connect("sqlite::memory:").await.unwrap();
         let store = Arc::new(
-            auth::CredentialStore::with_config(pool, &moltis_config::AuthConfig::default())
+            auth::CredentialStore::with_config(pool, &clawmaster_config::AuthConfig::default())
                 .await
                 .unwrap(),
         );
@@ -6567,7 +6567,7 @@ mod tests {
     // share_template, map_share_message_views tests moved to share_render::tests
 
     #[test]
-    fn same_origin_moltis_localhost() {
+    fn same_origin_clawmaster_localhost() {
         // moltis.localhost ↔ localhost loopback variants
         assert!(is_same_origin(
             "https://moltis.localhost:8080",
@@ -6579,7 +6579,7 @@ mod tests {
         ));
         assert!(is_same_origin(
             "http://localhost:8080",
-            "moltis.localhost:8080"
+            "clawmaster.localhost:8080"
         ));
         // Any .localhost subdomain is treated as loopback (RFC 6761).
         assert!(is_same_origin(
@@ -6617,19 +6617,19 @@ mod tests {
     fn prebuild_runs_only_when_mode_enabled_and_packages_present() {
         let packages = vec!["curl".to_string()];
         assert!(should_prebuild_sandbox_image(
-            &moltis_tools::sandbox::SandboxMode::All,
+            &clawmaster_tools::sandbox::SandboxMode::All,
             &packages
         ));
         assert!(should_prebuild_sandbox_image(
-            &moltis_tools::sandbox::SandboxMode::NonMain,
+            &clawmaster_tools::sandbox::SandboxMode::NonMain,
             &packages
         ));
         assert!(!should_prebuild_sandbox_image(
-            &moltis_tools::sandbox::SandboxMode::Off,
+            &clawmaster_tools::sandbox::SandboxMode::Off,
             &packages
         ));
         assert!(!should_prebuild_sandbox_image(
-            &moltis_tools::sandbox::SandboxMode::All,
+            &clawmaster_tools::sandbox::SandboxMode::All,
             &[]
         ));
     }
@@ -6742,7 +6742,7 @@ mod tests {
 
     #[test]
     fn sync_persona_into_preset_creates_new_entry() {
-        let mut agents = moltis_config::AgentsConfig::default();
+        let mut agents = clawmaster_config::AgentsConfig::default();
         let persona = crate::agent_persona::AgentPersona {
             id: "writer".into(),
             name: "Creative Writer".into(),
@@ -6764,11 +6764,11 @@ mod tests {
 
     #[test]
     fn sync_persona_preserves_existing_preset_fields() {
-        let mut agents = moltis_config::AgentsConfig::default();
-        let existing = moltis_config::AgentPreset {
+        let mut agents = clawmaster_config::AgentsConfig::default();
+        let existing = clawmaster_config::AgentPreset {
             model: Some("haiku".into()),
             timeout_secs: Some(30),
-            tools: moltis_config::PresetToolPolicy {
+            tools: clawmaster_config::PresetToolPolicy {
                 deny: vec!["exec".into()],
                 ..Default::default()
             },

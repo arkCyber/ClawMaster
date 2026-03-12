@@ -2,16 +2,16 @@ use std::sync::Arc;
 
 use {
     async_trait::async_trait,
-    moltis_tools::image_cache::ImageBuilder,
+    clawmaster_tools::image_cache::ImageBuilder,
     tracing::{debug, error, info, warn},
 };
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         ChannelAttachment, ChannelEvent, ChannelEventSink, ChannelMessageMeta, ChannelReplyTarget,
         Error as ChannelError, Result as ChannelResult,
     },
-    moltis_sessions::metadata::SqliteSessionMetadata,
+    clawmaster_sessions::metadata::SqliteSessionMetadata,
 };
 
 use crate::{
@@ -429,7 +429,7 @@ impl ChannelEventSink for GatewayChannelEventSink {
             // cancel itself after this call returns.
 
             // Broadcast an event so the UI can update.
-            let channel_type: moltis_channels::ChannelType = match channel_type.parse() {
+            let channel_type: clawmaster_channels::ChannelType = match channel_type.parse() {
                 Ok(ct) => ct,
                 Err(e) => {
                     warn!("request_disable_account: {e}");
@@ -602,13 +602,13 @@ impl ChannelEventSink for GatewayChannelEventSink {
         };
 
         // Update in-memory cache.
-        let geo = moltis_config::GeoLocation::now(latitude, longitude, None);
+        let geo = clawmaster_config::GeoLocation::now(latitude, longitude, None);
         state.inner.write().await.cached_location = Some(geo.clone());
 
         // Persist to USER.md (best-effort).
-        let mut user = moltis_config::load_user().unwrap_or_default();
+        let mut user = clawmaster_config::load_user().unwrap_or_default();
         user.location = Some(geo);
-        if let Err(e) = moltis_config::save_user(&user) {
+        if let Err(e) = clawmaster_config::save_user(&user) {
             warn!(error = %e, "failed to persist location to USER.md");
         }
 
@@ -663,12 +663,12 @@ impl ChannelEventSink for GatewayChannelEventSink {
             .remove(&pending_key);
         if let Some(invoke) = pending {
             // Cache and persist only when we resolved an explicit request.
-            let geo = moltis_config::GeoLocation::now(latitude, longitude, None);
+            let geo = clawmaster_config::GeoLocation::now(latitude, longitude, None);
             state.inner.write().await.cached_location = Some(geo.clone());
 
-            let mut user = moltis_config::load_user().unwrap_or_default();
+            let mut user = clawmaster_config::load_user().unwrap_or_default();
             user.location = Some(geo);
-            if let Err(e) = moltis_config::save_user(&user) {
+            if let Err(e) = clawmaster_config::save_user(&user) {
                 warn!(error = %e, "failed to persist location to USER.md");
             }
 
@@ -1474,7 +1474,7 @@ impl ChannelEventSink for GatewayChannelEventSink {
                                 if let Some(ref router) = state.sandbox_router {
                                     router.default_image().await
                                 } else {
-                                    moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string()
+                                    clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string()
                                 }
                             },
                         }
@@ -1487,10 +1487,10 @@ impl ChannelEventSink for GatewayChannelEventSink {
                     };
 
                     // List available images.
-                    let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+                    let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
                     let cached = builder.list_cached().await.unwrap_or_default();
 
-                    let default_img = moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string();
+                    let default_img = clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string();
                     let mut images: Vec<(String, Option<String>)> =
                         vec![(default_img.clone(), None)];
                     for img in &cached {
@@ -1555,8 +1555,8 @@ impl ChannelEventSink for GatewayChannelEventSink {
                         ChannelError::invalid_input("usage: /sandbox image [number]")
                     })?;
 
-                    let default_img = moltis_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string();
-                    let builder = moltis_tools::image_cache::DockerImageBuilder::new();
+                    let default_img = clawmaster_tools::sandbox::DEFAULT_SANDBOX_IMAGE.to_string();
+                    let builder = clawmaster_tools::image_cache::DockerImageBuilder::new();
                     let cached = builder.list_cached().await.unwrap_or_default();
                     let mut images: Vec<String> = vec![default_img];
                     for img in &cached {
@@ -1735,7 +1735,7 @@ fn format_model_list(
 #[allow(clippy::unwrap_used, clippy::expect_used)]
 #[cfg(test)]
 mod tests {
-    use {super::*, moltis_channels::ChannelType};
+    use {super::*, clawmaster_channels::ChannelType};
 
     #[test]
     fn channel_event_serialization() {

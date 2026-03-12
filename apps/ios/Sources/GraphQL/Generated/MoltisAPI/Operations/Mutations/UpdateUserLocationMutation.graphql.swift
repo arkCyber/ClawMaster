@@ -4,7 +4,7 @@
 @_exported import ApolloAPI
 @_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-extension MoltisAPI {
+extension ClawMasterAPI {
   struct UpdateUserLocationMutation: GraphQLMutation {
     static let operationName: String = "UpdateUserLocation"
     static let operationDocument: ApolloAPI.OperationDocument = .init(
@@ -20,11 +20,11 @@ extension MoltisAPI {
 
     @_spi(Unsafe) public var __variables: Variables? { ["input": input] }
 
-    struct Data: MoltisAPI.SelectionSet {
+    struct Data: ClawMasterAPI.SelectionSet {
       let __data: DataDict
       init(_dataDict: DataDict) { __data = _dataDict }
 
-      static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.MutationRoot }
+      static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.MutationRoot }
       static var __selections: [ApolloAPI.Selection] { [
         .field("agents", Agents.self),
       ] }
@@ -37,11 +37,11 @@ extension MoltisAPI {
       /// Agents
       ///
       /// Parent Type: `AgentMutation`
-      struct Agents: MoltisAPI.SelectionSet {
+      struct Agents: ClawMasterAPI.SelectionSet {
         let __data: DataDict
         init(_dataDict: DataDict) { __data = _dataDict }
 
-        static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.AgentMutation }
+        static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.AgentMutation }
         static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
           .field("updateIdentity", UpdateIdentity.self, arguments: ["input": .variable("input")]),
@@ -56,11 +56,11 @@ extension MoltisAPI {
         /// Agents.UpdateIdentity
         ///
         /// Parent Type: `BoolResult`
-        struct UpdateIdentity: MoltisAPI.SelectionSet {
+        struct UpdateIdentity: ClawMasterAPI.SelectionSet {
           let __data: DataDict
           init(_dataDict: DataDict) { __data = _dataDict }
 
-          static var __parentType: any ApolloAPI.ParentType { MoltisAPI.Objects.BoolResult }
+          static var __parentType: any ApolloAPI.ParentType { ClawMasterAPI.Objects.BoolResult }
           static var __selections: [ApolloAPI.Selection] { [
             .field("__typename", String.self),
             .field("ok", Bool.self),

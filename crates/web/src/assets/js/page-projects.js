@@ -285,7 +285,7 @@ function ProjectsPage() {
         </button>
       </div>
       <p class="text-xs text-[var(--muted)] max-w-form">
-        Clear All only removes repository entries from Moltis, it does not delete anything from disk.
+        Clear All only removes repository entries from ClawMaster, it does not delete anything from disk.
       </p>
       <p class="text-sm text-[var(--muted)]" style="max-width:600px;margin:0;">
         Projects bind sessions to a codebase directory. When a session is linked to a project, context files (CLAUDE.md, AGENTS.md) are loaded automatically and a custom system prompt can be injected. Enable auto-worktree to give each session its own git branch for isolated work.

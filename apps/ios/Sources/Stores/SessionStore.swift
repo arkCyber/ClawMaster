@@ -7,7 +7,7 @@ final class SessionStore: ObservableObject {
     @Published var isLoading = false
 
     private weak var connectionStore: ConnectionStore?
-    private let logger = Logger(subsystem: "org.moltis.ios", category: "sessions")
+    private let logger = Logger(subsystem: "org.clawmaster.ios", category: "sessions")
 
     init(connectionStore: ConnectionStore) {
         self.connectionStore = connectionStore

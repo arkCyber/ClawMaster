@@ -1,0 +1,39 @@
+[package]
+name = "clawmaster-qq"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+# Async runtime
+tokio = { features = ["full"], workspace = true }
+
+# HTTP client
+reqwest = { features = ["json"], workspace = true }
+
+# Serialization
+serde = { features = ["derive"], workspace = true }
+serde_json = { workspace = true }
+
+# Async trait
+async-trait = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Regex for markdown conversion
+regex = { workspace = true }
+
+# Workspace crates
+clawmaster-channels = { workspace = true }
+clawmaster-common = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio-test = "0.4"
+
+[lints]
+workspace = true

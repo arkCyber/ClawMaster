@@ -1,0 +1,56 @@
+package clawmaster:text-split@0.1.0;
+
+/// Text splitting tool for Moltis AI agents.
+///
+/// This tool provides text splitting operations.
+///
+/// # Compliance
+/// DO-178C §6.3.2: Error handling - All operations return Result types
+/// DO-178C §11.10: Resource management - Output count limits enforced
+world text-split {
+    /// Split text by delimiter.
+    ///
+    /// # Arguments
+    /// * `text` - Text to split
+    /// * `delimiter` - Delimiter string
+    ///
+    /// # Returns
+    /// * `Ok(parts)` - List of text parts
+    /// * `Err(message)` - Error message if splitting fails
+    ///
+    /// # Compliance
+    /// DO-178C §6.3.2: All errors properly handled
+    /// DO-178C §6.3.4: Deterministic splitting
+    export split: func(text: string, delimiter: string) -> result<list<string>, string>;
+    
+    /// Split text by lines.
+    ///
+    /// # Arguments
+    /// * `text` - Text to split
+    ///
+    /// # Returns
+    /// * `Ok(lines)` - List of lines
+    /// * `Err(message)` - Error message
+    export split-lines: func(text: string) -> result<list<string>, string>;
+    
+    /// Split text by whitespace.
+    ///
+    /// # Arguments
+    /// * `text` - Text to split
+    ///
+    /// # Returns
+    /// * `Ok(words)` - List of words
+    /// * `Err(message)` - Error message
+    export split-whitespace: func(text: string) -> result<list<string>, string>;
+    
+    /// Split text into chunks of specified size.
+    ///
+    /// # Arguments
+    /// * `text` - Text to split
+    /// * `chunk-size` - Size of each chunk
+    ///
+    /// # Returns
+    /// * `Ok(chunks)` - List of text chunks
+    /// * `Err(message)` - Error message
+    export split-chunks: func(text: string, chunk-size: u32) -> result<list<string>, string>;
+}

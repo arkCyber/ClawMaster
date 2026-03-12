@@ -1,6 +1,6 @@
-# Native Swift App with Embedded Moltis Rust Core (POC)
+# Native Swift App with Embedded ClawMaster Rust Core (POC)
 
-This guide shows a **proof-of-concept path** to build a native Swift app where Swift is the UI layer and Moltis Rust code is embedded as a local library.
+This guide shows a **proof-of-concept path** to build a native Swift app where Swift is the UI layer and ClawMaster Rust code is embedded as a local library.
 
 Goal:
 
@@ -34,17 +34,17 @@ C ABI bridge (headers + extern "C")
 Rust core facade (thin FFI-safe layer)
         |
         v
-Existing Moltis crates (chat/providers/config/etc.)
+Existing ClawMaster crates (chat/providers/config/etc.)
 ```
 
 ### Boundary Rules
 
 For the POC, keep the ABI intentionally small:
 
-- `moltis_version()`
-- `moltis_chat_json(request_json)`
-- `moltis_free_string(ptr)`
-- `moltis_shutdown()`
+- `clawmaster_version()`
+- `clawmaster_chat_json(request_json)`
+- `clawmaster_free_string(ptr)`
+- `clawmaster_shutdown()`
 
 Pass JSON strings across FFI to avoid unstable struct layouts early on.
 
@@ -71,8 +71,8 @@ Use YAML-generated Xcode projects for the POC (no hand-maintained `.xcodeproj`):
 
 1. Define app targets in `apps/macos/project.yml`.
 2. Generate project with XcodeGen.
-3. Link `Generated/libmoltis_bridge.a` and include `Generated/moltis_bridge.h`.
-4. Use a Swift facade (`MoltisClient`) to own pointer and lifetime rules.
+3. Link `Generated/libclawmaster_bridge.a` and include `Generated/clawmaster_bridge.h`.
+4. Use a Swift facade (`ClawMasterClient`) to own pointer and lifetime rules.
 5. Keep Swift linted via `apps/macos/.swiftlint.yml`.
 
 From repo root:
@@ -87,9 +87,9 @@ just swift-build
 The UI remains purely SwiftUI while core requests/responses flow through the Rust bridge.
 
 
-## Intel + Apple Silicon (Universal `libmoltis`)
+## Intel + Apple Silicon (Universal `libclawmaster`)
 
-Yes — you can build `libmoltis` for both Intel and Apple Silicon and merge them into one universal macOS static library.
+Yes — you can build `libclawmaster` for both Intel and Apple Silicon and merge them into one universal macOS static library.
 
 ### Build both architectures
 
@@ -97,10 +97,10 @@ Yes — you can build `libmoltis` for both Intel and Apple Silicon and merge the
 rustup target add x86_64-apple-darwin aarch64-apple-darwin
 
 # Intel
-cargo build -p moltis-swift-bridge --release --target x86_64-apple-darwin
+cargo build -p clawmaster-swift-bridge --release --target x86_64-apple-darwin
 
 # Apple Silicon
-cargo build -p moltis-swift-bridge --release --target aarch64-apple-darwin
+cargo build -p clawmaster-swift-bridge --release --target aarch64-apple-darwin
 ```
 
 ### Merge into one universal archive
@@ -108,14 +108,14 @@ cargo build -p moltis-swift-bridge --release --target aarch64-apple-darwin
 ```bash
 mkdir -p target/universal-macos/release
 lipo -create \
-  target/x86_64-apple-darwin/release/libmoltis_bridge.a \
-  target/aarch64-apple-darwin/release/libmoltis_bridge.a \
-  -output target/universal-macos/release/libmoltis_bridge.a
+  target/x86_64-apple-darwin/release/libclawmaster_bridge.a \
+  target/aarch64-apple-darwin/release/libclawmaster_bridge.a \
+  -output target/universal-macos/release/libclawmaster_bridge.a
 
-lipo -info target/universal-macos/release/libmoltis_bridge.a
+lipo -info target/universal-macos/release/libclawmaster_bridge.a
 ```
 
-This universal `libmoltis_bridge.a` can then be linked by your Swift macOS app, so one app build supports both Intel and M-series Macs.
+This universal `libclawmaster_bridge.a` can then be linked by your Swift macOS app, so one app build supports both Intel and M-series Macs.
 
 ### Recommended packaging for Xcode
 
@@ -123,7 +123,7 @@ For production, prefer an `XCFramework` (device/simulator/platform-safe packagin
 
 ## Async/Streaming Strategy
 
-Moltis is async-first. For a POC:
+ClawMaster is async-first. For a POC:
 
 - Start with request/response calls over FFI.
 - Add streaming in phase 2 using callback registration or poll handles.
@@ -142,8 +142,8 @@ So for your POC requirement (Swift UI app that embeds Rust core without a separa
 
 ## POC Milestones
 
-1. Add `swift-bridge` crate exposing one health function (`moltis_version`).
-2. Add one end-to-end chat method (`moltis_chat_json`).
+1. Add `swift-bridge` crate exposing one health function (`clawmaster_version`).
+2. Add one end-to-end chat method (`clawmaster_chat_json`).
 3. Build and link from minimal SwiftUI app.
 4. Validate memory lifecycle with repeated calls.
 5. Expand API surface only after the boundary is stable.
@@ -155,6 +155,6 @@ So for your POC requirement (Swift UI app that embeds Rust core without a separa
 - Logging and secret handling at the boundary.
 - Cross-target build complexity (simulator vs device architectures).
 
-## Why This Fits Moltis
+## Why This Fits ClawMaster
 
-Moltis already has clear crate boundaries and async services. A thin FFI facade lets Swift own the native UX while reusing provider orchestration, config, and session logic from Rust.
+ClawMaster already has clear crate boundaries and async services. A thin FFI facade lets Swift own the native UX while reusing provider orchestration, config, and session logic from Rust.

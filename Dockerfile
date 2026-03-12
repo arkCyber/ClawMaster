@@ -1,5 +1,5 @@
-# Multi-stage Dockerfile for moltis
-# Builds a minimal debian-based image with the moltis gateway
+# Multi-stage Dockerfile for clawmaster
+# Builds a minimal debian-based image with the clawmaster gateway
 #
 # Moltis uses Docker/Podman for sandboxed command execution. To enable this,
 # mount the container runtime socket when running:
@@ -39,10 +39,10 @@ RUN ARCH=$(uname -m) && \
 
 # Install WASM target and build WASM components (embedded via include_bytes!)
 RUN rustup target add wasm32-wasip2 && \
-    cargo build --target wasm32-wasip2 -p moltis-wasm-calc -p moltis-wasm-web-fetch -p moltis-wasm-web-search --release
+    cargo build --target wasm32-wasip2 -p clawmaster-wasm-calc -p clawmaster-wasm-web-fetch -p clawmaster-wasm-web-search --release
 
 # Build release binary (exclude local-llm-metal: Metal is macOS-only)
-RUN cargo build --release -p moltis --no-default-features --features "\
+RUN cargo build --release -p clawmaster --no-default-features --features "\
 agent,caldav,code-splitter,file-watcher,graphql,jemalloc,local-llm,\
 mdns,metrics,openclaw-import,prometheus,push-notifications,qmd,\
 tailscale,tls,trusted-network,vault,voice,wasm,web-ui,whatsapp"
@@ -54,7 +54,7 @@ FROM debian:bookworm-slim
 # - ca-certificates: for HTTPS connections to LLM providers
 # - chromium: headless browser for the browser tool (web search/fetch)
 # - curl: makes it possible to run healthchecks from docker
-# - sudo: allows moltis user to install packages at runtime (passwordless)
+# - sudo: allows clawmaster user to install packages at runtime (passwordless)
 # - docker-ce-cli + docker-buildx-plugin: Docker CLI for sandbox execution
 #   (talks to mounted socket, no daemon in-container)
 # - tmux: terminal multiplexer available in deployed container
@@ -83,28 +83,28 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 # Create non-root user and add to docker group for socket access.
-# Grant passwordless sudo so moltis can install host packages at startup.
+# Grant passwordless sudo so clawmaster can install host packages at startup.
 RUN groupadd -f docker && \
-    useradd --create-home --user-group moltis && \
-    usermod -aG docker moltis && \
-    echo "moltis ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/moltis
+    useradd --create-home --user-group clawmaster && \
+    usermod -aG docker clawmaster && \
+    echo "clawmaster ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/clawmaster
 
 # Copy binary from builder
-COPY --from=builder /build/target/release/moltis /usr/local/bin/moltis
-COPY --from=builder /build/crates/web/src/assets /usr/share/moltis/web
-COPY --from=builder /build/target/wasm32-wasip2/release/moltis_wasm_calc.wasm /usr/share/moltis/wasm/
-COPY --from=builder /build/target/wasm32-wasip2/release/moltis_wasm_web_fetch.wasm /usr/share/moltis/wasm/
-COPY --from=builder /build/target/wasm32-wasip2/release/moltis_wasm_web_search.wasm /usr/share/moltis/wasm/
+COPY --from=builder /build/target/release/clawmaster /usr/local/bin/clawmaster
+COPY --from=builder /build/crates/web/src/assets /usr/share/clawmaster/web
+COPY --from=builder /build/target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm /usr/share/clawmaster/wasm/
+COPY --from=builder /build/target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm /usr/share/clawmaster/wasm/
+COPY --from=builder /build/target/wasm32-wasip2/release/clawmaster_wasm_web_search.wasm /usr/share/clawmaster/wasm/
 
 # Create config and data directories
-RUN mkdir -p /home/moltis/.config/moltis /home/moltis/.moltis && \
-    chown -R moltis:moltis /home/moltis/.config /home/moltis/.moltis
+RUN mkdir -p /home/clawmaster/.config/clawmaster /home/clawmaster/.clawmaster && \
+    chown -R clawmaster:clawmaster /home/clawmaster/.config /home/clawmaster/.clawmaster
 
 # Volume mount points for persistence and container runtime
-VOLUME ["/home/moltis/.config/moltis", "/home/moltis/.moltis", "/var/run/docker.sock"]
+VOLUME ["/home/clawmaster/.config/clawmaster", "/home/clawmaster/.clawmaster", "/var/run/docker.sock"]
 
-USER moltis
-WORKDIR /home/moltis
+USER clawmaster
+WORKDIR /home/clawmaster
 
 # Expose gateway port (HTTPS), HTTP port for CA certificate download (gateway port + 1),
 # and OAuth callback port (used by providers with pre-registered redirect URIs).
@@ -112,5 +112,5 @@ EXPOSE 13131 13132 1455
 
 # Bind 0.0.0.0 so Docker port forwarding works (localhost only binds to
 # the container's loopback, making the port unreachable from the host).
-ENTRYPOINT ["moltis"]
+ENTRYPOINT ["clawmaster"]
 CMD ["--bind", "0.0.0.0", "--port", "13131"]

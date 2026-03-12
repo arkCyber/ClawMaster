@@ -7,8 +7,8 @@ import { sendRpc } from "../helpers.js";
 
 // ── Signals ──────────────────────────────────────────────────
 export var projects = signal([]);
-export var activeProjectId = signal(localStorage.getItem("moltis-project") || "");
-export var projectFilterId = signal(localStorage.getItem("moltis-project-filter") || "");
+export var activeProjectId = signal(localStorage.getItem("clawmaster-project") || "");
+export var projectFilterId = signal(localStorage.getItem("clawmaster-project-filter") || "");
 
 // ── Methods ──────────────────────────────────────────────────
 
@@ -34,9 +34,9 @@ export function setActiveProjectId(id) {
 export function setFilterId(id) {
 	projectFilterId.value = id || "";
 	if (id) {
-		localStorage.setItem("moltis-project-filter", id);
+		localStorage.setItem("clawmaster-project-filter", id);
 	} else {
-		localStorage.removeItem("moltis-project-filter");
+		localStorage.removeItem("clawmaster-project-filter");
 	}
 }
 

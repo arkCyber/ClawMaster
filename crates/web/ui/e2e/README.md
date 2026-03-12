@@ -1,6 +1,6 @@
 # Gateway UI E2E Tests
 
-These tests use Playwright against a real `moltis` server process.
+These tests use Playwright against a real `clawmaster` server process.
 
 ## Why this setup
 
@@ -32,7 +32,7 @@ npm run e2e
 1. Creates `target/e2e-runtime/{config,data}`.
 2. Seeds `IDENTITY.md` and `USER.md` so onboarding is completed.
 3. Sets `MOLTIS_CONFIG_DIR`, `MOLTIS_DATA_DIR`, and `MOLTIS_SERVER__PORT`.
-4. Checks for a pre-built binary (`target/debug/moltis` or `target/release/moltis`)
+4. Checks for a pre-built binary (`target/debug/clawmaster` or `target/release/clawmaster`)
    before falling back to `cargo run`. Set `MOLTIS_BINARY` to override.
 
 ### Onboarding server (`start-gateway-onboarding.sh`)
@@ -105,7 +105,7 @@ npx playwright show-report
 ## Tips
 
 - **Build the binary first** (`cargo build`) to avoid recompilation on every
-  test run. The startup script auto-detects `target/debug/moltis`.
-- Set `MOLTIS_BINARY=/path/to/moltis` to use a specific binary.
+  test run. The startup script auto-detects `target/debug/clawmaster`.
+- Set `MOLTIS_BINARY=/path/to/clawmaster` to use a specific binary.
 - Tests run serially (`workers: 1`) because they share a single server.
 - On failure, traces, screenshots, and videos are saved in `test-results/`.

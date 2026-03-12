@@ -1,0 +1,25 @@
+[package]
+name = "clawmaster-agent-loop"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+tokio = { features = ["full"], workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+serde = { features = ["derive"], workspace = true }
+serde_json = { workspace = true }
+uuid = { features = ["v4"], workspace = true }
+parking_lot = "0.12"
+dashmap = "6.1"
+
+clawmaster-common = { workspace = true }
+clawmaster-channels = { workspace = true }
+clawmaster-tools = { workspace = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[lints]
+workspace = true

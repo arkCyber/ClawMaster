@@ -1,34 +1,34 @@
 # OpenClaw Import
 
-Moltis can automatically detect and import data from an existing [OpenClaw](https://docs.openclaw.ai) installation. This lets you migrate to Moltis without losing your provider keys, memory files, skills, sessions, personality, or channel configuration.
+ClawMaster can automatically detect and import data from an existing [OpenClaw](https://docs.openclaw.ai) installation. This lets you migrate to ClawMaster without losing your provider keys, memory files, skills, sessions, personality, or channel configuration.
 
-> **Your OpenClaw installation is never modified.** The import is strictly read-only — Moltis copies data into its own directory and does not write to, move, or delete anything under `~/.openclaw/`. You can safely keep using OpenClaw alongside Moltis, and re-import at any time to pick up new data.
+> **Your OpenClaw installation is never modified.** The import is strictly read-only — ClawMaster copies data into its own directory and does not write to, move, or delete anything under `~/.openclaw/`. You can safely keep using OpenClaw alongside ClawMaster, and re-import at any time to pick up new data.
 
 ## How Detection Works
 
-Moltis checks for an OpenClaw installation in two locations:
+ClawMaster checks for an OpenClaw installation in two locations:
 
 1. The path set in the `OPENCLAW_HOME` environment variable
 2. `~/.openclaw/` (default)
 
-If the directory exists and contains recognizable OpenClaw files (`openclaw.json`, agent directories, etc.), Moltis considers it detected. The workspace directory respects the `OPENCLAW_PROFILE` environment variable for multi-profile setups.
+If the directory exists and contains recognizable OpenClaw files (`openclaw.json`, agent directories, etc.), ClawMaster considers it detected. The workspace directory respects the `OPENCLAW_PROFILE` environment variable for multi-profile setups.
 
 ## What Gets Imported
 
 | Category | Source | Destination | Notes |
 |----------|--------|-------------|-------|
-| **Identity** | `openclaw.json` agent name, theme, and timezone | `moltis.toml` identity section | Preserves existing Moltis identity if already configured |
-| **Providers** | Agent auth-profiles (API keys) | `~/.moltis/provider_keys.json` | Maps OpenClaw provider names to Moltis equivalents (e.g., `google` becomes `gemini`) |
-| **Skills** | `skills/` directories with `SKILL.md` | `~/.moltis/skills/` | Copies entire skill directories; skips duplicates |
-| **Memory** | `MEMORY.md` and all `memory/*.md` files | `~/.moltis/MEMORY.md` and `~/.moltis/memory/` | Imports daily logs, project notes, and all other markdown memory files. Appends with `<!-- Imported from OpenClaw -->` separator for idempotency |
-| **Channels** | Telegram and Discord bot configuration in `openclaw.json` | `moltis.toml` channels section | Supports both flat and multi-account Telegram configs |
-| **Sessions** | JSONL conversation files under `agents/*/sessions/` | `~/.moltis/sessions/` and `~/.moltis/memory/sessions/` | Converts OpenClaw message format to Moltis format; prefixes keys with `oc:`. Also generates markdown transcripts for memory search indexing |
-| **MCP Servers** | `mcp-servers.json` | `~/.moltis/mcp-servers.json` | Merges with existing servers; skips duplicates by name |
-| **Workspace Files** | `SOUL.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `AGENTS.md`, `HEARTBEAT.md`, `BOOT.md` | `~/.moltis/` (root) or `~/.moltis/agents/<id>/` | Copies raw workspace files; skips if destination already has user content. Replaces auto-seeded defaults |
+| **Identity** | `openclaw.json` agent name, theme, and timezone | `clawmaster.toml` identity section | Preserves existing ClawMaster identity if already configured |
+| **Providers** | Agent auth-profiles (API keys) | `~/.clawmaster/provider_keys.json` | Maps OpenClaw provider names to ClawMaster equivalents (e.g., `google` becomes `gemini`) |
+| **Skills** | `skills/` directories with `SKILL.md` | `~/.clawmaster/skills/` | Copies entire skill directories; skips duplicates |
+| **Memory** | `MEMORY.md` and all `memory/*.md` files | `~/.clawmaster/MEMORY.md` and `~/.clawmaster/memory/` | Imports daily logs, project notes, and all other markdown memory files. Appends with `<!-- Imported from OpenClaw -->` separator for idempotency |
+| **Channels** | Telegram and Discord bot configuration in `openclaw.json` | `clawmaster.toml` channels section | Supports both flat and multi-account Telegram configs |
+| **Sessions** | JSONL conversation files under `agents/*/sessions/` | `~/.clawmaster/sessions/` and `~/.clawmaster/memory/sessions/` | Converts OpenClaw message format to ClawMaster format; prefixes keys with `oc:`. Also generates markdown transcripts for memory search indexing |
+| **MCP Servers** | `mcp-servers.json` | `~/.clawmaster/mcp-servers.json` | Merges with existing servers; skips duplicates by name |
+| **Workspace Files** | `SOUL.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `AGENTS.md`, `HEARTBEAT.md`, `BOOT.md` | `~/.clawmaster/` (root) or `~/.clawmaster/agents/<id>/` | Copies raw workspace files; skips if destination already has user content. Replaces auto-seeded defaults |
 
 ### Workspace files explained
 
-These markdown files shape your agent's personality and behavior. Moltis uses them in the same way OpenClaw does:
+These markdown files shape your agent's personality and behavior. ClawMaster uses them in the same way OpenClaw does:
 
 - **`SOUL.md`** — personality directives (tone, style, boundaries)
 - **`IDENTITY.md`** — agent name, emoji, creature/vibe theme
@@ -44,9 +44,9 @@ If you customized any of these files in OpenClaw, they will carry over. If the d
 
 If your OpenClaw installation has multiple agents (defined in `openclaw.json`'s `agents.list` or detected from `agents/` directories), all of them are imported:
 
-- The **default agent** becomes Moltis's `main` agent
+- The **default agent** becomes ClawMaster's `main` agent
 - **Non-default agents** are created as separate agent personas with their name, theme, and emoji
-- **Per-agent workspace files** (`SOUL.md`, `IDENTITY.md`, etc.) are copied to `~/.moltis/agents/<id>/`, giving each agent its own personality
+- **Per-agent workspace files** (`SOUL.md`, `IDENTITY.md`, etc.) are copied to `~/.clawmaster/agents/<id>/`, giving each agent its own personality
 - **Per-agent sessions** are prefixed with `oc:<agent_id>:` so they appear under the correct agent
 - Agents without per-agent workspace files inherit from the root files automatically
 
@@ -54,7 +54,7 @@ If your OpenClaw installation has multiple agents (defined in `openclaw.json`'s 
 
 ### During Onboarding
 
-If Moltis detects an OpenClaw installation at first launch, an **Import** step appears in the onboarding wizard before the identity and provider steps. You can select which categories to import using checkboxes, then proceed with the rest of setup.
+If ClawMaster detects an OpenClaw installation at first launch, an **Import** step appears in the onboarding wizard before the identity and provider steps. You can select which categories to import using checkboxes, then proceed with the rest of setup.
 
 ### From Settings
 
@@ -68,14 +68,14 @@ The import section only appears when an OpenClaw installation is detected.
 
 ## Importing via CLI
 
-The `moltis import` command provides three subcommands:
+The `clawmaster import` command provides three subcommands:
 
 ### Detect
 
 Check whether an OpenClaw installation exists and preview what can be imported:
 
 ```bash
-moltis import detect
+clawmaster import detect
 ```
 
 Example output:
@@ -96,7 +96,7 @@ OpenClaw installation detected at /Users/you/.openclaw
 Use `--json` for machine-readable output:
 
 ```bash
-moltis import detect --json
+clawmaster import detect --json
 ```
 
 ### Import All
@@ -104,13 +104,13 @@ moltis import detect --json
 Import everything at once:
 
 ```bash
-moltis import all
+clawmaster import all
 ```
 
 Preview what would happen without writing anything:
 
 ```bash
-moltis import all --dry-run
+clawmaster import all --dry-run
 ```
 
 ### Import Selected Categories
@@ -118,7 +118,7 @@ moltis import all --dry-run
 Import only specific categories:
 
 ```bash
-moltis import select -c providers,skills,memory
+clawmaster import select -c providers,skills,memory
 ```
 
 Valid category names: `identity`, `providers`, `skills`, `memory`, `channels`, `sessions`, `mcp_servers`, `workspace-files`.
@@ -126,7 +126,7 @@ Valid category names: `identity`, `providers`, `skills`, `memory`, `channels`, `
 Combine with `--dry-run` to preview:
 
 ```bash
-moltis import select -c sessions --dry-run
+clawmaster import select -c sessions --dry-run
 ```
 
 ## Importing via RPC
@@ -158,7 +158,7 @@ The response includes a report with per-category status (`imported`, `skipped`, 
 
 ## Incremental Session Import
 
-If you continue using OpenClaw after the initial import, Moltis will detect new messages when you re-import. Sessions are compared by source file line count — if the source JSONL has grown since the last import, Moltis re-converts the full session and updates the metadata.
+If you continue using OpenClaw after the initial import, ClawMaster will detect new messages when you re-import. Sessions are compared by source file line count — if the source JSONL has grown since the last import, ClawMaster re-converts the full session and updates the metadata.
 
 On incremental update:
 - The session's original `id` and `created_at` are preserved
@@ -170,11 +170,11 @@ Legacy metadata (from imports before incremental support) will trigger a one-tim
 
 ## Automatic Background Syncing
 
-When the `file-watcher` feature is enabled (default), Moltis automatically watches the OpenClaw sessions directory for changes. Any new or appended session files are synced incrementally within seconds, without requiring a manual re-import.
+When the `file-watcher` feature is enabled (default), ClawMaster automatically watches the OpenClaw sessions directory for changes. Any new or appended session files are synced incrementally within seconds, without requiring a manual re-import.
 
 **How it works:**
 
-- Moltis uses OS-level file notifications (FSEvents on macOS, inotify on Linux) to detect `.jsonl` file changes in the OpenClaw sessions directory
+- ClawMaster uses OS-level file notifications (FSEvents on macOS, inotify on Linux) to detect `.jsonl` file changes in the OpenClaw sessions directory
 - Events are debounced with a 5-second window to batch rapid writes during active conversations
 - A 60-second periodic fallback ensures changes are caught even if file notifications are missed
 - Only sessions are synced automatically — provider keys, memory, skills, and other categories are handled by the manual import or their own dedicated watchers
@@ -199,17 +199,17 @@ To disable automatic syncing, compile without the `file-watcher` feature.
 Running the import multiple times is safe:
 
 - **Memory** uses an `<!-- Imported from OpenClaw -->` marker to avoid duplicating `MEMORY.md` content. Individual memory files skip if they already exist at the destination
-- **Skills** skip directories that already exist in the Moltis skills folder
+- **Skills** skip directories that already exist in the ClawMaster skills folder
 - **MCP servers** skip entries with matching names
-- **Sessions** use `oc:` prefixed keys that won't collide with native Moltis sessions. Unchanged sessions (same line count) are skipped; grown sessions are re-converted
+- **Sessions** use `oc:` prefixed keys that won't collide with native ClawMaster sessions. Unchanged sessions (same line count) are skipped; grown sessions are re-converted
 - **Provider keys** merge with existing keys without overwriting
 - **Workspace files** skip if the destination already has user content; replace only auto-seeded defaults
 
 ## Provider Name Mapping
 
-OpenClaw and Moltis use different names for some providers:
+OpenClaw and ClawMaster use different names for some providers:
 
-| OpenClaw Name | Moltis Name |
+| OpenClaw Name | ClawMaster Name |
 |---------------|-------------|
 | `google` | `gemini` |
 | `anthropic` | `anthropic` |
@@ -236,12 +236,12 @@ OpenClaw stores API keys in agent auth-profiles. If the key was rotated or expir
 
 ### Memory import appears incomplete
 
-The import brings over `MEMORY.md` and all `.md` files from the `memory/` directory (daily logs, project notes, custom files). Non-markdown files are skipped. OpenClaw's SQLite vector database is not imported because embeddings are not portable across models — Moltis will re-index the imported files automatically.
+The import brings over `MEMORY.md` and all `.md` files from the `memory/` directory (daily logs, project notes, custom files). Non-markdown files are skipped. OpenClaw's SQLite vector database is not imported because embeddings are not portable across models — ClawMaster will re-index the imported files automatically.
 
 ### Session transcripts
 
-When sessions are imported, Moltis also generates markdown transcripts in `~/.moltis/memory/sessions/`. These contain the user/assistant conversation text and are indexed by the memory system, making your imported OpenClaw conversations searchable.
+When sessions are imported, ClawMaster also generates markdown transcripts in `~/.clawmaster/memory/sessions/`. These contain the user/assistant conversation text and are indexed by the memory system, making your imported OpenClaw conversations searchable.
 
 ### Workspace files not appearing
 
-If a workspace file wasn't imported, it may already exist at the destination with custom content. The import never overwrites user-customized files. Check `~/.moltis/SOUL.md` (or `~/.moltis/agents/<id>/SOUL.md` for non-default agents) to see what's there. You can delete it and re-import to get the OpenClaw version.
+If a workspace file wasn't imported, it may already exist at the destination with custom content. The import never overwrites user-customized files. Check `~/.clawmaster/SOUL.md` (or `~/.clawmaster/agents/<id>/SOUL.md` for non-default agents) to see what's there. You can delete it and re-import to get the OpenClaw version.

@@ -116,7 +116,9 @@ export default {
 		sessionTargetLabel: "Session Target",
 		targetIsolated: "Isolated",
 		targetMain: "Main",
-		deleteAfterRun: "Delete after run",
-		create: "Create",
+		deleteAfterRun: "Supprimer après exécution",
+		create: "Créer",
 	},
+	confirmDelete: "Supprimer la tâche '{{name}}' ?",
+	confirmDeleteMessage: "Cela supprimera définitivement la tâche cron.",
 };

@@ -19,7 +19,7 @@ use {
     tracing::info,
 };
 
-use moltis_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent};
+use clawmaster_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent};
 
 pub use {
     backend::{BackendType, LocalBackend},

@@ -1,6 +1,6 @@
-# Moltis macOS App
+# ClawMaster macOS App
 
-This app embeds Moltis Rust code into a native macOS SwiftUI app.
+This app embeds ClawMaster Rust code into a native macOS SwiftUI app.
 
 On first launch, the app opens an AppKit onboarding wizard to configure identity
 and model defaults before entering the chat UI.

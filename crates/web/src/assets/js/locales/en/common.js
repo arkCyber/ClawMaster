@@ -2,8 +2,17 @@
 // Shared actions, status labels, and navigation items.
 
 export default {
+	nav: {
+		settings: "Settings",
+		sessions: "Sessions",
+		cron: "Cron",
+		signOut: "Sign out",
+	},
 	actions: {
 		save: "Save",
+		searchSessions: "Search sessions…",
+		newSession: "New session",
+		allSessions: "All sessions",
 		saving: "Saving\u2026",
 		saved: "Saved",
 		cancel: "Cancel",
@@ -61,7 +70,7 @@ export default {
 		signOut: "Sign out",
 	},
 	banners: {
-		authDisabled: "Authentication is disabled. Anyone with network access can control moltis and your computer.",
+		authDisabled: "Authentication is disabled. Anyone with network access can control clawmaster and your computer.",
 		setupAuthentication: "Set up authentication",
 		updateAvailable: "An update is available",
 		viewRelease: "View release",
@@ -118,5 +127,27 @@ export default {
 		addProvider: "Add Provider",
 		addChannel: "Add Channel",
 		manageProjects: "Manage Projects",
+	},
+	chat: {
+		inputPlaceholder: "Type a message or use / for commands",
+		sendButton: "Send",
+		stopButton: "Stop",
+		attachFile: "Attach file",
+		newChat: "New chat",
+	},
+	theme: {
+		light: "Light theme",
+		system: "System theme",
+		dark: "Dark theme",
+	},
+	menu: {
+		openMenu: "Open menu",
+	},
+	errors: {
+		networkError: "Network error. Please try again.",
+		authError: "Authentication failed",
+		permissionDenied: "Permission denied",
+		unknownError: "An unknown error occurred",
+		noResults: "No results",
 	},
 };

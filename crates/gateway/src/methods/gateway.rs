@@ -156,13 +156,13 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                     })
                     .collect();
 
-                let event_descriptors: Vec<serde_json::Value> = moltis_protocol::KNOWN_EVENTS
+                let event_descriptors: Vec<serde_json::Value> = clawmaster_protocol::KNOWN_EVENTS
                     .iter()
                     .map(|name| serde_json::json!({ "name": name }))
                     .collect();
 
                 Ok(serde_json::json!({
-                    "protocol": moltis_protocol::PROTOCOL_VERSION,
+                    "protocol": clawmaster_protocol::PROTOCOL_VERSION,
                     "methods": methods,
                     "events": event_descriptors,
                 }))

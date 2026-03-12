@@ -1,11 +1,11 @@
 [package]
 edition.workspace = true
-name              = "moltis-vault"
+name              = "clawmaster-vault"
 version.workspace = true
 
 [features]
 default = ["metrics", "tracing"]
-metrics = ["dep:moltis-metrics"]
+metrics = ["dep:clawmaster-metrics"]
 tracing = ["dep:tracing"]
 
 [dependencies]
@@ -13,7 +13,7 @@ anyhow           = { workspace = true }
 argon2           = { workspace = true }
 base64           = { workspace = true }
 chacha20poly1305 = { workspace = true }
-moltis-metrics   = { optional = true, workspace = true }
+clawmaster-metrics   = { optional = true, workspace = true }
 rand             = { workspace = true }
 serde            = { workspace = true }
 serde_json       = { workspace = true }

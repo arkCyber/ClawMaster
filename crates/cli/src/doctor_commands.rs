@@ -8,7 +8,7 @@ use std::path::{Path, PathBuf};
 
 use {
     anyhow::Result,
-    moltis_config::{
+    clawmaster_config::{
         MoltisConfig,
         validate::{self, Severity},
     },
@@ -133,8 +133,8 @@ const OAUTH_PROVIDERS: &[&str] = &["openai-codex", "github-copilot"];
 // ── Entry point ─────────────────────────────────────────────────────────────
 
 pub async fn handle_doctor() -> Result<()> {
-    let config_dir = moltis_config::config_dir();
-    let data_dir = moltis_config::data_dir();
+    let config_dir = clawmaster_config::config_dir();
+    let data_dir = clawmaster_config::data_dir();
 
     eprintln!("{BOLD}moltis doctor{RESET}");
     eprintln!("{BOLD}============={RESET}\n");
@@ -145,7 +145,7 @@ pub async fn handle_doctor() -> Result<()> {
     sections.push(check_config(config_dir.as_deref()));
 
     // Load config for subsequent checks (best-effort)
-    let config = moltis_config::discover_and_load();
+    let config = clawmaster_config::discover_and_load();
 
     // 2. Security audit
     sections.push(check_security(&config, config_dir.as_deref(), &data_dir));
@@ -181,7 +181,7 @@ pub async fn handle_doctor() -> Result<()> {
 
 fn check_config(config_dir: Option<&Path>) -> Section {
     let label = config_dir
-        .map(|d| d.join("moltis.toml").display().to_string())
+        .map(|d| d.join("clawmaster.toml").display().to_string())
         .unwrap_or_else(|| "default config".into());
     let mut section = Section::new(format!("Config ({label})"));
 
@@ -292,7 +292,7 @@ fn check_security(config: &MoltisConfig, config_dir: Option<&Path>, data_dir: &P
 
         // Config file permissions
         if let Some(dir) = config_dir {
-            let config_file = dir.join("moltis.toml");
+            let config_file = dir.join("clawmaster.toml");
             if let Ok(meta) = std::fs::metadata(&config_file) {
                 let mode = meta.permissions().mode();
                 if mode & 0o044 != 0 {
@@ -390,21 +390,21 @@ fn check_directories(config_dir: Option<&Path>, data_dir: &Path) -> Section {
 
     // Check for expected files
     if let Some(dir) = config_dir {
-        let config_file = dir.join("moltis.toml");
+        let config_file = dir.join("clawmaster.toml");
         if config_file.exists() {
-            section.push(Status::Ok, "moltis.toml present");
+            section.push(Status::Ok, "clawmaster.toml present");
         } else {
-            section.push(Status::Info, "moltis.toml not found (using defaults)");
+            section.push(Status::Info, "clawmaster.toml not found (using defaults)");
         }
     }
 
-    let db_file = data_dir.join("moltis.db");
+    let db_file = data_dir.join("clawmaster.db");
     if db_file.exists() {
-        section.push(Status::Ok, "moltis.db present");
+        section.push(Status::Ok, "clawmaster.db present");
     } else {
         section.push(
             Status::Info,
-            "moltis.db not found (will be created on first gateway start)",
+            "clawmaster.db not found (will be created on first gateway start)",
         );
     }
 
@@ -429,11 +429,11 @@ fn check_writable(section: &mut Section, dir: &Path, label: &str) {
 async fn check_database(data_dir: &Path) -> Section {
     let mut section = Section::new("Database");
 
-    let db_path = data_dir.join("moltis.db");
+    let db_path = data_dir.join("clawmaster.db");
     if !db_path.exists() {
         section.push(
             Status::Skip,
-            "moltis.db not found (skipping connectivity check)",
+            "clawmaster.db not found (skipping connectivity check)",
         );
         return section;
     }
@@ -545,7 +545,7 @@ fn check_tls(config: &MoltisConfig) -> Section {
 
     // Auto-generated certs
     if config.tls.auto_generate {
-        match moltis_gateway::tls::cert_dir() {
+        match clawmaster_gateway::tls::cert_dir() {
             Ok(cert_dir) => {
                 let ca_path = cert_dir.join("ca.pem");
                 let server_cert = cert_dir.join("server.pem");
@@ -680,7 +680,7 @@ fn check_mcp_servers(config: &MoltisConfig) -> Section {
 #[allow(clippy::unwrap_used, clippy::expect_used)]
 #[cfg(test)]
 mod tests {
-    use {super::*, moltis_config::MoltisConfig};
+    use {super::*, clawmaster_config::MoltisConfig};
 
     #[test]
     fn status_labels() {
@@ -729,7 +729,7 @@ mod tests {
     #[test]
     fn check_providers_with_config_key() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::ProviderEntry {
+        let entry = clawmaster_config::schema::ProviderEntry {
             api_key: Some(secrecy::Secret::new("sk-test-fake".to_string())),
             ..Default::default()
         };
@@ -753,7 +753,7 @@ mod tests {
         // Use a provider unlikely to have its env var set in CI
         config.providers.providers.insert(
             "minimax".to_string(),
-            moltis_config::schema::ProviderEntry::default(),
+            clawmaster_config::schema::ProviderEntry::default(),
         );
 
         // Only assert warning if the env var is genuinely absent
@@ -770,7 +770,7 @@ mod tests {
         let mut config = MoltisConfig::default();
         config.providers.providers.insert(
             "ollama".to_string(),
-            moltis_config::schema::ProviderEntry::default(),
+            clawmaster_config::schema::ProviderEntry::default(),
         );
 
         // Ollama key is optional — if the env var happens to be set,
@@ -788,7 +788,7 @@ mod tests {
     #[test]
     fn check_providers_disabled_skipped() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::ProviderEntry {
+        let entry = clawmaster_config::schema::ProviderEntry {
             enabled: false,
             ..Default::default()
         };
@@ -808,7 +808,7 @@ mod tests {
         let mut config = MoltisConfig::default();
         config.providers.providers.insert(
             "github-copilot".to_string(),
-            moltis_config::schema::ProviderEntry::default(),
+            clawmaster_config::schema::ProviderEntry::default(),
         );
 
         let section = check_providers(&config);
@@ -831,7 +831,7 @@ mod tests {
     #[test]
     fn check_mcp_servers_disabled_skipped() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::McpServerEntry {
+        let entry = clawmaster_config::schema::McpServerEntry {
             command: "node".to_string(),
             args: vec![],
             env: Default::default(),
@@ -851,7 +851,7 @@ mod tests {
     #[test]
     fn check_mcp_servers_missing_command_fails() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::McpServerEntry {
+        let entry = clawmaster_config::schema::McpServerEntry {
             command: String::new(),
             args: vec![],
             env: Default::default(),
@@ -871,7 +871,7 @@ mod tests {
     #[test]
     fn check_mcp_servers_sse_with_url_ok() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::McpServerEntry {
+        let entry = clawmaster_config::schema::McpServerEntry {
             command: String::new(),
             args: vec![],
             env: Default::default(),
@@ -891,7 +891,7 @@ mod tests {
     #[test]
     fn check_mcp_servers_sse_without_url_fails() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::McpServerEntry {
+        let entry = clawmaster_config::schema::McpServerEntry {
             command: String::new(),
             args: vec![],
             env: Default::default(),
@@ -914,7 +914,7 @@ mod tests {
     #[test]
     fn check_mcp_servers_nonexistent_command_fails() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::McpServerEntry {
+        let entry = clawmaster_config::schema::McpServerEntry {
             command: "definitely-not-a-real-command-xyz123".to_string(),
             args: vec![],
             env: Default::default(),
@@ -980,7 +980,7 @@ mod tests {
     #[tokio::test]
     async fn check_database_valid_db() {
         let temp = tempfile::TempDir::new().unwrap();
-        let db_path = temp.path().join("moltis.db");
+        let db_path = temp.path().join("clawmaster.db");
 
         // Create a minimal SQLite database
         let db_url = format!("sqlite:{}?mode=rwc", db_path.display());
@@ -1021,7 +1021,7 @@ mod tests {
     #[test]
     fn check_security_api_keys_in_config_warns() {
         let mut config = MoltisConfig::default();
-        let entry = moltis_config::schema::ProviderEntry {
+        let entry = clawmaster_config::schema::ProviderEntry {
             api_key: Some(secrecy::Secret::new("sk-test".to_string())),
             ..Default::default()
         };

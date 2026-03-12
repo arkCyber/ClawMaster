@@ -10,9 +10,9 @@ use {
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{counter, histogram, labels, tools as tools_metrics};
+use clawmaster_metrics::{counter, histogram, labels, tools as tools_metrics};
 
-use moltis_agents::tool_registry::AgentTool;
+use clawmaster_agents::tool_registry::AgentTool;
 
 use crate::{
     exec::ExecOpts,

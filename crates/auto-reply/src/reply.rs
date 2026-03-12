@@ -1,10 +1,10 @@
 use {
-    moltis_common::types::{MsgContext, ReplyPayload},
+    clawmaster_common::types::{MsgContext, ReplyPayload},
     tracing::info,
 };
 
 #[cfg(feature = "metrics")]
-use moltis_metrics::{auto_reply as auto_reply_metrics, counter, histogram, labels};
+use clawmaster_metrics::{auto_reply as auto_reply_metrics, counter, histogram, labels};
 
 /// Main entry point: process an inbound message and produce a reply.
 ///

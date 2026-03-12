@@ -229,7 +229,7 @@ function HookCard({ hook }) {
                    style="min-height:60px;max-height:400px">
                 <p>${hook.description}</p>
                 <p class="mt-2">
-                  <a href="https://github.com/moltis-org/moltis/blob/main/${hook.source_path}"
+                  <a href="https://github.com/arkCyber/ClawMaster/blob/main/${hook.source_path}"
                      target="_blank" rel="noopener noreferrer"
                      class="text-[var(--accent)] hover:underline">
                     View source on GitHub \u2197
@@ -319,7 +319,7 @@ function HooksPage() {
 
       <div class="max-w-[600px] bg-[var(--surface2)] border border-[var(--border)] rounded-[var(--radius)] px-5 py-4 leading-relaxed">
         <p class="text-sm text-[var(--text)] mb-2.5">
-          <strong class="text-[var(--text-strong)]">Hooks</strong> run shell commands in response to lifecycle events (tool calls, messages, sessions, etc.). They live in <code class="font-mono text-xs">.moltis/hooks/</code> directories.
+          <strong class="text-[var(--text-strong)]">Hooks</strong> run shell commands in response to lifecycle events (tool calls, messages, sessions, etc.). They live in <code class="font-mono text-xs">.clawmaster/hooks/</code> directories.
         </p>
         <div class="flex items-center gap-2 my-3 px-3.5 py-2.5 bg-[var(--surface)] rounded-[var(--radius-sm)] font-mono text-xs text-[var(--text-strong)]">
           <span class="opacity-50">Event</span>
@@ -337,7 +337,7 @@ function HooksPage() {
 				hooks.value.length === 0 && !loading.value
 					? html`
         <div class="max-w-[600px] text-sm text-[var(--muted)] px-1">
-          No hooks discovered. Create a <code class="font-mono text-xs">HOOK.md</code> file in <code class="font-mono text-xs">.moltis/hooks/my-hook/</code> or <code class="font-mono text-xs">~/.moltis/hooks/my-hook/</code> to get started.
+          No hooks discovered. Create a <code class="font-mono text-xs">HOOK.md</code> file in <code class="font-mono text-xs">.clawmaster/hooks/my-hook/</code> or <code class="font-mono text-xs">~/.clawmaster/hooks/my-hook/</code> to get started.
         </div>
       `
 					: null

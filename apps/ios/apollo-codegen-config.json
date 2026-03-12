@@ -1,5 +1,5 @@
 {
-  "schemaNamespace": "MoltisAPI",
+  "schemaNamespace": "ClawMasterAPI",
   "input": {
     "operationSearchPaths": [
       "GraphQL/Operations/**/*.graphql"
@@ -13,10 +13,10 @@
       "none": {}
     },
     "schemaTypes": {
-      "path": "Sources/GraphQL/Generated/MoltisAPI",
+      "path": "Sources/GraphQL/Generated/ClawMasterAPI",
       "moduleType": {
         "embeddedInTarget": {
-          "name": "Moltis"
+          "name": "ClawMaster"
         }
       }
     },

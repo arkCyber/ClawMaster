@@ -14,7 +14,7 @@ use {
     tracing::{debug, info},
 };
 
-use moltis_channels::{
+use clawmaster_channels::{
     ChannelEventSink,
     message_log::MessageLog,
     plugin::{ChannelReplyTarget, ChannelType},
@@ -38,17 +38,17 @@ pub async fn register_events_api_account(
     accounts: AccountStateMap,
     message_log: Option<Arc<dyn MessageLog>>,
     event_sink: Option<Arc<dyn ChannelEventSink>>,
-) -> moltis_channels::Result<()> {
+) -> clawmaster_channels::Result<()> {
     let bot_token_str = config.bot_token.expose_secret().clone();
 
     if bot_token_str.is_empty() {
-        return Err(moltis_channels::Error::invalid_input(
+        return Err(clawmaster_channels::Error::invalid_input(
             "Slack bot_token is required",
         ));
     }
 
     let client = Arc::new(SlackClient::new(SlackClientHyperConnector::new().map_err(
-        |e| moltis_channels::Error::unavailable(format!("hyper connector: {e}")),
+        |e| clawmaster_channels::Error::unavailable(format!("hyper connector: {e}")),
     )?));
 
     // Verify the bot token and get the bot user ID.
@@ -57,7 +57,7 @@ pub async fn register_events_api_account(
     let auth_response = session
         .auth_test()
         .await
-        .map_err(|e| moltis_channels::Error::unavailable(format!("auth.test failed: {e}")))?;
+        .map_err(|e| clawmaster_channels::Error::unavailable(format!("auth.test failed: {e}")))?;
 
     let bot_user_id = auth_response.user_id.to_string();
     info!(
@@ -137,23 +137,23 @@ pub async fn handle_webhook(
     timestamp: &str,
     signature: &str,
     accounts: &AccountStateMap,
-) -> moltis_channels::Result<Option<String>> {
+) -> clawmaster_channels::Result<Option<String>> {
     // Look up the account and verify the signature.
     let signing_secret = {
         let accts = accounts.read().unwrap_or_else(|e| e.into_inner());
         let state = accts
             .get(account_id)
-            .ok_or_else(|| moltis_channels::Error::unknown_account(account_id))?;
+            .ok_or_else(|| clawmaster_channels::Error::unknown_account(account_id))?;
         state
             .config
             .signing_secret
             .as_ref()
             .map(|s| s.expose_secret().clone())
-            .ok_or_else(|| moltis_channels::Error::invalid_input("signing_secret not configured"))?
+            .ok_or_else(|| clawmaster_channels::Error::invalid_input("signing_secret not configured"))?
     };
 
     if !verify_signature(&signing_secret, timestamp, body, signature) {
-        return Err(moltis_channels::Error::invalid_input(
+        return Err(clawmaster_channels::Error::invalid_input(
             "invalid Slack webhook signature",
         ));
     }
@@ -188,7 +188,7 @@ pub async fn handle_verified_webhook(
     account_id: &str,
     body: &[u8],
     accounts: &AccountStateMap,
-) -> moltis_channels::Result<Option<String>> {
+) -> clawmaster_channels::Result<Option<String>> {
     let payload: serde_json::Value = serde_json::from_slice(body)?;
 
     // URL verification challenge.
@@ -216,13 +216,13 @@ pub async fn handle_verified_interaction_webhook(
     account_id: &str,
     body: &[u8],
     accounts: &AccountStateMap,
-) -> moltis_channels::Result<()> {
+) -> clawmaster_channels::Result<()> {
     // Parse form-encoded body to extract `payload` field.
     let body_str = std::str::from_utf8(body)
-        .map_err(|e| moltis_channels::Error::invalid_input(format!("invalid utf-8: {e}")))?;
+        .map_err(|e| clawmaster_channels::Error::invalid_input(format!("invalid utf-8: {e}")))?;
 
     let payload_json = extract_form_payload(body_str).ok_or_else(|| {
-        moltis_channels::Error::invalid_input("missing payload field in interaction")
+        clawmaster_channels::Error::invalid_input("missing payload field in interaction")
     })?;
 
     let payload: serde_json::Value = serde_json::from_str(&payload_json)?;
@@ -339,7 +339,7 @@ async fn dispatch_event_callback(
                         accts.get(account_id).and_then(|s| s.event_sink.clone())
                     };
                     if let Some(sink) = event_sink {
-                        sink.emit(moltis_channels::ChannelEvent::ReactionChange {
+                        sink.emit(clawmaster_channels::ChannelEvent::ReactionChange {
                             channel_type: ChannelType::Slack,
                             account_id: account_id.to_string(),
                             chat_id: item_channel.to_string(),
@@ -369,33 +369,33 @@ pub async fn handle_interaction_webhook(
     timestamp: &str,
     signature: &str,
     accounts: &AccountStateMap,
-) -> moltis_channels::Result<()> {
+) -> clawmaster_channels::Result<()> {
     // Verify signature.
     let signing_secret = {
         let accts = accounts.read().unwrap_or_else(|e| e.into_inner());
         let state = accts
             .get(account_id)
-            .ok_or_else(|| moltis_channels::Error::unknown_account(account_id))?;
+            .ok_or_else(|| clawmaster_channels::Error::unknown_account(account_id))?;
         state
             .config
             .signing_secret
             .as_ref()
             .map(|s| s.expose_secret().clone())
-            .ok_or_else(|| moltis_channels::Error::invalid_input("signing_secret not configured"))?
+            .ok_or_else(|| clawmaster_channels::Error::invalid_input("signing_secret not configured"))?
     };
 
     if !verify_signature(&signing_secret, timestamp, body, signature) {
-        return Err(moltis_channels::Error::invalid_input(
+        return Err(clawmaster_channels::Error::invalid_input(
             "invalid Slack webhook signature",
         ));
     }
 
     // Parse form-encoded body to extract `payload` field.
     let body_str = std::str::from_utf8(body)
-        .map_err(|e| moltis_channels::Error::invalid_input(format!("invalid utf-8: {e}")))?;
+        .map_err(|e| clawmaster_channels::Error::invalid_input(format!("invalid utf-8: {e}")))?;
 
     let payload_json = extract_form_payload(body_str).ok_or_else(|| {
-        moltis_channels::Error::invalid_input("missing payload field in interaction")
+        clawmaster_channels::Error::invalid_input("missing payload field in interaction")
     })?;
 
     let payload: serde_json::Value = serde_json::from_str(&payload_json)?;

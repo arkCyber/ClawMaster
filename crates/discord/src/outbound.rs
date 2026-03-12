@@ -7,14 +7,14 @@ use {
 };
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         Error as ChannelError, Result as ChannelResult,
         plugin::{
             ButtonStyle as ChannelButtonStyle, ChannelOutbound, ChannelStreamOutbound,
             ChannelThreadContext, InteractiveMessage, StreamEvent, StreamReceiver, ThreadMessage,
         },
     },
-    moltis_common::types::ReplyPayload,
+    clawmaster_common::types::ReplyPayload,
     serenity::all::{
         ButtonStyle as SerenityButtonStyle, ChannelId, CreateActionRow, CreateAttachment,
         CreateButton, CreateEmbed, CreateMessage, EditMessage, GetMessages, MessageId,
@@ -235,7 +235,7 @@ fn build_upload_preview(data: &[u8], mime: &str) -> Option<(Vec<u8>, String)> {
         return None;
     }
 
-    let resized = moltis_media::image_ops::resize_image(
+    let resized = clawmaster_media::image_ops::resize_image(
         data,
         DISCORD_IMAGE_PREVIEW_MAX_WIDTH,
         DISCORD_IMAGE_PREVIEW_MAX_HEIGHT,
@@ -410,9 +410,9 @@ impl ChannelOutbound for DiscordOutbound {
             .map_err(|e| ChannelError::external("Discord send", std::io::Error::other(e)))?;
 
         #[cfg(feature = "metrics")]
-        moltis_metrics::counter!(
-            moltis_metrics::channels::MESSAGES_SENT_TOTAL,
-            moltis_metrics::labels::CHANNEL => "discord"
+        clawmaster_metrics::counter!(
+            clawmaster_metrics::channels::MESSAGES_SENT_TOTAL,
+            clawmaster_metrics::labels::CHANNEL => "discord"
         )
         .increment(1);
 

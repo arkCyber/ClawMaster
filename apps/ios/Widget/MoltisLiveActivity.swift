@@ -2,9 +2,9 @@ import ActivityKit
 import SwiftUI
 import WidgetKit
 
-struct MoltisLiveActivity: Widget {
+struct ClawMasterLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: MoltisActivityAttributes.self) { context in
+        ActivityConfiguration(for: ClawMasterActivityAttributes.self) { context in
             // MARK: - Lock Screen Banner
             lockScreenView(context: context)
                 .activityBackgroundTint(.black.opacity(0.85))
@@ -82,7 +82,7 @@ struct MoltisLiveActivity: Widget {
 
     @ViewBuilder
     private func lockScreenView(
-        context: ActivityViewContext<MoltisActivityAttributes>
+        context: ActivityViewContext<ClawMasterActivityAttributes>
     ) -> some View {
         VStack(spacing: 12) {
             // Header: agent name + model + tokens
@@ -100,7 +100,7 @@ struct MoltisLiveActivity: Widget {
 
     @ViewBuilder
     private func headerRow(
-        context: ActivityViewContext<MoltisActivityAttributes>
+        context: ActivityViewContext<ClawMasterActivityAttributes>
     ) -> some View {
         HStack {
             // Agent icon
@@ -133,7 +133,7 @@ struct MoltisLiveActivity: Widget {
 
     @ViewBuilder
     private func centerContent(
-        context: ActivityViewContext<MoltisActivityAttributes>
+        context: ActivityViewContext<ClawMasterActivityAttributes>
     ) -> some View {
         if context.state.isFinished {
             // Finished state
@@ -169,7 +169,7 @@ struct MoltisLiveActivity: Widget {
 
     @ViewBuilder
     private func footerRow(
-        context: ActivityViewContext<MoltisActivityAttributes>
+        context: ActivityViewContext<ClawMasterActivityAttributes>
     ) -> some View {
         HStack(spacing: 8) {
             if let icon = context.state.currentStepIcon {

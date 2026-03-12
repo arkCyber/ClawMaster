@@ -2,7 +2,7 @@
 //!
 //! The OTP state machine is platform-agnostic and shared across channel plugins.
 //! WhatsApp-specific constants (like the challenge message) live here.
-pub use moltis_channels::otp::*;
+pub use clawmaster_channels::otp::*;
 
 /// Message sent to the WhatsApp user when an OTP challenge is created.
 /// The code is NOT included — it is only visible to the admin in the web UI.

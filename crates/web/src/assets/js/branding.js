@@ -4,7 +4,7 @@ function trimString(value) {
 
 export function identityName(identity) {
 	var name = trimString(identity?.name);
-	return name || "moltis";
+	return name || "clawmaster";
 }
 
 export function identityEmoji(identity) {

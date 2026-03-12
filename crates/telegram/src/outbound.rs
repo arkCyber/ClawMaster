@@ -12,11 +12,11 @@ use {
 };
 
 use {
-    moltis_channels::{
+    clawmaster_channels::{
         Error as ChannelError, Result,
         plugin::{ChannelOutbound, ChannelStreamOutbound, StreamEvent, StreamReceiver},
     },
-    moltis_common::types::ReplyPayload,
+    clawmaster_common::types::ReplyPayload,
 };
 
 use crate::{

@@ -7,8 +7,8 @@ export var connected = false;
 export var reconnectDelay = 1000;
 export var pending = {};
 export var models = [];
-export var activeSessionKey = localStorage.getItem("moltis-session") || "main";
-export var activeProjectId = localStorage.getItem("moltis-project") || "";
+export var activeSessionKey = localStorage.getItem("clawmaster-session") || "main";
+export var activeProjectId = localStorage.getItem("clawmaster-project") || "";
 export var sessions = [];
 export var projects = [];
 
@@ -17,7 +17,7 @@ export var streamEl = null;
 export var streamText = "";
 export var lastToolOutput = "";
 export var voicePending = false;
-export var chatHistory = JSON.parse(localStorage.getItem("moltis-chat-history") || "[]");
+export var chatHistory = JSON.parse(localStorage.getItem("clawmaster-chat-history") || "[]");
 export var chatHistoryIdx = -1;
 export var chatHistoryDraft = "";
 // Client-side sequence counter for message ordering diagnostics.
@@ -36,7 +36,7 @@ export var modelComboLabel = null;
 export var modelDropdown = null;
 export var modelSearchInput = null;
 export var modelDropdownList = null;
-export var selectedModelId = localStorage.getItem("moltis-model") || "";
+export var selectedModelId = localStorage.getItem("clawmaster-model") || "";
 export var modelIdx = -1;
 
 // Node selector elements — created dynamically inside the chat page
@@ -102,7 +102,7 @@ export var unseenErrors = 0;
 export var unseenWarns = 0;
 
 // Project filter
-export var projectFilterId = localStorage.getItem("moltis-project-filter") || "";
+export var projectFilterId = localStorage.getItem("clawmaster-project-filter") || "";
 
 // DOM shorthand
 export function $(id) {

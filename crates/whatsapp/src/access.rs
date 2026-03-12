@@ -1,4 +1,4 @@
-use moltis_channels::gating::{self, DmPolicy, GroupPolicy};
+use clawmaster_channels::gating::{self, DmPolicy, GroupPolicy};
 
 use crate::config::WhatsAppAccountConfig;
 

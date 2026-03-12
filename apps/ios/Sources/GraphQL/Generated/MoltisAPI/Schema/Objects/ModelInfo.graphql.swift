@@ -3,7 +3,7 @@
 
 import ApolloAPI
 
-extension MoltisAPI.Objects {
+extension ClawMasterAPI.Objects {
   static let ModelInfo = ApolloAPI.Object(
     typename: "ModelInfo",
     implementedInterfaces: [],

@@ -45,7 +45,7 @@ export function renderProjectDropdownList() {
 
 export function selectProject(id, label) {
 	S.setActiveProjectId(id);
-	localStorage.setItem("moltis-project", S.activeProjectId);
+	localStorage.setItem("clawmaster-project", S.activeProjectId);
 	if (S.projectComboLabel) S.projectComboLabel.textContent = label;
 	closeProjectDropdown();
 	if (S.connected && S.activeSessionKey) {
@@ -84,7 +84,7 @@ document.addEventListener("click", (e) => {
 	}
 });
 
-window.addEventListener("moltis:locale-changed", () => {
+window.addEventListener("clawmaster:locale-changed", () => {
 	updateSessionProjectSelect(S.activeProjectId);
 	if (S.projectDropdown && !S.projectDropdown.classList.contains("hidden")) {
 		renderProjectDropdownList();

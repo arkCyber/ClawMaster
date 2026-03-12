@@ -8,7 +8,7 @@ use std::pin::Pin;
 use {
     async_trait::async_trait,
     futures::StreamExt,
-    moltis_oauth::{OAuthTokens, TokenStore, kimi_headers},
+    clawmaster_oauth::{OAuthTokens, TokenStore, kimi_headers},
     secrecy::{ExposeSecret, Secret},
     tokio_stream::Stream,
     tracing::{debug, trace, warn},
@@ -19,7 +19,7 @@ use {
         SseLineResult, StreamingToolState, finalize_stream, parse_openai_compat_usage_from_payload,
         parse_tool_calls, process_openai_sse_line, to_openai_tools,
     },
-    moltis_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent},
+    clawmaster_agents::model::{ChatMessage, CompletionResponse, LlmProvider, StreamEvent},
 };
 
 // ── Constants ────────────────────────────────────────────────────────────────

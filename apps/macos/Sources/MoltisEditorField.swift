@@ -1,9 +1,9 @@
 import AppKit
 import SwiftUI
 
-// MARK: - MoltisEditorField (for multi-line text editing in forms)
+// MARK: - ClawMasterEditorField (for multi-line text editing in forms)
 
-struct MoltisEditorField: View {
+struct ClawMasterEditorField: View {
     @Binding var text: String
     let minHeight: CGFloat
 
