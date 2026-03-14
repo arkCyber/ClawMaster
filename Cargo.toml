@@ -1,7 +1,10 @@
 [workspace]
 default-members = [
   "apps/courier",
+  "apps/cosmic",
   "crates/agents",
+  "crates/audit-log",
+  "crates/backup-recovery",
   "crates/auth",
   "crates/auto-reply",
   "crates/benchmarks",
@@ -12,18 +15,23 @@ default-members = [
   "crates/chat",
   # "crates/clawhub",  # Optional: GitHub integration (requires sqlx offline mode setup)
   "crates/cli",
+  "crates/cosmic-client",
+  "crates/fault-recovery",
   "crates/common",
   "crates/config",
+  "crates/config-validator",
   "crates/cron",
   "crates/discord",
+  "crates/folder-access",
   "crates/gateway",
   "crates/graphql",
+  "crates/health-check",
+  "crates/input-validator",
   "crates/mcp",
   "crates/media",
   "crates/memory",
   "crates/metrics",
   "crates/msteams",
-  "crates/network-filter",
   "crates/node-host",
   "crates/oauth",
   "crates/onboarding",
@@ -34,6 +42,7 @@ default-members = [
   "crates/provider-setup",
   "crates/providers",
   "crates/qmd",
+  "crates/resource-quota",
   "crates/routing",
   "crates/service-traits",
   "crates/sessions",
@@ -52,10 +61,17 @@ default-members = [
   "crates/wasm-tools/web-search",
   "crates/web",
   "crates/whatsapp",
+  "crates/setup-wizard",
+  "crates/agents-memory",
+  "crates/user-errors",
 ]
 members = [
   "apps/courier",
+  "apps/cosmic",
+  "apps/tauri/src-tauri",
   "crates/agents",
+  "crates/audit-log",
+  "crates/backup-recovery",
   "crates/auth",
   "crates/auto-reply",
   "crates/benchmarks",
@@ -65,12 +81,19 @@ members = [
   "crates/channels",
   "crates/chat",
   "crates/clawhub",
+  "crates/fault-recovery",
   "crates/cli",
+  "crates/cosmic-client",
   "crates/common",
   "crates/config",
+  "crates/config-validator",
   "crates/cron",
+  "crates/discord",
+  "crates/folder-access",
   "crates/gateway",
   "crates/graphql",
+  "crates/health-check",
+  "crates/input-validator",
   "crates/mcp",
   "crates/media",
   "crates/memory",
@@ -86,6 +109,7 @@ members = [
   "crates/provider-setup",
   "crates/providers",
   "crates/qmd",
+  "crates/resource-quota",
   "crates/routing",
   "crates/schema-export",
   "crates/service-traits",
@@ -105,6 +129,12 @@ members = [
   "crates/wasm-tools/web-search",
   "crates/web",
   "crates/whatsapp",
+  "crates/setup-wizard",
+  "crates/agents-memory",
+  "crates/user-errors",
+  "crates/soul",
+  "crates/agentic-loop",
+  "crates/chat-catchup",
 ]
 resolver = "2"
 
@@ -293,8 +323,11 @@ zeroize       = { features = ["derive"], version = "1" }
 # Workspace crates
 clawmaster                 = { path = "crates/cli" }
 clawmaster-agents          = { path = "crates/agents" }
+clawmaster-audit-log       = { path = "crates/audit-log" }
+clawmaster-backup-recovery = { path = "crates/backup-recovery" }
 clawmaster-auth            = { path = "crates/auth" }
 clawmaster-auto-reply      = { path = "crates/auto-reply" }
+clawmaster-fault-recovery  = { path = "crates/fault-recovery" }
 clawmaster-browser         = { path = "crates/browser" }
 clawmaster-caldav          = { path = "crates/caldav" }
 clawmaster-canvas          = { path = "crates/canvas" }
@@ -302,7 +335,11 @@ clawmaster-channels        = { path = "crates/channels" }
 clawmaster-chat            = { path = "crates/chat" }
 clawmaster-common          = { path = "crates/common" }
 clawmaster-config          = { path = "crates/config" }
+clawmaster-config-validator = { path = "crates/config-validator" }
 clawmaster-cron            = { path = "crates/cron" }
+clawmaster-health-check    = { path = "crates/health-check" }
+clawmaster-input-validator = { path = "crates/input-validator" }
+clawmaster-resource-quota  = { path = "crates/resource-quota" }
 clawmaster-discord         = { path = "crates/discord" }
 clawmaster-gateway         = { default-features = false, path = "crates/gateway" }
 clawmaster-graphql         = { path = "crates/graphql" }
@@ -337,9 +374,15 @@ clawmaster-vault           = { path = "crates/vault" }
 clawmaster-voice           = { path = "crates/voice" }
 clawmaster-web             = { default-features = false, path = "crates/web" }
 clawmaster-whatsapp        = { path = "crates/whatsapp" }
+clawmaster-setup-wizard    = { path = "crates/setup-wizard" }
+clawmaster-agents-memory   = { path = "crates/agents-memory" }
+clawmaster-user-errors     = { path = "crates/user-errors" }
+clawmaster-soul            = { path = "crates/soul" }
+clawmaster-agentic-loop    = { path = "crates/agentic-loop" }
+clawmaster-chat-catchup    = { path = "crates/chat-catchup" }
 
 [profile.release]
+opt-level = 3
+lto = true
 codegen-units = 1
-lto           = "thin"
-panic         = "abort"
-strip         = true
+strip = true

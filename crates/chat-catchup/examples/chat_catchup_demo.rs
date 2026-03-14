@@ -1,6 +1,6 @@
 //! Demonstration of chat catchup functionality
 
-use clawmaster_chat_catchup::{create_chat_catchup_with_config, CatchupConfig, CatchupStrategy};
+use clawmaster_chat_catchup::{CatchupConfig, CatchupStrategy, ChatCatchupInterface};
 use clawmaster_chat_catchup::catchup_engine::{MockMessageStore, MockSessionStore, ChatCatchup};
 use clawmaster_chat_catchup::message_processor::{ChatMessage, MessageType};
 use std::sync::Arc;
@@ -21,11 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         enable_summarization: true,
         max_context_length: 2000,
         message_filter: Default::default(),
-        strategy: CatchupStrategy::Adaptive {
-            summary_threshold: 10,
-            cluster_threshold: 5,
-            old_message_threshold: Duration::from_secs(1800), // 30 minutes
-        },
+        strategy: CatchupStrategy::Full,
     };
 
     // Create mock stores
@@ -75,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Test marking as read
     println!("\n=== Mark as Read ===");
-    catchup.mark_as_read("general", "user2", Utc::now()).await?;
+    catchup.mark_as_read("general", "user2", Utc::now().timestamp() as u64).await?;
     println!("Marked messages as read for user2");
 
     // Demonstrate different strategies
@@ -203,7 +199,7 @@ async fn add_many_messages(message_store: &MockMessageStore, count: usize) {
             user_id: user.to_string(),
             username: user.to_string(),
             content: format!("{} - Message {}", topic, i),
-            timestamp: Utc::now() - Duration::from_secs((count - i) * 60),
+            timestamp: Utc::now() - Duration::from_secs(((count - i) * 60) as u64),
             is_bot: false,
             is_system: false,
             message_type: MessageType::Text,

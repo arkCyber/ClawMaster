@@ -1,7 +1,7 @@
 //! Integration tests for chat catchup functionality
 
-use clawmaster_chat_catchup::{create_chat_catchup_with_config, CatchupConfig, CatchupStrategy};
-use clawmaster_chat_catchup::catchup_engine::{MockMessageStore, MockSessionStore};
+use clawmaster_chat_catchup::{create_chat_catchup_with_config, CatchupConfig, CatchupStrategy, ChatCatchupInterface};
+use clawmaster_chat_catchup::catchup_engine::{MockMessageStore, MockSessionStore, ChatCatchup};
 use clawmaster_chat_catchup::message_processor::{ChatMessage, MessageType};
 use std::sync::Arc;
 use chrono::Utc;

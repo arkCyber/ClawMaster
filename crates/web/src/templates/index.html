@@ -59,6 +59,8 @@
 <link rel="stylesheet" href="{{ asset_prefix }}css/layout.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/chat.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/components.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/security.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/dashboard.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/language-selector.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/dark-mode-icons.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/mobile.css">
@@ -83,6 +85,7 @@
 <link rel="modulepreload" href="{{ asset_prefix }}js/project-combo.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/providers.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/chat-ui.js">
+<link rel="modulepreload" href="{{ asset_prefix }}js/security.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/icons.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/sandbox.js">
 <link rel="modulepreload" href="{{ asset_prefix }}js/nav-counts.js">
@@ -116,19 +119,39 @@
 
 <!-- Top bar -->
 <header class="flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface)] shrink-0">
-  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer"><span id="titleEmoji"></span><span id="titleName">clawmaster</span></a>
-  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;if(!g||!g.identity)return;var i=g.identity;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");if(e&&i.emoji)e.textContent=i.emoji+" ";if(n&&i.name)n.textContent=i.name;var a=(i&&i.name&&String(i.name).trim())||"clawmaster";document.title=a}()</script>
+  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer flex items-center gap-2">
+    <span id="titleEmoji" class="text-xl">🦾</span>
+    <span id="titleName" class="font-bold">ClawMaster</span>
+    <span id="consoleName" class="text-sm text-[var(--muted)] font-normal"></span>
+  </a>
+  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");var c=document.getElementById("consoleName");n.textContent="ClawMaster";if(g&&g.identity){var i=g.identity;if(e&&i.emoji)e.textContent=i.emoji;if(c&&i.name&&i.name!=="ClawMaster")c.textContent="("+i.name+")";var a=(i&&i.name&&String(i.name).trim())||"ClawMaster";document.title=a}else{document.title="ClawMaster"}}()</script>
   <span class="status-dot" id="statusDot"></span>
   <span class="text-xs text-[var(--muted)]" id="statusText" data-i18n="common:status.disconnected">disconnected</span>
   <div class="flex-1"></div>
 
-  <span id="memoryInfo" class="text-xs text-[var(--muted)]" title="Process memory · System free memory"></span>
+  <!-- Security Mode Indicator -->
+  <div id="securityModeIndicator" class="security-indicator" style="display:none" title="Security approval mode">
+    <span class="security-icon">🛡️</span>
+    <span class="security-mode" id="securityModeText">Smart</span>
+  </div>
+
+  <!-- Emergency Stop Button (Always Visible) -->
+  <button id="emergencyStopBtn" class="emergency-stop-btn" style="display:flex !important;" data-i18n-title="security:emergencyStop.title" title="Emergency Stop - Abort all running commands">
+    <span class="icon icon-sm icon-stop-circle"></span>
+    <span class="emergency-label" data-i18n="security:emergencyStop.label">STOP</span>
+  </button>
 
   <button id="mobileMenuBtn" class="burger-btn" data-i18n-title="common:menu.openMenu" aria-label="Open menu">
     <span class="icon icon-md icon-burger-mobile"></span>
   </button>
 
-  <div class="header-actions">
+  <div class="header-actions" style="display:flex !important;">
+    <!-- Dashboard Button -->
+    <a href="/dashboard" id="dashboardBtn" class="header-link-btn" style="display:inline-flex !important;" data-i18n-title="common:nav.dashboard" title="Dashboard">
+      <span class="icon icon-home"></span>
+      <span class="header-link-label" data-i18n="common:nav.dashboard">Dashboard</span>
+    </a>
+    
     <button id="settingsBtn" class="header-link-btn" data-i18n-title="common:nav.settings">
     <span class="icon icon-settings"></span>
     <span class="header-link-label" data-i18n="common:nav.settings">Settings</span>

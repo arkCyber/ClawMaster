@@ -1,7 +1,7 @@
 //! Configuration loading, validation, env substitution, and legacy migration.
 //!
-//! Config files: `moltis.toml`, `moltis.yaml`, or `moltis.json`
-//! Searched in `./` then `~/.config/moltis/`.
+//! Config files: `clawmaster.toml`, `clawmaster.yaml`, or `clawmaster.json`
+//! Searched in `./` then `~/.config/clawmaster/`.
 //!
 //! Supports `${ENV_VAR}` substitution in all string values.
 

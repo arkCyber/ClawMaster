@@ -30,6 +30,7 @@ pub mod cron;
 pub mod env_routes;
 #[cfg(feature = "graphql")]
 pub mod graphql_routes;
+pub mod health_routes;
 #[cfg(feature = "local-llm")]
 pub mod local_llm_setup;
 pub mod logs;
@@ -47,6 +48,8 @@ pub mod network_audit;
 pub mod node_exec;
 pub mod nodes;
 pub mod onboarding;
+pub mod p0_integration;
+pub mod p0_routes;
 pub mod pairing;
 pub mod project;
 pub mod provider_setup;

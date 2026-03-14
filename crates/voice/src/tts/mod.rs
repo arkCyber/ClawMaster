@@ -5,10 +5,15 @@ mod elevenlabs;
 mod google;
 mod openai;
 mod piper;
+pub mod streaming;
 
 pub use {
-    coqui::CoquiTts, elevenlabs::ElevenLabsTts, google::GoogleTts, openai::OpenAiTts,
+    coqui::CoquiTts,
+    elevenlabs::ElevenLabsTts,
+    google::GoogleTts,
+    openai::OpenAiTts,
     piper::PiperTts,
+    streaming::{AudioChunk, AudioStream, StreamingConfig, StreamingMetrics, StreamingTtsProvider},
 };
 
 use {

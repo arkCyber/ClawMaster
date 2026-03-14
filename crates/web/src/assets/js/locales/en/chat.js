@@ -200,4 +200,14 @@ export default {
 	queuedMessages: {
 		cancelAllTooltip: "Cancel all queued",
 	},
+
+	// ── Status indicator (2-line display) ───────────────────
+	status: {
+		thinking: "🤔 Thinking",
+		analyzing: "Analyzing and reasoning...",
+		runningTool: "🔧 Running Tool",
+		streaming: "✍️ Streaming",
+		generatingResponse: "AI is generating response in real-time...",
+		processing: "Processing...",
+	},
 };

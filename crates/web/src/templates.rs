@@ -16,6 +16,7 @@ use crate::assets::{asset_content_hash, is_dev_assets};
 #[derive(serde::Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct SpaRoutes {
+    dashboard: &'static str,
     chats: &'static str,
     settings: &'static str,
     providers: &'static str,
@@ -33,6 +34,7 @@ pub(crate) struct SpaRoutes {
 }
 
 pub(crate) static SPA_ROUTES: SpaRoutes = SpaRoutes {
+    dashboard: "/dashboard",
     chats: "/chats",
     settings: "/settings",
     providers: "/settings/providers",

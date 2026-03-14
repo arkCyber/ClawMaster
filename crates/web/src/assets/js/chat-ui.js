@@ -225,6 +225,11 @@ export function renderApprovalCard(requestId, command) {
 
 	S.chatMsgBox.appendChild(card);
 	S.chatMsgBox.scrollTop = S.chatMsgBox.scrollHeight;
+
+	// Trigger enhanced notifications if security module is available
+	if (window.enhanceApprovalNotification) {
+		window.enhanceApprovalNotification(requestId, command);
+	}
 }
 
 export function resolveApproval(requestId, decision, command, card) {
@@ -235,6 +240,15 @@ export function resolveApproval(requestId, decision, command, card) {
 		card.querySelectorAll(".approval-btn").forEach((b) => {
 			b.disabled = true;
 		});
+		
+		// Notify security module
+		if (window.notifyApprovalResolved) {
+			window.notifyApprovalResolved(requestId);
+		}
+		if (window.removeApprovalBanner) {
+			window.removeApprovalBanner();
+		}
+		
 		var status = document.createElement("div");
 		status.className = "approval-status";
 		status.textContent = decision === "approved" ? "Allowed" : "Denied";

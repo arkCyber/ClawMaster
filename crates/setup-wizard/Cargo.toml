@@ -1,0 +1,21 @@
+[package]
+name = "clawmaster-setup-wizard"
+version = "0.10.18"
+edition = "2021"
+authors = ["ClawMaster Team"]
+license = "MIT OR Apache-2.0"
+description = "Interactive setup wizard for ClawMaster"
+
+[dependencies]
+ratatui = "0.26"
+crossterm = "0.27"
+tokio = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+clawmaster-config = { workspace = true }
+clawmaster-providers = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

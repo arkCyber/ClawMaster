@@ -162,12 +162,52 @@ function handleChatThinkingText(p, isActive, isChatPage, eventSession) {
 	var indicator = document.getElementById("thinkingIndicator");
 	if (indicator) {
 		var existingBtn = indicator.querySelector(".thinking-stop-btn");
+		
+		// Update to 2-line status format
 		while (indicator.firstChild) indicator.removeChild(indicator.firstChild);
-		var textEl = document.createElement("span");
-		textEl.className = "thinking-text";
-		textEl.textContent = p.text;
-		indicator.appendChild(textEl);
+		
+		// Create status icon
+		var icon = document.createElement("div");
+		icon.className = "inline-status-icon";
+		
+		// Create content container
+		var content = document.createElement("div");
+		content.className = "inline-status-content";
+		
+		// First line: status label + truncated text
+		var mainLine = document.createElement("div");
+		mainLine.className = "inline-status-main";
+		
+		var label = document.createElement("span");
+		label.className = "inline-status-label";
+		label.textContent = "🤔 Thinking";
+		label.setAttribute("data-i18n", "chat.status.thinking");
+		
+		var text = document.createElement("span");
+		text.className = "inline-status-text";
+		text.textContent = p.text;
+		
+		mainLine.appendChild(label);
+		mainLine.appendChild(text);
+		
+		// Second line: detail info with character count
+		var detailLine = document.createElement("div");
+		detailLine.className = "inline-status-detail";
+		var charCount = p.text ? p.text.length : 0;
+		detailLine.textContent = "Analyzing and reasoning... (" + charCount + " chars)";
+		detailLine.setAttribute("data-i18n", "chat.status.analyzing");
+		
+		content.appendChild(mainLine);
+		content.appendChild(detailLine);
+		
+		// Add to indicator
+		indicator.appendChild(icon);
+		indicator.appendChild(content);
 		indicator.appendChild(existingBtn || makeThinkingStopBtn(eventSession));
+		
+		// Add active class for styling
+		indicator.classList.add("inline-status-bar", "active", "thinking");
+		
 		S.chatMsgBox.scrollTop = S.chatMsgBox.scrollHeight;
 	}
 }
@@ -219,6 +259,10 @@ function handleChatToolCallStart(p, isActive, isChatPage, eventSession) {
 	if (session) session.streamText.value = "";
 	if (!(isActive && isChatPage)) return;
 	var thinkingText = extractThinkingText();
+	
+	// Show tool execution status before removing thinking indicator
+	showToolExecutionStatus(p.toolName, p.arguments);
+	
 	removeThinking();
 	// Close the current streaming element so new text deltas after this tool
 	// call will create a fresh element positioned after the tool card
@@ -440,6 +484,81 @@ function hasNonWhitespaceContent(text) {
 	return String(text || "").trim().length > 0;
 }
 
+function showToolExecutionStatus(toolName, args) {
+	var indicator = document.getElementById("thinkingIndicator");
+	if (!indicator) return;
+	
+	// Clear existing content
+	while (indicator.firstChild) indicator.removeChild(indicator.firstChild);
+	
+	// Create status icon
+	var icon = document.createElement("div");
+	icon.className = "inline-status-icon";
+	
+	// Create content container
+	var content = document.createElement("div");
+	content.className = "inline-status-content";
+	
+	// First line: tool name
+	var mainLine = document.createElement("div");
+	mainLine.className = "inline-status-main";
+	
+	var label = document.createElement("span");
+	label.className = "inline-status-label";
+	label.textContent = "🔧 Running Tool";
+	label.setAttribute("data-i18n", "chat.status.runningTool");
+	
+	var text = document.createElement("span");
+	text.className = "inline-status-text";
+	text.textContent = toolName;
+	
+	mainLine.appendChild(label);
+	mainLine.appendChild(text);
+	
+	// Second line: arguments summary
+	var detailLine = document.createElement("div");
+	detailLine.className = "inline-status-detail";
+	var argsSummary = args ? JSON.stringify(args).substring(0, 60) : "Processing...";
+	if (argsSummary.length >= 60) argsSummary += "...";
+	detailLine.textContent = argsSummary;
+	
+	content.appendChild(mainLine);
+	content.appendChild(detailLine);
+	
+	// Add to indicator
+	indicator.appendChild(icon);
+	indicator.appendChild(content);
+	
+	// Add classes for styling
+	indicator.classList.remove("thinking", "streaming");
+	indicator.classList.add("inline-status-bar", "active", "tool-running");
+}
+
+function updateStreamingStatus() {
+	var indicator = document.getElementById("thinkingIndicator");
+	if (!indicator) return;
+	
+	// Only update if it's currently showing thinking or tool status
+	if (!indicator.classList.contains("inline-status-bar")) return;
+	
+	// Update to streaming state
+	indicator.classList.remove("thinking", "tool-running");
+	indicator.classList.add("streaming");
+	
+	// Update label if content exists
+	var label = indicator.querySelector(".inline-status-label");
+	if (label) {
+		label.textContent = "✍️ Streaming";
+		label.setAttribute("data-i18n", "chat.status.streaming");
+	}
+	
+	var detail = indicator.querySelector(".inline-status-detail");
+	if (detail) {
+		detail.textContent = "AI is generating response in real-time...";
+		detail.setAttribute("data-i18n", "chat.status.generatingResponse");
+	}
+}
+
 function handleChatDelta(p, isActive, isChatPage, eventSession) {
 	updateSessionRunId(eventSession, p.runId);
 	if (!p.text) return;
@@ -447,6 +566,9 @@ function handleChatDelta(p, isActive, isChatPage, eventSession) {
 	var session = sessionStore.getByKey(eventSession);
 	if (session) session.streamText.value += p.text;
 	if (!(isActive && isChatPage)) return;
+	
+	// Update status to streaming if indicator exists
+	updateStreamingStatus();
 	// When voice is pending, accumulate text silently without rendering.
 	if (S.voicePending) {
 		S.setStreamText(S.streamText + p.text);

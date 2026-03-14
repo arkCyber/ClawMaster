@@ -16,6 +16,7 @@ clawmaster-common   = { workspace = true }
 clawmaster-config   = { workspace = true }
 clawmaster-sessions = { workspace = true }
 clawmaster-skills   = { workspace = true }
+clawmaster-agentic-loop = { workspace = true }
 reqwest         = { workspace = true }
 secrecy         = { workspace = true }
 serde           = { workspace = true }

@@ -25,7 +25,9 @@ hyper-util             = { optional = true, workspace = true }
 include_dir            = { optional = true, workspace = true }
 mdns-sd                = { optional = true, workspace = true }
 clawmaster-agents          = { workspace = true }
+clawmaster-audit-log       = { workspace = true }
 clawmaster-auth            = { workspace = true }
+clawmaster-backup-recovery = { workspace = true }
 clawmaster-browser         = { workspace = true }
 clawmaster-caldav          = { optional = true, workspace = true }
 clawmaster-canvas          = { workspace = true }
@@ -33,8 +35,13 @@ clawmaster-channels        = { workspace = true }
 clawmaster-chat            = { workspace = true }
 clawmaster-common          = { workspace = true }
 clawmaster-config          = { workspace = true }
+clawmaster-config-validator = { workspace = true }
 clawmaster-cron            = { workspace = true }
 clawmaster-discord         = { workspace = true }
+clawmaster-fault-recovery  = { workspace = true }
+clawmaster-health-check    = { workspace = true }
+clawmaster-input-validator = { workspace = true }
+clawmaster-resource-quota  = { workspace = true }
 clawmaster-graphql         = { optional = true, workspace = true }
 clawmaster-mcp             = { workspace = true }
 clawmaster-media           = { workspace = true }

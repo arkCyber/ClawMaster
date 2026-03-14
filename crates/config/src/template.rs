@@ -7,7 +7,7 @@
 /// Generate the default config template with a specific port.
 pub fn default_config_template(port: u16) -> String {
     format!(
-        r##"# Moltis Configuration
+        r##"# ClawMaster Configuration
 # ====================
 # This file contains all available configuration options.
 # Uncomment and modify settings as needed.
@@ -25,7 +25,7 @@ bind = "127.0.0.1"                # Address to bind to ("0.0.0.0" for all interf
 port = {port}                           # Port number (auto-generated for this installation)
 http_request_logs = false              # Enable verbose Axum HTTP request/response logs (debugging)
 ws_request_logs = false                # Enable WebSocket RPC request/response logs (debugging)
-update_releases_url = "https://www.moltis.org/releases.json"    # Releases manifest URL for update checks (override to use a custom URL)
+update_releases_url = "https://www.clawmaster.org/releases.json"    # Releases manifest URL for update checks (override to use a custom URL)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # AUTHENTICATION
@@ -403,7 +403,7 @@ idle_timeout_secs = 300           # Close idle browsers after this many seconds 
 navigation_timeout_ms = 30000     # Page load timeout in milliseconds (30 sec)
 sandbox = false                   # Run browser in Docker/Apple Container for isolation
 # container_host = "127.0.0.1"   # Host/IP to reach browser container (default: localhost)
-                                  # Set to "host.docker.internal" when Moltis runs inside Docker
+                                  # Set to "host.docker.internal" when ClawMaster runs inside Docker
 # chrome_path = "/path/to/chrome" # Custom Chrome/Chromium binary path (auto-detected)
 # user_agent = "Custom UA"        # Custom user agent string
 # chrome_args = []                # Extra Chrome command-line arguments
@@ -428,7 +428,7 @@ allowed_domains = []              # Empty = all domains allowed
 [skills]
 enabled = true                    # Enable skills system
 search_paths = []                 # Additional directories to search for skills
-                                  # Default locations: ~/.config/moltis/skills/, ./skills/
+                                  # Default locations: ~/.config/clawmaster/skills/, ./skills/
 auto_load = []                    # Skills to always load without explicit activation
                                   # Example: ["code-review", "commit"]
 
@@ -542,7 +542,7 @@ providers = ["whisper", "mistral", "elevenlabs"] # UI allowlist (empty = show al
 # ══════════════════════════════════════════════════════════════════════════════
 # TAILSCALE
 # ══════════════════════════════════════════════════════════════════════════════
-# Expose moltis via Tailscale Serve (private) or Funnel (public).
+# Expose ClawMaster via Tailscale Serve (private) or Funnel (public).
 
 [tailscale]
 mode = "off"                      # Tailscale mode:
@@ -610,7 +610,7 @@ reset_on_exit = true              # Reset serve/funnel when gateway shuts down
 # ══════════════════════════════════════════════════════════════════════════════
 # ENVIRONMENT VARIABLES
 # ══════════════════════════════════════════════════════════════════════════════
-# Variables injected into the Moltis process at startup.
+# Variables injected into the ClawMaster process at startup.
 # Useful for API keys in Docker where you can't easily pass env vars.
 # Process env vars (docker -e, host env) take precedence — existing vars
 # are NOT overwritten.
@@ -646,8 +646,8 @@ reset_on_exit = true              # Reset serve/funnel when gateway shuts down
 #     "MessageSent",               # After a response is delivered
 #     "SessionStart",              # When a new session begins
 #     "SessionEnd",                # When a session ends
-#     "GatewayStart",              # When Moltis starts
-#     "GatewayStop",               # When Moltis shuts down
+#     "GatewayStart",              # When ClawMaster starts
+#     "GatewayStop",               # When ClawMaster shuts down
 #     "Command",                   # When a slash command is used
 # ]
 # timeout = 10                    # Command timeout in seconds

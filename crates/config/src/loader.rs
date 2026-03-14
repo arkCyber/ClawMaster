@@ -95,21 +95,21 @@ fn share_dir_override() -> Option<PathBuf> {
 ///
 /// Resolution order:
 /// 1. Programmatic override via `set_share_dir()`
-/// 2. `MOLTIS_SHARE_DIR` env var
-/// 3. `/usr/share/moltis/` (Linux system packages) — only if it exists
-/// 4. `data_dir()/share/` (`~/.moltis/share/`) — only if it exists
+/// 2. `CLAWMASTER_SHARE_DIR` env var
+/// 3. `/usr/share/clawmaster/` (Linux system packages) — only if it exists
+/// 4. `data_dir()/share/` (`~/.clawmaster/share/`) — only if it exists
 /// 5. `None` (fall back to embedded assets)
 pub fn share_dir() -> Option<PathBuf> {
     if let Some(dir) = share_dir_override() {
         return Some(dir);
     }
-    if let Ok(dir) = std::env::var("MOLTIS_SHARE_DIR")
+    if let Ok(dir) = std::env::var("CLAWMASTER_SHARE_DIR")
         && !dir.is_empty()
     {
         return Some(PathBuf::from(dir));
     }
     // System packages (Linux)
-    let system = PathBuf::from("/usr/share/moltis");
+    let system = PathBuf::from("/usr/share/clawmaster");
     if system.is_dir() {
         return Some(system);
     }
@@ -123,7 +123,7 @@ pub fn share_dir() -> Option<PathBuf> {
 
 /// Load config from the given path (any supported format).
 ///
-/// After parsing, `MOLTIS_*` env vars are applied as overrides.
+/// After parsing, `CLAWMASTER_*` env vars are applied as overrides.
 pub fn load_config(path: &Path) -> crate::Result<MoltisConfig> {
     let raw = std::fs::read_to_string(path).map_err(|source| {
         crate::Error::external(format!("failed to read {}", path.display()), source)
@@ -145,8 +145,8 @@ pub fn load_config_value(path: &Path) -> crate::Result<serde_json::Value> {
 /// Discover and load config from standard locations.
 ///
 /// Search order:
-/// 1. `./moltis.{toml,yaml,yml,json}` (project-local)
-/// 2. `~/.config/moltis/moltis.{toml,yaml,yml,json}` (user-global)
+/// 1. `./clawmaster.{toml,yaml,yml,json}` (project-local)
+/// 2. `~/.config/clawmaster/clawmaster.{toml,yaml,yml,json}` (user-global)
 ///
 /// Returns `MoltisConfig::default()` if no config file is found.
 ///
@@ -253,13 +253,13 @@ pub fn find_config_file() -> Option<PathBuf> {
     None
 }
 
-/// Returns the config directory: programmatic override → `MOLTIS_CONFIG_DIR` env →
-/// `~/.config/moltis/`.
+/// Returns the config directory: programmatic override → `CLAWMASTER_CONFIG_DIR` env →
+/// `~/.config/clawmaster/`.
 pub fn config_dir() -> Option<PathBuf> {
     if let Some(dir) = config_dir_override() {
         return Some(dir);
     }
-    if let Ok(dir) = std::env::var("MOLTIS_CONFIG_DIR")
+    if let Ok(dir) = std::env::var("CLAWMASTER_CONFIG_DIR")
         && !dir.is_empty()
     {
         return Some(PathBuf::from(dir));
@@ -267,14 +267,14 @@ pub fn config_dir() -> Option<PathBuf> {
     home_dir().map(|h| h.join(".config").join("clawmaster"))
 }
 
-/// Returns the user-global config directory (`~/.config/moltis`) without
-/// considering overrides like `MOLTIS_CONFIG_DIR`.
+/// Returns the user-global config directory (`~/.config/clawmaster`) without
+/// considering overrides like `CLAWMASTER_CONFIG_DIR`.
 pub fn user_global_config_dir() -> Option<PathBuf> {
     home_dir().map(|h| h.join(".config").join("clawmaster"))
 }
 
 /// Returns the user-global config directory only when it differs from the
-/// active config directory (i.e. when `MOLTIS_CONFIG_DIR` or `--config-dir`
+/// active config directory (i.e. when `CLAWMASTER_CONFIG_DIR` or `--config-dir`
 /// is overriding the default). Returns `None` when they are the same path.
 pub fn user_global_config_dir_if_different() -> Option<PathBuf> {
     let home = user_global_config_dir()?;
@@ -298,20 +298,20 @@ pub fn find_user_global_config_file() -> Option<PathBuf> {
     None
 }
 
-/// Returns the data directory: programmatic override → `MOLTIS_DATA_DIR` env →
-/// `~/.moltis/`.
+/// Returns the data directory: programmatic override → `CLAWMASTER_DATA_DIR` env →
+/// `~/.clawmaster/`.
 pub fn data_dir() -> PathBuf {
     if let Some(dir) = data_dir_override() {
         return dir;
     }
-    if let Ok(dir) = std::env::var("MOLTIS_DATA_DIR")
+    if let Ok(dir) = std::env::var("CLAWMASTER_DATA_DIR")
         && !dir.is_empty()
     {
         return PathBuf::from(dir);
     }
     home_dir()
-        .map(|h| h.join(".moltis"))
-        .unwrap_or_else(|| PathBuf::from(".moltis"))
+        .map(|h| h.join(".clawmaster"))
+        .unwrap_or_else(|| PathBuf::from(".clawmaster"))
 }
 
 /// Path to the workspace soul file.
@@ -385,7 +385,7 @@ pub fn load_identity_for_agent(agent_id: &str) -> Option<AgentIdentity> {
 }
 
 /// Build a fully-resolved identity by merging all sources:
-/// `moltis.toml` `[identity]` + `IDENTITY.md` frontmatter + `USER.md` + `SOUL.md`.
+/// `clawmaster.toml` `[identity]` + `IDENTITY.md` frontmatter + `USER.md` + `SOUL.md`.
 ///
 /// This is the single source of truth used by both the gateway (`identity_get`)
 /// and the Swift FFI bridge.
@@ -490,7 +490,7 @@ _This file is yours to evolve. As you learn who you are, update it._";
 /// Load SOUL.md from the workspace root (`data_dir`) if present and non-empty.
 ///
 /// When the file does not exist, it is seeded with [`DEFAULT_SOUL`] (mirroring
-/// how `discover_and_load()` writes `moltis.toml` on first run).
+/// how `discover_and_load()` writes `clawmaster.toml` on first run).
 pub fn load_soul() -> Option<String> {
     let path = soul_path();
     match std::fs::read_to_string(&path) {
@@ -661,7 +661,7 @@ pub fn save_identity(identity: &AgentIdentity) -> crate::Result<PathBuf> {
     }
     let yaml = yaml_lines.join("\n");
     let content = format!(
-        "---\n{}\n---\n\n# IDENTITY.md\n\nThis file is managed by Moltis settings.\n",
+        "---\n{}\n---\n\n# IDENTITY.md\n\nThis file is managed by ClawMaster settings.\n",
         yaml
     );
     std::fs::write(&path, content)?;
@@ -735,7 +735,7 @@ pub fn save_user(user: &UserProfile) -> crate::Result<PathBuf> {
     }
     let yaml = yaml_lines.join("\n");
     let content = format!(
-        "---\n{}\n---\n\n# USER.md\n\nThis file is managed by Moltis settings.\n",
+        "---\n{}\n---\n\n# USER.md\n\nThis file is managed by ClawMaster settings.\n",
         yaml
     );
     std::fs::write(&path, content)?;
@@ -1071,19 +1071,19 @@ fn write_default_config(path: &Path, config: &MoltisConfig) -> crate::Result<()>
     Ok(())
 }
 
-/// Apply `MOLTIS_*` environment variable overrides to a loaded config.
+/// Apply `CLAWMASTER_*` environment variable overrides to a loaded config.
 ///
 /// Maps env vars to config fields using `__` as a section separator and
 /// lowercasing. For example:
-/// - `MOLTIS_AUTH_DISABLED=true` → `auth.disabled = true`
-/// - `MOLTIS_TOOLS_EXEC_DEFAULT_TIMEOUT_SECS=60` → `tools.exec.default_timeout_secs = 60`
-/// - `MOLTIS_CHAT_MESSAGE_QUEUE_MODE=collect` → `chat.message_queue_mode = "collect"`
+/// - `CLAWMASTER_AUTH_DISABLED=true` → `auth.disabled = true`
+/// - `CLAWMASTER_TOOLS_EXEC_DEFAULT_TIMEOUT_SECS=60` → `tools.exec.default_timeout_secs = 60`
+/// - `CLAWMASTER_CHAT_MESSAGE_QUEUE_MODE=collect` → `chat.message_queue_mode = "collect"`
 ///
 /// The config is serialized to a JSON value, env overrides are merged in,
-/// then deserialized back. Only env vars with the `MOLTIS_` prefix are
-/// considered. `MOLTIS_CONFIG_DIR`, `MOLTIS_DATA_DIR`, `MOLTIS_SHARE_DIR`,
-/// `MOLTIS_ASSETS_DIR`, `MOLTIS_TOKEN`, `MOLTIS_PASSWORD`, `MOLTIS_TAILSCALE`,
-/// `MOLTIS_WEBAUTHN_RP_ID`, and `MOLTIS_WEBAUTHN_ORIGIN` are excluded
+/// then deserialized back. Only env vars with the `CLAWMASTER_` prefix are
+/// considered. `CLAWMASTER_CONFIG_DIR`, `CLAWMASTER_DATA_DIR`, `CLAWMASTER_SHARE_DIR`,
+/// `CLAWMASTER_ASSETS_DIR`, `CLAWMASTER_TOKEN`, `CLAWMASTER_PASSWORD`, `CLAWMASTER_TAILSCALE`,
+/// `CLAWMASTER_WEBAUTHN_RP_ID`, and `CLAWMASTER_WEBAUTHN_ORIGIN` are excluded
 /// (they are handled separately).
 pub fn apply_env_overrides(config: MoltisConfig) -> MoltisConfig {
     apply_env_overrides_with(config, std::env::vars())
@@ -1098,15 +1098,15 @@ fn apply_env_overrides_with(
     use serde_json::Value;
 
     const EXCLUDED: &[&str] = &[
-        "MOLTIS_CONFIG_DIR",
-        "MOLTIS_DATA_DIR",
-        "MOLTIS_SHARE_DIR",
-        "MOLTIS_ASSETS_DIR",
-        "MOLTIS_TOKEN",
-        "MOLTIS_PASSWORD",
-        "MOLTIS_TAILSCALE",
-        "MOLTIS_WEBAUTHN_RP_ID",
-        "MOLTIS_WEBAUTHN_ORIGIN",
+        "CLAWMASTER_CONFIG_DIR",
+        "CLAWMASTER_DATA_DIR",
+        "CLAWMASTER_SHARE_DIR",
+        "CLAWMASTER_ASSETS_DIR",
+        "CLAWMASTER_TOKEN",
+        "CLAWMASTER_PASSWORD",
+        "CLAWMASTER_TAILSCALE",
+        "CLAWMASTER_WEBAUTHN_RP_ID",
+        "CLAWMASTER_WEBAUTHN_ORIGIN",
     ];
 
     let mut root: Value = match serde_json::to_value(&config) {
@@ -1118,15 +1118,15 @@ fn apply_env_overrides_with(
     };
 
     for (key, val) in vars {
-        if !key.starts_with("MOLTIS_") {
+        if !key.starts_with("CLAWMASTER_") {
             continue;
         }
         if EXCLUDED.contains(&key.as_str()) {
             continue;
         }
 
-        // MOLTIS_AUTH__DISABLED → ["auth", "disabled"]
-        let path_parts: Vec<String> = key["MOLTIS_".len()..]
+        // CLAWMASTER_AUTH__DISABLED → ["auth", "disabled"]
+        let path_parts: Vec<String> = key["CLAWMASTER_".len()..]
             .split("__")
             .map(|segment| segment.to_lowercase())
             .collect();
@@ -1154,7 +1154,7 @@ fn parse_env_value(val: &str) -> serde_json::Value {
     let trimmed = val.trim();
 
     // Support JSON arrays/objects for list-like env overrides, e.g.
-    // MOLTIS_PROVIDERS__OFFERED='["openai","github-copilot"]' or '[]'.
+    // CLAWMASTER_PROVIDERS__OFFERED='["openai","github-copilot"]' or '[]'.
     if ((trimmed.starts_with('[') && trimmed.ends_with(']'))
         || (trimmed.starts_with('{') && trimmed.ends_with('}')))
         && let Ok(parsed) = serde_json::from_str::<serde_json::Value>(trimmed)
@@ -1301,7 +1301,7 @@ mod tests {
 
     #[test]
     fn apply_env_overrides_auth_disabled() {
-        let vars = vec![("MOLTIS_AUTH__DISABLED".into(), "true".into())];
+        let vars = vec![("CLAWMASTER_AUTH__DISABLED".into(), "true".into())];
         let config = MoltisConfig::default();
         assert!(!config.auth.disabled);
         let config = apply_env_overrides_with(config, vars.into_iter());
@@ -1310,22 +1310,22 @@ mod tests {
 
     #[test]
     fn apply_env_overrides_tools_agent_timeout() {
-        let vars = vec![("MOLTIS_TOOLS__AGENT_TIMEOUT_SECS".into(), "120".into())];
+        let vars = vec![("CLAWMASTER_TOOLS__AGENT_TIMEOUT_SECS".into(), "120".into())];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
         assert_eq!(config.tools.agent_timeout_secs, 120);
     }
 
     #[test]
     fn apply_env_overrides_tools_agent_max_iterations() {
-        let vars = vec![("MOLTIS_TOOLS__AGENT_MAX_ITERATIONS".into(), "64".into())];
+        let vars = vec![("CLAWMASTER_TOOLS__AGENT_MAX_ITERATIONS".into(), "64".into())];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
         assert_eq!(config.tools.agent_max_iterations, 64);
     }
 
     #[test]
     fn apply_env_overrides_ignores_excluded() {
-        // MOLTIS_CONFIG_DIR should not be treated as a config field override.
-        let vars = vec![("MOLTIS_CONFIG_DIR".into(), "/tmp/test".into())];
+        // CLAWMASTER_CONFIG_DIR should not be treated as a config field override.
+        let vars = vec![("CLAWMASTER_CONFIG_DIR".into(), "/tmp/test".into())];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
         assert!(!config.auth.disabled);
     }
@@ -1333,9 +1333,9 @@ mod tests {
     #[test]
     fn apply_env_overrides_multiple() {
         let vars = vec![
-            ("MOLTIS_AUTH__DISABLED".into(), "true".into()),
-            ("MOLTIS_TOOLS__AGENT_TIMEOUT_SECS".into(), "300".into()),
-            ("MOLTIS_TAILSCALE__MODE".into(), "funnel".into()),
+            ("CLAWMASTER_AUTH__DISABLED".into(), "true".into()),
+            ("CLAWMASTER_TOOLS__AGENT_TIMEOUT_SECS".into(), "300".into()),
+            ("CLAWMASTER_TAILSCALE__MODE".into(), "funnel".into()),
         ];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
         assert!(config.auth.disabled);
@@ -1346,7 +1346,7 @@ mod tests {
     #[test]
     fn apply_env_overrides_deep_nesting() {
         let vars = vec![(
-            "MOLTIS_TOOLS__EXEC__DEFAULT_TIMEOUT_SECS".into(),
+            "CLAWMASTER_TOOLS__EXEC__DEFAULT_TIMEOUT_SECS".into(),
             "60".into(),
         )];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
@@ -1356,7 +1356,7 @@ mod tests {
     #[test]
     fn apply_env_overrides_providers_offered_array() {
         let vars = vec![(
-            "MOLTIS_PROVIDERS__OFFERED".into(),
+            "CLAWMASTER_PROVIDERS__OFFERED".into(),
             "[\"openai\",\"github-copilot\"]".into(),
         )];
         let config = apply_env_overrides_with(MoltisConfig::default(), vars.into_iter());
@@ -1365,7 +1365,7 @@ mod tests {
 
     #[test]
     fn apply_env_overrides_providers_offered_empty_array() {
-        let vars = vec![("MOLTIS_PROVIDERS__OFFERED".into(), "[]".into())];
+        let vars = vec![("CLAWMASTER_PROVIDERS__OFFERED".into(), "[]".into())];
         let mut base = MoltisConfig::default();
         base.providers.offered = vec!["openai".into()];
         let config = apply_env_overrides_with(base, vars.into_iter());

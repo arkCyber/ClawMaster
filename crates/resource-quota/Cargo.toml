@@ -1,0 +1,26 @@
+[package]
+name = "clawmaster-resource-quota"
+version = "0.10.18"
+edition = "2021"
+authors = ["ClawMaster Team"]
+description = "Resource quota and rate limiting - DO-178C Level A compliant"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+dashmap = "6.1"
+parking_lot = "0.12"
+
+# Time utilities
+time = { workspace = true }
+
+# Metrics (optional)
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[features]
+default = []

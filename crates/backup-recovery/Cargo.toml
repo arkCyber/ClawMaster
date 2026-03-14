@@ -1,0 +1,36 @@
+[package]
+name = "clawmaster-backup-recovery"
+version = "0.10.18"
+edition = "2021"
+authors = ["ClawMaster Team"]
+description = "Backup and recovery system - DO-178C Level A compliant"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+time = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v4"] }
+
+# File operations
+async-trait = { workspace = true }
+bytes = { workspace = true }
+
+# Compression
+flate2 = "1.0"
+
+# Hashing for verification
+sha2 = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+tempfile = "3.13"
+
+[features]
+default = []

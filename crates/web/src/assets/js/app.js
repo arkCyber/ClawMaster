@@ -32,6 +32,7 @@ import { connect } from "./websocket.js";
 window.__clawmaster_stores = { sessionStore, modelStore, projectStore };
 
 // Import page modules to register their routes
+import "./page-dashboard.js";
 import "./page-chat.js";
 import "./page-crons.js";
 import "./page-projects.js";

@@ -1399,6 +1399,52 @@ function SecuritySection() {
 			}
 		</div>
 
+		<!-- Emergency Stop / Kill Switch -->
+		<div style="max-width:600px;border-top:1px solid var(--border);padding-top:16px;">
+			<h3 class="text-sm font-medium text-[var(--text-strong)]" style="margin-bottom:4px;">Emergency Stop</h3>
+			<p class="text-xs text-[var(--muted)] leading-relaxed" style="margin:0 0 12px;">
+				Immediately stop all running commands, cancel queued messages, and deny all pending approvals. Use this if the agent is performing unwanted actions.
+			</p>
+			<button type="button" 
+				class="provider-btn provider-btn-danger" 
+				style="background:#dc2626;color:white;font-weight:600;padding:10px 20px;"
+				onClick=${async () => {
+					if (!confirm("Stop all running commands and cancel all pending operations?")) {
+						return;
+					}
+					
+					const btn = event.target;
+					const originalText = btn.textContent;
+					btn.disabled = true;
+					btn.textContent = "Stopping all operations...";
+					
+					try {
+						// Get current session
+						const sessionKey = S.sessionStore?.activeSessionKey?.value;
+						
+						// Abort current session
+						if (sessionKey) {
+							await sendRpc("chat.abort", { sessionKey });
+						}
+						
+						// Cancel all queued messages
+						if (sessionKey) {
+							await sendRpc("chat.cancel_queued", { sessionKey });
+						}
+						
+						alert("All operations stopped successfully.");
+					} catch (error) {
+						console.error("Emergency stop failed:", error);
+						alert("Failed to stop operations: " + error.message);
+					} finally {
+						btn.disabled = false;
+						btn.textContent = originalText;
+					}
+				}}>
+				🛑 EMERGENCY STOP
+			</button>
+		</div>
+
 		<!-- API Keys -->
 		<div style="max-width:600px;border-top:1px solid var(--border);padding-top:16px;">
 			<h3 class="text-sm font-medium text-[var(--text-strong)]" style="margin-bottom:4px;">API Keys</h3>

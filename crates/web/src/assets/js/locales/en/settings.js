@@ -139,6 +139,15 @@ export default {
 		scopeOperatorPairing: "operator.pairing",
 		scopeOperatorPairingDesc: "\u2014 Device/node pairing",
 		generateKey: "Generate key",
+		// Kill Switch / Emergency Stop
+		killSwitch: "Emergency Stop",
+		killSwitchDescription:
+			"Immediately stop all running commands, cancel queued messages, and deny all pending approvals. Use this if the agent is performing unwanted actions.",
+		killSwitchButton: "EMERGENCY STOP",
+		killSwitchConfirm: "Stop all running commands and cancel all pending operations?",
+		killSwitchSuccess: "All operations stopped successfully.",
+		killSwitchError: "Failed to stop operations",
+		killSwitchStopping: "Stopping all operations...",
 		// Danger zone
 		dangerZone: "Danger Zone",
 		removeAllAuth: "Remove all authentication",

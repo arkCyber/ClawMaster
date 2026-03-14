@@ -1,0 +1,20 @@
+[package]
+name = "clawmaster-soul"
+version = "0.10.18"
+edition = "2021"
+authors = ["ClawMaster Team"]
+description = "SOUL.md personality system for ClawMaster"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+clawmaster-config = { path = "../config" }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }
+tempfile = "3.8"

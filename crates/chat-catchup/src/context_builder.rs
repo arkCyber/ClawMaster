@@ -141,10 +141,29 @@ impl ContextBuilder {
     ) -> Result<ConversationContext, CatchupError> {
         let start_time = std::time::Instant::now();
         
+        // Handle empty messages case - return empty context
         if messages.is_empty() {
-            return Err(CatchupError::MessageProcessingFailed(
-                MessageProcessingError::ContextBuildingFailed("No messages to build context".to_string())
-            ));
+            let now = Utc::now();
+            let metadata = ContextMetadata {
+                created_at: now,
+                length: 0,
+                processing_time_ms: start_time.elapsed().as_millis() as u64,
+                strategy: "full".to_string(),
+                additional: HashMap::new(),
+            };
+            
+            return Ok(ConversationContext {
+                id: uuid::Uuid::new_v4().to_string(),
+                channel_id,
+                user_id,
+                context_type: ContextType::Full { messages: Vec::new() },
+                context_string: String::new(),
+                metadata,
+                time_range: (now, now),
+                message_count: 0,
+                participants: Vec::new(),
+                topics: Vec::new(),
+            });
         }
 
         let context_string = self.format_messages(&messages)?;

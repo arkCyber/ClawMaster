@@ -203,8 +203,8 @@ impl ChatCatchup {
     /// Create catchup metadata
     fn create_metadata(
         &self,
-        channel_id: &str,
-        user_id: &str,
+        _channel_id: &str,
+        _user_id: &str,
         last_read: Option<DateTime<Utc>>,
         newest_message: DateTime<Utc>,
         oldest_message: DateTime<Utc>,
@@ -380,13 +380,19 @@ impl MessageStore for MockMessageStore {
 
 pub struct MockSessionStore {
     last_read: std::sync::RwLock<std::collections::HashMap<(String, String), DateTime<Utc>>>,
+    message_store: std::sync::RwLock<Option<Arc<MockMessageStore>>>,
 }
 
 impl MockSessionStore {
     pub fn new() -> Self {
         Self {
             last_read: std::sync::RwLock::new(std::collections::HashMap::new()),
+            message_store: std::sync::RwLock::new(None),
         }
+    }
+    
+    pub fn set_message_store(&self, store: Arc<MockMessageStore>) {
+        *self.message_store.write().unwrap() = Some(store);
     }
 }
 
@@ -412,9 +418,24 @@ impl SessionStore for MockSessionStore {
         Ok(())
     }
 
-    async fn get_unread_count(&self, _channel_id: &str, _user_id: &str) -> Result<usize, CatchupError> {
-        // Mock implementation
-        Ok(0)
+    async fn get_unread_count(&self, channel_id: &str, user_id: &str) -> Result<usize, CatchupError> {
+        // Get last read timestamp
+        let last_read = self.get_last_read_timestamp(channel_id, user_id).await?;
+        
+        // Clone the Arc to avoid holding the lock across await
+        let store_clone = {
+            let guard = self.message_store.read().unwrap();
+            guard.as_ref().cloned()
+        };
+        
+        // If we have a message store, count messages since last read
+        if let Some(store) = store_clone {
+            let since = last_read.unwrap_or_else(|| Utc::now() - Duration::days(30));
+            let messages = store.get_messages_since(channel_id, since, 1000).await?;
+            Ok(messages.len())
+        } else {
+            Ok(0)
+        }
     }
 }
 

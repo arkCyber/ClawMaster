@@ -203,10 +203,18 @@ body {
     display: none;
   }
 
-  /* Replace desktop header actions with a compact mobile menu. */
-  .header-actions,
+  /* Hide some header actions on mobile, but keep Dashboard and Emergency Stop visible */
+  .header-actions .header-link-label {
+    display: none;
+  }
+  
   #logoutBtn {
     display: none;
+  }
+  
+  /* Keep Dashboard button visible with icon only */
+  .header-actions {
+    gap: 4px;
   }
 
   #mobileMenuBtn {

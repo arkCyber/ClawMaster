@@ -1,0 +1,19 @@
+[package]
+name = "clawmaster-agentic-loop"
+version = "0.10.18"
+edition = "2021"
+authors = ["ClawMaster Team"]
+description = "Agentic loop with tool execution for ClawMaster"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+async-trait = "0.1"
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }

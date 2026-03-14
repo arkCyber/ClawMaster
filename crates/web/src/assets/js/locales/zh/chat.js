@@ -198,4 +198,14 @@ export default {
 	queuedMessages: {
 		cancelAllTooltip: "取消所有排队消息",
 	},
+
+	// ── Status indicator (2-line display) ───────────────────
+	status: {
+		thinking: "🤔 思考中",
+		analyzing: "正在分析和推理...",
+		runningTool: "🔧 执行工具",
+		streaming: "✍️ 生成中",
+		generatingResponse: "AI 正在实时生成回复...",
+		processing: "处理中...",
+	},
 };
