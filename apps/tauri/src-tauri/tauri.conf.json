@@ -1,0 +1,36 @@
+{
+  "$schema": "https://tauri.app/schema/config.json",
+  "productName": "ClawMaster",
+  "version": "0.10.18",
+  "identifier": "ai.clawmaster.app",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    }
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "ClawMaster",
+        "width": 1400,
+        "height": 900,
+        "minWidth": 800,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "url": "index.html",
+        "label": "main",
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://esm.sh; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' ws: wss: http://localhost:* https:; worker-src 'self' blob:"
+    }
+  }
+}

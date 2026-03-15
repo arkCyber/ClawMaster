@@ -1,0 +1,24 @@
+[package]
+name = "clawmaster-tauri"
+version = "0.10.18"
+edition = "2021"
+description = "ClawMaster Tauri Desktop Application"
+authors = ["ClawMaster Team"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.1", features = ["devtools", "unstable"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+reqwest = { version = "0.12", default-features = false, features = ["native-tls", "json"] }
+clawmaster-cosmic-client = { path = "../../../crates/cosmic-client" }
+open = "5.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

@@ -1,0 +1,38 @@
+/* ══ Dark Mode Icon Brightness Enhancement ══ */
+/* 暗模式下所有图标亮度提升 30% */
+
+[data-theme="dark"] .icon,
+[data-theme="dark"] svg,
+[data-theme="dark"] .icon-menu-dots-horizontal,
+[data-theme="dark"] .icon-burger-mobile,
+[data-theme="dark"] .icon-send,
+[data-theme="dark"] .icon-settings,
+[data-theme="dark"] .icon-link,
+[data-theme="dark"] .icon-sun,
+[data-theme="dark"] .icon-moon,
+[data-theme="dark"] .icon-monitor,
+[data-theme="dark"] .session-icon,
+[data-theme="dark"] .session-icon > svg,
+[data-theme="dark"] .session-icon > .icon,
+[data-theme="dark"] .header-link-btn .icon,
+[data-theme="dark"] .theme-btn svg,
+[data-theme="dark"] .theme-btn .icon,
+[data-theme="dark"] .settings-back-slot .icon,
+[data-theme="dark"] button .icon,
+[data-theme="dark"] button svg,
+[data-theme="dark"] a .icon,
+[data-theme="dark"] a svg {
+  filter: brightness(1.3);
+}
+
+/* 确保图标容器也应用亮度提升 */
+[data-theme="dark"] [class*="icon-"],
+[data-theme="dark"] .provider-btn svg,
+[data-theme="dark"] .send-btn svg,
+[data-theme="dark"] .language-selector-button svg,
+[data-theme="dark"] .language-selector-item svg {
+  filter: brightness(1.3);
+}
+
+/* 特殊情况：保持某些已经很亮的图标不变（如果需要） */
+/* 可以在这里添加例外 */

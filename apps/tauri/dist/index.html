@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+
+<!-- PWA Meta Tags -->
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+
+<script>!function(){var t=localStorage.getItem("clawmaster-theme")||"system";if(t==="system")t=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);document.documentElement.style.background=t==="dark"?"#0f1115":"#fafafa";document.documentElement.style.color=t==="dark"?"#e0e0e0":"#222"}()</script>
+<title>ClawMaster</title>
+<meta name="description" content="ClawMaster - Rust-native AI agent">
+
+<link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72.png">
+
+<!-- Initialize Tauri and gon data -->
+<script>
+window.__MOLTIS__={
+  routes: {
+    chats: "/chats",
+    metrics: "/metrics",
+    settings: "/settings",
+    providers: "/settings/llms",
+    security: "/settings/security",
+    projects: "/projects"
+  },
+  identity: {
+    name: "ClawMaster",
+    emoji: "🦾"
+  },
+  shiki_url: "https://esm.sh/shiki@1.0.0",
+  ws_url: "ws://localhost:8080/ws",
+  api_base: "http://localhost:8080"
+};
+
+// Tauri environment detection
+window.__TAURI_ENABLED__ = typeof window.__TAURI__ !== 'undefined';
+</script>
+
+<script type="importmap">
+{
+  "imports": {
+    "preact": "/js/vendor/preact.mjs",
+    "preact/hooks": "/js/vendor/preact-hooks.mjs",
+    "@preact/signals": "/js/vendor/preact-signals.mjs",
+    "htm/preact": "/js/vendor/htm-preact.mjs",
+    "luxon": "/js/vendor/luxon.mjs",
+    "uplot": "/js/vendor/uplot.mjs",
+    "pretty-bytes": "/js/vendor/pretty-bytes.mjs",
+    "@xterm/xterm": "/js/vendor/xterm.mjs",
+    "@xterm/addon-fit": "/js/vendor/xterm-addon-fit.mjs",
+    "i18next": "/js/vendor/i18next.mjs",
+    "shiki": "https://esm.sh/shiki@1.0.0"
+  }
+}
+</script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/layout.css">
+<link rel="stylesheet" href="/css/chat.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/security.css">
+<link rel="stylesheet" href="/css/tooltip.css">
+<link rel="stylesheet" href="/css/language-selector.css">
+<link rel="stylesheet" href="/css/dark-mode-icons.css">
+<link rel="stylesheet" href="/css/mobile.css">
+<link rel="stylesheet" href="/css/vendor/xterm.css">
+<link rel="stylesheet" href="/css/uplot.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/css/warm-dark-theme.css">
+
+<!-- Preload critical JS -->
+<link rel="modulepreload" href="/js/app.js">
+<link rel="modulepreload" href="/js/state.js">
+<link rel="modulepreload" href="/js/theme.js">
+<link rel="modulepreload" href="/js/helpers.js">
+<link rel="modulepreload" href="/js/events.js">
+<link rel="modulepreload" href="/js/router.js">
+<link rel="modulepreload" href="/js/websocket.js">
+<link rel="modulepreload" href="/js/vendor/preact.mjs">
+<link rel="modulepreload" href="/js/vendor/preact-hooks.mjs">
+<link rel="modulepreload" href="/js/vendor/preact-signals.mjs">
+<link rel="modulepreload" href="/js/vendor/htm-preact.mjs">
+</head>
+<body>
+
+<!-- Git branch banner -->
+<div id="branchBanner" class="branch-banner" style="display:none">
+  <span class="icon icon-md icon-link"></span>
+  <span>Running on: <strong id="branchName"></strong></span>
+</div>
+
+<!-- Top bar -->
+<header class="flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface)] shrink-0">
+  <a href="/chats" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer flex items-center gap-2" title="ClawMaster - Return to chat home">
+    <span id="titleEmoji" class="text-xl">🦾</span>
+    <span id="titleName" class="font-bold">ClawMaster</span>
+    <span id="consoleName" class="text-sm text-[var(--muted)] font-normal"></span>
+  </a>
+  <script>!function(){var g=window.__MOLTIS__;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");var c=document.getElementById("consoleName");n.textContent="ClawMaster";if(g&&g.identity){var i=g.identity;if(e&&i.emoji)e.textContent=i.emoji;if(c&&i.name&&i.name!=="ClawMaster")c.textContent="("+i.name+")";var a=(i&&i.name&&String(i.name).trim())||"ClawMaster";document.title=a}else{document.title="ClawMaster"}}()</script>
+  <span class="status-dot" id="statusDot"></span>
+  <span class="text-xs text-[var(--muted)]" id="statusText" data-i18n="common:status.disconnected">disconnected</span>
+  <div class="flex-1"></div>
+
+  <!-- Security Mode Indicator -->
+  <div id="securityModeIndicator" class="security-indicator" style="display:none" title="Security approval mode">
+    <span class="security-icon">🛡️</span>
+    <span class="security-mode" id="securityModeText">Smart</span>
+  </div>
+
+  <!-- Emergency Stop Button -->
+  <button id="emergencyStopBtn" class="emergency-stop-btn" style="display:flex !important;" data-i18n-title="security:emergencyStop.title" title="Emergency Stop - Abort all running commands">
+    <span class="icon icon-sm icon-stop-circle"></span>
+    <span class="emergency-label" data-i18n="security:emergencyStop.label">STOP</span>
+  </button>
+
+  <button id="mobileMenuBtn" class="burger-btn" data-i18n-title="common:menu.openMenu" aria-label="Open menu">
+    <span class="icon icon-md icon-burger-mobile"></span>
+  </button>
+
+  <div class="header-actions" style="display:flex !important;">
+    <!-- Monitor Button -->
+    <a href="/metrics" id="metricsBtn" class="header-link-btn" style="display:inline-flex !important;" data-i18n-title="common:nav.metrics" title="System Monitoring - View metrics, performance, and resource usage">
+      <span class="icon icon-home"></span>
+      <span class="header-link-label" data-i18n="common:nav.metrics">Monitor</span>
+    </a>
+    
+    <a href="/settings" id="settingsBtn" class="header-link-btn" data-i18n-title="common:nav.settings" title="Settings - Configure providers, channels, security, and system preferences">
+      <span class="icon icon-settings"></span>
+      <span class="header-link-label" data-i18n="common:nav.settings">Settings</span>
+    </a>
+    <!-- Language Selector -->
+    <div id="languageSelectorContainer"></div>
+  </div>
+
+  <!-- Theme toggle -->
+  <div class="theme-toggle" id="themeToggle">
+    <button class="theme-btn" data-theme-val="light" data-i18n-title="common:theme.light" title="Light Theme - Switch to light color scheme">
+      <span class="icon icon-sun"></span>
+    </button>
+    <button class="theme-btn" data-theme-val="system" data-i18n-title="common:theme.system" title="System Theme - Follow system color scheme">
+      <span class="icon icon-monitor"></span>
+    </button>
+    <button class="theme-btn" data-theme-val="dark" data-i18n-title="common:theme.dark" title="Dark Theme - Switch to dark color scheme">
+      <span class="icon icon-moon"></span>
+    </button>
+  </div>
+
+  <!-- Logout button -->
+  <button id="logoutBtn" class="logout-btn" data-i18n-title="common:nav.signOut" style="display:none" title="Sign Out - Log out from your account">
+    <span class="icon icon-logout"></span>
+  </button>
+
+</header>
+
+<div id="mobileMenuOverlay" class="mobile-menu-overlay"></div>
+<div id="mobileMenuPanel" class="mobile-menu-panel">
+  <button id="mobileMenuSessionsBtn" type="button" class="mobile-menu-item" title="Sessions - View and manage chat sessions">
+    <span class="icon icon-chat-dots"></span>
+    <span data-i18n="common:nav.sessions">Sessions</span>
+  </button>
+  <button id="mobileMenuSettingsBtn" type="button" class="mobile-menu-item" title="Settings - Configure system preferences">
+    <span class="icon icon-settings"></span>
+    <span data-i18n="common:nav.settings">Settings</span>
+  </button>
+  <button id="mobileMenuLogoutBtn" type="button" class="mobile-menu-item mobile-menu-item-danger" style="display:none" title="Sign Out - Log out from your account">
+    <span class="icon icon-logout"></span>
+    <span data-i18n="common:nav.signOut">Sign out</span>
+  </button>
+</div>
+
+<!-- Auth disabled warning banner -->
+<div id="authDisabledBanner" class="auth-disabled-banner" style="display:none">
+  <span>Authentication is disabled. Anyone with network access can control clawmaster and your computer.</span>
+  <a href="/settings/security" class="auth-disabled-setup">Set up authentication</a>
+</div>
+
+<!-- Update available banner -->
+<div id="updateBanner" class="info-banner" style="display:none">
+  <span>
+    An update is available
+    <strong id="updateLatestVersion"></strong>
+  </span>
+  <a id="updateReleaseLink" href="https://github.com/clawmaster-org/clawmaster/releases/latest" target="_blank" rel="noopener noreferrer" class="auth-disabled-setup">View release</a>
+  <button id="updateDismissBtn" type="button" class="auth-disabled-setup bg-transparent border-0 p-0 cursor-pointer">Dismiss</button>
+</div>
+
+<!-- Overlays for mobile panels -->
+<div id="sessionsOverlay" class="sessions-overlay"></div>
+
+<!-- Main layout -->
+<div class="flex flex-1 min-h-0 overflow-hidden">
+  <!-- Sessions sidebar -->
+  <div class="w-[240px] border-r border-[var(--border)] flex flex-col bg-[var(--surface)] shrink-0 hidden" id="sessionsPanel">
+    <!-- Project selector -->
+    <div id="projectSelectWrapper" class="px-3 py-2 border-b border-[var(--border)] hidden">
+      <div id="projectFilterCombo" class="model-combo">
+        <button id="projectFilterBtn" class="model-combo-btn" type="button" style="width:100%;max-width:none;justify-content:space-between" title="Filter by Project - Show sessions from a specific project">
+          <span id="projectFilterLabel" data-i18n="common:actions.allSessions">All sessions</span>
+          <span class="icon icon-sm icon-chevron-down model-combo-chevron"></span>
+        </button>
+        <div id="projectFilterDropdown" class="model-dropdown hidden" style="width:100%">
+          <input id="projectFilterSearch" type="text" placeholder="Search projects…" class="model-search-input" autocomplete="off" />
+          <div id="projectFilterList" class="model-dropdown-list"></div>
+        </div>
+      </div>
+    </div>
+    <div class="h-12 px-3 border-b border-[var(--border)] relative flex items-center">
+      <div class="w-full flex items-center gap-1">
+        <input id="sessionSearch" type="text" data-i18n-placeholder="common:actions.searchSessions"
+               class="flex-1 min-w-0 text-xs bg-[var(--surface2)] border border-[var(--border)] rounded px-2 py-1.5 text-[var(--text)] focus:outline-none focus:border-[var(--border-strong)] font-sans" />
+        <button id="newSessionBtn" class="text-xs text-[var(--muted)] border border-[var(--border)] px-2 py-1.5 rounded hover:text-[var(--text)] hover:border-[var(--border-strong)] transition-colors cursor-pointer bg-transparent" data-i18n-title="common:actions.newSession" title="New Session - Create a new chat session">+</button>
+      </div>
+      <div id="searchResults" class="hidden"></div>
+    </div>
+    <div id="sessionTabBar" class="flex border-b border-[var(--border)] text-xs" role="tablist">
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="sessions" role="tab" data-i18n="common:nav.sessions" title="Chat Sessions - View and manage your conversations">Sessions</button>
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="cron" role="tab" data-i18n="common:nav.cron" title="Scheduled Tasks - View and manage cron jobs">Cron</button>
+    </div>
+    <div class="flex-1 overflow-y-auto" id="sessionList"></div>
+  </div>
+
+  <!-- Page content (swapped by router) -->
+  <div id="pageContent" class="flex-1 flex flex-col min-w-0 overflow-hidden"></div>
+</div>
+
+<!-- Mobile sessions toggle FAB -->
+<button id="sessionsToggle" class="sessions-toggle-btn" title="Toggle Sessions Panel - Show or hide chat sessions sidebar">
+  <span class="icon icon-xl icon-chat-dots"></span>
+</button>
+
+<!-- Modals -->
+<div id="modalRoot"></div>
+
+<!-- Templates -->
+<template id="tpl-thinking-dots">
+  <span class="thinking-dots"><span></span><span></span><span></span></span>
+</template>
+
+<template id="tpl-exec-card">
+  <div class="msg exec-card running">
+    <div class="exec-prompt">
+      <span class="exec-prompt-char">$</span>
+      <span data-cmd></span>
+    </div>
+    <div class="exec-status">running…</div>
+  </div>
+</template>
+
+<template id="tpl-approval-card">
+  <div class="msg approval-card">
+    <div class="approval-label">Command requires approval:</div>
+    <code class="approval-cmd"></code>
+    <div class="approval-btns">
+      <button class="approval-btn approval-allow">Allow</button>
+      <button class="approval-btn approval-deny">Deny</button>
+    </div>
+    <div class="approval-countdown"></div>
+  </div>
+</template>
+
+<template id="tpl-session-item">
+  <div class="session-item">
+    <div class="session-info">
+      <div class="session-label">
+        <span class="session-icon"></span>
+        <span data-label-text></span>
+        <span class="session-actions"></span>
+      </div>
+      <div class="session-meta"></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-welcome-card">
+  <div id="welcomeCard" class="my-auto self-center flex flex-col items-center text-center px-6 py-10 max-w-md">
+    <div data-welcome-emoji class="text-4xl mb-4"></div>
+    <h2 class="text-lg font-medium text-[var(--text)] mb-1">
+      <span data-welcome-greeting></span>
+    </h2>
+    <p class="text-sm text-[var(--muted)] mb-6">
+      I'm <span data-welcome-bot-name class="font-medium text-[var(--text)]"></span>. How can I help?
+    </p>
+    <div data-welcome-agents class="hidden flex-wrap items-center justify-center gap-2 w-full mb-6"></div>
+    <ul class="text-left text-sm text-[var(--muted)] flex flex-col gap-3 w-full">
+      <li class="flex items-start gap-3">
+        <span class="text-[var(--accent)] mt-0.5 flex-shrink-0">
+          <span class="icon icon-chat-bubble"></span>
+        </span>
+        <span>Chat with multiple LLM providers and models</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="text-[var(--accent)] mt-0.5 flex-shrink-0">
+          <span class="icon icon-terminal-cmd"></span>
+        </span>
+        <span>Run commands in a sandboxed environment</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="text-[var(--accent)] mt-0.5 flex-shrink-0">
+          <span class="icon icon-search"></span>
+        </span>
+        <span>Browse the web and fetch content</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="text-[var(--accent)] mt-0.5 flex-shrink-0">
+          <span class="icon icon-file"></span>
+        </span>
+        <span>Remember context across sessions with long-term memory</span>
+      </li>
+      <li class="flex items-start gap-3">
+        <span class="text-[var(--accent)] mt-0.5 flex-shrink-0">
+          <span class="icon icon-layers"></span>
+        </span>
+        <span>Extend with MCP tools, skills, and plugins</span>
+      </li>
+    </ul>
+    <div class="mt-6 text-xs text-[var(--muted)]">
+      Type a message or use <kbd class="px-1.5 py-0.5 bg-[var(--surface2)] border border-[var(--border)] rounded text-[var(--text)] text-xs font-mono">/</kbd> for commands
+    </div>
+  </div>
+</template>
+
+<template id="tpl-no-providers-card">
+  <div id="noProvidersCard" class="my-auto self-center flex flex-col items-center text-center px-6 py-10 max-w-md">
+    <h2 class="text-lg font-medium text-[var(--text)] mb-1">No LLMs Connected</h2>
+    <p class="text-sm text-[var(--muted)] mb-6">
+      You have not connected any LLM providers yet. Add one to start chatting.
+    </p>
+    <a href="/settings/llms" class="provider-btn">Go to LLMs</a>
+  </div>
+</template>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

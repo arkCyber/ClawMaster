@@ -1,0 +1,368 @@
+/* ── Folder Access Control Styles ────────────────────────── */
+
+.folder-access-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.folder-access-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.folder-access-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.folder-access-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Folders List */
+.folders-list {
+  display: grid;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-state p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Folder Card */
+.folder-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.folder-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.folder-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.folder-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.folder-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.path-text {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.folder-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.btn-icon:hover {
+  background: var(--hover-bg);
+}
+
+.folder-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Permissions */
+.folder-permissions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.folder-permissions .label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.permission-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.permission-badge {
+  background: var(--primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Description */
+.folder-description {
+  display: flex;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.folder-description .label {
+  color: var(--muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* Stats */
+.folder-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.folder-stats .stat {
+  display: flex;
+  gap: 4px;
+}
+
+.folder-stats .label {
+  font-weight: 500;
+}
+
+.folder-stats .value {
+  color: var(--text);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--hover-bg);
+  color: var(--text);
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  background: var(--background);
+  color: var(--text);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.readonly-field {
+  padding: 8px 12px;
+  background: var(--hover-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.permission-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s ease;
+}
+
+.checkbox-label:hover {
+  background: var(--hover-bg);
+}
+
+.checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.checkbox-label span {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark, var(--primary));
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--hover-bg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .folder-access-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .folder-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-content {
+    width: 95%;
+  }
+}

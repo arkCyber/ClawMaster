@@ -1,0 +1,472 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Security Components CSS - DO-178C Level A Compliant
+   
+   This stylesheet provides styling for security-critical UI components:
+   - Emergency stop button
+   - Security mode indicator
+   - Approval notification enhancements
+   
+   Compliance: DO-178C §11.10 - User interface safety requirements
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Security Mode Indicator ── */
+
+.security-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--muted);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.security-indicator:hover {
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+.security-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.security-mode {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Security mode color coding - DO-178C §6.3.4: Visual feedback requirements */
+.security-indicator[data-mode="always"] {
+  border-color: var(--ok);
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 8%, transparent);
+}
+
+.security-indicator[data-mode="on-miss"],
+.security-indicator[data-mode="smart"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.security-indicator[data-mode="off"] {
+  border-color: var(--warn);
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 8%, transparent);
+  animation: security-warning-pulse 2s ease-in-out infinite;
+}
+
+@keyframes security-warning-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ── Emergency Stop Button ── */
+
+.emergency-stop-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--error);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.emergency-stop-btn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+.emergency-stop-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.emergency-stop-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.emergency-label {
+  font-weight: 700;
+}
+
+/* Pulsing animation when active commands are running */
+.emergency-stop-btn.active {
+  animation: emergency-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes emergency-pulse {
+  0%, 100% {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.5);
+  }
+}
+
+/* ── Approval Card Enhancements ── */
+
+/* High-visibility pulse animation for new approval requests */
+.approval-card.new-request {
+  animation: approval-urgent-pulse 1s ease-in-out 3;
+}
+
+@keyframes approval-urgent-pulse {
+  0%, 100% {
+    border-color: var(--warn);
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0);
+  }
+  50% {
+    border-color: var(--error);
+    box-shadow: 0 0 0 8px rgba(251, 146, 60, 0.3);
+  }
+}
+
+/* Approval notification banner */
+.approval-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--warn);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: banner-slide-in 0.3s ease-out;
+}
+
+@keyframes banner-slide-in {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.approval-banner button {
+  background: white;
+  color: var(--warn);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.approval-banner button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
+/* ── Security Settings Modal ── */
+
+.security-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.security-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modal-slide-up 0.3s ease-out;
+}
+
+@keyframes modal-slide-up {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.security-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.security-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.security-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.security-modal-close:hover {
+  color: var(--text);
+}
+
+.security-modal-body {
+  padding: 24px;
+}
+
+.security-section {
+  margin-bottom: 32px;
+}
+
+.security-section:last-child {
+  margin-bottom: 0;
+}
+
+.security-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.security-section-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Radio group for mode selection */
+.security-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.security-radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.security-radio-option:hover {
+  border-color: var(--border-strong);
+  background: var(--surface2);
+}
+
+.security-radio-option.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.security-radio-option input[type="radio"] {
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.security-radio-content {
+  flex: 1;
+}
+
+.security-radio-label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.security-radio-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Allowlist management */
+.allowlist-container {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: var(--surface2);
+}
+
+.allowlist-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+
+.allowlist-item:last-child {
+  margin-bottom: 0;
+}
+
+.allowlist-item code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.allowlist-item button {
+  background: transparent;
+  border: none;
+  color: var(--error);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  transition: opacity 0.15s;
+}
+
+.allowlist-item button:hover {
+  opacity: 0.7;
+}
+
+.allowlist-add {
+  margin-top: 12px;
+}
+
+/* Dangerous patterns list */
+.dangerous-patterns {
+  background: color-mix(in srgb, var(--warn) 5%, transparent);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.dangerous-patterns ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.dangerous-patterns li {
+  font-family: var(--font-mono);
+}
+
+.dangerous-patterns .help-text {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .security-indicator {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+
+  .security-icon {
+    font-size: 0.8rem;
+  }
+
+  .emergency-stop-btn {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+
+  .emergency-label {
+    display: none;
+  }
+
+  .security-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .security-modal-body {
+    padding: 16px;
+  }
+
+  .approval-banner {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .security-indicator {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .emergency-stop-btn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .security-modal {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}

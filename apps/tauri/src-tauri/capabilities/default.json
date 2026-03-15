@@ -1,0 +1,17 @@
+{
+  "$schema": "https://tauri.app/schema/capability.json",
+  "identifier": "default",
+  "description": "Default permissions for ClawMaster",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:webview:default",
+    "core:webview:allow-webview-position",
+    "core:webview:allow-webview-size",
+    "core:webview:allow-internal-toggle-devtools"
+  ]
+}

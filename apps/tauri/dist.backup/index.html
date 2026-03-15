@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClawMaster</title>
+    <script>
+        // Tauri 2.x IPC bridge - 调试 API 可用性
+        console.log('[Tauri Boot] Script loaded');
+        console.log('[Tauri Boot] __TAURI__:', typeof window.__TAURI__);
+        console.log('[Tauri Boot] __TAURI_INTERNALS__:', typeof window.__TAURI_INTERNALS__);
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('[Tauri DOMContentLoaded] Checking APIs...');
+            console.log('[Tauri DOMContentLoaded] __TAURI__:', window.__TAURI__);
+            console.log('[Tauri DOMContentLoaded] __TAURI_INTERNALS__:', window.__TAURI_INTERNALS__);
+            
+            // 列出所有可用的 Tauri API
+            if (window.__TAURI__) {
+                console.log('[Tauri DOMContentLoaded] Available APIs:', Object.keys(window.__TAURI__));
+                if (window.__TAURI__.core) {
+                    console.log('[Tauri DOMContentLoaded] Core APIs:', Object.keys(window.__TAURI__.core));
+                }
+            }
+        });
+    </script>
+    <style>
+        /* Light Theme */
+        :root, [data-theme="light"] {
+            --bg: #f5f5f5;
+            --surface: #ffffff;
+            --surface2: #f0f0f0;
+            --border: #e0e0e0;
+            --text: #1a1a1a;
+            --text-strong: #000000;
+            --muted: #666666;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+        }
+        
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --surface: #242424;
+            --surface2: #2d2d2d;
+            --border: #3d3d3d;
+            --text: #e5e5e5;
+            --text-strong: #ffffff;
+            --muted: #888888;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 20px;
+        }
+        
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-strong);
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--warning);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: var(--success);
+            animation: none;
+        }
+        
+        .status-dot.error {
+            background: var(--error);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .header-spacer {
+            flex: 1;
+        }
+        
+        /* Security Indicator */
+        .security-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        /* Emergency Stop Button */
+        .emergency-stop-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .emergency-stop-btn:hover {
+            background: #dc2626;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .header-link-btn:hover {
+            background: var(--surface2);
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .language-btn:hover {
+            background: var(--surface2);
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 150px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .language-dropdown.show {
+            display: block;
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .language-option:hover {
+            background: var(--surface2);
+        }
+        
+        .language-option.active {
+            color: var(--accent);
+        }
+        
+        .language-option:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .language-option:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 2px;
+        }
+        
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 28px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .theme-btn:hover {
+            color: var(--text);
+        }
+        
+        .theme-btn.active {
+            background: var(--surface);
+            color: var(--accent);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* Main Layout */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-header input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+        
+        .sidebar-header input::placeholder {
+            color: var(--muted);
+        }
+        
+        .new-session-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .new-session-btn:hover {
+            background: var(--accent-hover);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+        
+        .nav-tab:hover {
+            color: var(--text);
+        }
+        
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .sessions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        
+        .session-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+        
+        .session-item:hover {
+            background: var(--surface2);
+        }
+        
+        .session-item.active {
+            background: var(--surface2);
+            border-left: 3px solid var(--accent);
+        }
+        
+        .session-icon {
+            font-size: 16px;
+        }
+        
+        .session-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .session-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .session-time {
+            font-size: 11px;
+            color: var(--muted);
+        }
+        
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+        }
+        
+        .chat-header {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+        }
+        
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .chat-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .chat-meta {
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chat-action-btn:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        /* Welcome Card */
+        .welcome-card {
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent), #fb923c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .welcome-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            text-align: left;
+        }
+        
+        .feature {
+            padding: 14px;
+            background: var(--surface);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        .feature-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+        
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .feature-desc {
+            font-size: 11px;
+            color: var(--muted);
+        }
+        
+        /* Chat Input */
+        .chat-input-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        .chat-input-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            resize: none;
+            min-height: 42px;
+            max-height: 200px;
+        }
+        
+        .chat-input::placeholder {
+            color: var(--muted);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .send-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background: var(--accent);
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .send-btn:hover {
+            background: var(--accent-hover);
+        }
+        
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Message Styles */
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background: var(--accent);
+            color: #000;
+        }
+        
+        .message.assistant {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 6px 16px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        /* Dropdown Arrow */
+        .dropdown-arrow {
+            font-size: 10px;
+            margin-left: 4px;
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            max-width: 400px;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-icon {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .toast-message {
+            flex: 1;
+        }
+        
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+        
+        .toast-success .toast-icon {
+            color: #10b981;
+        }
+        
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+        
+        .toast-error .toast-icon {
+            color: #ef4444;
+        }
+        
+        .toast-warning {
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .toast-warning .toast-icon {
+            color: #f59e0b;
+        }
+        
+        .toast-info {
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .toast-info .toast-icon {
+            color: #3b82f6;
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        button.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Custom Dialog */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .dialog-overlay.show {
+            opacity: 1;
+        }
+        
+        .dialog {
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            min-width: 400px;
+            max-width: 90vw;
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+        }
+        
+        .dialog-overlay.show .dialog {
+            transform: scale(1);
+        }
+        
+        .dialog-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .dialog-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .dialog-body {
+            padding: 20px 24px;
+        }
+        
+        .dialog-body p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        
+        .dialog-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .dialog-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .dialog-actions {
+            padding: 16px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-top: 1px solid var(--border);
+        }
+        
+        .btn-primary,
+        .btn-secondary {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        /* External Page Container (Dashboard/Settings) */
+        #externalPageContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .external-page-header {
+            height: 60px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+        }
+        
+        .back-btn {
+            padding: 8px 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--border);
+        }
+        
+        #externalPageTitle {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        #externalPageContent {
+            flex: 1;
+            width: 100%;
+            overflow: auto;
+            background: var(--bg);
+            padding: 0;
+        }
+        
+        #externalPageContent > * {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo" onclick="showChatView(); return false;">
+            <span class="logo-icon">🦾</span>
+            <span class="logo-text">ClawMaster</span>
+        </a>
+        
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">connecting...</span>
+        </div>
+        
+        <div class="header-spacer"></div>
+        
+        <!-- Security Indicator -->
+        <div class="security-indicator" title="Security approval mode">
+            <span>🛡️</span>
+            <span id="securityModeText">Smart</span>
+        </div>
+        
+        <!-- Emergency Stop Button -->
+        <button class="emergency-stop-btn" id="emergencyStopBtn" title="紧急停止 - 中止所有运行中的命令">
+            <span>🛑</span>
+            <span>紧急停止</span>
+        </button>
+        
+        <div class="header-actions">
+            <!-- Dashboard Button -->
+            <button class="header-link-btn" id="dashboardBtn" title="仪表盘 - 查看系统状态">
+                <span>📊</span>
+                <span>仪表盘</span>
+            </button>
+            
+            <!-- Settings Button -->
+            <button class="header-link-btn" id="settingsBtn" title="设置 - 配置系统参数">
+                <span>⚙️</span>
+                <span>设置</span>
+            </button>
+            
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="language-btn" id="languageBtn">
+                    <span>🌐</span>
+                    <span id="currentLang">中文</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option active" data-lang="zh">🇨🇳 中文</div>
+                    <div class="language-option" data-lang="en">🇺🇸 English</div>
+                    <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+                    <div class="language-option" data-lang="ko">🇰🇷 한국어</div>
+                    <div class="language-option" data-lang="de">🇩🇪 Deutsch</div>
+                    <div class="language-option" data-lang="fr">🇫🇷 Français</div>
+                    <div class="language-option" data-lang="es">🇪🇸 Español</div>
+                    <div class="language-option" data-lang="pt">🇧🇷 Português</div>
+                    <div class="language-option" data-lang="ru">🇷🇺 Русский</div>
+                    <div class="language-option" data-lang="it">🇮🇹 Italiano</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" id="themeToggle">
+            <button class="theme-btn" data-theme="light" title="Light mode">☀️</button>
+            <button class="theme-btn" data-theme="system" title="System theme">💻</button>
+            <button class="theme-btn active" data-theme="dark" title="Dark mode">🌙</button>
+        </div>
+    </header>
+    
+    <main class="main">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <input type="text" placeholder="搜索会话..." id="searchInput">
+                <button class="new-session-btn" id="newSessionBtn" title="New session">+</button>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="sessions">会话</button>
+                <button class="nav-tab" data-tab="cron">定时任务</button>
+            </div>
+            <div class="sessions-list" id="sessionsList">
+                <div class="session-item active">
+                    <span class="session-icon">💬</span>
+                    <div class="session-info">
+                        <div class="session-name">main</div>
+                        <div class="session-time">刚刚</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <section class="chat-area">
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div class="model-selector" id="modelSelector">
+                        <span>🤖</span>
+                        <span id="currentModel">loading...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="chat-action-btn" title="Clear chat">🗑️</button>
+                    <button class="chat-action-btn" title="Export chat">📤</button>
+                    <button class="chat-action-btn" title="More options">⋯</button>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-card">
+                    <div class="welcome-icon">🦾</div>
+                    <h1 class="welcome-title">ClawMaster</h1>
+                    <p class="welcome-subtitle">一个你可以信赖的 Rust 原生 AI 智能体</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-title">多模型对话</div>
+                            <div class="feature-desc">支持多种 LLM 提供商</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🔧</div>
+                            <div class="feature-title">工具执行</div>
+                            <div class="feature-desc">沙箱环境安全运行</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🌐</div>
+                            <div class="feature-title">网页浏览</div>
+                            <div class="feature-desc">获取实时网络内容</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🧠</div>
+                            <div class="feature-title">长期记忆</div>
+                            <div class="feature-desc">跨会话上下文记忆</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="chat-input-meta">
+                    <span>0 in / 0 out</span>
+                    <span>·</span>
+                    <span>0 tokens</span>
+                    <span>·</span>
+                    <span>Execute: sandboxed (#)</span>
+                </div>
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="chatInput" placeholder="Type a message..." rows="1"></textarea>
+                    <button class="send-btn" id="sendBtn">Send</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Dashboard/Settings 内容容器 -->
+    <div id="externalPageContainer" style="display: none;">
+        <div class="external-page-header">
+            <button class="back-btn" id="backToChat">← 返回聊天</button>
+            <span id="externalPageTitle">Dashboard</span>
+        </div>
+        <div id="externalPageContent"></div>
+    </div>
+    
+    <footer class="footer">
+        ClawMaster v0.10.18 · Rust 原生 AI 智能体 · 本地优先，安全可信
+    </footer>
+    
+    <script>
+        // Tauri 2.x API - 等待 Tauri 加载完成
+        let invoke;
+        
+        let isConnected = false;
+        let currentTheme = 'dark';
+        let currentLang = 'zh';
+        let currentSessionId = 'main';
+        let sessions = [];
+        let models = [];
+        let currentModel = null;
+        
+        // 初始化 Tauri API
+        async function initTauri() {
+            console.log('[Tauri] Checking API availability...');
+            
+            // Tauri 2.x: 检查 __TAURI_INTERNALS__ 或 __TAURI__
+            const checkTauri = () => {
+                if (window.__TAURI__ && window.__TAURI__.core && window.__TAURI__.core.invoke) {
+                    return window.__TAURI__.core.invoke;
+                }
+                if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+                    return window.__TAURI_INTERNALS__.invoke;
+                }
+                return null;
+            };
+            
+            invoke = checkTauri();
+            if (invoke) {
+                console.log('[Tauri] API loaded successfully');
+                return true;
+            }
+            
+            // 等待 Tauri 加载 (最多 2 秒)
+            for (let i = 0; i < 10; i++) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+                invoke = checkTauri();
+                if (invoke) {
+                    console.log('[Tauri] API loaded after delay');
+                    return true;
+                }
+            }
+            
+            console.error('[Tauri] API not available');
+            console.log('[Tauri] window.__TAURI__:', window.__TAURI__);
+            console.log('[Tauri] window.__TAURI_INTERNALS__:', window.__TAURI_INTERNALS__);
+            return false;
+        }
+        
+        const translations = {
+            zh: {
+                connecting: '正在连接...',
+                connected: '已连接',
+                disconnected: '未连接',
+                error: '连接失败',
+                searchSessions: '搜索会话...',
+                sessions: '会话',
+                cron: '定时任务',
+                typeMessage: '输入消息...',
+                send: '发送',
+                dashboard: 'Dashboard',
+                settings: '设置',
+                justNow: '刚刚',
+                newSession: '新建会话',
+                clearChat: '清空聊天',
+                exportChat: '导出聊天',
+                emergencyStop: '紧急停止',
+                noModels: '无可用模型',
+                loading: '加载中...'
+            },
+            en: {
+                connecting: 'connecting...',
+                connected: 'connected',
+                disconnected: 'disconnected',
+                error: 'connection failed',
+                searchSessions: 'Search sessions...',
+                sessions: 'Sessions',
+                cron: 'Cron Jobs',
+                typeMessage: 'Type a message...',
+                send: 'Send',
+                dashboard: 'Dashboard',
+                settings: 'Settings',
+                justNow: 'just now',
+                newSession: 'New Session',
+                clearChat: 'Clear Chat',
+                exportChat: 'Export Chat',
+                emergencyStop: 'Emergency Stop',
+                noModels: 'No models available',
+                loading: 'Loading...'
+            }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            initTheme();
+            initLanguage();
+            setupEventListeners();
+            
+            // 等待 Tauri API 加载
+            const tauriReady = await initTauri();
+            if (tauriReady) {
+                await initialize();
+            } else {
+                // 如果 Tauri 不可用，显示错误
+                setConnected(false, 'Tauri API not available');
+            }
+        });
+        
+        async function initialize() {
+            await checkConnection();
+            if (isConnected) {
+                await loadSessions();
+                await loadModels();
+            }
+        }
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'dark';
+            setTheme(saved);
+        }
+        
+        function setTheme(theme) {
+            currentTheme = theme;
+            
+            if (theme === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+            
+            localStorage.setItem('theme', theme);
+        }
+        
+        function initLanguage() {
+            const saved = localStorage.getItem('lang') || 'zh';
+            setLanguage(saved);
+        }
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang] || translations.en;
+            
+            document.getElementById('searchInput').placeholder = t.searchSessions;
+            document.getElementById('chatInput').placeholder = t.typeMessage;
+            document.getElementById('sendBtn').textContent = t.send;
+            document.querySelectorAll('.nav-tab')[0].textContent = t.sessions;
+            document.querySelectorAll('.nav-tab')[1].textContent = t.cron;
+            
+            const langNames = {
+                zh: '中文', en: 'English', ja: '日本語', ko: '한국어',
+                de: 'Deutsch', fr: 'Français', es: 'Español', pt: 'Português',
+                ru: 'Русский', it: 'Italiano'
+            };
+            document.getElementById('currentLang').textContent = langNames[lang] || lang;
+            
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.lang === lang);
+            });
+            
+            localStorage.setItem('lang', lang);
+        }
+        
+        function setupEventListeners() {
+            // Theme toggle
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+            });
+            
+            // Language selector
+            const langBtn = document.getElementById('languageBtn');
+            const langDropdown = document.getElementById('languageDropdown');
+            
+            langBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                langDropdown.classList.toggle('show');
+            });
+            
+            document.querySelectorAll('.language-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    setLanguage(opt.dataset.lang);
+                    langDropdown.classList.remove('show');
+                });
+            });
+            
+            document.addEventListener('click', () => {
+                langDropdown.classList.remove('show');
+            });
+            
+            // Chat input
+            const input = document.getElementById('chatInput');
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            input.addEventListener('input', () => {
+                input.style.height = 'auto';
+                input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+            });
+            
+            // Send button
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            
+            // Tab switching
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                });
+            });
+            
+            // Emergency stop
+            document.getElementById('emergencyStopBtn').addEventListener('click', emergencyStop);
+            
+            // New session
+            document.getElementById('newSessionBtn').addEventListener('click', createNewSession);
+            
+            // Dashboard
+            document.getElementById('dashboardBtn').addEventListener('click', openDashboard);
+            
+            // Settings
+            document.getElementById('settingsBtn').addEventListener('click', openSettings);
+            
+            // Model selector
+            document.getElementById('modelSelector').addEventListener('click', toggleModelDropdown);
+            
+            // Chat action buttons
+            document.querySelectorAll('.chat-action-btn').forEach((btn, index) => {
+                if (index === 0) btn.addEventListener('click', clearChat);
+                if (index === 1) btn.addEventListener('click', exportChat);
+            });
+            
+            // Search sessions
+            document.getElementById('searchInput').addEventListener('input', filterSessions);
+            
+            // Back to chat button
+            document.getElementById('backToChat').addEventListener('click', backToChat);
+        }
+        
+        const BACKEND_URL = 'https://localhost:59233';
+        
+        // 直接使用 fetch API 连接后端
+        async function fetchBackend(path) {
+            const response = await fetch(`${BACKEND_URL}${path}`);
+            return response.json();
+        }
+        
+        async function postBackend(path, body) {
+            const response = await fetch(`${BACKEND_URL}${path}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            return response.json();
+        }
+        
+        // ============================================
+        // UI 改进函数
+        // ============================================
+        
+        // Toast 通知系统
+        function showToast(message, type = 'info', duration = 3000) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icon = {
+                success: '✓',
+                error: '✗',
+                warning: '⚠',
+                info: 'ℹ'
+            }[type] || 'ℹ';
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icon}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        // 加载状态管理
+        function setButtonLoading(button, loading, loadingText = 'Loading...') {
+            if (typeof button === 'string') {
+                button = document.getElementById(button);
+            }
+            
+            if (!button) return;
+            
+            if (loading) {
+                button.disabled = true;
+                button.classList.add('loading');
+                button.dataset.originalHTML = button.innerHTML;
+                button.innerHTML = `<span class="spinner"></span> ${loadingText}`;
+            } else {
+                button.disabled = false;
+                button.classList.remove('loading');
+                if (button.dataset.originalHTML) {
+                    button.innerHTML = button.dataset.originalHTML;
+                    delete button.dataset.originalHTML;
+                }
+            }
+        }
+        
+        // 自定义确认对话框
+        function showConfirmDialog(title, message) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'dialog-overlay';
+                overlay.innerHTML = `
+                    <div class="dialog">
+                        <div class="dialog-header">
+                            <h3>${title}</h3>
+                        </div>
+                        <div class="dialog-body">
+                            <p>${message}</p>
+                        </div>
+                        <div class="dialog-actions">
+                            <button class="btn-secondary dialog-cancel">Cancel</button>
+                            <button class="btn-primary dialog-confirm">Confirm</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                requestAnimationFrame(() => {
+                    overlay.classList.add('show');
+                });
+                
+                const close = (result) => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        overlay.remove();
+                        resolve(result);
+                    }, 200);
+                };
+                
+                overlay.querySelector('.dialog-cancel').onclick = () => close(false);
+                overlay.querySelector('.dialog-confirm').onclick = () => close(true);
+                overlay.onclick = (e) => {
+                    if (e.target === overlay) close(false);
+                };
+                
+                const escHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        document.removeEventListener('keydown', escHandler);
+                        close(false);
+                    }
+                };
+                document.addEventListener('keydown', escHandler);
+            });
+        }
+        
+        // 自定义输入对话框
+        function showInputDialog(title, placeholder = '', defaultValue = '') {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'dialog-overlay';
+                overlay.innerHTML = `
+                    <div class="dialog">
+                        <div class="dialog-header">
+                            <h3>${title}</h3>
+                        </div>
+                        <div class="dialog-body">
+                            <input type="text" class="dialog-input" placeholder="${placeholder}" value="${defaultValue}">
+                        </div>
+                        <div class="dialog-actions">
+                            <button class="btn-secondary dialog-cancel">Cancel</button>
+                            <button class="btn-primary dialog-ok">OK</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(overlay);
+                
+                const input = overlay.querySelector('.dialog-input');
+                
+                requestAnimationFrame(() => {
+                    overlay.classList.add('show');
+                    input.focus();
+                    input.select();
+                });
+                
+                const close = (result) => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        overlay.remove();
+                        resolve(result);
+                    }, 200);
+                };
+                
+                overlay.querySelector('.dialog-cancel').onclick = () => close(null);
+                overlay.querySelector('.dialog-ok').onclick = () => {
+                    const value = input.value.trim();
+                    close(value || null);
+                };
+                
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        const value = input.value.trim();
+                        close(value || null);
+                    } else if (e.key === 'Escape') {
+                        close(null);
+                    }
+                };
+                
+                overlay.onclick = (e) => {
+                    if (e.target === overlay) close(null);
+                };
+            });
+        }
+        
+        async function checkConnection() {
+            const t = translations[currentLang] || translations.en;
+            
+            try {
+                console.log('[checkConnection] Fetching /api/gon...');
+                const data = await fetchBackend('/api/gon');
+                console.log('[checkConnection] Result:', data.version);
+                if (data.version) {
+                    setConnected(true, t.connected);
+                } else {
+                    setConnected(false, t.error);
+                }
+            } catch (error) {
+                console.error('[checkConnection] Error:', error);
+                setConnected(false, t.error);
+            }
+        }
+        
+        function setConnected(connected, text) {
+            isConnected = connected;
+            const dot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            
+            dot.className = 'status-dot ' + (connected ? 'connected' : 'error');
+            statusText.textContent = text;
+        }
+        
+        async function loadSessions() {
+            try {
+                const result = await fetchBackend('/api/sessions');
+                sessions = Array.isArray(result) ? result : [];
+                renderSessions();
+            } catch (error) {
+                console.error('Failed to load sessions:', error);
+            }
+        }
+        
+        function renderSessions() {
+            const container = document.getElementById('sessionsList');
+            container.innerHTML = '';
+            
+            sessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'session-item' + (session.key === currentSessionId ? ' active' : '');
+                item.innerHTML = `
+                    <span class="session-icon">💬</span>
+                    <div class="session-info">
+                        <div class="session-name">${session.label || session.key || 'Session'}</div>
+                        <div class="session-time">${formatTime(session.updatedAt)}</div>
+                    </div>
+                `;
+                item.addEventListener('click', () => selectSession(session.key || session.id));
+                container.appendChild(item);
+            });
+        }
+        
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return translations[currentLang]?.justNow || 'just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h';
+            return date.toLocaleDateString();
+        }
+        
+        function selectSession(sessionId) {
+            currentSessionId = sessionId;
+            document.querySelectorAll('.session-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Clear messages and show welcome
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = '';
+            const welcomeCard = document.querySelector('.welcome-card');
+            if (welcomeCard) welcomeCard.style.display = 'block';
+        }
+        
+        function filterSessions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.session-item').forEach(item => {
+                const name = item.querySelector('.session-name').textContent.toLowerCase();
+                item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+        }
+        
+        async function loadModels() {
+            try {
+                const result = await fetchBackend('/api/models');
+                models = result.models || result || [];
+                updateModelDisplay();
+            } catch (error) {
+                console.error('Failed to load models:', error);
+                document.getElementById('currentModel').textContent = translations[currentLang]?.noModels || 'No models';
+            }
+        }
+        
+        function updateModelDisplay() {
+            const modelEl = document.getElementById('currentModel');
+            if (models.length > 0) {
+                currentModel = models[0].id || models[0].name || models[0];
+                modelEl.textContent = currentModel;
+            } else {
+                modelEl.textContent = translations[currentLang]?.noModels || 'No models';
+            }
+        }
+        
+        function toggleModelDropdown() {
+            console.log('Models:', models);
+            if (models.length === 0) {
+                showToast('No models available', 'warning');
+                return;
+            }
+            const modelNames = models.map(m => m.id || m.name || m).join('\n');
+            showToast('Available models:\n' + modelNames, 'info', 5000);
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+            
+            const welcomeCard = document.querySelector('.welcome-card');
+            if (welcomeCard) welcomeCard.style.display = 'none';
+            
+            // Show typing indicator
+            const typingId = addTypingIndicator();
+            
+            try {
+                const response = await postBackend(`/api/sessions/${currentSessionId}/message`, { content: message });
+                removeTypingIndicator(typingId);
+                addMessage(response.content || response.text || JSON.stringify(response), 'assistant');
+            } catch (error) {
+                removeTypingIndicator(typingId);
+                addMessage('Error: ' + error, 'assistant');
+            }
+        }
+        
+        function addMessage(content, role) {
+            const container = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`;
+            msg.textContent = content;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function addTypingIndicator() {
+            const container = document.getElementById('chatMessages');
+            const indicator = document.createElement('div');
+            indicator.className = 'message assistant typing';
+            indicator.id = 'typing-' + Date.now();
+            indicator.innerHTML = '<span class="typing-dots">...</span>';
+            container.appendChild(indicator);
+            container.scrollTop = container.scrollHeight;
+            return indicator.id;
+        }
+        
+        function removeTypingIndicator(id) {
+            const indicator = document.getElementById(id);
+            if (indicator) indicator.remove();
+        }
+        
+        async function emergencyStop() {
+            const btn = document.getElementById('emergencyStopBtn');
+            setButtonLoading(btn, true, 'Stopping...');
+            
+            try {
+                await postBackend('/api/emergency-stop', {});
+                const t = translations[currentLang] || translations.en;
+                showToast(t.emergencyStop + ' executed!', 'success');
+            } catch (error) {
+                console.error('Emergency stop error:', error);
+                showToast('Failed to execute emergency stop: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+        
+        async function createNewSession() {
+            const t = translations[currentLang] || translations.en;
+            const name = await showInputDialog(t.newSession || 'New Session', 'Enter session name', 'New Session');
+            if (!name) return;
+            
+            const btn = document.getElementById('newSessionBtn');
+            setButtonLoading(btn, true, 'Creating...');
+            
+            try {
+                const result = await postBackend('/api/sessions', { label: name });
+                await loadSessions();
+                if (result.key || result.id) {
+                    selectSession(result.key || result.id);
+                }
+                showToast('Session created successfully!', 'success');
+            } catch (error) {
+                console.error('Failed to create session:', error);
+                showToast('Failed to create session: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+        
+        async function clearChat() {
+            const confirmed = await showConfirmDialog(
+                'Clear Chat',
+                'Are you sure you want to clear all messages in this session? This action cannot be undone.'
+            );
+            
+            if (!confirmed) return;
+            
+            const btn = event.currentTarget;
+            setButtonLoading(btn, true, 'Clearing...');
+            
+            try {
+                await postBackend(`/api/sessions/${currentSessionId}/clear`, {});
+                const container = document.getElementById('chatMessages');
+                container.innerHTML = '';
+                const welcomeCard = document.querySelector('.welcome-card');
+                if (welcomeCard) welcomeCard.style.display = 'block';
+                showToast('Chat cleared successfully!', 'success');
+            } catch (error) {
+                console.error('Failed to clear chat:', error);
+                showToast('Failed to clear chat: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+        
+        async function exportChat() {
+            const btn = event.currentTarget;
+            setButtonLoading(btn, true, 'Exporting...');
+            
+            try {
+                const result = await fetchBackend(`/api/sessions/${currentSessionId}/messages`);
+                const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `chat-${currentSessionId}-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Chat exported successfully!', 'success');
+            } catch (error) {
+                console.error('Failed to export chat:', error);
+                showToast('Failed to export chat: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+        
+        function openDashboard(e) {
+            if (e) e.preventDefault();
+            console.log('[openDashboard] Opening dashboard in main view...');
+            showExternalPage('https://localhost:59233/dashboard', '仪表盘');
+        }
+        
+        function openSettings(e) {
+            if (e) e.preventDefault();
+            console.log('[openSettings] Opening settings in main view...');
+            showExternalPage('https://localhost:59233/settings', '设置');
+        }
+        
+        function showChatView() {
+            console.log('[showChatView] Returning to chat view...');
+            backToChat();
+        }
+        
+        // 在系统默认浏览器中打开 URL
+        async function openInBrowser(url) {
+            try {
+                console.log('[openInBrowser] Opening URL in browser:', url);
+                
+                // 使用 Tauri 后端命令在系统浏览器中打开
+                await invoke('open_url_in_browser', { url });
+                showToast('Opening in browser...', 'info');
+            } catch (error) {
+                console.error('[openInBrowser] Failed to open URL:', error);
+                showToast('Failed to open in browser: ' + error, 'error');
+            }
+        }
+        
+        async function showExternalPage(url, title) {
+            const container = document.getElementById('externalPageContainer');
+            const content = document.getElementById('externalPageContent');
+            const titleEl = document.getElementById('externalPageTitle');
+            const main = document.querySelector('.main');
+            const header = document.querySelector('.header');
+            const footer = document.querySelector('.footer');
+            
+            // 设置标题
+            titleEl.textContent = title;
+            
+            // 显示加载状态
+            content.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted);"><span class="spinner"></span> Loading...</div>';
+            
+            // 隐藏聊天界面，显示内容容器（保留 header）
+            main.style.display = 'none';
+            if (footer) footer.style.display = 'none';
+            container.style.display = 'flex';
+            
+            try {
+                console.log(`[showExternalPage] Fetching ${title} from ${url}`);
+                
+                // 从 URL 提取路径
+                const path = url.replace('https://localhost:59233', '');
+                
+                // 使用 Tauri 命令获取 HTML 内容（绕过证书验证）
+                const html = await invoke('fetch_backend', { path });
+                
+                // 直接渲染 HTML 内容
+                content.innerHTML = html;
+                
+                // 执行页面中的脚本
+                const scripts = content.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    script.parentNode.replaceChild(newScript, script);
+                });
+                
+                console.log(`[showExternalPage] Successfully loaded ${title}`);
+            } catch (error) {
+                console.error(`[showExternalPage] Failed to load ${title}:`, error);
+                content.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 16px;">
+                        <div style="font-size: 48px;">⚠️</div>
+                        <div>Failed to load ${title}</div>
+                        <div style="font-size: 14px; color: var(--muted);">${error.message || error}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        function backToChat() {
+            const container = document.getElementById('externalPageContainer');
+            const content = document.getElementById('externalPageContent');
+            const main = document.querySelector('.main');
+            const header = document.querySelector('.header');
+            const footer = document.querySelector('.footer');
+            
+            // 清空内容
+            content.innerHTML = '';
+            
+            // 显示聊天界面，隐藏内容容器
+            container.style.display = 'none';
+            main.style.display = 'flex';
+            if (footer) footer.style.display = 'block';
+            
+            console.log('[backToChat] Returned to chat interface');
+        }
+    </script>
+</body>
+</html>
