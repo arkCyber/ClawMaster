@@ -17,8 +17,8 @@ use {
         response::IntoResponse,
     },
     base64::Engine as _,
-    futures::{SinkExt, StreamExt},
     clawmaster_gateway::server::AppState,
+    futures::{SinkExt, StreamExt},
     portable_pty::{CommandBuilder, PtySize, native_pty_system},
     tracing::{debug, info, warn},
 };

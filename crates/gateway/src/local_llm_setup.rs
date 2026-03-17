@@ -586,8 +586,8 @@ impl LocalLlmConfig {
 
     /// Save config to the config directory.
     pub fn save(&self) -> anyhow::Result<()> {
-        let config_dir =
-            clawmaster_config::config_dir().ok_or_else(|| anyhow::anyhow!("no config directory"))?;
+        let config_dir = clawmaster_config::config_dir()
+            .ok_or_else(|| anyhow::anyhow!("no config directory"))?;
         std::fs::create_dir_all(&config_dir)?;
         let config_path = config_dir.join("local-llm.json");
         let content = serde_json::to_string_pretty(self)?;

@@ -60,7 +60,8 @@
 <link rel="stylesheet" href="{{ asset_prefix }}css/chat.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/components.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/security.css">
-<link rel="stylesheet" href="{{ asset_prefix }}css/dashboard.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/tooltip.css">
+<link rel="stylesheet" href="{{ asset_prefix }}css/tooltip-test.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/language-selector.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/dark-mode-icons.css">
 <link rel="stylesheet" href="{{ asset_prefix }}css/mobile.css">
@@ -119,12 +120,12 @@
 
 <!-- Top bar -->
 <header class="flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface)] shrink-0">
-  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer flex items-center gap-2">
+  <a href="{{ routes.chats }}" id="titleLink" class="text-base font-medium tracking-wide text-[var(--text-strong)] no-underline cursor-pointer flex items-center gap-2" title="ClawMaster - Return to chat home">
     <span id="titleEmoji" class="text-xl">🦾</span>
     <span id="titleName" class="font-bold">ClawMaster</span>
-    <span id="consoleName" class="text-sm text-[var(--muted)] font-normal"></span>
+    <span id="consoleName" class="hidden text-sm text-[var(--muted)] font-normal"></span>
   </a>
-  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");var c=document.getElementById("consoleName");n.textContent="ClawMaster";if(g&&g.identity){var i=g.identity;if(e&&i.emoji)e.textContent=i.emoji;if(c&&i.name&&i.name!=="ClawMaster")c.textContent="("+i.name+")";var a=(i&&i.name&&String(i.name).trim())||"ClawMaster";document.title=a}else{document.title="ClawMaster"}}()</script>
+  <script nonce="{{ nonce }}">!function(){var g=window.__MOLTIS__;var e=document.getElementById("titleEmoji");var n=document.getElementById("titleName");var c=document.getElementById("consoleName");n.textContent="ClawMaster";if(c)c.textContent="";if(g&&g.identity){var i=g.identity;if(e&&i.emoji)e.textContent=i.emoji;var a="ClawMaster";document.title=a}else{document.title="ClawMaster"}}()</script>
   <span class="status-dot" id="statusDot"></span>
   <span class="text-xs text-[var(--muted)]" id="statusText" data-i18n="common:status.disconnected">disconnected</span>
   <div class="flex-1"></div>
@@ -146,35 +147,35 @@
   </button>
 
   <div class="header-actions" style="display:flex !important;">
-    <!-- Dashboard Button -->
-    <a href="/dashboard" id="dashboardBtn" class="header-link-btn" style="display:inline-flex !important;" data-i18n-title="common:nav.dashboard" title="Dashboard">
-      <span class="icon icon-home"></span>
-      <span class="header-link-label" data-i18n="common:nav.dashboard">Dashboard</span>
+    <!-- Monitor Button -->
+    <a href="{{ routes.monitoring }}" id="metricsBtn" class="header-link-btn" style="display:inline-flex !important;" title="System Monitoring - View metrics, performance, and resource usage">
+      <span class="icon icon-monitor"></span>
+      <span class="header-link-label">Monitor</span>
     </a>
     
-    <button id="settingsBtn" class="header-link-btn" data-i18n-title="common:nav.settings">
-    <span class="icon icon-settings"></span>
-    <span class="header-link-label" data-i18n="common:nav.settings">Settings</span>
-  </button>
+    <a href="/settings" id="settingsBtn" class="header-link-btn" title="Settings - Configure providers, channels, security, and system preferences">
+      <span class="icon icon-settings"></span>
+      <span class="header-link-label">Settings</span>
+    </a>
     <!-- Language Selector (replaces Report issue button) -->
     <div id="languageSelectorContainer"></div>
   </div>
 
   <!-- Theme toggle -->
   <div class="theme-toggle" id="themeToggle">
-    <button class="theme-btn" data-theme-val="light" data-i18n-title="common:theme.light">
+    <button class="theme-btn" data-theme-val="light" data-i18n-title="common:theme.light" title="Light Theme - Switch to light color scheme">
       <span class="icon icon-sun"></span>
     </button>
-    <button class="theme-btn" data-theme-val="system" data-i18n-title="common:theme.system">
+    <button class="theme-btn" data-theme-val="system" data-i18n-title="common:theme.system" title="System Theme - Follow system color scheme">
       <span class="icon icon-monitor"></span>
     </button>
-    <button class="theme-btn" data-theme-val="dark" data-i18n-title="common:theme.dark">
+    <button class="theme-btn" data-theme-val="dark" data-i18n-title="common:theme.dark" title="Dark Theme - Switch to dark color scheme">
       <span class="icon icon-moon"></span>
     </button>
   </div>
 
   <!-- Logout button (shown by JS only when auth is active) -->
-  <button id="logoutBtn" class="logout-btn" data-i18n-title="common:nav.signOut" style="display:none">
+  <button id="logoutBtn" class="logout-btn" data-i18n-title="common:nav.signOut" style="display:none" title="Sign Out - Log out from your account">
     <span class="icon icon-logout"></span>
   </button>
 
@@ -182,15 +183,15 @@
 
 <div id="mobileMenuOverlay" class="mobile-menu-overlay"></div>
 <div id="mobileMenuPanel" class="mobile-menu-panel">
-  <button id="mobileMenuSessionsBtn" type="button" class="mobile-menu-item">
+  <button id="mobileMenuSessionsBtn" type="button" class="mobile-menu-item" title="Sessions - View and manage chat sessions">
     <span class="icon icon-chat-dots"></span>
     <span data-i18n="common:nav.sessions">Sessions</span>
   </button>
-  <button id="mobileMenuSettingsBtn" type="button" class="mobile-menu-item">
+  <button id="mobileMenuSettingsBtn" type="button" class="mobile-menu-item" title="Settings - Configure system preferences">
     <span class="icon icon-settings"></span>
     <span data-i18n="common:nav.settings">Settings</span>
   </button>
-  <button id="mobileMenuLogoutBtn" type="button" class="mobile-menu-item mobile-menu-item-danger" style="display:none">
+  <button id="mobileMenuLogoutBtn" type="button" class="mobile-menu-item mobile-menu-item-danger" style="display:none" title="Sign Out - Log out from your account">
     <span class="icon icon-logout"></span>
     <span data-i18n="common:nav.signOut">Sign out</span>
   </button>
@@ -234,7 +235,7 @@
     <!-- Project selector -->
     <div id="projectSelectWrapper" class="px-3 py-2 border-b border-[var(--border)] hidden">
       <div id="projectFilterCombo" class="model-combo">
-        <button id="projectFilterBtn" class="model-combo-btn" type="button" style="width:100%;max-width:none;justify-content:space-between">
+        <button id="projectFilterBtn" class="model-combo-btn" type="button" style="width:100%;max-width:none;justify-content:space-between" title="Filter by Project - Show sessions from a specific project">
           <span id="projectFilterLabel" data-i18n="common:actions.allSessions">All sessions</span>
           <span class="icon icon-sm icon-chevron-down model-combo-chevron"></span>
         </button>
@@ -248,13 +249,13 @@
       <div class="w-full flex items-center gap-1">
         <input id="sessionSearch" type="text" data-i18n-placeholder="common:actions.searchSessions"
                class="flex-1 min-w-0 text-xs bg-[var(--surface2)] border border-[var(--border)] rounded px-2 py-1.5 text-[var(--text)] focus:outline-none focus:border-[var(--border-strong)] font-sans" />
-        <button id="newSessionBtn" class="text-xs text-[var(--muted)] border border-[var(--border)] px-2 py-1.5 rounded hover:text-[var(--text)] hover:border-[var(--border-strong)] transition-colors cursor-pointer bg-transparent" data-i18n-title="common:actions.newSession">+</button>
+        <button id="newSessionBtn" class="text-xs text-[var(--muted)] border border-[var(--border)] px-2 py-1.5 rounded hover:text-[var(--text)] hover:border-[var(--border-strong)] transition-colors cursor-pointer bg-transparent" data-i18n-title="common:actions.newSession" title="New Session - Create a new chat session">+</button>
       </div>
       <div id="searchResults" class="hidden"></div>
     </div>
     <div id="sessionTabBar" class="flex border-b border-[var(--border)] text-xs" role="tablist">
-      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="sessions" role="tab" data-i18n="common:nav.sessions">Sessions</button>
-      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="cron" role="tab" data-i18n="common:nav.cron">Cron</button>
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="sessions" role="tab" data-i18n="sessions:tabs.sessions" title="Chat Sessions - View and manage your conversations">Sessions</button>
+      <button class="session-tab flex-1 py-1.5 text-center cursor-pointer bg-transparent border-b-2 border-transparent text-[var(--muted)] hover:text-[var(--text)] transition-colors" data-tab="cron" role="tab" data-i18n="sessions:tabs.cron" title="Scheduled Tasks - View and manage cron jobs">Cron</button>
     </div>
     <div class="flex-1 overflow-y-auto" id="sessionList"></div>
   </div>
@@ -264,7 +265,7 @@
 </div>
 
 <!-- Mobile sessions toggle FAB -->
-<button id="sessionsToggle" class="sessions-toggle-btn" title="Toggle sessions">
+<button id="sessionsToggle" class="sessions-toggle-btn" title="Toggle Sessions Panel - Show or hide chat sessions sidebar">
   <span class="icon icon-xl icon-chat-dots"></span>
 </button>
 

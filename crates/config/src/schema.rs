@@ -176,7 +176,11 @@ pub struct ResolvedIdentity {
 impl ResolvedIdentity {
     pub fn from_config(cfg: &MoltisConfig) -> Self {
         Self {
-            name: cfg.identity.name.clone().unwrap_or_else(|| "clawmaster".into()),
+            name: cfg
+                .identity
+                .name
+                .clone()
+                .unwrap_or_else(|| "clawmaster".into()),
             emoji: cfg.identity.emoji.clone(),
             theme: cfg.identity.theme.clone(),
             soul: None,

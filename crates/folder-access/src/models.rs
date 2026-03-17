@@ -243,19 +243,15 @@ impl ValidationRule {
     /// DO-178C §6.3.4: Deterministic pattern matching
     pub fn matches(&self, path: &str) -> bool {
         match self.rule_type {
-            RuleType::Blacklist | RuleType::Whitelist => {
-                self.matches_glob_pattern(path)
-            }
-            RuleType::Pattern => {
-                self.matches_regex_pattern(path)
-            }
+            RuleType::Blacklist | RuleType::Whitelist => self.matches_glob_pattern(path),
+            RuleType::Pattern => self.matches_regex_pattern(path),
         }
     }
 
     fn matches_glob_pattern(&self, path: &str) -> bool {
         // Simple glob matching (* wildcard)
         let pattern = &self.pattern;
-        
+
         if pattern == "*" {
             return true;
         }
@@ -267,13 +263,13 @@ impl ValidationRule {
 
         // Split pattern by * and match each part
         let parts: Vec<&str> = pattern.split('*').collect();
-        
+
         if parts.is_empty() {
             return true;
         }
 
         let mut pos = 0;
-        
+
         for (i, part) in parts.iter().enumerate() {
             if part.is_empty() {
                 continue;
@@ -330,7 +326,10 @@ mod tests {
     #[test]
     fn test_access_operation() {
         assert_eq!(AccessOperation::Read.as_str(), "read");
-        assert_eq!(AccessOperation::from_str("write"), Some(AccessOperation::Write));
+        assert_eq!(
+            AccessOperation::from_str("write"),
+            Some(AccessOperation::Write)
+        );
         assert_eq!(AccessOperation::from_str("invalid"), None);
     }
 

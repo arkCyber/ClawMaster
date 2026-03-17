@@ -1026,8 +1026,8 @@ fn toggle_skill(params: &Value, enabled: bool) -> ServiceResult {
         .and_then(|v| v.as_str())
         .ok_or_else(|| "missing 'skill' parameter".to_string())?;
 
-    let manifest_path =
-        clawmaster_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
+    let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
+        .map_err(ServiceError::message)?;
     let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
     let mut manifest = store.load().map_err(ServiceError::message)?;
 
@@ -1086,8 +1086,8 @@ fn set_skill_trusted(params: &Value, trusted: bool) -> ServiceResult {
         .and_then(|v| v.as_str())
         .ok_or_else(|| "missing 'skill' parameter".to_string())?;
 
-    let manifest_path =
-        clawmaster_skills::manifest::ManifestStore::default_path().map_err(ServiceError::message)?;
+    let manifest_path = clawmaster_skills::manifest::ManifestStore::default_path()
+        .map_err(ServiceError::message)?;
     let store = clawmaster_skills::manifest::ManifestStore::new(manifest_path);
     let mut manifest = store.load().map_err(ServiceError::message)?;
 
@@ -1120,7 +1120,10 @@ pub struct RealBrowserService {
 }
 
 impl RealBrowserService {
-    pub fn new(config: &clawmaster_config::schema::BrowserConfig, container_prefix: String) -> Self {
+    pub fn new(
+        config: &clawmaster_config::schema::BrowserConfig,
+        container_prefix: String,
+    ) -> Self {
         let mut browser_config = clawmaster_browser::BrowserConfig::from(config);
         browser_config.container_prefix = container_prefix;
         Self {
@@ -1216,6 +1219,7 @@ impl BrowserService for RealBrowserService {
 // ── Bundled services ────────────────────────────────────────────────────────
 
 /// All domain services the gateway delegates to.
+#[derive(Clone)]
 pub struct GatewayServices {
     pub agent: Arc<dyn AgentService>,
     pub session: Arc<dyn SessionService>,
@@ -1256,6 +1260,9 @@ pub struct GatewayServices {
     pub agent_persona_store: Option<Arc<crate::agent_persona::AgentPersonaStore>>,
     /// Shared agents config (presets) for spawn_agent and RPC sync.
     pub agents_config: Option<Arc<tokio::sync::RwLock<clawmaster_config::AgentsConfig>>>,
+    /// Optional conversation history store for recording chat turns and issues.
+    pub conversation_history:
+        Option<Arc<dyn crate::conversation_history::ConversationHistoryStore>>,
 }
 
 impl GatewayServices {
@@ -1314,28 +1321,28 @@ impl GatewayServices {
     }
 
     /// Create a service bundle with all noop implementations.
-    pub fn noop() -> Self {
-        Self {
+    pub fn noop() -> Arc<Self> {
+        Arc::new(Self {
             agent: Arc::new(NoopAgentService),
             session: Arc::new(NoopSessionService),
             channel: Arc::new(NoopChannelService),
             config: Arc::new(NoopConfigService),
-            cron: Arc::new(NoopCronService),
+            model: Arc::new(NoopModelService),
             chat: Arc::new(NoopChatService),
+            provider_setup: Arc::new(NoopProviderSetupService),
+            exec_approval: Arc::new(NoopExecApprovalService),
+            mcp: Arc::new(NoopMcpService),
+            cron: Arc::new(NoopCronService),
             tts: Arc::new(NoopTtsService),
             stt: Arc::new(NoopSttService),
             skills: Arc::new(NoopSkillsService),
-            mcp: Arc::new(NoopMcpService),
             browser: Arc::new(NoopBrowserService),
             usage: Arc::new(NoopUsageService),
-            exec_approval: Arc::new(NoopExecApprovalService),
             onboarding: Arc::new(NoopOnboardingService),
             update: Arc::new(NoopUpdateService),
-            model: Arc::new(NoopModelService),
             web_login: Arc::new(NoopWebLoginService),
             voicewake: Arc::new(NoopVoicewakeService),
             logs: Arc::new(NoopLogsService),
-            provider_setup: Arc::new(NoopProviderSetupService),
             project: Arc::new(NoopProjectService),
             local_llm: Arc::new(NoopLocalLlmService),
             network_audit: Arc::new(crate::network_audit::NoopNetworkAuditService),
@@ -1347,7 +1354,8 @@ impl GatewayServices {
             session_share_store: None,
             agent_persona_store: None,
             agents_config: None,
-        }
+            conversation_history: None,
+        })
     }
 
     pub fn with_local_llm(mut self, local_llm: Arc<dyn LocalLlmService>) -> Self {
@@ -1381,7 +1389,10 @@ impl GatewayServices {
         self
     }
 
-    pub fn with_session_store(mut self, store: Arc<clawmaster_sessions::store::SessionStore>) -> Self {
+    pub fn with_session_store(
+        mut self,
+        store: Arc<clawmaster_sessions::store::SessionStore>,
+    ) -> Self {
         self.session_store = Some(store);
         self
     }

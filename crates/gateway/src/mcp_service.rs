@@ -268,7 +268,9 @@ impl McpService for LiveMcpService {
             Err(e) => {
                 if matches!(
                     e,
-                    clawmaster_mcp::Error::Manager(clawmaster_mcp::McpManagerError::OAuthRequired { .. })
+                    clawmaster_mcp::Error::Manager(
+                        clawmaster_mcp::McpManagerError::OAuthRequired { .. }
+                    )
                 ) {
                     if let Some(uri) = redirect_uri {
                         let auth_url = self
@@ -333,7 +335,9 @@ impl McpService for LiveMcpService {
             Err(e) => {
                 if matches!(
                     e,
-                    clawmaster_mcp::Error::Manager(clawmaster_mcp::McpManagerError::OAuthRequired { .. })
+                    clawmaster_mcp::Error::Manager(
+                        clawmaster_mcp::McpManagerError::OAuthRequired { .. }
+                    )
                 ) {
                     if let Some(uri) = redirect_uri {
                         let auth_url = self

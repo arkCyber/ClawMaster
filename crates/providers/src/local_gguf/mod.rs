@@ -400,6 +400,10 @@ impl LlmProvider for LocalGgufProvider {
         true
     }
 
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
+        Some(clawmaster_config::ToolMode::Text)
+    }
+
     async fn complete(
         &self,
         messages: &[ChatMessage],
@@ -738,6 +742,10 @@ impl LlmProvider for LazyLocalGgufProvider {
         true
     }
 
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
+        Some(clawmaster_config::ToolMode::Text)
+    }
+
     async fn complete(
         &self,
         messages: &[ChatMessage],
@@ -859,7 +867,7 @@ pub fn log_system_info_and_suggestions() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use {super::*, clawmaster_agents::model::LlmProvider};
 
     #[test]
     fn test_default_config() {
@@ -868,6 +876,16 @@ mod tests {
         assert!(config.model_path.is_none());
         assert_eq!(config.gpu_layers, 0);
         assert!((config.temperature - 0.7).abs() < 0.01);
+    }
+
+    #[test]
+    fn lazy_local_gguf_provider_uses_text_tool_mode() {
+        let provider = LazyLocalGgufProvider::new(LocalGgufConfig::default());
+        assert_eq!(
+            provider.tool_mode(),
+            Some(clawmaster_config::ToolMode::Text)
+        );
+        assert!(provider.supports_tools());
     }
 
     #[test]

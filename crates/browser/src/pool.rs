@@ -168,7 +168,8 @@ impl BrowserPool {
                 .fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             clawmaster_metrics::gauge!(clawmaster_metrics::browser::INSTANCES_ACTIVE)
                 .set(self.active_count.load(std::sync::atomic::Ordering::Relaxed) as f64);
-            clawmaster_metrics::counter!(clawmaster_metrics::browser::INSTANCES_CREATED_TOTAL).increment(1);
+            clawmaster_metrics::counter!(clawmaster_metrics::browser::INSTANCES_CREATED_TOTAL)
+                .increment(1);
         }
 
         let mode = if sandbox {
@@ -245,8 +246,10 @@ impl BrowserPool {
                     .fetch_sub(1, std::sync::atomic::Ordering::Relaxed);
                 clawmaster_metrics::gauge!(clawmaster_metrics::browser::INSTANCES_ACTIVE)
                     .set(self.active_count.load(std::sync::atomic::Ordering::Relaxed) as f64);
-                clawmaster_metrics::counter!(clawmaster_metrics::browser::INSTANCES_DESTROYED_TOTAL)
-                    .increment(1);
+                clawmaster_metrics::counter!(
+                    clawmaster_metrics::browser::INSTANCES_DESTROYED_TOTAL
+                )
+                .increment(1);
             }
 
             info!(session_id, "closed browser session");
@@ -686,7 +689,7 @@ mod tests {
 
     #[test]
     fn sanitize_session_component_replaces_unsafe_chars() {
-        let sanitized = sanitize_session_component("discord:moltis:1476434288646815864");
+        let sanitized = sanitize_session_component("discord:clawmaster:1476434288646815864");
         assert_eq!(sanitized, "discord_clawmaster_1476434288646815864");
     }
 

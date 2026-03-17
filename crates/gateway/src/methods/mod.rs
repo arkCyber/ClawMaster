@@ -7,6 +7,7 @@ use clawmaster_protocol::{ErrorShape, ResponseFrame, error_codes};
 use crate::state::GatewayState;
 
 mod channel_mux;
+pub mod conversation;
 mod gateway;
 mod node;
 mod pairing;

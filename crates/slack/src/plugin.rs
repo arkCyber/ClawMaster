@@ -251,7 +251,8 @@ impl ChannelPlugin for SlackPlugin {
     fn channel_webhook_verifier(
         &self,
         account_id: &str,
-    ) -> Option<Box<dyn clawmaster_channels::channel_webhook_middleware::ChannelWebhookVerifier>> {
+    ) -> Option<Box<dyn clawmaster_channels::channel_webhook_middleware::ChannelWebhookVerifier>>
+    {
         let accounts = self.accounts.read().unwrap_or_else(|e| e.into_inner());
         let state = accounts.get(account_id)?;
         let secret = state.config.signing_secret.as_ref()?;

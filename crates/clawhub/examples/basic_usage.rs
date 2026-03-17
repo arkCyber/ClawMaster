@@ -1,16 +1,20 @@
 //! Basic usage example for ClawHub registry.
 
-use clawmaster_clawhub::registry::Registry;
-use clawmaster_clawhub::types::{SecurityStatus, ToolMetadata, ToolType};
-use time::OffsetDateTime;
+use {
+    clawmaster_clawhub::{
+        registry::Registry,
+        types::{SecurityStatus, ToolMetadata, ToolType},
+    },
+    time::OffsetDateTime,
+};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // Create a new registry
     let registry = Registry::new("example_clawhub.db").await?;
-    
+
     println!("✅ Registry created successfully");
-    
+
     // Create sample tool metadata
     let metadata = ToolMetadata {
         name: "example-calc".to_string(),
@@ -34,12 +38,12 @@ async fn main() -> anyhow::Result<()> {
         published_at: OffsetDateTime::now_utc(),
         updated_at: OffsetDateTime::now_utc(),
     };
-    
+
     // Publish the tool
     println!("📦 Publishing tool: {}@{}", metadata.name, metadata.version);
     registry.publish(metadata.clone()).await?;
     println!("✅ Tool published successfully");
-    
+
     // Retrieve the tool
     println!("\n🔍 Retrieving tool...");
     let retrieved = registry.get_tool("example-calc", "1.0.0").await?;
@@ -49,15 +53,17 @@ async fn main() -> anyhow::Result<()> {
     println!("   License: {}", retrieved.license);
     println!("   Type: {:?}", retrieved.tool_type);
     println!("   Security: {:?}", retrieved.security_status);
-    
+
     // Increment downloads
     println!("\n📥 Incrementing downloads...");
-    registry.increment_downloads("example-calc", "1.0.0").await?;
-    
+    registry
+        .increment_downloads("example-calc", "1.0.0")
+        .await?;
+
     let updated = registry.get_tool("example-calc", "1.0.0").await?;
     println!("✅ Downloads: {}", updated.downloads);
-    
+
     println!("\n🎉 Example completed successfully!");
-    
+
     Ok(())
 }

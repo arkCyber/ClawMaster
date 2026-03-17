@@ -25,7 +25,8 @@ fn config_load_toml(bencher: divan::Bencher) {
     let path = dir.path().join("clawmaster.toml");
     std::fs::write(&path, &toml_content).unwrap();
 
-    bencher.bench_local(|| divan::black_box(clawmaster_config::loader::load_config(&path).unwrap()));
+    bencher
+        .bench_local(|| divan::black_box(clawmaster_config::loader::load_config(&path).unwrap()));
 }
 
 /// Benchmark config round-trip: serialize MoltisConfig to TOML, then deserialize.
@@ -42,7 +43,9 @@ fn config_validate_toml(bencher: divan::Bencher) {
     let toml_content = clawmaster_config::template::default_config_template(8080);
 
     bencher.bench_local(|| {
-        divan::black_box(clawmaster_config::validate::validate_toml_str(&toml_content))
+        divan::black_box(clawmaster_config::validate::validate_toml_str(
+            &toml_content,
+        ))
     });
 }
 
@@ -72,7 +75,9 @@ fn vision_support_lookup(model_id: &str) -> bool {
 
 #[divan::bench]
 fn namespaced_model_id() -> String {
-    divan::black_box(clawmaster_providers::namespaced_model_id("openai", "gpt-4o"))
+    divan::black_box(clawmaster_providers::namespaced_model_id(
+        "openai", "gpt-4o",
+    ))
 }
 
 // ── Session store ───────────────────────────────────────────────────────────
@@ -86,7 +91,9 @@ const SESSION_KEYS: &[&str] = &[
 
 #[divan::bench(args = SESSION_KEYS)]
 fn session_key_to_filename(key: &str) -> String {
-    divan::black_box(clawmaster_sessions::store::SessionStore::key_to_filename(key))
+    divan::black_box(clawmaster_sessions::store::SessionStore::key_to_filename(
+        key,
+    ))
 }
 
 fn build_sanitize_input(payload_bytes: usize) -> String {
@@ -99,7 +106,9 @@ fn build_sanitize_input(payload_bytes: usize) -> String {
 fn sanitize_tool_result(bencher: divan::Bencher, payload_bytes: usize) {
     let input = build_sanitize_input(payload_bytes);
     bencher.bench_local(|| {
-        divan::black_box(clawmaster_agents::runner::sanitize_tool_result(&input, 50_000))
+        divan::black_box(clawmaster_agents::runner::sanitize_tool_result(
+            &input, 50_000,
+        ))
     });
 }
 
@@ -171,8 +180,9 @@ fn build_persisted_messages(n: usize) -> Vec<serde_json::Value> {
 #[divan::bench(args = [50, 500, 2000])]
 fn values_to_chat_messages(bencher: divan::Bencher, n: usize) {
     let values = build_persisted_messages(n);
-    bencher
-        .bench_local(|| divan::black_box(clawmaster_agents::model::values_to_chat_messages(&values)));
+    bencher.bench_local(|| {
+        divan::black_box(clawmaster_agents::model::values_to_chat_messages(&values))
+    });
 }
 
 // ── Env substitution ────────────────────────────────────────────────────────

@@ -551,7 +551,9 @@ fn append_runtime_section(
 
 fn append_skills_section(prompt: &mut String, include_tools: bool, skills: &[SkillMetadata]) {
     if include_tools && !skills.is_empty() {
-        prompt.push_str(&clawmaster_skills::prompt_gen::generate_skills_prompt(skills));
+        prompt.push_str(&clawmaster_skills::prompt_gen::generate_skills_prompt(
+            skills,
+        ));
     }
 }
 

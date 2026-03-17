@@ -1124,7 +1124,10 @@ mod tests {
     #[test]
     fn localhost_cookie_domain_proxy_mode_supports_forwarded_localhost_subdomain() {
         let mut h = headers_with_host("localhost:13131");
-        h.insert("x-forwarded-host", "clawmaster.localhost:8080".parse().unwrap());
+        h.insert(
+            "x-forwarded-host",
+            "clawmaster.localhost:8080".parse().unwrap(),
+        );
         assert_eq!(localhost_cookie_domain(&h, true), "; Domain=localhost");
     }
 

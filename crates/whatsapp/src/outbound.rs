@@ -151,9 +151,9 @@ impl ChannelOutbound for WhatsAppOutbound {
         _reply_to: Option<&str>,
     ) -> ChannelResult<()> {
         let client = self.get_client(account_id)?;
-        let jid: Jid = to
-            .parse()
-            .map_err(|e| clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}")))?;
+        let jid: Jid = to.parse().map_err(|e| {
+            clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}"))
+        })?;
 
         debug!(
             account_id,
@@ -168,10 +168,9 @@ impl ChannelOutbound for WhatsAppOutbound {
             conversation: Some(watermarked),
             ..Default::default()
         };
-        let msg_id = client
-            .send_message(jid, msg)
-            .await
-            .map_err(|e| clawmaster_channels::Error::unavailable(format!("whatsapp send_text: {e}")))?;
+        let msg_id = client.send_message(jid, msg).await.map_err(|e| {
+            clawmaster_channels::Error::unavailable(format!("whatsapp send_text: {e}"))
+        })?;
         self.record_sent_id(account_id, &msg_id);
 
         #[cfg(feature = "metrics")]
@@ -226,9 +225,9 @@ impl ChannelOutbound for WhatsAppOutbound {
         );
 
         let client = self.get_client(account_id)?;
-        let jid: Jid = to
-            .parse()
-            .map_err(|e| clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}")))?;
+        let jid: Jid = to.parse().map_err(|e| {
+            clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}"))
+        })?;
 
         let upload = client.upload(bytes, media_type).await.map_err(|e| {
             clawmaster_channels::Error::unavailable(format!("whatsapp media upload: {e}"))
@@ -254,14 +253,16 @@ impl ChannelOutbound for WhatsAppOutbound {
 
     async fn send_typing(&self, account_id: &str, to: &str) -> ChannelResult<()> {
         let client = self.get_client(account_id)?;
-        let jid: Jid = to
-            .parse()
-            .map_err(|e| clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}")))?;
+        let jid: Jid = to.parse().map_err(|e| {
+            clawmaster_channels::Error::invalid_input(format!("invalid JID: {e:?}"))
+        })?;
         client
             .chatstate()
             .send(&jid, ChatStateType::Composing)
             .await
-            .map_err(|e| clawmaster_channels::Error::unavailable(format!("whatsapp chatstate: {e}")))?;
+            .map_err(|e| {
+                clawmaster_channels::Error::unavailable(format!("whatsapp chatstate: {e}"))
+            })?;
         Ok(())
     }
 }

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Marketplace - ClawMaster</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .marketplace-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .marketplace-header {
+            margin-bottom: 2rem;
+        }
+
+        .marketplace-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .marketplace-header p {
+            color: #6b7280;
+            font-size: 1.125rem;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .search-button {
+            padding: 0.75rem 2rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background: #2563eb;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            background: white;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .skill-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .skill-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .skill-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-verified {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-unverified {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .skill-description {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .skill-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .skill-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .skill-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            color: #4b5563;
+            margin-right: 0.5rem;
+        }
+
+        .skill-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-install {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-install:hover {
+            background: #2563eb;
+        }
+
+        .btn-install:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-details {
+            padding: 0.5rem 1rem;
+            background: white;
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-details:hover {
+            background: #eff6ff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .modal-close:hover {
+            color: #111827;
+        }
+    </style>
+</head>
+<body>
+    <div class="marketplace-container">
+        <div class="marketplace-header">
+            <h1>Skills Marketplace</h1>
+            <p>Discover and install Skills to extend ClawMaster's capabilities</p>
+        </div>
+
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="total-skills">-</div>
+                <div class="stat-label">Total Skills</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="verified-skills">-</div>
+                <div class="stat-label">Verified</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="installed-skills">-</div>
+                <div class="stat-label">Installed</div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="search-input"
+                    placeholder="Search skills..."
+                >
+                <button class="search-button" id="search-button">Search</button>
+            </div>
+            <div class="filters">
+                <select class="filter-select" id="category-filter">
+                    <option value="">All Categories</option>
+                    <option value="productivity">Productivity</option>
+                    <option value="developer">Developer</option>
+                    <option value="china">China</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="media">Media</option>
+                    <option value="finance">Finance</option>
+                </select>
+                <select class="filter-select" id="security-filter">
+                    <option value="">All Security Status</option>
+                    <option value="verified">Verified Only</option>
+                    <option value="unverified">Unverified</option>
+                </select>
+                <select class="filter-select" id="sort-filter">
+                    <option value="downloads">Most Downloaded</option>
+                    <option value="recent">Most Recent</option>
+                    <option value="name">Name (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="skills-container">
+            <div class="loading">Loading skills...</div>
+        </div>
+    </div>
+
+    <div class="modal" id="skill-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-skill-name">Skill Details</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div id="modal-skill-details">
+                <!-- Skill details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as gon from './gon.js';
+        import { onEvent } from './events.js';
+
+        let allSkills = [];
+        let installedSkills = new Set();
+
+        async function loadSkills() {
+            try {
+                const response = await fetch('/api/skills/list');
+                const skills = await response.json();
+                allSkills = skills;
+                
+                // Track installed skills
+                installedSkills = new Set(
+                    skills.filter(s => s.source === 'Registry' || s.source === 'Personal')
+                        .map(s => s.name)
+                );
+                
+                updateStats();
+                renderSkills(skills);
+            } catch (error) {
+                console.error('Failed to load skills:', error);
+                document.getElementById('skills-container').innerHTML = 
+                    '<div class="empty-state">Failed to load skills. Please try again.</div>';
+            }
+        }
+
+        function updateStats() {
+            const total = allSkills.length;
+            const verified = allSkills.filter(s => s.protected || s.source === 'Registry').length;
+            const installed = installedSkills.size;
+
+            document.getElementById('total-skills').textContent = total;
+            document.getElementById('verified-skills').textContent = verified;
+            document.getElementById('installed-skills').textContent = installed;
+        }
+
+        function renderSkills(skills) {
+            const container = document.getElementById('skills-container');
+            
+            if (skills.length === 0) {
+                container.innerHTML = '<div class="empty-state">No skills found.</div>';
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'skills-grid';
+
+            skills.forEach(skill => {
+                const card = createSkillCard(skill);
+                grid.appendChild(card);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+        }
+
+        function createSkillCard(skill) {
+            const card = document.createElement('div');
+            card.className = 'skill-card';
+
+            const isInstalled = installedSkills.has(skill.name);
+            const isVerified = skill.protected || skill.source === 'Registry';
+
+            card.innerHTML = `
+                <div class="skill-header">
+                    <div class="skill-name">${escapeHtml(skill.name)}</div>
+                    <span class="skill-badge ${isVerified ? 'badge-verified' : 'badge-unverified'}">
+                        ${isVerified ? '✓ Verified' : 'Unverified'}
+                    </span>
+                </div>
+                <div class="skill-description">${escapeHtml(skill.description)}</div>
+                <div class="skill-meta">
+                    <div class="skill-meta-item">
+                        <span>📦</span>
+                        <span>${skill.source || 'Unknown'}</span>
+                    </div>
+                    ${skill.license ? `
+                        <div class="skill-meta-item">
+                            <span>📄</span>
+                            <span>${escapeHtml(skill.license)}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="skill-actions">
+                    <button 
+                        class="btn-install" 
+                        data-skill-name="${escapeHtml(skill.name)}"
+                        ${isInstalled ? 'disabled' : ''}
+                    >
+                        ${isInstalled ? 'Installed' : 'Install'}
+                    </button>
+                    <button class="btn-details" data-skill-name="${escapeHtml(skill.name)}">
+                        Details
+                    </button>
+                </div>
+            `;
+
+            // Add event listeners
+            const installBtn = card.querySelector('.btn-install');
+            const detailsBtn = card.querySelector('.btn-details');
+
+            if (!isInstalled) {
+                installBtn.addEventListener('click', () => installSkill(skill));
+            }
+
+            detailsBtn.addEventListener('click', () => showSkillDetails(skill));
+
+            return card;
+        }
+
+        async function installSkill(skill) {
+            if (!confirm(`Install skill "${skill.name}"?`)) {
+                return;
+            }
+
+            try {
+                // For bundled skills, they're already available
+                if (skill.source === 'Registry') {
+                    alert(`Skill "${skill.name}" is already bundled with ClawMaster.`);
+                    return;
+                }
+
+                // For external skills, would need to call install API
+                alert('External skill installation coming soon!');
+            } catch (error) {
+                console.error('Failed to install skill:', error);
+                alert('Failed to install skill. Please try again.');
+            }
+        }
+
+        function showSkillDetails(skill) {
+            const modal = document.getElementById('skill-modal');
+            const modalName = document.getElementById('modal-skill-name');
+            const modalDetails = document.getElementById('modal-skill-details');
+
+            modalName.textContent = skill.name;
+            modalDetails.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <strong>Description:</strong>
+                    <p>${escapeHtml(skill.description)}</p>
+                </div>
+                ${skill.license ? `
+                    <div style="margin-bottom: 1rem;">
+                        <strong>License:</strong>
+                        <p>${escapeHtml(skill.license)}</p>
+                    </div>
+                ` : ''}
+                ${skill.allowed_tools && skill.allowed_tools.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Allowed Tools:</strong>
+                        <p>${skill.allowed_tools.map(t => escapeHtml(t)).join(', ')}</p>
+                    </div>
+                ` : ''}
+                ${skill.missing_bins && skill.missing_bins.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Missing Dependencies:</strong>
+                        <p style="color: #dc2626;">${skill.missing_bins.map(b => escapeHtml(b)).join(', ')}</p>
+                    </div>
+                ` : ''}
+                <div style="margin-bottom: 1rem;">
+                    <strong>Path:</strong>
+                    <p style="font-family: monospace; font-size: 0.875rem;">${escapeHtml(skill.path)}</p>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Search and filter
+        function filterSkills() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const category = document.getElementById('category-filter').value;
+            const security = document.getElementById('security-filter').value;
+            const sort = document.getElementById('sort-filter').value;
+
+            let filtered = allSkills.filter(skill => {
+                const matchesSearch = !searchTerm || 
+                    skill.name.toLowerCase().includes(searchTerm) ||
+                    skill.description.toLowerCase().includes(searchTerm);
+
+                const matchesCategory = !category || 
+                    skill.name.toLowerCase().includes(category);
+
+                const isVerified = skill.protected || skill.source === 'Registry';
+                const matchesSecurity = !security ||
+                    (security === 'verified' && isVerified) ||
+                    (security === 'unverified' && !isVerified);
+
+                return matchesSearch && matchesCategory && matchesSecurity;
+            });
+
+            // Sort
+            if (sort === 'name') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sort === 'recent') {
+                filtered.reverse();
+            }
+
+            renderSkills(filtered);
+        }
+
+        // Event listeners
+        document.getElementById('search-button').addEventListener('click', filterSkills);
+        document.getElementById('search-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') filterSkills();
+        });
+        document.getElementById('category-filter').addEventListener('change', filterSkills);
+        document.getElementById('security-filter').addEventListener('change', filterSkills);
+        document.getElementById('sort-filter').addEventListener('change', filterSkills);
+
+        document.getElementById('modal-close').addEventListener('click', () => {
+            document.getElementById('skill-modal').classList.remove('active');
+        });
+
+        document.getElementById('skill-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'skill-modal') {
+                document.getElementById('skill-modal').classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadSkills();
+    </script>
+</body>
+</html>

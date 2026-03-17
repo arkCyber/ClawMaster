@@ -26,6 +26,8 @@ pub mod channel_webhook_middleware;
 pub mod channel_webhook_rate_limit;
 pub mod chat;
 pub mod chat_error;
+pub mod conversation_history;
+pub mod conversation_history_rpc;
 pub mod cron;
 pub mod env_routes;
 #[cfg(feature = "graphql")]

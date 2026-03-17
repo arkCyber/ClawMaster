@@ -2,16 +2,18 @@
 //!
 //! DO-178C Level A Compliant Health Check Endpoints
 
-use axum::{
-    extract::State,
-    http::StatusCode,
-    response::{IntoResponse, Json, Response},
-    routing::get,
-    Router,
+use {
+    axum::{
+        Router,
+        extract::State,
+        http::StatusCode,
+        response::{IntoResponse, Json, Response},
+        routing::get,
+    },
+    clawmaster_health_check::{HealthCheckService, HealthStatus},
+    serde_json::json,
+    std::sync::Arc,
 };
-use clawmaster_health_check::{HealthCheckService, HealthStatus};
-use serde_json::json;
-use std::sync::Arc;
 
 /// Health check state
 #[derive(Clone)]
@@ -94,11 +96,12 @@ async fn ready_handler(State(state): State<HealthState>) -> Response {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use axum::body::Body;
-    use axum::http::Request;
-    use clawmaster_health_check::MemoryHealthCheck;
-    use tower::ServiceExt;
+    use {
+        super::*,
+        axum::{body::Body, http::Request},
+        clawmaster_health_check::MemoryHealthCheck,
+        tower::ServiceExt,
+    };
 
     #[tokio::test]
     async fn test_health_endpoint() {
@@ -108,7 +111,12 @@ mod tests {
         let app = health_routes(Arc::new(service));
 
         let response = app
-            .oneshot(Request::builder().uri("/health").body(Body::empty()).unwrap())
+            .oneshot(
+                Request::builder()
+                    .uri("/health")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
             .await
             .unwrap();
 
@@ -123,7 +131,12 @@ mod tests {
         let app = health_routes(Arc::new(service));
 
         let response = app
-            .oneshot(Request::builder().uri("/ready").body(Body::empty()).unwrap())
+            .oneshot(
+                Request::builder()
+                    .uri("/ready")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
             .await
             .unwrap();
 

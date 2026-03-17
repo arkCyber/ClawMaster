@@ -173,7 +173,8 @@ pub mod plugins {
     /// Plugin installation attempts
     pub const INSTALLATION_ATTEMPTS_TOTAL: &str = "clawmaster_plugin_installation_attempts_total";
     /// Plugin installation duration in seconds
-    pub const INSTALLATION_DURATION_SECONDS: &str = "clawmaster_plugin_installation_duration_seconds";
+    pub const INSTALLATION_DURATION_SECONDS: &str =
+        "clawmaster_plugin_installation_duration_seconds";
     /// Plugin installation errors
     pub const INSTALLATION_ERRORS_TOTAL: &str = "clawmaster_plugin_installation_errors_total";
     /// Hook executions by type
@@ -243,13 +244,15 @@ pub mod auto_reply {
     /// Total messages received for processing
     pub const MESSAGES_RECEIVED_TOTAL: &str = "clawmaster_auto_reply_messages_received_total";
     /// Message processing duration in seconds
-    pub const PROCESSING_DURATION_SECONDS: &str = "clawmaster_auto_reply_processing_duration_seconds";
+    pub const PROCESSING_DURATION_SECONDS: &str =
+        "clawmaster_auto_reply_processing_duration_seconds";
     /// Queue size by mode (per_message, batch, debounce)
     pub const QUEUE_SIZE: &str = "clawmaster_auto_reply_queue_size";
     /// Messages dropped due to policy
     pub const MESSAGES_DROPPED_TOTAL: &str = "clawmaster_auto_reply_messages_dropped_total";
     /// Directive parse errors
-    pub const DIRECTIVE_PARSE_ERRORS_TOTAL: &str = "clawmaster_auto_reply_directive_parse_errors_total";
+    pub const DIRECTIVE_PARSE_ERRORS_TOTAL: &str =
+        "clawmaster_auto_reply_directive_parse_errors_total";
     /// Response chunk operations
     pub const CHUNK_OPERATIONS_TOTAL: &str = "clawmaster_auto_reply_chunk_operations_total";
     /// Delivery failures by channel type
@@ -309,11 +312,13 @@ pub mod media {
     /// Image resize operations by format
     pub const IMAGE_RESIZES_TOTAL: &str = "clawmaster_media_image_resizes_total";
     /// Image resize duration in seconds
-    pub const IMAGE_RESIZE_DURATION_SECONDS: &str = "clawmaster_media_image_resize_duration_seconds";
+    pub const IMAGE_RESIZE_DURATION_SECONDS: &str =
+        "clawmaster_media_image_resize_duration_seconds";
     /// Audio transcription operations
     pub const TRANSCRIPTIONS_TOTAL: &str = "clawmaster_media_transcriptions_total";
     /// Transcription duration in seconds
-    pub const TRANSCRIPTION_DURATION_SECONDS: &str = "clawmaster_media_transcription_duration_seconds";
+    pub const TRANSCRIPTION_DURATION_SECONDS: &str =
+        "clawmaster_media_transcription_duration_seconds";
     /// TTL cleanup operations
     pub const CLEANUP_OPERATIONS_TOTAL: &str = "clawmaster_media_cleanup_operations_total";
     /// Files expired and removed
@@ -371,7 +376,8 @@ pub mod projects {
     /// Projects auto-detected
     pub const DETECTED_TOTAL: &str = "clawmaster_projects_detected_total";
     /// Context load duration (CLAUDE.md/AGENTS.md)
-    pub const CONTEXT_LOAD_DURATION_SECONDS: &str = "clawmaster_projects_context_load_duration_seconds";
+    pub const CONTEXT_LOAD_DURATION_SECONDS: &str =
+        "clawmaster_projects_context_load_duration_seconds";
     /// Context load errors by file type
     pub const CONTEXT_LOAD_ERRORS_TOTAL: &str = "clawmaster_projects_context_load_errors_total";
     /// Worktree creation operations
@@ -388,13 +394,15 @@ pub mod projects {
 /// Protocol metrics
 pub mod protocol {
     /// Frame validation errors by frame type
-    pub const FRAME_VALIDATION_ERRORS_TOTAL: &str = "clawmaster_protocol_frame_validation_errors_total";
+    pub const FRAME_VALIDATION_ERRORS_TOTAL: &str =
+        "clawmaster_protocol_frame_validation_errors_total";
     /// Handshake duration in seconds
     pub const HANDSHAKE_DURATION_SECONDS: &str = "clawmaster_protocol_handshake_duration_seconds";
     /// Handshake timeouts
     pub const HANDSHAKE_TIMEOUTS_TOTAL: &str = "clawmaster_protocol_handshake_timeouts_total";
     /// Payload size violations by limit type
-    pub const PAYLOAD_SIZE_VIOLATIONS_TOTAL: &str = "clawmaster_protocol_payload_size_violations_total";
+    pub const PAYLOAD_SIZE_VIOLATIONS_TOTAL: &str =
+        "clawmaster_protocol_payload_size_violations_total";
     /// Deduplication operations
     pub const DEDUPE_OPERATIONS_TOTAL: &str = "clawmaster_protocol_dedupe_operations_total";
     /// Frame rate exceeded events
@@ -412,7 +420,8 @@ pub mod routing {
     /// Fallback to default agent
     pub const FALLBACK_TO_DEFAULT_TOTAL: &str = "clawmaster_routing_fallback_to_default_total";
     /// Session key generations
-    pub const SESSION_KEY_GENERATIONS_TOTAL: &str = "clawmaster_routing_session_key_generations_total";
+    pub const SESSION_KEY_GENERATIONS_TOTAL: &str =
+        "clawmaster_routing_session_key_generations_total";
 }
 
 /// Skills metrics
@@ -430,7 +439,8 @@ pub mod skills {
     /// Installation attempts
     pub const INSTALLATION_ATTEMPTS_TOTAL: &str = "clawmaster_skills_installation_attempts_total";
     /// Installation duration in seconds
-    pub const INSTALLATION_DURATION_SECONDS: &str = "clawmaster_skills_installation_duration_seconds";
+    pub const INSTALLATION_DURATION_SECONDS: &str =
+        "clawmaster_skills_installation_duration_seconds";
     /// Installation errors
     pub const INSTALLATION_ERRORS_TOTAL: &str = "clawmaster_skills_installation_errors_total";
     /// Prompt generation operations
@@ -447,7 +457,8 @@ pub mod telegram {
     /// Messages sent to Telegram
     pub const MESSAGES_SENT_TOTAL: &str = "clawmaster_telegram_messages_sent_total";
     /// Message send duration in seconds
-    pub const MESSAGE_SEND_DURATION_SECONDS: &str = "clawmaster_telegram_message_send_duration_seconds";
+    pub const MESSAGE_SEND_DURATION_SECONDS: &str =
+        "clawmaster_telegram_message_send_duration_seconds";
     /// Message send errors by type
     pub const MESSAGE_SEND_ERRORS_TOTAL: &str = "clawmaster_telegram_message_send_errors_total";
     /// Streaming edit operations
@@ -460,7 +471,8 @@ pub mod telegram {
     /// Active Telegram accounts/bots
     pub const ACTIVE_ACCOUNTS: &str = "clawmaster_telegram_active_accounts";
     /// Access control denials
-    pub const ACCESS_CONTROL_DENIALS_TOTAL: &str = "clawmaster_telegram_access_control_denials_total";
+    pub const ACCESS_CONTROL_DENIALS_TOTAL: &str =
+        "clawmaster_telegram_access_control_denials_total";
     /// Update polling duration
     pub const POLLING_DURATION_SECONDS: &str = "clawmaster_telegram_polling_duration_seconds";
     /// OTP challenges issued to non-allowlisted users

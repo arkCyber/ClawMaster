@@ -5,16 +5,11 @@
 //! - System metrics
 //! - Fault recovery status
 
-use axum::{
-    Extension,
-    Json,
-    Router,
-    http::StatusCode,
-    response::IntoResponse,
-    routing::get,
+use {
+    axum::{Extension, Json, Router, http::StatusCode, response::IntoResponse, routing::get},
+    serde::Serialize,
+    std::sync::Arc,
 };
-use serde::Serialize;
-use std::sync::Arc;
 
 use crate::p0_integration::P0Features;
 
@@ -70,27 +65,31 @@ async fn get_health(
     Extension(p0): Extension<Arc<P0Features>>,
 ) -> Result<Json<HealthResponse>, StatusCode> {
     let health = p0.get_health_status().await;
-    
-    let checks = health.checks.iter().map(|check| {
-        let (status_str, message) = match &check.status {
-            clawmaster_health_check::HealthStatus::Healthy => ("healthy".to_string(), None),
-            clawmaster_health_check::HealthStatus::Degraded { reason } => {
-                ("degraded".to_string(), Some(reason.clone()))
+
+    let checks = health
+        .checks
+        .iter()
+        .map(|check| {
+            let (status_str, message) = match &check.status {
+                clawmaster_health_check::HealthStatus::Healthy => ("healthy".to_string(), None),
+                clawmaster_health_check::HealthStatus::Degraded { reason } => {
+                    ("degraded".to_string(), Some(reason.clone()))
+                },
+                clawmaster_health_check::HealthStatus::Unhealthy { reason } => {
+                    ("unhealthy".to_string(), Some(reason.clone()))
+                },
+            };
+
+            ComponentHealth {
+                name: check.name.clone(),
+                status: status_str,
+                criticality: format!("{:?}", check.criticality),
+                duration_ms: check.duration_ms,
+                message,
             }
-            clawmaster_health_check::HealthStatus::Unhealthy { reason } => {
-                ("unhealthy".to_string(), Some(reason.clone()))
-            }
-        };
-        
-        ComponentHealth {
-            name: check.name.clone(),
-            status: status_str,
-            criticality: format!("{:?}", check.criticality),
-            duration_ms: check.duration_ms,
-            message,
-        }
-    }).collect();
-    
+        })
+        .collect();
+
     let status_str = if health.status.is_healthy() {
         "healthy"
     } else if health.status.is_degraded() {
@@ -98,7 +97,7 @@ async fn get_health(
     } else {
         "unhealthy"
     };
-    
+
     Ok(Json(HealthResponse {
         status: status_str.to_string(),
         timestamp: health.timestamp.to_string(),
@@ -112,16 +111,12 @@ async fn get_metrics(
     Extension(p0): Extension<Arc<P0Features>>,
 ) -> Result<Json<MetricsResponse>, StatusCode> {
     // Get fault isolation metrics
-    let isolated_services = vec![
-        "database",
-        "llm_provider",
-        "channel_service",
-    ]
-    .into_iter()
-    .filter(|s| p0.is_service_isolated(s))
-    .map(|s| s.to_string())
-    .collect();
-    
+    let isolated_services = vec!["database", "llm_provider", "channel_service"]
+        .into_iter()
+        .filter(|s| p0.is_service_isolated(s))
+        .map(|s| s.to_string())
+        .collect();
+
     Ok(Json(MetricsResponse {
         circuit_breaker: CircuitBreakerMetrics {
             state: "active".to_string(),
@@ -142,11 +137,9 @@ async fn get_metrics(
 }
 
 /// GET /api/p0/ready - Readiness probe
-async fn get_ready(
-    Extension(p0): Extension<Arc<P0Features>>,
-) -> impl IntoResponse {
+async fn get_ready(Extension(p0): Extension<Arc<P0Features>>) -> impl IntoResponse {
     let health = p0.get_health_status().await;
-    
+
     if health.is_ready() {
         (StatusCode::OK, "ready")
     } else {
@@ -170,19 +163,20 @@ pub fn p0_router() -> Router {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use axum::body::Body;
-    use axum::http::Request;
-    use tower::ServiceExt;
-    use tempfile::TempDir;
+    use {
+        super::*,
+        axum::{body::Body, http::Request},
+        tempfile::TempDir,
+        tower::ServiceExt,
+    };
 
     #[tokio::test]
     async fn test_health_endpoint() {
         let temp_dir = TempDir::new().unwrap();
         let p0 = Arc::new(P0Features::new(temp_dir.path()).await.unwrap());
-        
+
         let app = p0_router().layer(Extension(p0));
-        
+
         let response = app
             .oneshot(
                 Request::builder()
@@ -192,7 +186,7 @@ mod tests {
             )
             .await
             .unwrap();
-        
+
         assert_eq!(response.status(), StatusCode::OK);
     }
 
@@ -200,9 +194,9 @@ mod tests {
     async fn test_ready_endpoint() {
         let temp_dir = TempDir::new().unwrap();
         let p0 = Arc::new(P0Features::new(temp_dir.path()).await.unwrap());
-        
+
         let app = p0_router().layer(Extension(p0));
-        
+
         let response = app
             .oneshot(
                 Request::builder()
@@ -212,24 +206,19 @@ mod tests {
             )
             .await
             .unwrap();
-        
+
         assert_eq!(response.status(), StatusCode::OK);
     }
 
     #[tokio::test]
     async fn test_live_endpoint() {
         let app = p0_router();
-        
+
         let response = app
-            .oneshot(
-                Request::builder()
-                    .uri("/live")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
+            .oneshot(Request::builder().uri("/live").body(Body::empty()).unwrap())
             .await
             .unwrap();
-        
+
         assert_eq!(response.status(), StatusCode::OK);
     }
 }

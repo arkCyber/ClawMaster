@@ -327,7 +327,8 @@ impl OnboardingService for GatewayOnboardingService {
             .ok_or_else(|| "could not determine config directory".to_string())?;
         let data_dir = clawmaster_config::data_dir();
 
-        let report = clawmaster_openclaw_import::import(&detection, &selection, &config_dir, &data_dir);
+        let report =
+            clawmaster_openclaw_import::import(&detection, &selection, &config_dir, &data_dir);
 
         // Create imported agent personas (non-default agents)
         if let Some(ref agents) = report.imported_agents
@@ -458,7 +459,9 @@ mod tests {
         .unwrap();
 
         let service = GatewayOnboardingService::new(
-            clawmaster_onboarding::service::LiveOnboardingService::new(dir.path().join("clawmaster.toml")),
+            clawmaster_onboarding::service::LiveOnboardingService::new(
+                dir.path().join("clawmaster.toml"),
+            ),
             Arc::new(clawmaster_sessions::metadata::SqliteSessionMetadata::new(
                 pool.clone(),
             )),

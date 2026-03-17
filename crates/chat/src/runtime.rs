@@ -113,10 +113,12 @@ pub trait ChatRuntime: Send + Sync {
     fn channel_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelOutbound>>;
 
     /// Channel stream outbound for edit-in-place streaming.
-    fn channel_stream_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>>;
+    fn channel_stream_outbound(
+        &self,
+    ) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>>;
 
-    /// TTS service for voice synthesis.
-    fn tts_service(&self) -> &dyn clawmaster_service_traits::TtsService;
+    /// Retrieve the TTS service.
+    fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService>;
 
     /// Project service for loading project context.
     fn project_service(&self) -> &dyn clawmaster_service_traits::ProjectService;

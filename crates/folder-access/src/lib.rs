@@ -17,14 +17,18 @@
 //! - Symbolic link resolution
 
 pub mod models;
+pub mod rpc;
 pub mod service;
 pub mod validation;
-pub mod rpc;
 
-pub use models::{FolderPermission, AccessLog, ValidationRule, PermissionFlags, AccessOperation, RuleType};
-pub use service::FolderAccessService;
-pub use validation::{PathValidator, ValidationResult};
-pub use rpc::FolderAccessRpc;
+pub use {
+    models::{
+        AccessLog, AccessOperation, FolderPermission, PermissionFlags, RuleType, ValidationRule,
+    },
+    rpc::FolderAccessRpc,
+    service::FolderAccessService,
+    validation::{PathValidator, ValidationResult},
+};
 
 use anyhow::Result;
 
@@ -37,7 +41,7 @@ pub async fn run_migrations(pool: &sqlx::SqlitePool) -> Result<()> {
         .run(pool)
         .await
         .map_err(|e| anyhow::anyhow!("Failed to run folder access migrations: {}", e))?;
-    
+
     tracing::info!("Folder access control migrations completed");
     Ok(())
 }

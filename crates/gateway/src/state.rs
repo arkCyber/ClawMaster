@@ -15,7 +15,9 @@ use clawmaster_metrics::MetricsHandle;
 
 // Re-export for use by other modules
 #[cfg(feature = "metrics")]
-pub use clawmaster_metrics::{MetricsHistoryPoint, MetricsStore, ProviderTokens, SqliteMetricsStore};
+pub use clawmaster_metrics::{
+    MetricsHistoryPoint, MetricsStore, ProviderTokens, SqliteMetricsStore,
+};
 
 use tokio::sync::{RwLock, mpsc, oneshot};
 
@@ -79,7 +81,9 @@ use clawmaster_protocol::{ConnectParams, EventFrame};
 
 use clawmaster_tools::sandbox::SandboxRouter;
 
-use {clawmaster_channels::ChannelReplyTarget, clawmaster_sessions::session_events::SessionEventBus};
+use {
+    clawmaster_channels::ChannelReplyTarget, clawmaster_sessions::session_events::SessionEventBus,
+};
 
 use crate::{
     auth::{CredentialStore, ResolvedAuth},
@@ -553,6 +557,10 @@ impl GatewayState {
         Arc::clone(&self.services.chat)
     }
 
+    fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+        Arc::clone(&self.services.tts)
+    }
+
     pub fn next_seq(&self) -> u64 {
         self.seq.fetch_add(1, Ordering::Relaxed) + 1
     }
@@ -582,7 +590,8 @@ impl GatewayState {
         #[cfg(feature = "metrics")]
         {
             let _ = count;
-            clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS).set(count as f64);
+            clawmaster_metrics::gauge!(clawmaster_metrics::system::CONNECTED_CLIENTS)
+                .set(count as f64);
         }
         #[cfg(not(feature = "metrics"))]
         let _ = count;
@@ -763,7 +772,10 @@ impl GatewayState {
             channel: None,
         };
         let json = serde_json::to_string(&req_frame).map_err(|e| {
-            clawmaster_protocol::ErrorShape::new(clawmaster_protocol::error_codes::INTERNAL, e.to_string())
+            clawmaster_protocol::ErrorShape::new(
+                clawmaster_protocol::error_codes::INTERNAL,
+                e.to_string(),
+            )
         })?;
 
         let (tx, rx) = oneshot::channel();

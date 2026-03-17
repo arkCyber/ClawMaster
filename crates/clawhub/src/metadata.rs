@@ -20,19 +20,19 @@ pub fn validate_tool_name(name: &str) -> Result<()> {
             "Tool name must be 3-64 characters".to_string(),
         ));
     }
-    
+
     if !name.chars().next().unwrap().is_ascii_lowercase() {
         return Err(Error::InvalidMetadata(
             "Tool name must start with a lowercase letter".to_string(),
         ));
     }
-    
+
     if name.ends_with('-') {
         return Err(Error::InvalidMetadata(
             "Tool name cannot end with a hyphen".to_string(),
         ));
     }
-    
+
     for ch in name.chars() {
         if !ch.is_ascii_lowercase() && !ch.is_ascii_digit() && ch != '-' {
             return Err(Error::InvalidMetadata(
@@ -40,7 +40,7 @@ pub fn validate_tool_name(name: &str) -> Result<()> {
             ));
         }
     }
-    
+
     Ok(())
 }
 
@@ -58,13 +58,13 @@ pub fn validate_tool_name(name: &str) -> Result<()> {
 /// ```
 pub fn validate_version(version: &str) -> Result<()> {
     let parts: Vec<&str> = version.split('.').collect();
-    
+
     if parts.len() != 3 {
         return Err(Error::InvalidVersion(
             "Version must be in format MAJOR.MINOR.PATCH".to_string(),
         ));
     }
-    
+
     for part in parts {
         if part.parse::<u32>().is_err() {
             return Err(Error::InvalidVersion(
@@ -72,7 +72,7 @@ pub fn validate_version(version: &str) -> Result<()> {
             ));
         }
     }
-    
+
     Ok(())
 }
 
@@ -86,7 +86,7 @@ mod tests {
         assert!(validate_tool_name("calc").is_ok());
         assert!(validate_tool_name("web-fetch").is_ok());
         assert!(validate_tool_name("tool123").is_ok());
-        
+
         // Invalid names
         assert!(validate_tool_name("ab").is_err()); // Too short
         assert!(validate_tool_name("Tool").is_err()); // Uppercase
@@ -100,7 +100,7 @@ mod tests {
         assert!(validate_version("1.0.0").is_ok());
         assert!(validate_version("0.1.2").is_ok());
         assert!(validate_version("10.20.30").is_ok());
-        
+
         // Invalid versions
         assert!(validate_version("1.0").is_err());
         assert!(validate_version("1.0.0.0").is_err());

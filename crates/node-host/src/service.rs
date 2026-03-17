@@ -405,7 +405,11 @@ fn systemd_unit_path() -> anyhow::Result<PathBuf> {
 }
 
 /// Generate a systemd user unit file.
-pub fn generate_systemd_unit(clawmaster_bin: &Path, config: &ServiceConfig, log_path: &Path) -> String {
+pub fn generate_systemd_unit(
+    clawmaster_bin: &Path,
+    config: &ServiceConfig,
+    log_path: &Path,
+) -> String {
     let bin = clawmaster_bin.display();
     let log = log_path.display();
 

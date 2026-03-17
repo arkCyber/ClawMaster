@@ -49,7 +49,11 @@ use {
 };
 
 #[derive(Parser)]
-#[command(name = "clawmaster", about = "ClawMaster — personal AI gateway", version)]
+#[command(
+    name = "clawmaster",
+    about = "ClawMaster — personal AI gateway",
+    version
+)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -372,8 +376,8 @@ async fn main() -> anyhow::Result<()> {
 
     // Ensure config/data directories exist for every command path. This is a
     // hard requirement for startup; fail fast if directory initialization fails.
-    let config_dir =
-        clawmaster_config::config_dir().ok_or_else(|| anyhow!("unable to resolve config directory"))?;
+    let config_dir = clawmaster_config::config_dir()
+        .ok_or_else(|| anyhow!("unable to resolve config directory"))?;
     std::fs::create_dir_all(&config_dir).unwrap_or_else(|e| {
         panic!(
             "failed to create config directory {}: {e}",
@@ -405,12 +409,12 @@ async fn main() -> anyhow::Result<()> {
             let no_tls = false;
 
             #[cfg(feature = "tailscale")]
-            let tailscale_opts = cli
-                .tailscale
-                .map(|mode| clawmaster_gateway::server::TailscaleOpts {
-                    mode,
-                    reset_on_exit: cli.tailscale_reset_on_exit,
-                });
+            let tailscale_opts =
+                cli.tailscale
+                    .map(|mode| clawmaster_gateway::server::TailscaleOpts {
+                        mode,
+                        reset_on_exit: cli.tailscale_reset_on_exit,
+                    });
             #[cfg(not(feature = "tailscale"))]
             let tailscale_opts: Option<()> = None;
             let _ = &tailscale_opts; // suppress unused warning when feature disabled

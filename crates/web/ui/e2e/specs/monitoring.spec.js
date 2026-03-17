@@ -23,6 +23,12 @@ test.describe("Monitoring dashboard", () => {
 		await expect(page.getByText("Process Memory", { exact: true })).toBeVisible();
 	});
 
+	test("monitoring page keeps sessions sidebar visible", async ({ page }) => {
+		await navigateAndWait(page, "/monitoring");
+		await expect(page.locator("#sessionsPanel")).toBeVisible();
+		await expect(page.getByPlaceholder("Search sessions...")).toBeVisible();
+	});
+
 	test("page has no JS errors", async ({ page }) => {
 		const pageErrors = watchPageErrors(page);
 		await navigateAndWait(page, "/monitoring");

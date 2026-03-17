@@ -2,22 +2,26 @@
 //!
 //! This module provides REST API endpoints for the ClawHub registry.
 
-use crate::error::{Error, Result};
-use crate::registry::Registry;
-use crate::skills::SkillsRegistry;
-use crate::types::{
-    PublishRequest, PublishResponse, PublishSkillRequest, PublishSkillResponse, SearchQuery,
-    SkillMetadata, SkillSearchQuery, ToolMetadata,
+use {
+    crate::{
+        error::{Error, Result},
+        registry::Registry,
+        skills::SkillsRegistry,
+        types::{
+            PublishRequest, PublishResponse, PublishSkillRequest, PublishSkillResponse,
+            SearchQuery, SkillMetadata, SkillSearchQuery, ToolMetadata,
+        },
+    },
+    axum::{
+        Json, Router,
+        extract::{Path, Query, State},
+        http::StatusCode,
+        response::IntoResponse,
+        routing::{get, post},
+    },
+    std::sync::Arc,
+    tracing::{debug, info},
 };
-use axum::{
-    extract::{Path, Query, State},
-    http::StatusCode,
-    response::IntoResponse,
-    routing::{get, post},
-    Json, Router,
-};
-use std::sync::Arc;
-use tracing::{debug, info};
 
 /// API state shared across handlers.
 #[derive(Clone)]
@@ -72,9 +76,9 @@ async fn list_tools(
     Query(query): Query<SearchQuery>,
 ) -> Result<Json<Vec<ToolMetadata>>> {
     debug!("Listing tools: {:?}", query);
-    
+
     let (tools, _total) = state.registry.search(query).await?;
-    
+
     Ok(Json(tools))
 }
 
@@ -86,9 +90,9 @@ async fn search_tools(
     Query(query): Query<SearchQuery>,
 ) -> Result<Json<Vec<ToolMetadata>>> {
     debug!("Searching tools: {:?}", query);
-    
+
     let (tools, _total) = state.registry.search(query).await?;
-    
+
     Ok(Json(tools))
 }
 
@@ -100,7 +104,7 @@ async fn get_tool_latest(
     Path(name): Path<String>,
 ) -> Result<Json<ToolMetadata>> {
     debug!("Getting latest version of tool: {}", name);
-    
+
     // TODO: Implement get_latest_version in registry
     // For now, return error
     Err(Error::ToolNotFound {
@@ -117,9 +121,9 @@ async fn get_tool_version(
     Path((name, version)): Path<(String, String)>,
 ) -> Result<Json<ToolMetadata>> {
     debug!("Getting tool: {}@{}", name, version);
-    
+
     let tool = state.registry.get_tool(&name, &version).await?;
-    
+
     Ok(Json(tool))
 }
 
@@ -131,10 +135,10 @@ async fn download_tool(
     Path((name, version)): Path<(String, String)>,
 ) -> Result<impl IntoResponse> {
     info!("Downloading tool: {}@{}", name, version);
-    
+
     // Increment download count
     state.registry.increment_downloads(&name, &version).await?;
-    
+
     // TODO: Implement actual file download
     // For now, return placeholder
     Ok((
@@ -151,22 +155,24 @@ async fn publish_tool(
     State(state): State<ApiState>,
     Json(request): Json<PublishRequest>,
 ) -> Result<Json<PublishResponse>> {
-    info!("Publishing tool: {}@{}", request.metadata.name, request.metadata.version);
-    
+    info!(
+        "Publishing tool: {}@{}",
+        request.metadata.name, request.metadata.version
+    );
+
     // Publish to registry
     state.registry.publish(request.metadata.clone()).await?;
-    
+
     let response = PublishResponse {
         name: request.metadata.name.clone(),
         version: request.metadata.version.clone(),
         download_url: format!(
             "/tools/{}/{}/download",
-            request.metadata.name,
-            request.metadata.version
+            request.metadata.name, request.metadata.version
         ),
         message: "Tool published successfully".to_string(),
     };
-    
+
     Ok(Json(response))
 }
 
@@ -307,13 +313,17 @@ impl IntoResponse for Error {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::types::{SecurityStatus, ToolType};
-    use axum::body::Body;
-    use axum::http::{Request, StatusCode};
-    use tempfile::tempdir;
-    use time::OffsetDateTime;
-    use tower::ServiceExt;
+    use {
+        super::*,
+        crate::types::{SecurityStatus, ToolType},
+        axum::{
+            body::Body,
+            http::{Request, StatusCode},
+        },
+        tempfile::tempdir,
+        time::OffsetDateTime,
+        tower::ServiceExt,
+    };
 
     #[tokio::test]
     async fn test_list_tools() {
@@ -341,7 +351,7 @@ mod tests {
         let dir = tempdir().unwrap();
         let db_path = dir.path().join("test.db");
         let registry = Registry::new(&db_path).await.unwrap();
-        
+
         // Publish a test tool
         let metadata = ToolMetadata {
             name: "test-tool".to_string(),
@@ -366,7 +376,7 @@ mod tests {
             updated_at: OffsetDateTime::now_utc(),
         };
         registry.publish(metadata).await.unwrap();
-        
+
         let state = ApiState::new(registry);
         let app = routes(state);
 

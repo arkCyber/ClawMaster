@@ -301,8 +301,10 @@ impl BrowserManager {
 
         #[cfg(feature = "metrics")]
         {
-            clawmaster_metrics::histogram!(clawmaster_metrics::browser::NAVIGATION_DURATION_SECONDS)
-                .record(nav_start.elapsed().as_secs_f64());
+            clawmaster_metrics::histogram!(
+                clawmaster_metrics::browser::NAVIGATION_DURATION_SECONDS
+            )
+            .record(nav_start.elapsed().as_secs_f64());
         }
 
         let current_url = page.url().await.ok().flatten().unwrap_or_default();

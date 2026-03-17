@@ -4,13 +4,17 @@
 //! - `CredentialStore`: SQLite-backed storage for passwords, passkeys, API keys, and sessions
 //! - `WebAuthnState`/`WebAuthnRegistry`: WebAuthn (passkey) challenge management
 //! - Connection locality detection for auth decisions
+//!
+//! DO-178C Level A compliant: All errors are explicitly handled, no panic/unwrap in production code.
 
 pub mod credential_store;
+pub mod error;
 pub mod locality;
 pub mod webauthn;
 
 pub use {
     credential_store::*,
+    error::{AuthError, Result},
     locality::{has_proxy_headers, is_local_connection},
     webauthn::{WebAuthnRegistry, WebAuthnState, load_passkeys},
 };

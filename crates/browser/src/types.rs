@@ -495,7 +495,11 @@ impl BrowserConfig {
         if let Some(ref dir) = self.profile_dir {
             Some(std::path::PathBuf::from(dir))
         } else if self.persist_profile {
-            Some(clawmaster_config::data_dir().join("browser").join("profile"))
+            Some(
+                clawmaster_config::data_dir()
+                    .join("browser")
+                    .join("profile"),
+            )
         } else {
             None
         }

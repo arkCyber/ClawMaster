@@ -400,7 +400,8 @@ pub async fn handle_connection(
     #[cfg(feature = "metrics")]
     {
         clawmaster_metrics::counter!(clawmaster_metrics::websocket::CONNECTIONS_TOTAL).increment(1);
-        clawmaster_metrics::gauge!(clawmaster_metrics::websocket::CONNECTIONS_ACTIVE).increment(1.0);
+        clawmaster_metrics::gauge!(clawmaster_metrics::websocket::CONNECTIONS_ACTIVE)
+            .increment(1.0);
     }
 
     // If node role, register in node registry.

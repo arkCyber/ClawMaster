@@ -149,7 +149,9 @@ pub async fn handle_webhook(
             .signing_secret
             .as_ref()
             .map(|s| s.expose_secret().clone())
-            .ok_or_else(|| clawmaster_channels::Error::invalid_input("signing_secret not configured"))?
+            .ok_or_else(|| {
+                clawmaster_channels::Error::invalid_input("signing_secret not configured")
+            })?
     };
 
     if !verify_signature(&signing_secret, timestamp, body, signature) {
@@ -381,7 +383,9 @@ pub async fn handle_interaction_webhook(
             .signing_secret
             .as_ref()
             .map(|s| s.expose_secret().clone())
-            .ok_or_else(|| clawmaster_channels::Error::invalid_input("signing_secret not configured"))?
+            .ok_or_else(|| {
+                clawmaster_channels::Error::invalid_input("signing_secret not configured")
+            })?
     };
 
     if !verify_signature(&signing_secret, timestamp, body, signature) {

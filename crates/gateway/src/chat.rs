@@ -146,12 +146,14 @@ impl ChatRuntime for GatewayChatRuntime {
         self.state.services.channel_outbound_arc()
     }
 
-    fn channel_stream_outbound(&self) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>> {
+    fn channel_stream_outbound(
+        &self,
+    ) -> Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>> {
         self.state.services.channel_stream_outbound_arc()
     }
 
-    fn tts_service(&self) -> &dyn clawmaster_service_traits::TtsService {
-        &*self.state.services.tts
+    fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+        Arc::clone(&self.state.services.tts)
     }
 
     fn project_service(&self) -> &dyn clawmaster_service_traits::ProjectService {

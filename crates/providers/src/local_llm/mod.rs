@@ -154,6 +154,10 @@ impl LlmProvider for LocalLlmProvider {
         true
     }
 
+    fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
+        Some(clawmaster_config::ToolMode::Text)
+    }
+
     async fn complete(
         &self,
         messages: &[ChatMessage],
@@ -230,7 +234,7 @@ pub fn log_system_info() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use {super::*, clawmaster_agents::model::LlmProvider};
 
     #[test]
     fn test_default_config() {
@@ -253,5 +257,15 @@ mod tests {
         let backends = backend::available_backends();
         // GGUF should always be available when compiled with local-llm feature
         assert!(backends.contains(&BackendType::Gguf));
+    }
+
+    #[test]
+    fn local_llm_provider_uses_text_tool_mode() {
+        let provider = LocalLlmProvider::new(LocalLlmConfig::default());
+        assert_eq!(
+            provider.tool_mode(),
+            Some(clawmaster_config::ToolMode::Text)
+        );
+        assert!(provider.supports_tools());
     }
 }

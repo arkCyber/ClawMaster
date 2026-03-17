@@ -3,14 +3,16 @@
 //! This module integrates the agentic loop functionality into the agent system,
 //! enabling autonomous multi-step task execution with tool chaining.
 
-use anyhow::Result;
-use async_trait::async_trait;
-use clawmaster_agentic_loop::{
-    AgenticLoop, AgenticLoopConfig, ExecutionContext, ReasoningResult, Tool, ToolCall,
+use {
+    anyhow::Result,
+    async_trait::async_trait,
+    clawmaster_agentic_loop::{
+        AgenticLoop, AgenticLoopConfig, ExecutionContext, ReasoningResult, Tool, ToolCall,
+    },
+    serde_json::Value,
+    std::sync::Arc,
+    tracing::{debug, info},
 };
-use serde_json::Value;
-use std::sync::Arc;
-use tracing::{debug, info};
 
 /// Agent with agentic loop capabilities
 pub struct AgenticAgent {
@@ -92,14 +94,19 @@ impl AgenticAgent {
 
         prompt.push_str("\nWhat should I do next? Respond with:\n");
         prompt.push_str("1. Your thought process\n");
-        prompt.push_str("2. Tool to use (if any) in format: TOOL: tool_name {\"arg\": \"value\"}\n");
+        prompt
+            .push_str("2. Tool to use (if any) in format: TOOL: tool_name {\"arg\": \"value\"}\n");
         prompt.push_str("3. Or COMPLETE: final_answer if task is done\n");
 
         prompt
     }
 
     /// Parse LLM response into reasoning result
-    fn parse_llm_response(&self, response: &str, _ctx: &ExecutionContext) -> Result<ReasoningResult> {
+    fn parse_llm_response(
+        &self,
+        response: &str,
+        _ctx: &ExecutionContext,
+    ) -> Result<ReasoningResult> {
         debug!("Parsing LLM response: {}", response);
 
         // Extract thought
@@ -129,11 +136,7 @@ impl AgenticAgent {
     /// Extract thought from response
     fn extract_thought(&self, response: &str) -> String {
         // Simple extraction - take first line or paragraph
-        response
-            .lines()
-            .next()
-            .unwrap_or("Thinking...")
-            .to_string()
+        response.lines().next().unwrap_or("Thinking...").to_string()
     }
 
     /// Extract completion marker and final answer
@@ -149,15 +152,15 @@ impl AgenticAgent {
     fn extract_tool_call(&self, response: &str) -> Result<Option<ToolCall>> {
         if let Some(idx) = response.find("TOOL:") {
             let tool_line = &response[idx + 5..].trim();
-            
+
             // Find the first space to separate tool name from arguments
             if let Some(space_idx) = tool_line.find(' ') {
                 let tool_name = tool_line[..space_idx].trim().to_string();
                 let args_str = tool_line[space_idx + 1..].trim();
 
                 // Parse JSON arguments
-                let args: Value = serde_json::from_str(args_str)
-                    .unwrap_or_else(|_| serde_json::json!({}));
+                let args: Value =
+                    serde_json::from_str(args_str).unwrap_or_else(|_| serde_json::json!({}));
 
                 return Ok(Some(ToolCall {
                     tool_name,
@@ -179,7 +182,10 @@ mod tests {
     #[async_trait]
     impl LLMClient for MockLLMClient {
         async fn reason(&self, _prompt: &str) -> Result<String> {
-            Ok("I need to search for information.\nTOOL: web_search {\"query\": \"test\"}".to_string())
+            Ok(
+                "I need to search for information.\nTOOL: web_search {\"query\": \"test\"}"
+                    .to_string(),
+            )
         }
     }
 
@@ -192,10 +198,7 @@ mod tests {
 
     #[test]
     fn test_extract_thought() {
-        let agent = AgenticAgent::new(
-            AgenticLoopConfig::default(),
-            Arc::new(MockLLMClient),
-        );
+        let agent = AgenticAgent::new(AgenticLoopConfig::default(), Arc::new(MockLLMClient));
         let response = "I need to search.\nTOOL: search {}";
         let thought = agent.extract_thought(response);
         assert_eq!(thought, "I need to search.");
@@ -203,10 +206,7 @@ mod tests {
 
     #[test]
     fn test_extract_completion() {
-        let agent = AgenticAgent::new(
-            AgenticLoopConfig::default(),
-            Arc::new(MockLLMClient),
-        );
+        let agent = AgenticAgent::new(AgenticLoopConfig::default(), Arc::new(MockLLMClient));
         let response = "Task is done.\nCOMPLETE: The answer is 42";
         let completion = agent.extract_completion(response);
         assert_eq!(completion, Some("The answer is 42".to_string()));
@@ -214,10 +214,7 @@ mod tests {
 
     #[test]
     fn test_extract_tool_call() {
-        let agent = AgenticAgent::new(
-            AgenticLoopConfig::default(),
-            Arc::new(MockLLMClient),
-        );
+        let agent = AgenticAgent::new(AgenticLoopConfig::default(), Arc::new(MockLLMClient));
         let response = "TOOL: web_search {\"query\": \"test\"}";
         let tool_call = agent.extract_tool_call(response).unwrap();
         assert!(tool_call.is_some());

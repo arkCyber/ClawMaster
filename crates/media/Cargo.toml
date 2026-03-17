@@ -4,12 +4,15 @@ name              = "clawmaster-media"
 version.workspace = true
 
 [dependencies]
-image          = { workspace = true }
+axum           = { workspace = true }
 clawmaster-common  = { workspace = true }
 clawmaster-metrics = { optional = true, workspace = true }
+image          = { workspace = true }
 reqwest        = { workspace = true }
 thiserror      = { workspace = true }
 tokio          = { workspace = true }
+tower          = { workspace = true }
+tower-http     = { workspace = true }
 tracing        = { workspace = true }
 uuid           = { workspace = true }
 

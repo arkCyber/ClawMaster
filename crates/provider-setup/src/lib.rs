@@ -2880,7 +2880,8 @@ fn probe_priority_rank(model_id: &str, fast: &[&str], slow: &[&str]) -> u8 {
 #[cfg(test)]
 mod tests {
     use {
-        super::*, clawmaster_config::schema::ProviderEntry, clawmaster_oauth::OAuthTokens, secrecy::Secret,
+        super::*, clawmaster_config::schema::ProviderEntry, clawmaster_oauth::OAuthTokens,
+        secrecy::Secret,
     };
 
     #[test]

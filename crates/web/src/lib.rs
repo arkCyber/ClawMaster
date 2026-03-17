@@ -122,7 +122,8 @@ fn build_api_routes() -> Router<AppState> {
         )
         .route(
             "/api/env",
-            get(clawmaster_gateway::env_routes::env_list).post(clawmaster_gateway::env_routes::env_set),
+            get(clawmaster_gateway::env_routes::env_list)
+                .post(clawmaster_gateway::env_routes::env_set),
         )
         .route(
             "/api/env/{id}",

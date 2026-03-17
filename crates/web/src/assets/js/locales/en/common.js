@@ -4,6 +4,7 @@
 export default {
 	nav: {
 		dashboard: "Dashboard",
+		metrics: "Monitor",
 		settings: "Settings",
 		sessions: "Sessions",
 		cron: "Cron",
@@ -150,5 +151,23 @@ export default {
 		permissionDenied: "Permission denied",
 		unknownError: "An unknown error occurred",
 		noResults: "No results",
+	},
+	tooltips: {
+		home: "ClawMaster - Return to chat home",
+		monitor: "System Monitoring - View metrics, performance, and resource usage",
+		settings: "Settings - Configure providers, channels, security, and system preferences",
+		emergencyStop: "Emergency Stop - Abort all running commands",
+		themeLight: "Light Theme - Switch to light color scheme",
+		themeSystem: "System Theme - Follow system color scheme",
+		themeDark: "Dark Theme - Switch to dark color scheme",
+		signOut: "Sign Out - Log out from your account",
+		newSession: "New Session - Create a new chat session",
+		sessionsTab: "Chat Sessions - View and manage your conversations",
+		cronTab: "Scheduled Tasks - View and manage cron jobs",
+		toggleSessions: "Toggle Sessions Panel - Show or hide chat sessions sidebar",
+		projectFilter: "Filter by Project - Show sessions from a specific project",
+		mobileMenu: "Open menu",
+		mobileSessions: "Sessions - View and manage chat sessions",
+		mobileSettings: "Settings - Configure system preferences",
 	},
 };

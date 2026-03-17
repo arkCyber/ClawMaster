@@ -202,7 +202,11 @@ fn launchd_plist_path() -> Result<PathBuf> {
         .join(format!("{LAUNCHD_LABEL}.plist")))
 }
 
-fn generate_launchd_plist(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
+fn generate_launchd_plist(
+    clawmaster_bin: &Path,
+    opts: &GatewayServiceOpts,
+    log_path: &Path,
+) -> String {
     let bin = clawmaster_bin.display();
     let log = log_path.display();
 
@@ -255,7 +259,11 @@ fn generate_launchd_plist(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_
     )
 }
 
-fn install_launchd(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
+fn install_launchd(
+    clawmaster_bin: &Path,
+    opts: &GatewayServiceOpts,
+    log_path: &Path,
+) -> Result<()> {
     let plist_path = launchd_plist_path()?;
 
     // Unload first if already loaded (ignore errors).
@@ -383,7 +391,11 @@ fn systemd_unit_path() -> Result<PathBuf> {
         .join(SYSTEMD_UNIT))
 }
 
-fn generate_systemd_unit(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> String {
+fn generate_systemd_unit(
+    clawmaster_bin: &Path,
+    opts: &GatewayServiceOpts,
+    log_path: &Path,
+) -> String {
     let bin = clawmaster_bin.display();
     let log = log_path.display();
 
@@ -417,7 +429,11 @@ WantedBy=default.target
     )
 }
 
-fn install_systemd(clawmaster_bin: &Path, opts: &GatewayServiceOpts, log_path: &Path) -> Result<()> {
+fn install_systemd(
+    clawmaster_bin: &Path,
+    opts: &GatewayServiceOpts,
+    log_path: &Path,
+) -> Result<()> {
     let unit_path = systemd_unit_path()?;
 
     let _ = Command::new("systemctl")

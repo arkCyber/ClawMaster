@@ -3,11 +3,15 @@
 //! These tests ensure 100% coverage of all critical execution paths,
 //! including error conditions, boundary cases, and race conditions.
 
-use clawmaster_clawhub::skills::SkillsRegistry;
-use clawmaster_clawhub::registry::Registry;
-use clawmaster_clawhub::types::{SkillMetadata, SkillFormat, SecurityStatus};
-use tempfile::tempdir;
-use time::OffsetDateTime;
+use {
+    clawmaster_clawhub::{
+        registry::Registry,
+        skills::SkillsRegistry,
+        types::{SecurityStatus, SkillFormat, SkillMetadata},
+    },
+    tempfile::tempdir,
+    time::OffsetDateTime,
+};
 
 /// Helper to create test metadata with specific parameters.
 fn create_metadata(name: &str, version: &str, format: SkillFormat) -> SkillMetadata {
@@ -15,7 +19,10 @@ fn create_metadata(name: &str, version: &str, format: SkillFormat) -> SkillMetad
         name: name.to_string(),
         version: version.to_string(),
         description: format!("Critical path test skill {}", name),
-        readme: Some(format!("# {}\n\nTest skill for critical path coverage", name)),
+        readme: Some(format!(
+            "# {}\n\nTest skill for critical path coverage",
+            name
+        )),
         author: "Test Author".to_string(),
         author_email: Some("test@example.com".to_string()),
         license: "MIT".to_string(),
@@ -49,7 +56,7 @@ async fn test_critical_publish_success_path() {
     let skills = SkillsRegistry::new(&registry.pool);
 
     let metadata = create_metadata("critical-skill", "1.0.0", SkillFormat::SkillMd);
-    
+
     // Critical path: successful publish
     let result = skills.publish(metadata.clone()).await;
     assert!(result.is_ok(), "Critical path publish must succeed");
@@ -67,10 +74,10 @@ async fn test_critical_publish_duplicate_rejection() {
     let skills = SkillsRegistry::new(&registry.pool);
 
     let metadata = create_metadata("duplicate", "1.0.0", SkillFormat::SkillMd);
-    
+
     // First publish succeeds
     skills.publish(metadata.clone()).await.unwrap();
-    
+
     // Critical path: duplicate must be rejected
     let result = skills.publish(metadata).await;
     assert!(result.is_err(), "Duplicate publish must be rejected");
@@ -109,7 +116,7 @@ async fn test_critical_get_existing_skill() {
     // Critical path: retrieval must succeed
     let result = skills.get_skill("existing", "1.0.0").await;
     assert!(result.is_ok(), "Retrieval of existing skill must succeed");
-    
+
     let retrieved = result.unwrap();
     assert_eq!(retrieved.name, "existing");
     assert_eq!(retrieved.version, "1.0.0");
@@ -148,7 +155,7 @@ async fn test_critical_search_empty_database() {
     // Critical path: empty search must return empty results
     let query = clawmaster_clawhub::types::SkillSearchQuery::default();
     let (results, total) = skills.search(query).await.unwrap();
-    
+
     assert_eq!(results.len(), 0, "Empty database must return no results");
     assert_eq!(total, 0, "Total count must be zero");
 }
@@ -167,7 +174,7 @@ async fn test_critical_search_with_results() {
     // Critical path: search must return all results
     let query = clawmaster_clawhub::types::SkillSearchQuery::default();
     let (results, total) = skills.search(query).await.unwrap();
-    
+
     assert_eq!(results.len(), 5, "Must return all published skills");
     assert_eq!(total, 5, "Total count must match");
 }
@@ -190,7 +197,7 @@ async fn test_critical_search_pagination_boundary() {
         ..Default::default()
     };
     let (results, total) = skills.search(query).await.unwrap();
-    
+
     assert_eq!(results.len(), 20, "Must return exactly page_size results");
     assert_eq!(total, 20, "Total must be exact");
 }
@@ -213,7 +220,7 @@ async fn test_critical_search_last_page_partial() {
         ..Default::default()
     };
     let (results, total) = skills.search(query).await.unwrap();
-    
+
     assert_eq!(results.len(), 5, "Last page must have remaining items");
     assert_eq!(total, 25, "Total must be correct");
 }
@@ -230,7 +237,10 @@ async fn test_critical_increment_downloads_atomicity() {
 
     // Critical path: atomic increments
     for _ in 0..10 {
-        skills.increment_downloads("popular", "1.0.0").await.unwrap();
+        skills
+            .increment_downloads("popular", "1.0.0")
+            .await
+            .unwrap();
     }
 
     let retrieved = skills.get_skill("popular", "1.0.0").await.unwrap();
@@ -276,7 +286,8 @@ async fn test_critical_concurrent_publishes() {
     for i in 0..10 {
         let skills_clone = SkillsRegistry::new(&registry.pool);
         let handle = tokio::spawn(async move {
-            let metadata = create_metadata(&format!("concurrent-{}", i), "1.0.0", SkillFormat::SkillMd);
+            let metadata =
+                create_metadata(&format!("concurrent-{}", i), "1.0.0", SkillFormat::SkillMd);
             skills_clone.publish(metadata).await
         });
         handles.push(handle);
@@ -291,7 +302,11 @@ async fn test_critical_concurrent_publishes() {
     // Verify all were published
     let query = clawmaster_clawhub::types::SkillSearchQuery::default();
     let (results, _) = skills.search(query).await.unwrap();
-    assert_eq!(results.len(), 10, "All concurrent publishes must be recorded");
+    assert_eq!(
+        results.len(),
+        10,
+        "All concurrent publishes must be recorded"
+    );
 }
 
 #[tokio::test]
@@ -307,7 +322,9 @@ async fn test_critical_concurrent_increments() {
     for _ in 0..100 {
         let skills_clone = SkillsRegistry::new(&registry.pool);
         let handle = tokio::spawn(async move {
-            skills_clone.increment_downloads("concurrent-stats", "1.0.0").await
+            skills_clone
+                .increment_downloads("concurrent-stats", "1.0.0")
+                .await
         });
         handles.push(handle);
     }
@@ -319,7 +336,10 @@ async fn test_critical_concurrent_increments() {
 
     // Verify atomicity
     let retrieved = skills.get_skill("concurrent-stats", "1.0.0").await.unwrap();
-    assert_eq!(retrieved.downloads, 100, "Concurrent increments must be atomic");
+    assert_eq!(
+        retrieved.downloads, 100,
+        "Concurrent increments must be atomic"
+    );
 }
 
 // ── Critical Path: Data Integrity ───────────────────────────────────────────
@@ -332,7 +352,7 @@ async fn test_critical_data_integrity_after_publish() {
     let metadata = create_metadata("integrity-test", "1.0.0", SkillFormat::SkillMd);
     let original_description = metadata.description.clone();
     let original_keywords = metadata.keywords.clone();
-    
+
     skills.publish(metadata).await.unwrap();
 
     // Critical path: data must be exactly as published
@@ -348,8 +368,12 @@ async fn test_critical_unicode_handling() {
 
     let mut metadata = create_metadata("unicode-test", "1.0.0", SkillFormat::SkillMd);
     metadata.description = "测试中文 🚀 Emoji テスト".to_string();
-    metadata.keywords = vec!["中文".to_string(), "日本語".to_string(), "한국어".to_string()];
-    
+    metadata.keywords = vec![
+        "中文".to_string(),
+        "日本語".to_string(),
+        "한국어".to_string(),
+    ];
+
     skills.publish(metadata.clone()).await.unwrap();
 
     // Critical path: Unicode must be preserved
@@ -364,8 +388,12 @@ async fn test_critical_special_characters_in_name() {
     let skills = SkillsRegistry::new(&registry.pool);
 
     // Critical path: names with hyphens and underscores
-    let names = vec!["skill-with-hyphens", "skill_with_underscores", "skill-mixed_chars"];
-    
+    let names = vec![
+        "skill-with-hyphens",
+        "skill_with_underscores",
+        "skill-mixed_chars",
+    ];
+
     for name in &names {
         let metadata = create_metadata(name, "1.0.0", SkillFormat::SkillMd);
         let result = skills.publish(metadata).await;
@@ -387,13 +415,13 @@ async fn test_critical_error_recovery_after_failed_publish() {
     let skills = SkillsRegistry::new(&registry.pool);
 
     let metadata = create_metadata("recovery-test", "1.0.0", SkillFormat::SkillMd);
-    
+
     // First publish succeeds
     skills.publish(metadata.clone()).await.unwrap();
-    
+
     // Second publish fails (duplicate)
     let _ = skills.publish(metadata.clone()).await;
-    
+
     // Critical path: system must recover and allow other operations
     let other_metadata = create_metadata("other-skill", "1.0.0", SkillFormat::SkillMd);
     let result = skills.publish(other_metadata).await;
@@ -408,7 +436,7 @@ async fn test_critical_search_after_errors() {
     // Cause some errors
     let _ = skills.get_skill("nonexistent", "1.0.0").await;
     let _ = skills.increment_downloads("nonexistent", "1.0.0").await;
-    
+
     // Critical path: search must still work after errors
     let query = clawmaster_clawhub::types::SkillSearchQuery::default();
     let result = skills.search(query).await;

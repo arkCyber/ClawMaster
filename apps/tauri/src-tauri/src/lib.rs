@@ -1,6 +1,8 @@
 // ClawMaster Tauri Library
 // This module provides the core functionality for the Tauri desktop application
 
+use tauri::Manager;
+
 const BACKEND_URL: &str = "http://localhost:8080";
 
 /// Initialize the Tauri application

@@ -1593,9 +1593,13 @@ impl SessionService for LiveSessionService {
             // Run teardown command if configured.
             if let Some(ref cmd) = project.teardown_command
                 && wt_dir.exists()
-                && let Err(e) =
-                    clawmaster_projects::WorktreeManager::run_teardown(&wt_dir, cmd, project_dir, key)
-                        .await
+                && let Err(e) = clawmaster_projects::WorktreeManager::run_teardown(
+                    &wt_dir,
+                    cmd,
+                    project_dir,
+                    key,
+                )
+                .await
             {
                 tracing::warn!("worktree teardown failed: {e}");
             }

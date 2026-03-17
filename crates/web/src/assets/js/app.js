@@ -27,18 +27,20 @@ import { projectStore } from "./stores/project-store.js";
 import { sessionStore } from "./stores/session-store.js";
 import { initTheme, injectMarkdownStyles } from "./theme.js";
 import { connect } from "./websocket.js";
+import { initTooltipI18n } from "./tooltip-i18n.js";
 
 // Expose stores on window for E2E test access.
 window.__clawmaster_stores = { sessionStore, modelStore, projectStore };
 
 // Import page modules to register their routes
-import "./page-dashboard.js";
 import "./page-chat.js";
 import "./page-crons.js";
 import "./page-projects.js";
 import "./page-skills.js";
 import "./page-metrics.js";
 import "./page-settings.js"; // also imports channels, providers, mcp, hooks, images, logs
+import "./page-tooltip-test.js"; // tooltip test page
+import "./page-tooltip-simple.js"; // simple tooltip test
 
 // Import side-effect modules
 import "./nav-counts.js";
@@ -195,6 +197,7 @@ onEvent("tick", (payload) => applyMemory(payload.mem));
 
 // Logout button — wire up click handler once.
 var logoutBtn = document.getElementById("logoutBtn");
+var metricsBtn = document.getElementById("metricsBtn");
 var settingsBtn = document.getElementById("settingsBtn");
 var mobileMenuBtn = document.getElementById("mobileMenuBtn");
 var mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
@@ -228,6 +231,13 @@ function performLogout() {
 
 if (logoutBtn) {
 	logoutBtn.addEventListener("click", performLogout);
+}
+if (metricsBtn) {
+	metricsBtn.addEventListener("click", (e) => {
+		e.preventDefault();
+		closeMobileMenu();
+		navigate(routes.monitoring);
+	});
 }
 if (settingsBtn) {
 	settingsBtn.addEventListener("click", () => {
@@ -418,8 +428,10 @@ function showBranchBanner(branch) {
 function applyIdentity(identity) {
 	var emojiEl = document.getElementById("titleEmoji");
 	var nameEl = document.getElementById("titleName");
+	var consoleNameEl = document.getElementById("consoleName");
 	if (emojiEl) emojiEl.textContent = identity?.emoji ? `${identity.emoji} ` : "";
-	if (nameEl) nameEl.textContent = identity?.name || "ClawMaster";
+	if (nameEl) nameEl.textContent = "ClawMaster";
+	if (consoleNameEl) consoleNameEl.textContent = "";
 	applyIdentityFavicon(identity);
 	var branch = gon.get("git_branch");
 
@@ -518,6 +530,9 @@ function startApp() {
 	var sessionListEl = S.$("sessionList");
 	if (sessionListEl) render(html`<${SessionList} />`, sessionListEl);
 	initSessionTabBar();
+	
+	// Initialize tooltip i18n system
+	initTooltipI18n();
 
 	var path = location.pathname;
 	if (path === "/") {

@@ -2,11 +2,15 @@
 //!
 //! Manages skill metadata and provides search/discovery functionality.
 
-use crate::error::{Error, Result};
-use crate::types::{SecurityStatus, SkillFormat, SkillMetadata, SkillSearchQuery, SortOrder};
-use sqlx::SqlitePool;
-use time::OffsetDateTime;
-use tracing::{debug, info};
+use {
+    crate::{
+        error::{Error, Result},
+        types::{SecurityStatus, SkillFormat, SkillMetadata, SkillSearchQuery, SortOrder},
+    },
+    sqlx::SqlitePool,
+    time::OffsetDateTime,
+    tracing::{debug, info},
+};
 
 #[derive(sqlx::FromRow)]
 struct SkillRow {
@@ -283,7 +287,7 @@ impl<'a> SkillsRegistry<'a> {
             name: String,
             version: String,
         }
-        
+
         let rows: Vec<SkillRow> = sqlx::query_as(&sql).fetch_all(self.pool).await?;
 
         let mut skills = Vec::new();
@@ -328,9 +332,7 @@ impl<'a> SkillsRegistry<'a> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::registry::Registry;
-    use tempfile::tempdir;
+    use {super::*, crate::registry::Registry, tempfile::tempdir};
 
     fn create_test_metadata(name: &str, version: &str) -> SkillMetadata {
         SkillMetadata {
@@ -390,7 +392,10 @@ mod tests {
         // Second publish should fail
         let result = skills.publish(metadata).await;
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), Error::ToolAlreadyExists { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            Error::ToolAlreadyExists { .. }
+        ));
     }
 
     #[tokio::test]
@@ -547,8 +552,14 @@ mod tests {
         skills.publish(metadata).await.unwrap();
 
         // Increment downloads
-        skills.increment_downloads("popular", "1.0.0").await.unwrap();
-        skills.increment_downloads("popular", "1.0.0").await.unwrap();
+        skills
+            .increment_downloads("popular", "1.0.0")
+            .await
+            .unwrap();
+        skills
+            .increment_downloads("popular", "1.0.0")
+            .await
+            .unwrap();
 
         let retrieved = skills.get_skill("popular", "1.0.0").await.unwrap();
         assert_eq!(retrieved.downloads, 2);

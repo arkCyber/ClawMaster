@@ -6920,7 +6920,10 @@ mod tests {
 
         assert!(prefix.contains("export HTTP_PROXY="));
         assert!(prefix.contains("export https_proxy="));
-        assert!(prefix.contains(&format!(":{}", clawmaster_network_filter::DEFAULT_PROXY_PORT)));
+        assert!(prefix.contains(&format!(
+            ":{}",
+            clawmaster_network_filter::DEFAULT_PROXY_PORT
+        )));
         assert!(prefix.contains("export NO_PROXY='localhost,127.0.0.1,::1'"));
     }
 

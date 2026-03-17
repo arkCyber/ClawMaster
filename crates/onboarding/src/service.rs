@@ -187,13 +187,19 @@ impl LiveOnboardingService {
         /// - empty string => Some(None) (clear timezone)
         /// - valid IANA timezone => Some(Some(Timezone))
         /// - invalid timezone => None (ignore)
-        fn timezone_field(params: &Value, key: &str) -> Option<Option<clawmaster_config::Timezone>> {
+        fn timezone_field(
+            params: &Value,
+            key: &str,
+        ) -> Option<Option<clawmaster_config::Timezone>> {
             let raw = params.get(key).and_then(|v| v.as_str())?;
             let trimmed = raw.trim();
             if trimmed.is_empty() {
                 return Some(None);
             }
-            trimmed.parse::<clawmaster_config::Timezone>().ok().map(Some)
+            trimmed
+                .parse::<clawmaster_config::Timezone>()
+                .ok()
+                .map(Some)
         }
 
         /// Extract optional location field from either `user_location` or `location`.

@@ -1,6 +1,6 @@
 //! Tests for public bind address security validation
 
-use clawmaster_config::{validate_toml_str, MoltisConfig, Severity};
+use clawmaster_config::{MoltisConfig, Severity, validate_toml_str};
 
 #[test]
 fn test_default_bind_is_localhost() {
@@ -17,7 +17,10 @@ bind = "127.0.0.1"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    assert!(result.diagnostics.is_empty(), "Localhost bind should not produce errors");
+    assert!(
+        result.diagnostics.is_empty(),
+        "Localhost bind should not produce errors"
+    );
 }
 
 #[test]
@@ -28,18 +31,24 @@ bind = "0.0.0.0"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    
+
     // Should have an error
-    let errors: Vec<_> = result.diagnostics.iter()
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error)
         .collect();
-    
-    assert!(!errors.is_empty(), "Should have error for public bind without permission");
-    
-    let error = errors.iter()
+
+    assert!(
+        !errors.is_empty(),
+        "Should have error for public bind without permission"
+    );
+
+    let error = errors
+        .iter()
         .find(|d| d.path == "server.bind")
         .expect("Should have error on server.bind");
-    
+
     assert!(error.message.contains("not allowed"));
     assert!(error.message.contains("allow_public_bind"));
 }
@@ -53,31 +62,39 @@ port = 8080
 allow_public_bind = true
 "#;
     let result = validate_toml_str(toml);
-    
+
     // Should not have errors, but should have warning
-    let errors: Vec<_> = result.diagnostics.iter()
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error)
         .collect();
-    
+
     if !errors.is_empty() {
         eprintln!("Unexpected errors:");
         for err in &errors {
             eprintln!("  - {}: {}", err.path, err.message);
         }
     }
-    
-    assert!(errors.is_empty(), "Should not have errors with explicit permission");
-    
-    let warnings: Vec<_> = result.diagnostics.iter()
+
+    assert!(
+        errors.is_empty(),
+        "Should not have errors with explicit permission"
+    );
+
+    let warnings: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Warning)
         .collect();
-    
+
     assert!(!warnings.is_empty(), "Should have warning for public bind");
-    
-    let warning = warnings.iter()
+
+    let warning = warnings
+        .iter()
         .find(|d| d.message.contains("public access explicitly allowed"))
         .expect("Should have warning about public access");
-    
+
     assert!(warning.message.contains("authentication"));
     assert!(warning.message.contains("TLS"));
 }
@@ -93,22 +110,28 @@ port = 8080
 mode = "serve"
 "#;
     let result = validate_toml_str(toml);
-    
+
     // Should not have errors when tunnel is configured
-    let errors: Vec<_> = result.diagnostics.iter()
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error && d.path == "server.bind")
         .collect();
-    
-    assert!(errors.is_empty(), "Should not have errors with Tailscale serve mode");
-    
+
+    assert!(
+        errors.is_empty(),
+        "Should not have errors with Tailscale serve mode"
+    );
+
     // Should have info message about tunnel
-    let infos: Vec<_> = result.diagnostics.iter()
+    let infos: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Info)
         .collect();
-    
-    let tunnel_info = infos.iter()
-        .find(|d| d.message.contains("Tailscale"));
-    
+
+    let tunnel_info = infos.iter().find(|d| d.message.contains("Tailscale"));
+
     assert!(tunnel_info.is_some(), "Should have info about Tailscale");
 }
 
@@ -123,13 +146,18 @@ port = 8080
 mode = "funnel"
 "#;
     let result = validate_toml_str(toml);
-    
+
     // Should not have errors when funnel is configured
-    let errors: Vec<_> = result.diagnostics.iter()
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error && d.path == "server.bind")
         .collect();
-    
-    assert!(errors.is_empty(), "Should not have errors with Tailscale funnel mode");
+
+    assert!(
+        errors.is_empty(),
+        "Should not have errors with Tailscale funnel mode"
+    );
 }
 
 #[test]
@@ -140,12 +168,17 @@ bind = "::"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    
-    let errors: Vec<_> = result.diagnostics.iter()
+
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error && d.path == "server.bind")
         .collect();
-    
-    assert!(!errors.is_empty(), "Should reject IPv6 public bind without permission");
+
+    assert!(
+        !errors.is_empty(),
+        "Should reject IPv6 public bind without permission"
+    );
 }
 
 #[test]
@@ -156,11 +189,13 @@ bind = "::1"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    
-    let errors: Vec<_> = result.diagnostics.iter()
+
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error)
         .collect();
-    
+
     assert!(errors.is_empty(), "IPv6 localhost should be allowed");
 }
 
@@ -172,11 +207,13 @@ bind = "localhost"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    
-    let errors: Vec<_> = result.diagnostics.iter()
+
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error)
         .collect();
-    
+
     assert!(errors.is_empty(), "localhost string should be allowed");
 }
 
@@ -188,15 +225,26 @@ bind = "0.0.0.0"
 port = 8080
 "#;
     let result = validate_toml_str(toml);
-    
-    let error = result.diagnostics.iter()
+
+    let error = result
+        .diagnostics
+        .iter()
         .find(|d| d.severity == Severity::Error && d.path == "server.bind")
         .expect("Should have error");
-    
+
     // Check that error message provides helpful solutions
-    assert!(error.message.contains("127.0.0.1"), "Should mention localhost option");
-    assert!(error.message.contains("Tailscale"), "Should mention Tailscale option");
-    assert!(error.message.contains("allow_public_bind"), "Should mention explicit permission option");
+    assert!(
+        error.message.contains("127.0.0.1"),
+        "Should mention localhost option"
+    );
+    assert!(
+        error.message.contains("Tailscale"),
+        "Should mention Tailscale option"
+    );
+    assert!(
+        error.message.contains("allow_public_bind"),
+        "Should mention explicit permission option"
+    );
 }
 
 #[test]
@@ -211,19 +259,26 @@ allow_public_bind = true
 disabled = true
 "#;
     let result = validate_toml_str(toml);
-    
-    let warnings: Vec<_> = result.diagnostics.iter()
+
+    let warnings: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Warning)
         .collect();
-    
+
     // Should have warning about public bind AND warning about disabled auth
-    assert!(warnings.len() >= 2, "Should have multiple security warnings");
-    
-    let has_public_bind_warning = warnings.iter()
+    assert!(
+        warnings.len() >= 2,
+        "Should have multiple security warnings"
+    );
+
+    let has_public_bind_warning = warnings
+        .iter()
         .any(|w| w.message.contains("public access explicitly allowed"));
-    let has_auth_warning = warnings.iter()
+    let has_auth_warning = warnings
+        .iter()
         .any(|w| w.message.contains("authentication is disabled"));
-    
+
     assert!(has_public_bind_warning, "Should warn about public bind");
     assert!(has_auth_warning, "Should warn about disabled auth");
 }
@@ -240,17 +295,23 @@ allow_public_bind = true
 enabled = false
 "#;
     let result = validate_toml_str(toml);
-    
-    let warnings: Vec<_> = result.diagnostics.iter()
+
+    let warnings: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Warning)
         .collect();
-    
+
     // Should have warning about public bind AND warning about disabled TLS
-    assert!(warnings.len() >= 2, "Should have multiple security warnings");
-    
-    let has_tls_warning = warnings.iter()
+    assert!(
+        warnings.len() >= 2,
+        "Should have multiple security warnings"
+    );
+
+    let has_tls_warning = warnings
+        .iter()
         .any(|w| w.message.contains("TLS is disabled"));
-    
+
     assert!(has_tls_warning, "Should warn about disabled TLS");
 }
 
@@ -265,11 +326,16 @@ port = 8080
 mode = "off"
 "#;
     let result = validate_toml_str(toml);
-    
+
     // Should still have error because Tailscale is off
-    let errors: Vec<_> = result.diagnostics.iter()
+    let errors: Vec<_> = result
+        .diagnostics
+        .iter()
         .filter(|d| d.severity == Severity::Error && d.path == "server.bind")
         .collect();
-    
-    assert!(!errors.is_empty(), "Should reject when Tailscale mode is off");
+
+    assert!(
+        !errors.is_empty(),
+        "Should reject when Tailscale mode is off"
+    );
 }

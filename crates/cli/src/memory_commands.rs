@@ -170,7 +170,9 @@ mod tests {
 
         // Create and populate the database
         let pool = sqlx::SqlitePool::connect(&db_url).await.unwrap();
-        clawmaster_memory::schema::run_migrations(&pool).await.unwrap();
+        clawmaster_memory::schema::run_migrations(&pool)
+            .await
+            .unwrap();
 
         // Insert test data
         sqlx::query("INSERT INTO files (path, source, hash, mtime, size) VALUES (?, ?, ?, ?, ?)")
@@ -222,7 +224,9 @@ mod tests {
         let db_url = format!("sqlite:{}?mode=rwc", db_path.display());
 
         let pool = sqlx::SqlitePool::connect(&db_url).await.unwrap();
-        clawmaster_memory::schema::run_migrations(&pool).await.unwrap();
+        clawmaster_memory::schema::run_migrations(&pool)
+            .await
+            .unwrap();
         pool.close().await;
 
         clawmaster_config::set_data_dir(tmp.path().to_path_buf());
@@ -252,7 +256,9 @@ mod tests {
         let db_url = format!("sqlite:{}?mode=rwc", db_path.display());
 
         let pool = sqlx::SqlitePool::connect(&db_url).await.unwrap();
-        clawmaster_memory::schema::run_migrations(&pool).await.unwrap();
+        clawmaster_memory::schema::run_migrations(&pool)
+            .await
+            .unwrap();
 
         // Insert a file and chunk
         sqlx::query("INSERT INTO files (path, source, hash, mtime, size) VALUES (?, ?, ?, ?, ?)")
@@ -293,7 +299,8 @@ mod tests {
             db_path: db_path.to_string_lossy().to_string(),
             ..Default::default()
         };
-        let manager = clawmaster_memory::manager::MemoryManager::keyword_only(config, Box::new(store));
+        let manager =
+            clawmaster_memory::manager::MemoryManager::keyword_only(config, Box::new(store));
         let status = manager.status().await.unwrap();
         assert_eq!(status.total_files, 1);
         assert_eq!(status.total_chunks, 1);

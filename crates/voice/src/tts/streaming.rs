@@ -1,12 +1,6 @@
 //! Streaming TTS support for lower latency audio delivery.
 
-use {
-    anyhow::Result,
-    async_trait::async_trait,
-    bytes::Bytes,
-    futures::Stream,
-    std::pin::Pin,
-};
+use {anyhow::Result, async_trait::async_trait, bytes::Bytes, futures::Stream, std::pin::Pin};
 
 use super::SynthesizeRequest;
 
@@ -99,15 +93,13 @@ impl StreamingMetrics {
     pub fn record_chunk(&mut self, chunk: &AudioChunk) {
         self.total_chunks += 1;
         self.total_bytes += chunk.data.len() as u64;
-        
+
         if self.total_chunks > 0 {
             self.avg_chunk_size = self.total_bytes / self.total_chunks;
         }
 
         if let Some(duration) = chunk.duration_ms {
-            self.total_duration_ms = Some(
-                self.total_duration_ms.unwrap_or(0) + duration
-            );
+            self.total_duration_ms = Some(self.total_duration_ms.unwrap_or(0) + duration);
         }
     }
 
@@ -132,14 +124,14 @@ mod tests {
     #[test]
     fn test_streaming_metrics() {
         let mut metrics = StreamingMetrics::new();
-        
+
         let chunk1 = AudioChunk {
             data: Bytes::from(vec![0u8; 1024]),
             sequence: 0,
             is_final: false,
             duration_ms: Some(100),
         };
-        
+
         let chunk2 = AudioChunk {
             data: Bytes::from(vec![0u8; 2048]),
             sequence: 1,

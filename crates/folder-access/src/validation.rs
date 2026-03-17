@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A: Comprehensive path validation to prevent security vulnerabilities
 
-use std::path::{Path, PathBuf};
-use anyhow::{anyhow, Result};
-use sha2::{Sha256, Digest};
+use {
+    anyhow::{Result, anyhow},
+    sha2::{Digest, Sha256},
+    std::path::{Path, PathBuf},
+};
 
 use crate::models::ValidationRule;
 
@@ -103,16 +105,18 @@ impl PathValidator {
                     if let Ok(parent_canonical) = parent.canonicalize() {
                         parent_canonical.join(path_obj.file_name().unwrap_or_default())
                     } else {
-                        return ValidationResult::invalid(
-                            format!("Failed to canonicalize path: {}", e)
-                        );
+                        return ValidationResult::invalid(format!(
+                            "Failed to canonicalize path: {}",
+                            e
+                        ));
                     }
                 } else {
-                    return ValidationResult::invalid(
-                        format!("Failed to canonicalize path: {}", e)
-                    );
+                    return ValidationResult::invalid(format!(
+                        "Failed to canonicalize path: {}",
+                        e
+                    ));
                 }
-            }
+            },
         };
 
         // Check 6: Apply validation rules
@@ -129,16 +133,18 @@ impl PathValidator {
 
                 match rule.rule_type {
                     crate::models::RuleType::Blacklist => {
-                        return ValidationResult::invalid(
-                            format!("Path matches blacklist rule: {}", rule.pattern)
-                        ).with_matched_rules(matched_rules);
-                    }
+                        return ValidationResult::invalid(format!(
+                            "Path matches blacklist rule: {}",
+                            rule.pattern
+                        ))
+                        .with_matched_rules(matched_rules);
+                    },
                     crate::models::RuleType::Whitelist => {
                         // Whitelist match is good, continue checking
-                    }
+                    },
                     crate::models::RuleType::Pattern => {
                         // Custom pattern, check description for action
-                    }
+                    },
                 }
             }
         }
@@ -152,28 +158,30 @@ impl PathValidator {
     /// DO-178C Security: Prevent directory escape
     pub fn validate_within_base(&self, path: &str, base: &Path) -> ValidationResult {
         let validation = self.validate(path);
-        
+
         if !validation.is_valid {
             return validation;
         }
 
         let canonical_path = validation.canonical_path.as_ref().unwrap();
-        
+
         // Canonicalize base path
         let canonical_base = match base.canonicalize() {
             Ok(p) => p,
             Err(e) => {
-                return ValidationResult::invalid(
-                    format!("Failed to canonicalize base path: {}", e)
-                );
-            }
+                return ValidationResult::invalid(format!(
+                    "Failed to canonicalize base path: {}",
+                    e
+                ));
+            },
         };
 
         // Check if path is within base
         if !canonical_path.starts_with(&canonical_base) {
-            return ValidationResult::invalid(
-                format!("Path escapes base directory: {}", base.display())
-            );
+            return ValidationResult::invalid(format!(
+                "Path escapes base directory: {}",
+                base.display()
+            ));
         }
 
         validation
@@ -185,7 +193,7 @@ impl PathValidator {
     /// DO-178C §6.3.4: Deterministic checks
     pub fn is_directory(&self, path: &str) -> Result<bool> {
         let validation = self.validate(path);
-        
+
         if !validation.is_valid {
             return Err(anyhow!(validation.error_message.unwrap_or_default()));
         }
@@ -200,7 +208,7 @@ impl PathValidator {
     /// DO-178C §6.3.4: Deterministic checks
     pub fn exists(&self, path: &str) -> Result<bool> {
         let validation = self.validate(path);
-        
+
         if !validation.is_valid {
             return Err(anyhow!(validation.error_message.unwrap_or_default()));
         }
@@ -227,17 +235,20 @@ pub fn calculate_path_hash(path: &str) -> String {
 /// DO-178C §6.3.4: Consistent path normalization
 pub fn normalize_path(path: &str) -> Result<String> {
     let path_obj = Path::new(path);
-    let canonical = path_obj.canonicalize()
+    let canonical = path_obj
+        .canonicalize()
         .map_err(|e| anyhow!("Failed to canonicalize path: {}", e))?;
-    
+
     Ok(canonical.to_string_lossy().to_string())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::models::{ValidationRule, RuleType};
-    use tempfile::tempdir;
+    use {
+        super::*,
+        crate::models::{RuleType, ValidationRule},
+        tempfile::tempdir,
+    };
 
     fn create_test_validator() -> PathValidator {
         let rules = vec![
@@ -286,28 +297,26 @@ mod tests {
     fn test_validate_blacklist_match() {
         // Test that blacklist rules work correctly
         // We create a validator with a specific blacklist rule
-        let rules = vec![
-            ValidationRule {
-                id: 1,
-                rule_type: RuleType::Blacklist,
-                pattern: "*/blocked/*".to_string(),
-                description: Some("Blocked paths".to_string()),
-                is_active: true,
-                priority: 100,
-                created_at: 0,
-                created_by: "test".to_string(),
-            },
-        ];
-        
+        let rules = vec![ValidationRule {
+            id: 1,
+            rule_type: RuleType::Blacklist,
+            pattern: "*/blocked/*".to_string(),
+            description: Some("Blocked paths".to_string()),
+            is_active: true,
+            priority: 100,
+            created_at: 0,
+            created_by: "test".to_string(),
+        }];
+
         let validator = PathValidator::new(rules);
-        
+
         // Create a path that matches the blacklist pattern
         let dir = tempdir().unwrap();
         let blocked_dir = dir.path().join("blocked");
         std::fs::create_dir(&blocked_dir).unwrap();
         let test_file = blocked_dir.join("test.txt");
         std::fs::write(&test_file, "test").unwrap();
-        
+
         let result = validator.validate(test_file.to_str().unwrap());
         assert!(!result.is_valid);
         assert!(result.error_message.unwrap().contains("blacklist"));
@@ -319,7 +328,7 @@ mod tests {
         let dir = tempdir().unwrap();
         let test_path = dir.path().join("test.txt");
         std::fs::write(&test_path, "test").unwrap();
-        
+
         let result = validator.validate(test_path.to_str().unwrap());
         assert!(result.is_valid);
         assert!(result.canonical_path.is_some());
@@ -333,11 +342,8 @@ mod tests {
         let test_path = base.join("subdir/test.txt");
         std::fs::create_dir_all(test_path.parent().unwrap()).unwrap();
         std::fs::write(&test_path, "test").unwrap();
-        
-        let result = validator.validate_within_base(
-            test_path.to_str().unwrap(),
-            base
-        );
+
+        let result = validator.validate_within_base(test_path.to_str().unwrap(), base);
         assert!(result.is_valid);
     }
 
@@ -346,7 +352,7 @@ mod tests {
         let hash1 = calculate_path_hash("/test/path");
         let hash2 = calculate_path_hash("/test/path");
         let hash3 = calculate_path_hash("/different/path");
-        
+
         assert_eq!(hash1, hash2);
         assert_ne!(hash1, hash3);
         assert_eq!(hash1.len(), 64); // SHA-256 produces 64 hex characters
@@ -356,7 +362,7 @@ mod tests {
     fn test_is_directory() {
         let validator = create_test_validator();
         let dir = tempdir().unwrap();
-        
+
         let result = validator.is_directory(dir.path().to_str().unwrap());
         assert!(result.is_ok());
         assert!(result.unwrap());

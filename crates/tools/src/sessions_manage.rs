@@ -8,7 +8,10 @@ use std::sync::Arc;
 
 use {async_trait::async_trait, futures::future::BoxFuture, serde_json::Value};
 
-use {clawmaster_agents::tool_registry::AgentTool, clawmaster_sessions::metadata::SqliteSessionMetadata};
+use {
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_sessions::metadata::SqliteSessionMetadata,
+};
 
 use crate::{
     Error,

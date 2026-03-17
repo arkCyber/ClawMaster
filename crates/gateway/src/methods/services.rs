@@ -159,7 +159,9 @@ fn read_identity_payload_for_agent(agent_id: &str) -> serde_json::Value {
     };
     let identity_text = std::fs::read_to_string(identity_path)
         .ok()
-        .and_then(|content| clawmaster_config::extract_yaml_frontmatter(&content).map(str::to_string));
+        .and_then(|content| {
+            clawmaster_config::extract_yaml_frontmatter(&content).map(str::to_string)
+        });
     let soul = clawmaster_config::load_soul_for_agent(agent_id);
     let identity_name = identity.name.clone();
     let identity_emoji = identity.emoji.clone();
@@ -2073,8 +2075,10 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                     {
                         let project_dir = Path::new(dir);
                         let create_result =
-                            match clawmaster_projects::WorktreeManager::resolve_base_branch(project_dir)
-                                .await
+                            match clawmaster_projects::WorktreeManager::resolve_base_branch(
+                                project_dir,
+                            )
+                            .await
                             {
                                 Ok(base) => {
                                     clawmaster_projects::WorktreeManager::create_from_base(
@@ -2085,7 +2089,8 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                                     .await
                                 },
                                 Err(_) => {
-                                    clawmaster_projects::WorktreeManager::create(project_dir, key).await
+                                    clawmaster_projects::WorktreeManager::create(project_dir, key)
+                                        .await
                                 },
                             };
                         match create_result {

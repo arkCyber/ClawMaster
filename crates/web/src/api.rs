@@ -540,7 +540,8 @@ pub async fn api_skills_handler(State(state): State<AppState>) -> impl IntoRespo
         .and_then(|v| v.as_array().cloned())
         .unwrap_or_default();
 
-    let mut skills = enabled_from_manifest(clawmaster_skills::manifest::ManifestStore::default_path());
+    let mut skills =
+        enabled_from_manifest(clawmaster_skills::manifest::ManifestStore::default_path());
 
     {
         use clawmaster_skills::discover::{FsSkillDiscoverer, SkillDiscoverer};

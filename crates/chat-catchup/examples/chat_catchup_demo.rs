@@ -1,12 +1,14 @@
 //! Demonstration of chat catchup functionality
 
-use clawmaster_chat_catchup::{CatchupConfig, CatchupStrategy, ChatCatchupInterface};
-use clawmaster_chat_catchup::catchup_engine::{MockMessageStore, MockSessionStore, ChatCatchup};
-use clawmaster_chat_catchup::message_processor::{ChatMessage, MessageType};
-use std::sync::Arc;
-use std::collections::HashMap;
-use chrono::Utc;
-use std::time::Duration;
+use {
+    chrono::Utc,
+    clawmaster_chat_catchup::{
+        CatchupConfig, CatchupStrategy, ChatCatchupInterface,
+        catchup_engine::{ChatCatchup, MockMessageStore, MockSessionStore},
+        message_processor::{ChatMessage, MessageType},
+    },
+    std::{collections::HashMap, sync::Arc, time::Duration},
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -54,12 +56,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Total time: {:?}", catchup_duration);
 
     println!("\n=== Context Information ===");
-    println!("Context length: {} characters", result.context.context_string.len());
+    println!(
+        "Context length: {} characters",
+        result.context.context_string.len()
+    );
     println!("Participants: {}", result.context.participants.join(", "));
     println!("Topics: {}", result.context.topics.join(", "));
-    println!("Time range: {} to {}", 
-             result.context.time_range.0.format("%H:%M:%S"),
-             result.context.time_range.1.format("%H:%M:%S"));
+    println!(
+        "Time range: {} to {}",
+        result.context.time_range.0.format("%H:%M:%S"),
+        result.context.time_range.1.format("%H:%M:%S")
+    );
 
     println!("\n=== Generated Context ===");
     println!("{}", result.context.context_string);
@@ -71,25 +78,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Test marking as read
     println!("\n=== Mark as Read ===");
-    catchup.mark_as_read("general", "user2", Utc::now().timestamp() as u64).await?;
+    catchup
+        .mark_as_read("general", "user2", Utc::now().timestamp() as u64)
+        .await?;
     println!("Marked messages as read for user2");
 
     // Demonstrate different strategies
     println!("\n=== Testing Different Strategies ===");
-    
+
     // Test with many messages for summarization
     println!("Adding many messages to test summarization...");
     add_many_messages(&message_store, 20).await;
-    
+
     let result2 = catchup.catch_up("general", "user3").await?;
     println!("Strategy used for 20 messages: {:?}", result2.mode);
-    println!("Context type: {:?}", 
-             match result2.context.context_type {
-                 clawmaster_chat_catchup::context_builder::ContextType::Summarized { .. } => "Summarized",
-                 clawmaster_chat_catchup::context_builder::ContextType::Clustered { .. } => "Clustered",
-                 clawmaster_chat_catchup::context_builder::ContextType::Full { .. } => "Full",
-                 _ => "Other",
-             });
+    println!("Context type: {:?}", match result2.context.context_type {
+        clawmaster_chat_catchup::context_builder::ContextType::Summarized { .. } => "Summarized",
+        clawmaster_chat_catchup::context_builder::ContextType::Clustered { .. } => "Clustered",
+        clawmaster_chat_catchup::context_builder::ContextType::Full { .. } => "Full",
+        _ => "Other",
+    });
 
     println!("\n=== Demo Complete ===");
 
@@ -192,7 +200,7 @@ async fn add_many_messages(message_store: &MockMessageStore, count: usize) {
     for i in 0..count {
         let user = users[i % users.len()];
         let topic = topics[i % topics.len()];
-        
+
         let message = ChatMessage {
             id: format!("many_{}", i),
             channel_id: "general".to_string(),
@@ -205,7 +213,7 @@ async fn add_many_messages(message_store: &MockMessageStore, count: usize) {
             message_type: MessageType::Text,
             metadata: HashMap::new(),
         };
-        
+
         message_store.add_message(message);
     }
 

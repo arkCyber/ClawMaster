@@ -152,10 +152,10 @@ function LiveIndicator({ live }) {
 
 function MetricCard({ title, value, subtitle, trend }) {
 	return html`
-		<div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-6">
-			<div class="text-xs text-[var(--muted)] uppercase tracking-wide mb-2">${title}</div>
+		<div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4">
+			<div class="text-[11px] text-[var(--muted)] uppercase tracking-wide mb-1">${title}</div>
 			<div class="flex items-baseline gap-2">
-				<div class="text-2xl font-semibold">${value}</div>
+				<div class="text-xl font-semibold leading-none">${value}</div>
 				${
 					trend !== undefined &&
 					html`
@@ -165,7 +165,7 @@ function MetricCard({ title, value, subtitle, trend }) {
 				`
 				}
 			</div>
-			${subtitle && html`<div class="text-xs text-[var(--muted)] mt-2">${subtitle}</div>`}
+			${subtitle && html`<div class="text-xs text-[var(--muted)] mt-1">${subtitle}</div>`}
 		</div>
 	`;
 }
@@ -186,7 +186,7 @@ function getCssVar(name, fallback) {
 	return style.getPropertyValue(name).trim() || fallback;
 }
 
-function TimeSeriesChart({ title, data, series, height = 220 }) {
+function TimeSeriesChart({ title, data, series, height = 180 }) {
 	var containerRef = useRef(null);
 	var chartRef = useRef(null);
 
@@ -271,8 +271,8 @@ function TimeSeriesChart({ title, data, series, height = 220 }) {
 	}, [data]);
 
 	return html`
-		<div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-6">
-			<h3 class="text-sm font-medium mb-4">${title}</h3>
+		<div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4">
+			<h3 class="text-sm font-medium mb-3">${title}</h3>
 			<div ref=${containerRef} class="w-full"></div>
 		</div>
 	`;
@@ -388,11 +388,11 @@ function MetricsGrid({ categories, latestPoint }) {
 	}
 
 	return html`
-		<div class="space-y-10">
+		<div class="space-y-6">
 			<!-- System Overview -->
 			<section>
-				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-5">${t("metrics:sections.system")}</h3>
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-3">${t("metrics:sections.system")}</h3>
+				<div class="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
 					<${MetricCard} title=${t("metrics:cards.uptime")} value=${formatUptime(system?.uptime_seconds)} />
 					<${MetricCard} title=${t("metrics:cards.connectedClients")} value=${formatNumber(system?.connected_clients)} />
 					<${MetricCard} title=${t("metrics:cards.activeSessions")} value=${formatNumber(system?.active_sessions)} />
@@ -403,8 +403,8 @@ function MetricsGrid({ categories, latestPoint }) {
 
 			<!-- LLM Metrics -->
 			<section>
-				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-5">${t("metrics:sections.llmUsage")}</h3>
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-3">${t("metrics:sections.llmUsage")}</h3>
+				<div class="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
 					<${MetricCard}
 						title=${t("metrics:cards.completions")}
 						value=${formatNumber(llm?.completions_total)}
@@ -422,8 +422,8 @@ function MetricsGrid({ categories, latestPoint }) {
 
 			<!-- Tools & MCP -->
 			<section>
-				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-5">${t("metrics:sections.toolsMcp")}</h3>
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+				<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-3">${t("metrics:sections.toolsMcp")}</h3>
+				<div class="grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
 					<${MetricCard}
 						title=${t("metrics:cards.toolExecutions")}
 						value=${formatNumber(tools?.total)}
@@ -447,7 +447,7 @@ function ChartsSection({ points, timeRange, onTimeRangeChange }) {
 
 	if (!filteredPoints || filteredPoints.length < 2) {
 		return html`
-			<div class="space-y-8">
+			<div class="space-y-5">
 				<${TimeRangeSelector} value=${timeRange} onChange=${onTimeRangeChange} />
 				<${EmptyState}
 					icon=${chartIcon}
@@ -475,9 +475,9 @@ function ChartsSection({ points, timeRange, onTimeRangeChange }) {
 	}));
 
 	return html`
-		<div class="space-y-8">
+		<div class="space-y-5">
 			<${TimeRangeSelector} value=${timeRange} onChange=${onTimeRangeChange} />
-			<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+			<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
 				${
 					tokenData &&
 					html`
@@ -574,7 +574,7 @@ function TimeRangeSelector({ value, onChange }) {
 				([key, range]) => html`
 				<button
 					key=${key}
-					class="px-3 py-1.5 text-xs rounded transition-colors ${value === key ? "bg-[var(--surface2)] text-[var(--text)] font-medium" : "text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--surface2)]"}"
+					class="px-2.5 py-1 text-xs rounded transition-colors ${value === key ? "bg-[var(--surface2)] text-[var(--text)] font-medium" : "text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--surface2)]"}"
 					onClick=${() => onChange(key)}
 				>
 					${range.label()}
@@ -590,27 +590,27 @@ function ProviderTable({ byProvider }) {
 
 	return html`
 		<section>
-			<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-5">${t("metrics:sections.byProvider")}</h3>
+			<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-3">${t("metrics:sections.byProvider")}</h3>
 			<div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg overflow-hidden">
 				<table class="w-full text-sm">
 					<thead>
 						<tr class="border-b border-[var(--border)] bg-[var(--surface2)]">
-							<th class="text-left px-6 py-4 font-medium">${t("metrics:table.provider")}</th>
-							<th class="text-right px-6 py-4 font-medium">${t("metrics:table.completions")}</th>
-							<th class="text-right px-6 py-4 font-medium">${t("metrics:table.inputTokens")}</th>
-							<th class="text-right px-6 py-4 font-medium">${t("metrics:table.outputTokens")}</th>
-							<th class="text-right px-6 py-4 font-medium">${t("metrics:table.errors")}</th>
+							<th class="text-left px-4 py-3 font-medium">${t("metrics:table.provider")}</th>
+							<th class="text-right px-4 py-3 font-medium">${t("metrics:table.completions")}</th>
+							<th class="text-right px-4 py-3 font-medium">${t("metrics:table.inputTokens")}</th>
+							<th class="text-right px-4 py-3 font-medium">${t("metrics:table.outputTokens")}</th>
+							<th class="text-right px-4 py-3 font-medium">${t("metrics:table.errors")}</th>
 						</tr>
 					</thead>
 					<tbody>
 						${Object.entries(byProvider).map(
 							([name, stats]) => html`
 							<tr class="border-b border-[var(--border)] last:border-0">
-								<td class="px-6 py-4">${name}</td>
-								<td class="text-right px-6 py-4">${formatNumber(stats.completions)}</td>
-								<td class="text-right px-6 py-4">${formatNumber(stats.input_tokens)}</td>
-								<td class="text-right px-6 py-4">${formatNumber(stats.output_tokens)}</td>
-								<td class="text-right px-6 py-4 ${stats.errors > 0 ? "text-[var(--error)]" : ""}">${formatNumber(stats.errors)}</td>
+								<td class="px-4 py-3">${name}</td>
+								<td class="text-right px-4 py-3">${formatNumber(stats.completions)}</td>
+								<td class="text-right px-4 py-3">${formatNumber(stats.input_tokens)}</td>
+								<td class="text-right px-4 py-3">${formatNumber(stats.output_tokens)}</td>
+								<td class="text-right px-4 py-3 ${stats.errors > 0 ? "text-[var(--error)]" : ""}">${formatNumber(stats.errors)}</td>
 							</tr>
 						`,
 						)}
@@ -634,13 +634,13 @@ function PrometheusEndpoint() {
 
 	return html`
 		<section>
-			<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-5">${t("metrics:sections.prometheus")}</h3>
-			<div class="p-6 bg-[var(--surface)] border border-[var(--border)] rounded-lg">
-				<p class="text-sm text-[var(--muted)] mb-5">
+			<h3 class="text-sm font-medium text-[var(--muted)] uppercase tracking-wide mb-3">${t("metrics:sections.prometheus")}</h3>
+			<div class="p-4 bg-[var(--surface)] border border-[var(--border)] rounded-lg">
+				<p class="text-sm text-[var(--muted)] mb-3">
 					${t("metrics:prometheusDescription")}
 				</p>
-				<div class="flex items-center gap-4">
-					<code class="flex-1 px-4 py-3 bg-[var(--surface2)] rounded-md text-sm font-mono overflow-x-auto">${endpoint}</code>
+				<div class="flex items-center gap-3">
+					<code class="flex-1 px-3 py-2 bg-[var(--surface2)] rounded-md text-sm font-mono overflow-x-auto">${endpoint}</code>
 					<button
 						class="provider-btn provider-btn-secondary text-sm shrink-0"
 						onClick=${copyEndpoint}
@@ -697,9 +697,9 @@ function MonitoringPage({ initialTab }) {
 
 	if (error.value) {
 		return html`
-			<div class="p-10">
-				<div class="max-w-3xl mx-auto space-y-10">
-					<div class="p-6 bg-[var(--error-bg)] border border-[var(--error)] rounded-lg text-[var(--error)]">
+			<div class="p-4 lg:p-5">
+				<div class="max-w-6xl mx-auto space-y-6">
+					<div class="p-4 bg-[var(--error-bg)] border border-[var(--error)] rounded-lg text-[var(--error)]">
 						${error.value}
 					</div>
 					<${PrometheusEndpoint} />
@@ -709,23 +709,23 @@ function MonitoringPage({ initialTab }) {
 	}
 
 	return html`
-		<div class="p-10 overflow-y-auto">
-			<div class="max-w-7xl mx-auto">
-				<div class="flex items-center justify-between mb-10">
-					<div class="flex items-center gap-4">
-						<h2 class="text-xl font-semibold">${t("metrics:title")}</h2>
+		<div class="p-4 lg:p-5 overflow-y-auto">
+			<div class="max-w-6xl mx-auto">
+				<div class="flex items-center justify-between mb-5">
+					<div class="flex items-center gap-3">
+						<h2 class="text-lg font-semibold">${t("metrics:title")}</h2>
 						<${LiveIndicator} live=${isLive.value} />
 					</div>
-					<div class="flex items-center gap-4">
+					<div class="flex items-center gap-3">
 						<div class="flex border border-[var(--border)] rounded-md overflow-hidden">
 							<button
-								class="px-5 py-2.5 text-sm transition-colors ${activeTab === "overview" ? "bg-[var(--surface2)] text-[var(--text)]" : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]"}"
+								class="px-4 py-2 text-sm transition-colors ${activeTab === "overview" ? "bg-[var(--surface2)] text-[var(--text)]" : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]"}"
 								onClick=${() => handleTabChange("overview")}
 							>
 								${t("metrics:tabs.overview")}
 							</button>
 							<button
-								class="px-5 py-2.5 text-sm transition-colors ${activeTab === "charts" ? "bg-[var(--surface2)] text-[var(--text)]" : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]"}"
+								class="px-4 py-2 text-sm transition-colors ${activeTab === "charts" ? "bg-[var(--surface2)] text-[var(--text)]" : "text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--text)]"}"
 								onClick=${() => handleTabChange("charts")}
 							>
 								${t("metrics:tabs.charts")}
@@ -737,7 +737,7 @@ function MonitoringPage({ initialTab }) {
 				${
 					activeTab === "overview" &&
 					html`
-					<div class="space-y-10">
+					<div class="space-y-6">
 						<${MetricsGrid}
 							categories=${metricsData.value?.categories}
 							latestPoint=${historyPoints.value[historyPoints.value.length - 1]}

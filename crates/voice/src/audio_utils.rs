@@ -1,7 +1,7 @@
 //! Audio processing utilities for voice features.
 
 use {
-    anyhow::{anyhow, Result},
+    anyhow::{Result, anyhow},
     bytes::Bytes,
 };
 
@@ -100,11 +100,7 @@ pub fn normalize_volume(samples: &mut [i16], target_peak: f32) {
     }
 
     // Find current peak
-    let current_peak = samples
-        .iter()
-        .map(|&s| s.abs())
-        .max()
-        .unwrap_or(0) as f32;
+    let current_peak = samples.iter().map(|&s| s.abs()).max().unwrap_or(0) as f32;
 
     if current_peak == 0.0 {
         return;
@@ -125,11 +121,7 @@ pub fn normalize_volume(samples: &mut [i16], target_peak: f32) {
 ///
 /// Note: This is a simple linear interpolation. For production use,
 /// consider using a proper resampling library like libsamplerate.
-pub fn resample(
-    samples: &[i16],
-    from_rate: u32,
-    to_rate: u32,
-) -> Result<Vec<i16>> {
+pub fn resample(samples: &[i16], from_rate: u32, to_rate: u32) -> Result<Vec<i16>> {
     if from_rate == to_rate {
         return Ok(samples.to_vec());
     }
@@ -208,7 +200,7 @@ pub fn detect_format(data: &[u8]) -> Option<AudioFormat> {
         // MP3 (ID3v2 or MPEG frame sync)
         [0x49, 0x44, 0x33, _] | [0xFF, 0xFB, _, _] | [0xFF, 0xF3, _, _] | [0xFF, 0xF2, _, _] => {
             Some(AudioFormat::Mp3)
-        }
+        },
         // OGG
         [0x4F, 0x67, 0x67, 0x53] => Some(AudioFormat::Opus),
         // WebM
@@ -234,7 +226,7 @@ pub fn apply_fade_in(samples: &mut [i16], duration_samples: usize) {
 pub fn apply_fade_out(samples: &mut [i16], duration_samples: usize) {
     let fade_len = duration_samples.min(samples.len());
     let start_idx = samples.len().saturating_sub(fade_len);
-    
+
     for (i, sample) in samples.iter_mut().skip(start_idx).enumerate() {
         // Ensure the last sample is exactly 0
         let gain = if i + 1 >= fade_len {
@@ -256,10 +248,10 @@ mod tests {
         assert_eq!(AudioQuality::Medium.sample_rate(), 16000);
         assert_eq!(AudioQuality::High.sample_rate(), 24000);
         assert_eq!(AudioQuality::Studio.sample_rate(), 48000);
-        
+
         assert_eq!(AudioQuality::Low.channels(), 1);
         assert_eq!(AudioQuality::Studio.channels(), 2);
-        
+
         assert_eq!(AudioQuality::Low.bitrate_kbps(), 64);
         assert_eq!(AudioQuality::Studio.bitrate_kbps(), 320);
     }
@@ -268,7 +260,7 @@ mod tests {
     fn test_normalize_volume() {
         let mut samples = vec![100i16, -200, 300, -400];
         normalize_volume(&mut samples, 0.5);
-        
+
         // Peak should be around 0.5 * i16::MAX
         let max_abs = samples.iter().map(|&s| s.abs()).max().unwrap();
         assert!(max_abs > 15000 && max_abs < 17000); // ~0.5 * 32767
@@ -309,7 +301,7 @@ mod tests {
     fn test_calculate_duration() {
         let duration = calculate_duration(16000, 16000);
         assert_eq!(duration, 1.0);
-        
+
         let duration = calculate_duration(8000, 16000);
         assert_eq!(duration, 0.5);
     }
@@ -363,7 +355,7 @@ mod tests {
     fn test_apply_fade_in() {
         let mut samples = vec![1000i16; 10];
         apply_fade_in(&mut samples, 5);
-        
+
         assert_eq!(samples[0], 0);
         assert!(samples[4] > 0 && samples[4] < 1000);
         assert_eq!(samples[9], 1000);
@@ -373,7 +365,7 @@ mod tests {
     fn test_apply_fade_out() {
         let mut samples = vec![1000i16; 10];
         apply_fade_out(&mut samples, 5);
-        
+
         assert_eq!(samples[0], 1000);
         assert!(samples[7] > 0 && samples[7] < 1000);
         assert_eq!(samples[9], 0);

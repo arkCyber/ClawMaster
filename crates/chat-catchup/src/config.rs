@@ -1,7 +1,9 @@
 //! Configuration for chat catchup behavior
 
-use serde::{Deserialize, Serialize};
-use std::time::Duration;
+use {
+    serde::{Deserialize, Serialize},
+    std::time::Duration,
+};
 
 /// Configuration for chat catchup functionality
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -111,11 +113,7 @@ impl Default for CatchupStrategy {
 
 impl CatchupStrategy {
     /// Determine the appropriate strategy based on message count and time elapsed
-    pub fn determine_strategy(
-        &self,
-        message_count: usize,
-        time_elapsed: Duration,
-    ) -> CatchupMode {
+    pub fn determine_strategy(&self, message_count: usize, time_elapsed: Duration) -> CatchupMode {
         match self {
             CatchupStrategy::Full => CatchupMode::Full,
             CatchupStrategy::Clustered => CatchupMode::Clustered,
@@ -127,12 +125,14 @@ impl CatchupStrategy {
             } => {
                 if message_count > *summary_threshold {
                     CatchupMode::Summarized
-                } else if message_count > *cluster_threshold || time_elapsed > *old_message_threshold {
+                } else if message_count > *cluster_threshold
+                    || time_elapsed > *old_message_threshold
+                {
                     CatchupMode::Clustered
                 } else {
                     CatchupMode::Full
                 }
-            }
+            },
             CatchupStrategy::Custom { .. } => CatchupMode::Custom,
         }
     }

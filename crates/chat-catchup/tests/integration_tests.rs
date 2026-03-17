@@ -1,11 +1,15 @@
 //! Integration tests for chat catchup functionality
 
-use clawmaster_chat_catchup::{create_chat_catchup_with_config, CatchupConfig, CatchupStrategy, ChatCatchupInterface};
-use clawmaster_chat_catchup::catchup_engine::{MockMessageStore, MockSessionStore, ChatCatchup};
-use clawmaster_chat_catchup::message_processor::{ChatMessage, MessageType};
-use std::sync::Arc;
-use chrono::Utc;
-use std::collections::HashMap;
+use {
+    chrono::Utc,
+    clawmaster_chat_catchup::{
+        CatchupConfig, CatchupStrategy, ChatCatchupInterface,
+        catchup_engine::{ChatCatchup, MockMessageStore, MockSessionStore},
+        create_chat_catchup_with_config,
+        message_processor::{ChatMessage, MessageType},
+    },
+    std::{collections::HashMap, sync::Arc},
+};
 
 #[tokio::test]
 async fn test_catchup_adaptive_strategy() {
@@ -49,18 +53,19 @@ async fn test_catchup_adaptive_strategy() {
         catchup.get_config(),
         message_store,
         session_store,
-    ).unwrap();
+    )
+    .unwrap();
 
     let result = catchup_engine.catch_up("channel1", "user1").await.unwrap();
 
     assert_eq!(result.messages_processed, 15);
     assert!(result.had_unread);
-    
+
     // Should use summarized mode due to high message count
     match result.context.context_type {
         clawmaster_chat_catchup::context_builder::ContextType::Summarized { .. } => {
             // Expected
-        }
+        },
         _ => panic!("Expected summarized context type"),
     }
 }
@@ -134,7 +139,8 @@ async fn test_catchup_message_filtering() {
         catchup.get_config(),
         message_store,
         session_store,
-    ).unwrap();
+    )
+    .unwrap();
 
     let result = catchup_engine.catch_up("channel1", "user1").await.unwrap();
 
@@ -183,13 +189,17 @@ async fn test_catchup_context_length_limit() {
         catchup.get_config(),
         message_store,
         session_store,
-    ).unwrap();
+    )
+    .unwrap();
 
     let result = catchup_engine.catch_up("channel1", "user1").await.unwrap();
 
     // Context should be truncated to fit the limit
     assert!(result.context.context_string.len() <= 100);
-    assert_eq!(result.context.metadata.length, result.context.context_string.len());
+    assert_eq!(
+        result.context.metadata.length,
+        result.context.context_string.len()
+    );
 }
 
 #[tokio::test]
@@ -220,7 +230,8 @@ async fn test_catchup_concurrent_requests() {
         catchup.get_config(),
         message_store.clone(),
         session_store.clone(),
-    ).unwrap();
+    )
+    .unwrap();
 
     // Run concurrent catchup requests
     let future1 = catchup_engine.catch_up("channel1", "user1");
@@ -264,7 +275,8 @@ async fn test_catchup_timeout_handling() {
         catchup.get_config(),
         message_store,
         session_store,
-    ).unwrap();
+    )
+    .unwrap();
 
     // This should timeout
     let result = catchup_engine.catch_up("channel1", "user1").await;
@@ -273,7 +285,7 @@ async fn test_catchup_timeout_handling() {
     match result.unwrap_err() {
         clawmaster_chat_catchup::error::CatchupError::TimeoutExceeded(_) => {
             // Expected
-        }
+        },
         _ => panic!("Expected timeout error"),
     }
 }

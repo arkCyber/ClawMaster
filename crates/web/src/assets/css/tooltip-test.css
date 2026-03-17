@@ -1,0 +1,299 @@
+/* ── Tooltip Test Page Styles ─────────────────────────────────── */
+
+.tooltip-test-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.tooltip-test-header {
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.tooltip-test-header h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-bottom: 10px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.tooltip-test-header p {
+	font-size: 1.1rem;
+	color: var(--muted, #666);
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.tooltip-test-section {
+	margin-bottom: 50px;
+	padding: 30px;
+	background: var(--surface, #1a1a1a);
+	border-radius: 12px;
+	border: 1px solid var(--border, #333);
+}
+
+.tooltip-test-section h2 {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 20px;
+	color: var(--text, #ffffff);
+}
+
+.tooltip-demo-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 20px;
+}
+
+.demo-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 12px 20px;
+	background: var(--accent, #667eea);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-height: 44px;
+}
+
+.demo-btn:hover {
+	background: var(--accent-hover, #5a67d8);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.demo-btn:active {
+	transform: translateY(0);
+}
+
+.demo-btn.success {
+	background: var(--success, #22c55e);
+}
+
+.demo-btn.success:hover {
+	background: #16a34a;
+}
+
+.demo-btn.warning {
+	background: var(--warning, #f59e0b);
+}
+
+.demo-btn.warning:hover {
+	background: #d97706;
+}
+
+.demo-btn.error {
+	background: var(--error, #ef4444);
+}
+
+.demo-btn.error:hover {
+	background: #dc2626;
+}
+
+.demo-btn.info {
+	background: var(--info, #3b82f6);
+}
+
+.demo-btn.info:hover {
+	background: #2563eb;
+}
+
+.demo-btn.small {
+	padding: 8px 16px;
+	font-size: 0.8rem;
+	min-height: 36px;
+}
+
+.demo-btn:disabled {
+	background: var(--muted, #666);
+	cursor: not-allowed;
+	opacity: 0.6;
+}
+
+.demo-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	background: var(--surface2, #2a2a2a);
+	border: 1px solid var(--border, #333);
+	border-radius: 8px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.demo-icon:hover {
+	background: var(--surface3, #3a3a3a);
+	transform: scale(1.1);
+}
+
+.code-examples {
+	display: grid;
+	gap: 20px;
+}
+
+.code-example {
+	padding: 20px;
+	background: var(--surface2, #2a2a2a);
+	border-radius: 8px;
+	border: 1px solid var(--border, #333);
+}
+
+.code-example h3 {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: var(--text, #ffffff);
+}
+
+.code-toggle {
+	padding: 8px 16px;
+	background: var(--accent, #667eea);
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.code-toggle:hover {
+	background: var(--accent-hover, #5a67d8);
+}
+
+.code-block {
+	background: #0d1117;
+	color: #e6edf3;
+	padding: 16px;
+	border-radius: 6px;
+	overflow-x: auto;
+	font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+	font-size: 0.85rem;
+	line-height: 1.4;
+	margin-top: 10px;
+	border: 1px solid var(--border, #333);
+}
+
+.position-demo {
+	padding: 20px;
+	background: var(--surface2, #2a2a2a);
+	border-radius: 8px;
+}
+
+.position-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	gap: 15px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.tooltip-test-container {
+		padding: 15px;
+	}
+	
+	.tooltip-test-header h1 {
+		font-size: 2rem;
+	}
+	
+	.tooltip-test-section {
+		padding: 20px;
+	}
+	
+	.tooltip-demo-grid {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: 15px;
+	}
+	
+	.position-grid {
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 10px;
+	}
+	
+	.demo-btn {
+		padding: 10px 16px;
+		font-size: 0.85rem;
+	}
+}
+
+/* Dark theme specific styles */
+@media (prefers-color-scheme: dark) {
+	.tooltip-test-container {
+		color: #ffffff;
+	}
+}
+
+/* Light theme specific styles */
+@media (prefers-color-scheme: light) {
+	.tooltip-test-container {
+		color: #000000;
+	}
+	
+	.tooltip-test-section {
+		background: #f8f9fa;
+		border-color: #e0e0e0;
+	}
+	
+	.code-example {
+		background: #f1f3f4;
+		border-color: #e0e0e0;
+	}
+	
+	.position-demo {
+		background: #f1f3f4;
+	}
+}
+
+/* Animation for new elements */
+.tooltip-test-section {
+	animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Focus styles for accessibility */
+.demo-btn:focus,
+.demo-icon:focus,
+.code-toggle:focus {
+	outline: 2px solid var(--accent, #667eea);
+	outline-offset: 2px;
+}
+
+/* Custom scrollbar for code blocks */
+.code-block::-webkit-scrollbar {
+	height: 8px;
+}
+
+.code-block::-webkit-scrollbar-track {
+	background: var(--surface2, #2a2a2a);
+}
+
+.code-block::-webkit-scrollbar-thumb {
+	background: var(--border, #333);
+	border-radius: 4px;
+}
+
+.code-block::-webkit-scrollbar-thumb:hover {
+	background: var(--muted, #666);
+}

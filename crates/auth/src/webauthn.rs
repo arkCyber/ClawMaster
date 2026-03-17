@@ -341,7 +341,11 @@ mod tests {
         let mut registry = WebAuthnRegistry::new();
         registry.add("localhost".to_string(), state);
 
-        assert!(registry.get_for_host("clawmaster.localhost:18080").is_some());
+        assert!(
+            registry
+                .get_for_host("clawmaster.localhost:18080")
+                .is_some()
+        );
         assert!(registry.contains_host("clawmaster.localhost"));
     }
 }

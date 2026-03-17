@@ -21,7 +21,12 @@ fn generate_random_port() -> u16 {
 }
 
 /// Standard config file names, checked in order.
-const CONFIG_FILENAMES: &[&str] = &["clawmaster.toml", "clawmaster.yaml", "clawmaster.yml", "clawmaster.json"];
+const CONFIG_FILENAMES: &[&str] = &[
+    "clawmaster.toml",
+    "clawmaster.yaml",
+    "clawmaster.yml",
+    "clawmaster.json",
+];
 
 /// Override for the config directory, set via `set_config_dir()`.
 static CONFIG_DIR_OVERRIDE: Mutex<Option<PathBuf>> = Mutex::new(None);

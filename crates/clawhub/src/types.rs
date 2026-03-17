@@ -1,7 +1,9 @@
 //! Core types for ClawHub.
 
-use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
+use {
+    serde::{Deserialize, Serialize},
+    time::OffsetDateTime,
+};
 
 /// Tool metadata.
 ///

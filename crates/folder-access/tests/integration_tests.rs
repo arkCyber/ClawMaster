@@ -2,22 +2,24 @@
 //!
 //! DO-178C Level A: Comprehensive integration testing
 
-use clawmaster_folder_access::{
-    FolderAccessService, PermissionFlags, AccessOperation, RuleType, run_migrations,
+use {
+    clawmaster_folder_access::{
+        AccessOperation, FolderAccessService, PermissionFlags, RuleType, run_migrations,
+    },
+    sqlx::SqlitePool,
+    tempfile::tempdir,
 };
-use sqlx::SqlitePool;
-use tempfile::tempdir;
 
 async fn create_test_service() -> FolderAccessService {
     let pool = SqlitePool::connect(":memory:").await.unwrap();
     run_migrations(&pool).await.unwrap();
-    
+
     // Disable default blacklist rules for testing
     sqlx::query("UPDATE folder_validation_rules SET is_active = 0")
         .execute(&pool)
         .await
         .unwrap();
-    
+
     FolderAccessService::new(pool).await.unwrap()
 }
 
@@ -129,22 +131,14 @@ async fn test_nested_folder_permissions() {
 
     // Child file should inherit parent permissions
     let can_read = service
-        .check_access(
-            test_file.to_str().unwrap(),
-            AccessOperation::Read,
-            None,
-        )
+        .check_access(test_file.to_str().unwrap(), AccessOperation::Read, None)
         .await
         .unwrap();
 
     assert!(can_read);
 
     let can_write = service
-        .check_access(
-            test_file.to_str().unwrap(),
-            AccessOperation::Write,
-            None,
-        )
+        .check_access(test_file.to_str().unwrap(), AccessOperation::Write, None)
         .await
         .unwrap();
 
@@ -252,10 +246,12 @@ async fn test_permission_validation() {
         .await;
 
     assert!(result.is_err());
-    assert!(result
-        .unwrap_err()
-        .to_string()
-        .contains("At least one permission"));
+    assert!(
+        result
+            .unwrap_err()
+            .to_string()
+            .contains("At least one permission")
+    );
 }
 
 #[tokio::test]
@@ -397,8 +393,14 @@ async fn test_audit_log_completeness() {
     assert_eq!(logs.len(), 2);
 
     // Verify both operations are logged
-    let read_log = logs.iter().find(|l| l.operation == AccessOperation::Read).unwrap();
-    let write_log = logs.iter().find(|l| l.operation == AccessOperation::Write).unwrap();
+    let read_log = logs
+        .iter()
+        .find(|l| l.operation == AccessOperation::Read)
+        .unwrap();
+    let write_log = logs
+        .iter()
+        .find(|l| l.operation == AccessOperation::Write)
+        .unwrap();
 
     // Verify read log
     assert!(read_log.success);

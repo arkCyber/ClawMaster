@@ -96,7 +96,10 @@ const REASONING_SUFFIX_SEP: char = '@';
 
 /// Reasoning effort suffixes appended to model IDs.
 const REASONING_SUFFIXES: &[(&str, clawmaster_agents::model::ReasoningEffort)] = &[
-    ("reasoning-low", clawmaster_agents::model::ReasoningEffort::Low),
+    (
+        "reasoning-low",
+        clawmaster_agents::model::ReasoningEffort::Low,
+    ),
     (
         "reasoning-medium",
         clawmaster_agents::model::ReasoningEffort::Medium,
@@ -2969,12 +2972,13 @@ mod tests {
     #[test]
     fn cerebras_registers_with_api_key() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("cerebras".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "cerebras".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-cerebras".into())),
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         let cerebras_models: Vec<_> = reg
@@ -3028,12 +3032,13 @@ mod tests {
     #[test]
     fn moonshot_registers_with_api_key() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("moonshot".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "moonshot".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-moonshot".into())),
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         assert!(reg.list_models().iter().any(|m| m.provider == "moonshot"));
@@ -3042,12 +3047,13 @@ mod tests {
     #[test]
     fn deepseek_registers_with_api_key() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("deepseek".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "deepseek".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-deepseek".into())),
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         let ds_models: Vec<_> = reg
@@ -3074,12 +3080,13 @@ mod tests {
     fn openrouter_requires_model_in_config() {
         // OpenRouter has no default models — without configured models it registers nothing.
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "openrouter".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         assert!(!reg.list_models().iter().any(|m| m.provider == "openrouter"));
@@ -3088,13 +3095,14 @@ mod tests {
     #[test]
     fn openrouter_registers_with_model_in_config() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "openrouter".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 models: vec!["anthropic/claude-3-haiku".into()],
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         let or_models: Vec<_> = reg
@@ -3112,13 +3120,14 @@ mod tests {
     #[test]
     fn openrouter_strips_foreign_namespace_in_config_model_ids() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("openrouter".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "openrouter".into(),
+            clawmaster_config::schema::ProviderEntry {
                 api_key: Some(secrecy::Secret::new("sk-test-or".into())),
                 models: vec!["openai::gpt-5.2".into()],
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         assert!(
@@ -3469,12 +3478,13 @@ mod tests {
     #[test]
     fn local_llm_alias_key_registers_model() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("local-llm".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "local-llm".into(),
+            clawmaster_config::schema::ProviderEntry {
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         assert!(
@@ -3487,13 +3497,14 @@ mod tests {
     #[test]
     fn local_llm_alias_key_respects_disabled_flag() {
         let mut config = ProvidersConfig::default();
-        config
-            .providers
-            .insert("local-llm".into(), clawmaster_config::schema::ProviderEntry {
+        config.providers.insert(
+            "local-llm".into(),
+            clawmaster_config::schema::ProviderEntry {
                 enabled: false,
                 models: vec!["qwen2.5-coder-7b-q4_k_m".into()],
                 ..Default::default()
-            });
+            },
+        );
 
         let reg = ProviderRegistry::from_env_with_config(&config);
         assert!(

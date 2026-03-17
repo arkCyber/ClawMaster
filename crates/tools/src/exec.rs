@@ -415,7 +415,8 @@ impl AgentTool for ExecTool {
             .or_else(|| self.working_dir.clone());
 
         let runs_on_host = !(is_sandboxed && has_container_backend);
-        let host_default_dir = || clawmaster_config::home_dir().unwrap_or_else(clawmaster_config::data_dir);
+        let host_default_dir =
+            || clawmaster_config::home_dir().unwrap_or_else(clawmaster_config::data_dir);
 
         // When running on the host, validate that the explicit working dir
         // actually exists — the LLM may remember a container path like

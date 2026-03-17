@@ -9,20 +9,21 @@
 //! - P0-6: Backup Recovery
 //! - P0-7: Input Validator
 
-use std::sync::Arc;
-use std::time::Duration;
+use std::{sync::Arc, time::Duration};
 
 // P0 feature imports
-use clawmaster_audit_log::{AuditLogger, AuditLoggerConfig, MemoryStorage as AuditStorage};
-use clawmaster_backup_recovery::{BackupManager, BackupScheduler, ScheduleConfig};
-use clawmaster_config_validator::ConfigValidator;
-use clawmaster_fault_recovery::{
-    CircuitBreaker, CircuitBreakerConfig, DegradationManager, IsolationManager, RetryExecutor,
-    RetryPolicy,
-};
-use clawmaster_health_check::HealthCheckService;
-use clawmaster_resource_quota::{
-    ConnectionLimiter, MemoryQuota, RateLimiter, SessionLimiter, UploadLimiter,
+use {
+    clawmaster_audit_log::{AuditLogger, AuditLoggerConfig, MemoryStorage as AuditStorage},
+    clawmaster_backup_recovery::{BackupManager, BackupScheduler, ScheduleConfig},
+    clawmaster_config_validator::ConfigValidator,
+    clawmaster_fault_recovery::{
+        CircuitBreaker, CircuitBreakerConfig, DegradationManager, IsolationManager, RetryExecutor,
+        RetryPolicy,
+    },
+    clawmaster_health_check::HealthCheckService,
+    clawmaster_resource_quota::{
+        ConnectionLimiter, MemoryQuota, RateLimiter, SessionLimiter, UploadLimiter,
+    },
 };
 
 /// P0 features integration state
@@ -102,28 +103,28 @@ impl P0Features {
         // P0-5: Resource Quota
         tracing::info!("Initializing resource quota managers...");
         use clawmaster_resource_quota::{
-            RateLimitConfig, MemoryQuotaConfig, ConnectionLimitConfig,
-            SessionLimitConfig, UploadLimitConfig,
+            ConnectionLimitConfig, MemoryQuotaConfig, RateLimitConfig, SessionLimitConfig,
+            UploadLimitConfig,
         };
-        
+
         let rate_limiter = Arc::new(RateLimiter::new(RateLimitConfig {
             max_requests: 100,
             window_duration: Duration::from_secs(60),
         }));
-        
+
         let memory_quota = Arc::new(MemoryQuota::new(MemoryQuotaConfig {
             max_memory: 1024 * 1024 * 1024, // 1GB
         }));
-        
+
         let connection_limiter = Arc::new(ConnectionLimiter::new(ConnectionLimitConfig {
             max_connections: 1000,
         }));
-        
+
         let session_limiter = Arc::new(SessionLimiter::new(SessionLimitConfig {
             max_sessions_per_user: 10,
             max_total_sessions: 10000,
         }));
-        
+
         let upload_limiter = Arc::new(UploadLimiter::new(UploadLimitConfig {
             max_file_size: 100 * 1024 * 1024,  // 100MB per file
             max_total_size: 500 * 1024 * 1024, // 500MB total
@@ -244,8 +245,7 @@ impl P0Features {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_p0_features_initialization() {

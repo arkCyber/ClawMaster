@@ -91,10 +91,9 @@ pub async fn share_page_handler(
     let cookie_access_granted = jar.get(&cookie_name).is_some_and(|cookie| {
         clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, cookie.value())
     });
-    let query_access_granted = query
-        .k
-        .as_deref()
-        .is_some_and(|key| clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, key));
+    let query_access_granted = query.k.as_deref().is_some_and(|key| {
+        clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, key)
+    });
 
     if share.visibility == clawmaster_gateway::share_store::ShareVisibility::Private
         && !(cookie_access_granted || query_access_granted)
@@ -229,10 +228,9 @@ pub async fn share_social_image_handler(
     let cookie_access_granted = jar.get(&cookie_name).is_some_and(|cookie| {
         clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, cookie.value())
     });
-    let query_access_granted = query
-        .k
-        .as_deref()
-        .is_some_and(|key| clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, key));
+    let query_access_granted = query.k.as_deref().is_some_and(|key| {
+        clawmaster_gateway::share_store::ShareStore::verify_access_key(&share, key)
+    });
 
     if share.visibility == clawmaster_gateway::share_store::ShareVisibility::Private
         && !(cookie_access_granted || query_access_granted)

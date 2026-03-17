@@ -15,6 +15,13 @@ pub mod error;
 pub mod params;
 pub use error::{Error, Result};
 
+pub mod agents_list;
+pub mod apply_patch;
+pub mod gateway_config;
+pub mod image_tool;
+pub mod loop_detection;
+pub mod pdf_tool;
+
 static SHARED_CLIENT: std::sync::OnceLock<reqwest::Client> = std::sync::OnceLock::new();
 
 /// Initialize the shared HTTP client with optional proxy.

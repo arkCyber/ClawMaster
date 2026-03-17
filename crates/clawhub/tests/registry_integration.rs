@@ -1,9 +1,13 @@
 //! Integration tests for Registry.
 
-use clawmaster_clawhub::registry::Registry;
-use clawmaster_clawhub::types::{SearchQuery, SecurityStatus, SortOrder, ToolMetadata, ToolType};
-use tempfile::tempdir;
-use time::OffsetDateTime;
+use {
+    clawmaster_clawhub::{
+        registry::Registry,
+        types::{SearchQuery, SecurityStatus, SortOrder, ToolMetadata, ToolType},
+    },
+    tempfile::tempdir,
+    time::OffsetDateTime,
+};
 
 #[tokio::test]
 async fn test_registry_search() {
@@ -161,8 +165,14 @@ async fn test_registry_increment_downloads() {
     registry.publish(metadata).await.unwrap();
 
     // Increment downloads
-    registry.increment_downloads("download-test", "1.0.0").await.unwrap();
-    registry.increment_downloads("download-test", "1.0.0").await.unwrap();
+    registry
+        .increment_downloads("download-test", "1.0.0")
+        .await
+        .unwrap();
+    registry
+        .increment_downloads("download-test", "1.0.0")
+        .await
+        .unwrap();
 
     // Check downloads
     let tool = registry.get_tool("download-test", "1.0.0").await.unwrap();

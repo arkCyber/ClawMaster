@@ -1,10 +1,12 @@
 //! Message processing for chat catchup functionality
 
-use crate::error::{MessageProcessingError, MessageResult};
-use chrono::{DateTime, Utc};
-use regex::Regex;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use {
+    crate::error::{MessageProcessingError, MessageResult},
+    chrono::{DateTime, Utc},
+    regex::Regex,
+    serde::{Deserialize, Serialize},
+    std::collections::HashMap,
+};
 
 /// Represents a chat message
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -102,7 +104,10 @@ impl MessageProcessor {
             .iter()
             .map(|pattern| {
                 Regex::new(pattern).map_err(|e| {
-                    MessageProcessingError::InvalidFormat(format!("Invalid regex pattern '{}': {}", pattern, e))
+                    MessageProcessingError::InvalidFormat(format!(
+                        "Invalid regex pattern '{}': {}",
+                        pattern, e
+                    ))
                 })
             })
             .collect::<MessageResult<Vec<_>>>()?;
@@ -138,7 +143,10 @@ impl MessageProcessor {
 
             // Filter duplicates
             if self.filter_config.filter_duplicates {
-                let message_key = format!("{}:{}:{}", message.user_id, message.content, message.timestamp);
+                let message_key = format!(
+                    "{}:{}:{}",
+                    message.user_id, message.content, message.timestamp
+                );
                 if seen_messages.contains(&message_key) {
                     continue;
                 }
@@ -146,9 +154,10 @@ impl MessageProcessor {
             }
 
             // Filter by patterns
-            let should_exclude = self.compiled_patterns.iter().any(|pattern| {
-                pattern.is_match(&message.content)
-            });
+            let should_exclude = self
+                .compiled_patterns
+                .iter()
+                .any(|pattern| pattern.is_match(&message.content));
             if should_exclude {
                 continue;
             }
@@ -164,7 +173,10 @@ impl MessageProcessor {
     }
 
     /// Cluster messages by topic
-    pub fn cluster_messages(&self, messages: Vec<ChatMessage>) -> MessageResult<Vec<MessageCluster>> {
+    pub fn cluster_messages(
+        &self,
+        messages: Vec<ChatMessage>,
+    ) -> MessageResult<Vec<MessageCluster>> {
         if messages.is_empty() {
             return Ok(Vec::new());
         }
@@ -176,10 +188,12 @@ impl MessageProcessor {
         for message in messages {
             // Simple time-based clustering (messages within 5 minutes are in same cluster)
             let time_diff = message.timestamp.signed_duration_since(last_message_time);
-            
+
             if time_diff.num_minutes() > 5 && !current_cluster_messages.is_empty() {
                 // Create cluster from accumulated messages
-                if let Ok(cluster) = self.create_cluster(current_cluster_messages.drain(..).collect()) {
+                if let Ok(cluster) =
+                    self.create_cluster(current_cluster_messages.drain(..).collect())
+                {
                     clusters.push(cluster);
                 }
             }
@@ -201,18 +215,18 @@ impl MessageProcessor {
     /// Summarize messages
     pub fn summarize_messages(&self, messages: Vec<ChatMessage>) -> MessageResult<MessageSummary> {
         if messages.is_empty() {
-            return Err(MessageProcessingError::SummarizationFailed("No messages to summarize".to_string()));
+            return Err(MessageProcessingError::SummarizationFailed(
+                "No messages to summarize".to_string(),
+            ));
         }
 
         let message_count = messages.len();
         let start_time = messages[0].timestamp;
         let end_time = messages.last().unwrap().timestamp;
-        
-        let participants: std::collections::HashSet<_> = messages
-            .iter()
-            .map(|m| m.username.clone())
-            .collect();
-        
+
+        let participants: std::collections::HashSet<_> =
+            messages.iter().map(|m| m.username.clone()).collect();
+
         let participants: Vec<String> = participants.into_iter().collect();
 
         // Simple summarization logic (in production, this would use LLM)
@@ -225,7 +239,11 @@ impl MessageProcessor {
                 .collect();
             message_contents.join("; ")
         } else {
-            format!("{} messages discussed by {} participants", message_count, participants.len())
+            format!(
+                "{} messages discussed by {} participants",
+                message_count,
+                participants.len()
+            )
         };
 
         // Extract simple topics (in production, this would be more sophisticated)
@@ -244,19 +262,19 @@ impl MessageProcessor {
     /// Create a message cluster from messages
     fn create_cluster(&self, messages: Vec<ChatMessage>) -> MessageResult<MessageCluster> {
         if messages.is_empty() {
-            return Err(MessageProcessingError::ClusteringFailed("No messages in cluster".to_string()));
+            return Err(MessageProcessingError::ClusteringFailed(
+                "No messages in cluster".to_string(),
+            ));
         }
 
         let start_time = messages[0].timestamp;
         let end_time = messages.last().unwrap().timestamp;
-        
-        let participants: std::collections::HashSet<_> = messages
-            .iter()
-            .map(|m| m.username.clone())
-            .collect();
-        
+
+        let participants: std::collections::HashSet<_> =
+            messages.iter().map(|m| m.username.clone()).collect();
+
         let participants: Vec<String> = participants.into_iter().collect();
-        
+
         // Simple topic extraction
         let topic = if messages.len() == 1 {
             messages[0].content.chars().take(50).collect()
@@ -304,7 +322,7 @@ impl MessageProcessor {
         // Get top 5 words as topics
         let mut sorted_words: Vec<_> = word_counts.into_iter().collect();
         sorted_words.sort_by(|a, b| b.1.cmp(&a.1));
-        
+
         for (word, _count) in sorted_words.into_iter().take(5) {
             topics.push(word);
         }
@@ -315,8 +333,7 @@ impl MessageProcessor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::config::MessageFilterConfig;
+    use {super::*, crate::config::MessageFilterConfig};
 
     #[test]
     fn test_message_filtering() {

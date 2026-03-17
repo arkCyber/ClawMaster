@@ -391,9 +391,10 @@ mod tests {
 
     #[test]
     fn test_parse_prometheus_line_with_labels() {
-        let metric =
-            parse_prometheus_line(r#"clawmaster_http_requests_total{method="GET",status="200"} 100"#)
-                .unwrap();
+        let metric = parse_prometheus_line(
+            r#"clawmaster_http_requests_total{method="GET",status="200"} 100"#,
+        )
+        .unwrap();
         assert_eq!(metric.name, "clawmaster_http_requests_total");
         assert_eq!(metric.value, Some(100.0));
         assert_eq!(metric.labels.get("method"), Some(&"GET".to_string()));

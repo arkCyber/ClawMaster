@@ -2,17 +2,20 @@
 //!
 //! DO-178C Level A: Complete access control with audit logging
 
-use std::sync::Arc;
-use anyhow::{anyhow, Result};
-use sqlx::{SqlitePool, Row};
-use tokio::sync::RwLock;
-use tracing::{info, warn};
-
-use crate::models::{
-    FolderPermission, PermissionFlags, AccessLog, AccessOperation,
-    ValidationRule, RuleType,
+use {
+    anyhow::{Result, anyhow},
+    sqlx::{Row, SqlitePool},
+    std::sync::Arc,
+    tokio::sync::RwLock,
+    tracing::{info, warn},
 };
-use crate::validation::{PathValidator, calculate_path_hash};
+
+use crate::{
+    models::{
+        AccessLog, AccessOperation, FolderPermission, PermissionFlags, RuleType, ValidationRule,
+    },
+    validation::{PathValidator, calculate_path_hash},
+};
 
 /// Folder access control service
 ///
@@ -32,7 +35,7 @@ impl FolderAccessService {
     pub async fn new(pool: SqlitePool) -> Result<Self> {
         let rules = Self::load_validation_rules_static(&pool).await?;
         let validator = Arc::new(RwLock::new(PathValidator::new(rules)));
-        
+
         Ok(Self { pool, validator })
     }
 
@@ -67,12 +70,10 @@ impl FolderAccessService {
         let folder_hash = calculate_path_hash(&canonical_str);
 
         // Check if folder already exists
-        let existing = sqlx::query(
-            "SELECT id FROM folder_permissions WHERE folder_path = ?"
-        )
-        .bind(&canonical_str)
-        .fetch_optional(&self.pool)
-        .await?;
+        let existing = sqlx::query("SELECT id FROM folder_permissions WHERE folder_path = ?")
+            .bind(&canonical_str)
+            .fetch_optional(&self.pool)
+            .await?;
 
         if existing.is_some() {
             return Err(anyhow!("Folder already exists in permissions"));
@@ -92,7 +93,7 @@ impl FolderAccessService {
                 folder_path, folder_hash, can_read, can_write, can_execute, can_delete,
                 description, created_at, updated_at, created_by, is_active, access_count
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0)
-            "#
+            "#,
         )
         .bind(&canonical_str)
         .bind(&folder_hash)
@@ -125,13 +126,12 @@ impl FolderAccessService {
     /// DO-178C §6.3.2: Safe deletion with audit trail
     pub async fn remove_folder(&self, folder_id: i64) -> Result<()> {
         // Soft delete - mark as inactive
-        let result = sqlx::query(
-            "UPDATE folder_permissions SET is_active = 0, updated_at = ? WHERE id = ?"
-        )
-        .bind(chrono::Utc::now().timestamp())
-        .bind(folder_id)
-        .execute(&self.pool)
-        .await?;
+        let result =
+            sqlx::query("UPDATE folder_permissions SET is_active = 0, updated_at = ? WHERE id = ?")
+                .bind(chrono::Utc::now().timestamp())
+                .bind(folder_id)
+                .execute(&self.pool)
+                .await?;
 
         if result.rows_affected() == 0 {
             return Err(anyhow!("Folder not found"));
@@ -160,7 +160,7 @@ impl FolderAccessService {
             UPDATE folder_permissions 
             SET can_read = ?, can_write = ?, can_execute = ?, can_delete = ?, updated_at = ?
             WHERE id = ? AND is_active = 1
-            "#
+            "#,
         )
         .bind(permissions.can_read)
         .bind(permissions.can_write)
@@ -191,9 +191,7 @@ impl FolderAccessService {
             "SELECT * FROM folder_permissions WHERE is_active = 1 ORDER BY folder_path"
         };
 
-        let rows = sqlx::query(query)
-            .fetch_all(&self.pool)
-            .await?;
+        let rows = sqlx::query(query).fetch_all(&self.pool).await?;
 
         let mut folders = Vec::new();
         for row in rows {
@@ -261,7 +259,7 @@ impl FolderAccessService {
                     AccessOperation::Delete => f.permissions.can_delete,
                 };
                 (allowed, Some(f.id))
-            }
+            },
             None => {
                 warn!(
                     file_path = %canonical_str,
@@ -269,7 +267,7 @@ impl FolderAccessService {
                     "No folder permission found"
                 );
                 (false, None)
-            }
+            },
         };
 
         // Log access attempt
@@ -358,7 +356,7 @@ impl FolderAccessService {
             INSERT INTO folder_access_log (
                 folder_id, operation, file_path, success, session_key, error_message, timestamp
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
-            "#
+            "#,
         )
         .bind(folder_id)
         .bind(operation_str)
@@ -385,7 +383,7 @@ impl FolderAccessService {
             UPDATE folder_permissions 
             SET access_count = access_count + 1, last_accessed_at = ?
             WHERE id = ?
-            "#
+            "#,
         )
         .bind(now)
         .bind(folder_id)
@@ -399,13 +397,9 @@ impl FolderAccessService {
     ///
     /// # Compliance
     /// DO-178C §11.10: Audit trail retrieval
-    pub async fn get_access_logs(
-        &self,
-        folder_id: i64,
-        limit: i64,
-    ) -> Result<Vec<AccessLog>> {
+    pub async fn get_access_logs(&self, folder_id: i64, limit: i64) -> Result<Vec<AccessLog>> {
         let rows = sqlx::query(
-            "SELECT * FROM folder_access_log WHERE folder_id = ? ORDER BY timestamp DESC LIMIT ?"
+            "SELECT * FROM folder_access_log WHERE folder_id = ? ORDER BY timestamp DESC LIMIT ?",
         )
         .bind(folder_id)
         .bind(limit)
@@ -442,7 +436,7 @@ impl FolderAccessService {
     /// DO-178C §11.13: Dynamic rule loading
     async fn load_validation_rules_static(pool: &SqlitePool) -> Result<Vec<ValidationRule>> {
         let rows = sqlx::query(
-            "SELECT * FROM folder_validation_rules WHERE is_active = 1 ORDER BY priority DESC"
+            "SELECT * FROM folder_validation_rules WHERE is_active = 1 ORDER BY priority DESC",
         )
         .fetch_all(pool)
         .await?;
@@ -450,8 +444,8 @@ impl FolderAccessService {
         let mut rules = Vec::new();
         for row in rows {
             let rule_type_str: String = row.get("rule_type");
-            let rule_type = RuleType::from_str(&rule_type_str)
-                .ok_or_else(|| anyhow!("Invalid rule type"))?;
+            let rule_type =
+                RuleType::from_str(&rule_type_str).ok_or_else(|| anyhow!("Invalid rule type"))?;
 
             rules.push(ValidationRule {
                 id: row.get("id"),
@@ -500,7 +494,7 @@ impl FolderAccessService {
             INSERT INTO folder_validation_rules (
                 rule_type, pattern, description, is_active, priority, created_at, created_by
             ) VALUES (?, ?, ?, 1, ?, ?, ?)
-            "#
+            "#,
         )
         .bind(rule_type_str)
         .bind(pattern)
@@ -528,19 +522,18 @@ impl FolderAccessService {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::tempdir;
+    use {super::*, tempfile::tempdir};
 
     async fn create_test_service() -> FolderAccessService {
         let pool = SqlitePool::connect(":memory:").await.unwrap();
         crate::run_migrations(&pool).await.unwrap();
-        
+
         // Disable default blacklist rules for testing
         sqlx::query("UPDATE folder_validation_rules SET is_active = 0")
             .execute(&pool)
             .await
             .unwrap();
-        
+
         FolderAccessService::new(pool).await.unwrap()
     }
 
@@ -548,13 +541,15 @@ mod tests {
     async fn test_add_folder() {
         let service = create_test_service().await;
         let dir = tempdir().unwrap();
-        
-        let result = service.add_folder(
-            dir.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            Some("Test folder".to_string()),
-            "test_user",
-        ).await;
+
+        let result = service
+            .add_folder(
+                dir.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                Some("Test folder".to_string()),
+                "test_user",
+            )
+            .await;
 
         assert!(result.is_ok());
     }
@@ -565,19 +560,21 @@ mod tests {
         let dir = tempdir().unwrap();
         let test_file = dir.path().join("test.txt");
         std::fs::write(&test_file, "test").unwrap();
-        
-        service.add_folder(
-            dir.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            None,
-            "test_user",
-        ).await.unwrap();
 
-        let allowed = service.check_access(
-            test_file.to_str().unwrap(),
-            AccessOperation::Read,
-            None,
-        ).await.unwrap();
+        service
+            .add_folder(
+                dir.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
+
+        let allowed = service
+            .check_access(test_file.to_str().unwrap(), AccessOperation::Read, None)
+            .await
+            .unwrap();
 
         assert!(allowed);
     }
@@ -588,19 +585,21 @@ mod tests {
         let dir = tempdir().unwrap();
         let test_file = dir.path().join("test.txt");
         std::fs::write(&test_file, "test").unwrap();
-        
-        service.add_folder(
-            dir.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            None,
-            "test_user",
-        ).await.unwrap();
 
-        let allowed = service.check_access(
-            test_file.to_str().unwrap(),
-            AccessOperation::Write,
-            None,
-        ).await.unwrap();
+        service
+            .add_folder(
+                dir.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
+
+        let allowed = service
+            .check_access(test_file.to_str().unwrap(), AccessOperation::Write, None)
+            .await
+            .unwrap();
 
         assert!(!allowed);
     }
@@ -609,18 +608,20 @@ mod tests {
     async fn test_update_permissions() {
         let service = create_test_service().await;
         let dir = tempdir().unwrap();
-        
-        let folder_id = service.add_folder(
-            dir.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            None,
-            "test_user",
-        ).await.unwrap();
 
-        let result = service.update_permissions(
-            folder_id,
-            PermissionFlags::read_write(),
-        ).await;
+        let folder_id = service
+            .add_folder(
+                dir.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
+
+        let result = service
+            .update_permissions(folder_id, PermissionFlags::read_write())
+            .await;
 
         assert!(result.is_ok());
     }
@@ -630,20 +631,26 @@ mod tests {
         let service = create_test_service().await;
         let dir1 = tempdir().unwrap();
         let dir2 = tempdir().unwrap();
-        
-        service.add_folder(
-            dir1.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            None,
-            "test_user",
-        ).await.unwrap();
 
-        service.add_folder(
-            dir2.path().to_str().unwrap(),
-            PermissionFlags::read_write(),
-            None,
-            "test_user",
-        ).await.unwrap();
+        service
+            .add_folder(
+                dir1.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
+
+        service
+            .add_folder(
+                dir2.path().to_str().unwrap(),
+                PermissionFlags::read_write(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
 
         let folders = service.list_folders(false).await.unwrap();
         assert_eq!(folders.len(), 2);
@@ -655,19 +662,25 @@ mod tests {
         let dir = tempdir().unwrap();
         let test_file = dir.path().join("test.txt");
         std::fs::write(&test_file, "test").unwrap();
-        
-        let folder_id = service.add_folder(
-            dir.path().to_str().unwrap(),
-            PermissionFlags::read_only(),
-            None,
-            "test_user",
-        ).await.unwrap();
 
-        service.check_access(
-            test_file.to_str().unwrap(),
-            AccessOperation::Read,
-            Some("session123".to_string()),
-        ).await.unwrap();
+        let folder_id = service
+            .add_folder(
+                dir.path().to_str().unwrap(),
+                PermissionFlags::read_only(),
+                None,
+                "test_user",
+            )
+            .await
+            .unwrap();
+
+        service
+            .check_access(
+                test_file.to_str().unwrap(),
+                AccessOperation::Read,
+                Some("session123".to_string()),
+            )
+            .await
+            .unwrap();
 
         let logs = service.get_access_logs(folder_id, 10).await.unwrap();
         assert_eq!(logs.len(), 1);

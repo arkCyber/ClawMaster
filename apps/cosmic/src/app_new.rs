@@ -383,8 +383,7 @@ impl Application for ClawMasterApp {
                     created_at: "just now".to_string(),
                     message_count: 0,
                     is_active: true,
-                }
-                Task::none();
+                };
                 self.sessions.push(new_session.clone());
                 self.current_session_id = Some(new_session.id.clone());
                 self.current_page = Page::Chat;
@@ -393,20 +392,17 @@ impl Application for ClawMasterApp {
                 self.file_menu_open = false;
                 self.edit_menu_open = false;
                 self.view_menu_open = false;
-                Task::none()
                 self.help_menu_open = false;
-            }
                 Task::none()
+            }
             Message::SelectSession(session_id) => {
                 info!("Selecting session: {}", session_id);
                 self.current_session_id = Some(session_id.clone());
                 self.current_page = Page::Chat;
-                Task::none()
                 // 加载该会话的消息（模拟）
                 self.messages = Self::create_mock_messages(&session_id);
-            }
-            Task::none()
                 Task::none()
+            }
             Message::LoadSessionMessages(session_id) => {
                 self.messages = Self::create_mock_messages(&session_id);
                 Task::none()
@@ -1842,24 +1838,21 @@ impl ClawMasterApp {
                 created_at: "2024-03-14 10:30".to_string(),
                 message_count: 15,
                 is_active: true,
-            }
-                Task::none(),
+            },
             SessionInfo {
                 id: "session_2".to_string(),
                 title: "Code Review".to_string(),
                 created_at: "2024-03-14 14:20".to_string(),
                 message_count: 8,
                 is_active: false,
-            }
-                Task::none(),
+            },
             SessionInfo {
                 id: "session_3".to_string(),
                 title: "Bug Investigation".to_string(),
                 created_at: "2024-03-13 16:45".to_string(),
                 message_count: 23,
                 is_active: false,
-            }
-                Task::none(),
+            },
         ]
     }
     

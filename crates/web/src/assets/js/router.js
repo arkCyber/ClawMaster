@@ -98,8 +98,12 @@ export function mount(path) {
 
 	updateNavActiveState(path);
 
-	// Show sessions panel on chat pages
-	if (route.matchedPrefix === routes.chats || path === routes.chats) {
+	if (
+		route.matchedPrefix === routes.chats ||
+		path === routes.chats ||
+		route.matchedPrefix === routes.monitoring ||
+		path === routes.monitoring
+	) {
 		sessionsPanel.classList.remove("hidden");
 	} else {
 		sessionsPanel.classList.add("hidden");

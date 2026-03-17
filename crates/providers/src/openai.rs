@@ -7,8 +7,8 @@ use std::{
 
 use {
     async_trait::async_trait,
-    futures::{SinkExt, StreamExt},
     clawmaster_config::schema::ProviderStreamTransport,
+    futures::{SinkExt, StreamExt},
     secrecy::ExposeSecret,
     tokio_stream::Stream,
     tokio_tungstenite::tungstenite::{Message, client::IntoClientRequest, http::HeaderValue},

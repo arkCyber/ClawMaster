@@ -1,14 +1,18 @@
 //! Main catchup engine for chat catchup functionality
 
-use crate::config::{CatchupConfig, CatchupMode};
-use crate::error::CatchupError;
-use crate::message_processor::{MessageProcessor, ChatMessage};
-use crate::context_builder::{ContextBuilder, ConversationContext};
-use chrono::{DateTime, Utc, Duration};
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use tokio::time::timeout;
-use tracing::{debug, info, warn};
+use {
+    crate::{
+        config::{CatchupConfig, CatchupMode},
+        context_builder::{ContextBuilder, ConversationContext},
+        error::CatchupError,
+        message_processor::{ChatMessage, MessageProcessor},
+    },
+    chrono::{DateTime, Duration, Utc},
+    serde::{Deserialize, Serialize},
+    std::sync::Arc,
+    tokio::time::timeout,
+    tracing::{debug, info, warn},
+};
 
 use super::ChatCatchupInterface;
 
@@ -85,10 +89,13 @@ pub trait MessageStore: Send + Sync {
         since: DateTime<Utc>,
         limit: usize,
     ) -> Result<Vec<ChatMessage>, CatchupError>;
-    
+
     /// Get latest message timestamp
-    async fn get_latest_message_timestamp(&self, channel_id: &str) -> Result<Option<DateTime<Utc>>, CatchupError>;
-    
+    async fn get_latest_message_timestamp(
+        &self,
+        channel_id: &str,
+    ) -> Result<Option<DateTime<Utc>>, CatchupError>;
+
     /// Get message count in time range
     async fn get_message_count(
         &self,
@@ -107,7 +114,7 @@ pub trait SessionStore: Send + Sync {
         channel_id: &str,
         user_id: &str,
     ) -> Result<Option<DateTime<Utc>>, CatchupError>;
-    
+
     /// Update last read timestamp for user in channel
     async fn update_last_read_timestamp(
         &self,
@@ -115,7 +122,7 @@ pub trait SessionStore: Send + Sync {
         user_id: &str,
         timestamp: DateTime<Utc>,
     ) -> Result<(), CatchupError>;
-    
+
     /// Get unread message count
     async fn get_unread_count(
         &self,
@@ -131,11 +138,13 @@ impl ChatCatchup {
         message_store: Arc<dyn MessageStore>,
         session_store: Arc<dyn SessionStore>,
     ) -> Result<Self, CatchupError> {
-        let message_processor = Arc::new(MessageProcessor::new(config.message_filter.clone())
-            .map_err(|e| CatchupError::ConfigurationError(e.to_string()))?);
-        
-        let context_builder = Arc::new(ContextBuilder::new()
-            .with_max_length(config.max_context_length));
+        let message_processor = Arc::new(
+            MessageProcessor::new(config.message_filter.clone())
+                .map_err(|e| CatchupError::ConfigurationError(e.to_string()))?,
+        );
+
+        let context_builder =
+            Arc::new(ContextBuilder::new().with_max_length(config.max_context_length));
 
         Ok(Self {
             config,
@@ -152,20 +161,31 @@ impl ChatCatchup {
         channel_id: &str,
         user_id: &str,
     ) -> Result<(CatchupMode, DateTime<Utc>), CatchupError> {
-        let last_read = self.session_store.get_last_read_timestamp(channel_id, user_id).await?;
+        let last_read = self
+            .session_store
+            .get_last_read_timestamp(channel_id, user_id)
+            .await?;
         let now = Utc::now();
-        
+
         let since = last_read.unwrap_or_else(|| now - self.config.max_lookback_period);
-        
+
         // Get message count to determine strategy
-        let message_count = self.message_store.get_message_count(channel_id, since, now).await?;
+        let message_count = self
+            .message_store
+            .get_message_count(channel_id, since, now)
+            .await?;
         let time_elapsed = now.signed_duration_since(since);
-        
-        let mode = self.config.strategy.determine_strategy(message_count, time_elapsed.to_std().unwrap_or_default());
-        
-        debug!("Determined catchup strategy: {:?} for {} messages over {:?}", 
-               mode, message_count, time_elapsed);
-        
+
+        let mode = self
+            .config
+            .strategy
+            .determine_strategy(message_count, time_elapsed.to_std().unwrap_or_default());
+
+        debug!(
+            "Determined catchup strategy: {:?} for {} messages over {:?}",
+            mode, message_count, time_elapsed
+        );
+
         Ok((mode, since))
     }
 
@@ -178,25 +198,24 @@ impl ChatCatchup {
         user_id: String,
     ) -> Result<ConversationContext, CatchupError> {
         match mode {
-            CatchupMode::Full => {
-                self.context_builder
-                    .build_full_context(messages, channel_id, user_id)
-            }
+            CatchupMode::Full => self
+                .context_builder
+                .build_full_context(messages, channel_id, user_id),
             CatchupMode::Clustered => {
                 let clusters = self.message_processor.cluster_messages(messages)?;
                 self.context_builder
                     .build_clustered_context(clusters, channel_id, user_id)
-            }
+            },
             CatchupMode::Summarized => {
                 let summary = self.message_processor.summarize_messages(messages)?;
                 self.context_builder
                     .build_summarized_context(summary, channel_id, user_id)
-            }
+            },
             CatchupMode::Custom => {
                 // For custom mode, default to full processing
                 self.context_builder
                     .build_full_context(messages, channel_id, user_id)
-            }
+            },
         }
     }
 
@@ -226,36 +245,59 @@ impl ChatCatchup {
 
 #[async_trait::async_trait]
 impl ChatCatchupInterface for ChatCatchup {
-    async fn catch_up(&self, channel_id: &str, user_id: &str) -> Result<CatchupResult, CatchupError> {
+    async fn catch_up(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+    ) -> Result<CatchupResult, CatchupError> {
         let start_time = std::time::Instant::now();
         let catchup_id = uuid::Uuid::new_v4().to_string();
-        
-        info!("Starting catchup for user {} in channel {}", user_id, channel_id);
+
+        info!(
+            "Starting catchup for user {} in channel {}",
+            user_id, channel_id
+        );
 
         // Determine strategy and get since timestamp
-        let (mode, since) = timeout(self.config.catchup_timeout, 
-            self.determine_strategy(channel_id, user_id)
-        ).await.map_err(|_| CatchupError::TimeoutExceeded(self.config.catchup_timeout))??;
+        let (mode, since) = timeout(
+            self.config.catchup_timeout,
+            self.determine_strategy(channel_id, user_id),
+        )
+        .await
+        .map_err(|_| CatchupError::TimeoutExceeded(self.config.catchup_timeout))??;
 
         // Get messages since last read
-        let raw_messages = timeout(self.config.catchup_timeout,
-            self.message_store.get_messages_since(channel_id, since, self.config.max_messages_per_batch)
-        ).await.map_err(|_| CatchupError::TimeoutExceeded(self.config.catchup_timeout))??;
+        let raw_messages = timeout(
+            self.config.catchup_timeout,
+            self.message_store.get_messages_since(
+                channel_id,
+                since,
+                self.config.max_messages_per_batch,
+            ),
+        )
+        .await
+        .map_err(|_| CatchupError::TimeoutExceeded(self.config.catchup_timeout))??;
 
         let raw_count = raw_messages.len();
         debug!("Retrieved {} raw messages", raw_count);
 
         // Filter messages
-        let filtered_messages = self.message_processor.filter_messages(raw_messages)
+        let filtered_messages = self
+            .message_processor
+            .filter_messages(raw_messages)
             .map_err(|e| CatchupError::MessageProcessingFailed(e))?;
         let filtered_count = filtered_messages.len();
         debug!("Filtered to {} messages", filtered_count);
 
         // Get latest message timestamp
-        let latest_timestamp = self.message_store.get_latest_message_timestamp(channel_id).await?
+        let latest_timestamp = self
+            .message_store
+            .get_latest_message_timestamp(channel_id)
+            .await?
             .unwrap_or_else(|| Utc::now());
 
-        let oldest_timestamp = filtered_messages.first()
+        let oldest_timestamp = filtered_messages
+            .first()
             .map(|m| m.timestamp)
             .unwrap_or_else(|| Utc::now());
 
@@ -268,12 +310,20 @@ impl ChatCatchupInterface for ChatCatchup {
                 user_id.to_string(),
             )?
         } else {
-            self.process_messages(filtered_messages.clone(), mode.clone(), 
-                                 channel_id.to_string(), user_id.to_string()).await?
+            self.process_messages(
+                filtered_messages.clone(),
+                mode.clone(),
+                channel_id.to_string(),
+                user_id.to_string(),
+            )
+            .await?
         };
 
         // Get last read timestamp for metadata
-        let last_read = self.session_store.get_last_read_timestamp(channel_id, user_id).await?;
+        let last_read = self
+            .session_store
+            .get_last_read_timestamp(channel_id, user_id)
+            .await?;
 
         // Create metadata
         let metadata = self.create_metadata(
@@ -290,7 +340,11 @@ impl ChatCatchupInterface for ChatCatchup {
 
         // Update last read timestamp to now
         if had_unread {
-            if let Err(e) = self.session_store.update_last_read_timestamp(channel_id, user_id, Utc::now()).await {
+            if let Err(e) = self
+                .session_store
+                .update_last_read_timestamp(channel_id, user_id, Utc::now())
+                .await
+            {
                 warn!("Failed to update last read timestamp: {}", e);
             }
         }
@@ -308,20 +362,35 @@ impl ChatCatchupInterface for ChatCatchup {
             metadata,
         };
 
-        info!("Catchup completed for user {} in channel {}: {} messages processed in {:?}", 
-              user_id, channel_id, result.messages_processed, processing_time);
+        info!(
+            "Catchup completed for user {} in channel {}: {} messages processed in {:?}",
+            user_id, channel_id, result.messages_processed, processing_time
+        );
 
         Ok(result)
     }
 
-    async fn get_unread_count(&self, channel_id: &str, user_id: &str) -> Result<usize, CatchupError> {
-        self.session_store.get_unread_count(channel_id, user_id).await
+    async fn get_unread_count(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+    ) -> Result<usize, CatchupError> {
+        self.session_store
+            .get_unread_count(channel_id, user_id)
+            .await
     }
 
-    async fn mark_as_read(&self, channel_id: &str, user_id: &str, up_to_timestamp: u64) -> Result<(), CatchupError> {
+    async fn mark_as_read(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+        up_to_timestamp: u64,
+    ) -> Result<(), CatchupError> {
         let up_to = DateTime::from_timestamp(up_to_timestamp as i64, 0)
             .ok_or_else(|| CatchupError::InvalidTimestamp(up_to_timestamp))?;
-        self.session_store.update_last_read_timestamp(channel_id, user_id, up_to).await
+        self.session_store
+            .update_last_read_timestamp(channel_id, user_id, up_to)
+            .await
     }
 }
 
@@ -359,7 +428,10 @@ impl MessageStore for MockMessageStore {
             .collect())
     }
 
-    async fn get_latest_message_timestamp(&self, _channel_id: &str) -> Result<Option<DateTime<Utc>>, CatchupError> {
+    async fn get_latest_message_timestamp(
+        &self,
+        _channel_id: &str,
+    ) -> Result<Option<DateTime<Utc>>, CatchupError> {
         let messages = self.messages.read().unwrap();
         Ok(messages.last().map(|m| m.timestamp))
     }
@@ -390,7 +462,7 @@ impl MockSessionStore {
             message_store: std::sync::RwLock::new(None),
         }
     }
-    
+
     pub fn set_message_store(&self, store: Arc<MockMessageStore>) {
         *self.message_store.write().unwrap() = Some(store);
     }
@@ -404,7 +476,9 @@ impl SessionStore for MockSessionStore {
         user_id: &str,
     ) -> Result<Option<DateTime<Utc>>, CatchupError> {
         let last_read = self.last_read.read().unwrap();
-        Ok(last_read.get(&(channel_id.to_string(), user_id.to_string())).copied())
+        Ok(last_read
+            .get(&(channel_id.to_string(), user_id.to_string()))
+            .copied())
     }
 
     async fn update_last_read_timestamp(
@@ -418,16 +492,20 @@ impl SessionStore for MockSessionStore {
         Ok(())
     }
 
-    async fn get_unread_count(&self, channel_id: &str, user_id: &str) -> Result<usize, CatchupError> {
+    async fn get_unread_count(
+        &self,
+        channel_id: &str,
+        user_id: &str,
+    ) -> Result<usize, CatchupError> {
         // Get last read timestamp
         let last_read = self.get_last_read_timestamp(channel_id, user_id).await?;
-        
+
         // Clone the Arc to avoid holding the lock across await
         let store_clone = {
             let guard = self.message_store.read().unwrap();
             guard.as_ref().cloned()
         };
-        
+
         // If we have a message store, count messages since last read
         if let Some(store) = store_clone {
             let since = last_read.unwrap_or_else(|| Utc::now() - Duration::days(30));
@@ -441,19 +519,21 @@ impl SessionStore for MockSessionStore {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::config::{CatchupConfig, MessageFilterConfig};
+    use {
+        super::*,
+        crate::config::{CatchupConfig, MessageFilterConfig},
+    };
 
     #[tokio::test]
     async fn test_catchup_no_messages() {
         let config = CatchupConfig::default();
         let message_store = Arc::new(MockMessageStore::new());
         let session_store = Arc::new(MockSessionStore::new());
-        
+
         let catchup = ChatCatchup::new(config, message_store, session_store).unwrap();
-        
+
         let result = catchup.catch_up("channel1", "user1").await.unwrap();
-        
+
         assert_eq!(result.messages_processed, 0);
         assert!(!result.had_unread);
     }
@@ -463,7 +543,7 @@ mod tests {
         let config = CatchupConfig::default();
         let message_store = Arc::new(MockMessageStore::new());
         let session_store = Arc::new(MockSessionStore::new());
-        
+
         // Add some test messages
         let message = ChatMessage {
             id: "1".to_string(),
@@ -477,13 +557,13 @@ mod tests {
             message_type: crate::message_processor::MessageType::Text,
             metadata: std::collections::HashMap::new(),
         };
-        
+
         message_store.add_message(message);
-        
+
         let catchup = ChatCatchup::new(config, message_store, session_store).unwrap();
-        
+
         let result = catchup.catch_up("channel1", "user1").await.unwrap();
-        
+
         assert_eq!(result.messages_processed, 1);
         assert!(result.had_unread);
         assert_eq!(result.context.participants.len(), 1);

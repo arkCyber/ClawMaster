@@ -387,7 +387,10 @@ fn allowlist_pattern_matches_key(pattern: &str, key: &str) -> bool {
 }
 
 #[allow(dead_code)]
-pub fn model_matches_allowlist(model: &clawmaster_providers::ModelInfo, patterns: &[String]) -> bool {
+pub fn model_matches_allowlist(
+    model: &clawmaster_providers::ModelInfo,
+    patterns: &[String],
+) -> bool {
     if patterns.is_empty() {
         return true;
     }
@@ -1548,7 +1551,10 @@ impl LiveModelService {
         order
     }
 
-    fn priority_rank(order: &HashMap<String, usize>, model: &clawmaster_providers::ModelInfo) -> usize {
+    fn priority_rank(
+        order: &HashMap<String, usize>,
+        model: &clawmaster_providers::ModelInfo,
+    ) -> usize {
         let full = normalize_model_key(&model.id);
         if let Some(rank) = order.get(&full) {
             return *rank;
@@ -2746,7 +2752,9 @@ impl ChatService for LiveChatService {
                     .get("_channel_reply_target")
                     .cloned()
                     .and_then(|value| {
-                        match serde_json::from_value::<clawmaster_channels::ChannelReplyTarget>(value) {
+                        match serde_json::from_value::<clawmaster_channels::ChannelReplyTarget>(
+                            value,
+                        ) {
                             Ok(target) => Some(target),
                             Err(e) => {
                                 warn!(
@@ -2775,7 +2783,9 @@ impl ChatService for LiveChatService {
             let permit: OwnedSemaphorePermit = match session_sem.clone().try_acquire_owned() {
                 Ok(p) => p,
                 Err(_) => {
-                    let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
+                    let queue_mode = clawmaster_config::discover_and_load()
+                        .chat
+                        .message_queue_mode;
                     info!(
                         session = %session_key,
                         mode = ?queue_mode,
@@ -2922,7 +2932,9 @@ impl ChatService for LiveChatService {
                     .remove(&session_key_clone)
                     .unwrap_or_default();
                 if !queued.is_empty() {
-                    let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
+                    let queue_mode = clawmaster_config::discover_and_load()
+                        .chat
+                        .message_queue_mode;
                     let chat = state_for_drain.chat_service().await;
                     match queue_mode {
                         MessageQueueMode::Followup => {
@@ -3330,7 +3342,9 @@ impl ChatService for LiveChatService {
             Ok(p) => p,
             Err(_) => {
                 // Active run — enqueue and return immediately.
-                let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
+                let queue_mode = clawmaster_config::discover_and_load()
+                    .chat
+                    .message_queue_mode;
                 info!(
                     session = %session_key,
                     mode = ?queue_mode,
@@ -3387,7 +3401,9 @@ impl ChatService for LiveChatService {
             }
         }
 
-        let agent_timeout_secs = clawmaster_config::discover_and_load().tools.agent_timeout_secs;
+        let agent_timeout_secs = clawmaster_config::discover_and_load()
+            .tools
+            .agent_timeout_secs;
 
         let message_queue = Arc::clone(&self.message_queue);
         let state_for_drain = Arc::clone(&self.state);
@@ -3564,7 +3580,9 @@ impl ChatService for LiveChatService {
                 .remove(&session_key_clone)
                 .unwrap_or_default();
             if !queued.is_empty() {
-                let queue_mode = clawmaster_config::discover_and_load().chat.message_queue_mode;
+                let queue_mode = clawmaster_config::discover_and_load()
+                    .chat
+                    .message_queue_mode;
                 let chat = state_for_drain.chat_service().await;
                 match queue_mode {
                     MessageQueueMode::Followup => {
@@ -4139,7 +4157,8 @@ impl ChatService for LiveChatService {
 
         // Save compaction summary to memory file and trigger sync.
         if let Some(mm) = self.state.memory_manager() {
-            let memory_dir = clawmaster_config::agent_workspace_dir(&session_agent_id).join("memory");
+            let memory_dir =
+                clawmaster_config::agent_workspace_dir(&session_agent_id).join("memory");
             if let Err(e) = tokio::fs::create_dir_all(&memory_dir).await {
                 warn!(error = %e, "compact: failed to create memory dir");
             } else {
@@ -5003,7 +5022,8 @@ impl ChannelStreamDispatcher {
     }
 
     async fn finish(&mut self) {
-        self.send_terminal(clawmaster_channels::StreamEvent::Done).await;
+        self.send_terminal(clawmaster_channels::StreamEvent::Done)
+            .await;
         self.join_workers().await;
     }
 
@@ -5604,18 +5624,46 @@ fn install_agent_scoped_memory_tools(
 /// - `Text` — tools are described in the prompt; the runner parses tool calls from text
 /// - `Off` — no tools at all
 fn effective_tool_mode(provider: &dyn clawmaster_agents::model::LlmProvider) -> ToolMode {
-    match provider.tool_mode() {
+    let declared_mode = provider.tool_mode();
+    let supports_tools = provider.supports_tools();
+
+    let effective_mode = match declared_mode {
         Some(ToolMode::Native) => ToolMode::Native,
         Some(ToolMode::Text) => ToolMode::Text,
         Some(ToolMode::Off) => ToolMode::Off,
         Some(ToolMode::Auto) | None => {
-            if provider.supports_tools() {
+            if supports_tools {
                 ToolMode::Native
             } else {
                 ToolMode::Text
             }
         },
+    };
+
+    #[cfg(feature = "metrics")]
+    {
+        use clawmaster_metrics::{counter, labels};
+        let provider_name = provider.name();
+        let provider_id = provider.id();
+        counter!(
+            "clawmaster_tool_mode_resolution_total",
+            labels::PROVIDER => provider_name.to_string(),
+            labels::MODEL => provider_id.to_string(),
+            "mode" => format!("{:?}", effective_mode)
+        )
+        .increment(1);
     }
+
+    tracing::debug!(
+        provider_name = %provider.name(),
+        provider_id = %provider.id(),
+        declared_mode = ?declared_mode,
+        supports_tools = %supports_tools,
+        effective_mode = ?effective_mode,
+        "resolved effective tool mode"
+    );
+
+    effective_mode
 }
 
 async fn run_with_tools(
@@ -6387,7 +6435,7 @@ async fn run_with_tools(
                 run_id: run_id.to_string(),
                 session_key: session_key.to_string(),
                 state: "error",
-                error: error_obj,
+                error: error_obj.clone(),
                 seq: client_seq,
             };
             #[allow(clippy::unwrap_used)] // serializing known-valid struct
@@ -8644,7 +8692,8 @@ mod tests {
                     clawmaster_channels::StreamEvent::Delta(delta) => {
                         self.deltas.lock().await.push(delta);
                     },
-                    clawmaster_channels::StreamEvent::Done | clawmaster_channels::StreamEvent::Error(_) => {
+                    clawmaster_channels::StreamEvent::Done
+                    | clawmaster_channels::StreamEvent::Error(_) => {
                         break;
                     },
                 }
@@ -11122,5 +11171,17 @@ mod tests {
             mode: Some(ToolMode::Auto),
         };
         assert_eq!(effective_tool_mode(&text), ToolMode::Text);
+    }
+
+    #[test]
+    fn effective_tool_mode_local_provider_pattern() {
+        // Regression test: local providers (local-llm, local-gguf) declare
+        // supports_tools=true but use Text mode (grammar-constrained generation).
+        // This should be respected when tool_mode() explicitly returns Text.
+        let local_provider = ToolModeTestProvider {
+            native: true,               // supports_tools() returns true
+            mode: Some(ToolMode::Text), // but tool_mode() is explicitly Text
+        };
+        assert_eq!(effective_tool_mode(&local_provider), ToolMode::Text);
     }
 }

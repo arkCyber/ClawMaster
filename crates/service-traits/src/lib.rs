@@ -37,7 +37,10 @@ impl From<&str> for ServiceError {
 
 impl From<ServiceError> for clawmaster_protocol::ErrorShape {
     fn from(err: ServiceError) -> Self {
-        Self::new(clawmaster_protocol::error_codes::UNAVAILABLE, err.to_string())
+        Self::new(
+            clawmaster_protocol::error_codes::UNAVAILABLE,
+            err.to_string(),
+        )
     }
 }
 

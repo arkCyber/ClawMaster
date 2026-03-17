@@ -19,9 +19,8 @@ pub mod vad;
 
 pub use {
     audio_utils::{
-        AudioMetadata, AudioQuality, apply_fade_in, apply_fade_out,
-        calculate_duration, convert_format, detect_format, mono_to_stereo, normalize_volume,
-        resample, stereo_to_mono,
+        AudioMetadata, AudioQuality, apply_fade_in, apply_fade_out, calculate_duration,
+        convert_format, detect_format, mono_to_stereo, normalize_volume, resample, stereo_to_mono,
     },
     config::{
         CoquiTtsConfig, DeepgramConfig, ElevenLabsConfig, ElevenLabsSttConfig, GoogleSttConfig,

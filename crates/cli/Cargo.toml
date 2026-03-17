@@ -93,7 +93,8 @@ tracing-subscriber     = { workspace = true }
 uuid                   = { workspace = true }
 which                  = { workspace = true }
 
-[target.'cfg(all(not(target_os = "windows"), not(all(target_os = "linux", target_arch = "aarch64"))))'.dependencies]
+# jemalloc disabled on Windows, Linux aarch64 (16KiB page kernels), and mobile (iOS/Android)
+[target.'cfg(all(not(target_os = "windows"), not(target_os = "ios"), not(target_os = "android"), not(all(target_os = "linux", target_arch = "aarch64"))))'.dependencies]
 tikv-jemallocator = { optional = true, workspace = true }
 
 [dev-dependencies]

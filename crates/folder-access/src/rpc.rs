@@ -2,12 +2,16 @@
 //!
 //! DO-178C Level A: RPC interface with comprehensive validation
 
-use anyhow::Result;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use {
+    anyhow::Result,
+    serde::{Deserialize, Serialize},
+    serde_json::{Value, json},
+};
 
-use crate::models::{AccessOperation, PermissionFlags, RuleType};
-use crate::service::FolderAccessService;
+use crate::{
+    models::{AccessOperation, PermissionFlags, RuleType},
+    service::FolderAccessService,
+};
 
 /// RPC request to add folder permission
 #[derive(Debug, Deserialize)]
@@ -98,11 +102,7 @@ impl FolderAccessRpc {
     ///
     /// # RPC Method
     /// `folder_access.add`
-    pub async fn add_folder(
-        &self,
-        params: Value,
-        created_by: &str,
-    ) -> Result<Value> {
+    pub async fn add_folder(&self, params: Value, created_by: &str) -> Result<Value> {
         let req: AddFolderRequest = serde_json::from_value(params)?;
 
         let permissions = PermissionFlags {
@@ -112,12 +112,10 @@ impl FolderAccessRpc {
             can_delete: req.can_delete,
         };
 
-        let folder_id = self.service.add_folder(
-            &req.folder_path,
-            permissions,
-            req.description,
-            created_by,
-        ).await?;
+        let folder_id = self
+            .service
+            .add_folder(&req.folder_path, permissions, req.description, created_by)
+            .await?;
 
         Ok(json!({
             "ok": true,
@@ -131,9 +129,12 @@ impl FolderAccessRpc {
     /// # RPC Method
     /// `folder_access.remove`
     pub async fn remove_folder(&self, params: Value) -> Result<Value> {
-        let folder_id: i64 = serde_json::from_value(params.get("folder_id")
-            .ok_or_else(|| anyhow::anyhow!("Missing folder_id"))?
-            .clone())?;
+        let folder_id: i64 = serde_json::from_value(
+            params
+                .get("folder_id")
+                .ok_or_else(|| anyhow::anyhow!("Missing folder_id"))?
+                .clone(),
+        )?;
 
         self.service.remove_folder(folder_id).await?;
 
@@ -157,7 +158,9 @@ impl FolderAccessRpc {
             can_delete: req.can_delete,
         };
 
-        self.service.update_permissions(req.folder_id, permissions).await?;
+        self.service
+            .update_permissions(req.folder_id, permissions)
+            .await?;
 
         Ok(json!({
             "ok": true,
@@ -170,14 +173,16 @@ impl FolderAccessRpc {
     /// # RPC Method
     /// `folder_access.list`
     pub async fn list_folders(&self, params: Value) -> Result<Value> {
-        let include_inactive = params.get("include_inactive")
+        let include_inactive = params
+            .get("include_inactive")
             .and_then(|v| v.as_bool())
             .unwrap_or(false);
 
         let folders = self.service.list_folders(include_inactive).await?;
 
-        let response: Vec<FolderResponse> = folders.into_iter().map(|f| {
-            FolderResponse {
+        let response: Vec<FolderResponse> = folders
+            .into_iter()
+            .map(|f| FolderResponse {
                 id: f.id,
                 folder_path: f.folder_path,
                 permissions: PermissionFlagsResponse {
@@ -192,8 +197,8 @@ impl FolderAccessRpc {
                 created_by: f.created_by,
                 is_active: f.is_active,
                 access_count: f.access_count,
-            }
-        }).collect();
+            })
+            .collect();
 
         Ok(json!({
             "ok": true,
@@ -211,11 +216,10 @@ impl FolderAccessRpc {
         let operation = AccessOperation::from_str(&req.operation)
             .ok_or_else(|| anyhow::anyhow!("Invalid operation type"))?;
 
-        let allowed = self.service.check_access(
-            &req.file_path,
-            operation,
-            req.session_key,
-        ).await?;
+        let allowed = self
+            .service
+            .check_access(&req.file_path, operation, req.session_key)
+            .await?;
 
         Ok(json!({
             "ok": true,
@@ -228,18 +232,20 @@ impl FolderAccessRpc {
     /// # RPC Method
     /// `folder_access.logs`
     pub async fn get_logs(&self, params: Value) -> Result<Value> {
-        let folder_id: i64 = serde_json::from_value(params.get("folder_id")
-            .ok_or_else(|| anyhow::anyhow!("Missing folder_id"))?
-            .clone())?;
+        let folder_id: i64 = serde_json::from_value(
+            params
+                .get("folder_id")
+                .ok_or_else(|| anyhow::anyhow!("Missing folder_id"))?
+                .clone(),
+        )?;
 
-        let limit: i64 = params.get("limit")
-            .and_then(|v| v.as_i64())
-            .unwrap_or(100);
+        let limit: i64 = params.get("limit").and_then(|v| v.as_i64()).unwrap_or(100);
 
         let logs = self.service.get_access_logs(folder_id, limit).await?;
 
-        let response: Vec<AccessLogResponse> = logs.into_iter().map(|l| {
-            AccessLogResponse {
+        let response: Vec<AccessLogResponse> = logs
+            .into_iter()
+            .map(|l| AccessLogResponse {
                 id: l.id,
                 folder_id: l.folder_id,
                 operation: l.operation.as_str().to_string(),
@@ -248,8 +254,8 @@ impl FolderAccessRpc {
                 session_key: l.session_key,
                 error_message: l.error_message,
                 timestamp: l.timestamp,
-            }
-        }).collect();
+            })
+            .collect();
 
         Ok(json!({
             "ok": true,
@@ -261,23 +267,22 @@ impl FolderAccessRpc {
     ///
     /// # RPC Method
     /// `folder_access.add_rule`
-    pub async fn add_validation_rule(
-        &self,
-        params: Value,
-        created_by: &str,
-    ) -> Result<Value> {
+    pub async fn add_validation_rule(&self, params: Value, created_by: &str) -> Result<Value> {
         let req: AddValidationRuleRequest = serde_json::from_value(params)?;
 
         let rule_type = RuleType::from_str(&req.rule_type)
             .ok_or_else(|| anyhow::anyhow!("Invalid rule type"))?;
 
-        let rule_id = self.service.add_validation_rule(
-            rule_type,
-            req.pattern,
-            req.description,
-            req.priority,
-            created_by,
-        ).await?;
+        let rule_id = self
+            .service
+            .add_validation_rule(
+                rule_type,
+                req.pattern,
+                req.description,
+                req.priority,
+                created_by,
+            )
+            .await?;
 
         Ok(json!({
             "ok": true,
@@ -302,19 +307,18 @@ impl FolderAccessRpc {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use sqlx::SqlitePool;
+    use {super::*, sqlx::SqlitePool};
 
     async fn create_test_rpc() -> FolderAccessRpc {
         let pool = SqlitePool::connect(":memory:").await.unwrap();
         crate::run_migrations(&pool).await.unwrap();
-        
+
         // Disable default blacklist rules for testing
         sqlx::query("UPDATE folder_validation_rules SET is_active = 0")
             .execute(&pool)
             .await
             .unwrap();
-        
+
         let service = FolderAccessService::new(pool).await.unwrap();
         FolderAccessRpc::new(service)
     }

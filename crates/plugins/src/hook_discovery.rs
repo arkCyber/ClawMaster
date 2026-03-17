@@ -42,7 +42,10 @@ impl FsHookDiscoverer {
         let workspace_root = clawmaster_config::data_dir();
         vec![
             (workspace_root.join(".moltis/hooks"), HookSource::Project),
-            (clawmaster_config::data_dir().join("hooks"), HookSource::User),
+            (
+                clawmaster_config::data_dir().join("hooks"),
+                HookSource::User,
+            ),
         ]
     }
 }

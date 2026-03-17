@@ -8,9 +8,8 @@
 //! ```
 
 use clawmaster_voice::{
-    AudioQuality, EnergyVad, VadConfig, VadResult,
-    apply_fade_in, apply_fade_out, calculate_duration,
-    normalize_volume, resample, stereo_to_mono,
+    AudioQuality, EnergyVad, VadConfig, VadResult, apply_fade_in, apply_fade_out,
+    calculate_duration, normalize_volume, resample, stereo_to_mono,
 };
 
 fn main() {
@@ -31,7 +30,7 @@ fn main() {
 fn demo_audio_quality() {
     println!("📊 Audio Quality Settings:");
     println!("─────────────────────────");
-    
+
     for quality in &[
         AudioQuality::Low,
         AudioQuality::Medium,
@@ -79,14 +78,14 @@ fn demo_vad() {
             if let Some(duration) = result.duration {
                 println!("Duration: {:.2}s", duration);
             }
-        }
+        },
         Err(e) => println!("Error: {}", e),
     }
 
     match vad.detect(&silence_samples, 16000) {
         Ok(result) => {
             println!("\nSilence detected: {}", !result.has_speech);
-        }
+        },
         Err(e) => println!("Error: {}", e),
     }
 
@@ -131,7 +130,7 @@ fn demo_audio_processing() {
                 original.len(),
                 resampled.len()
             );
-        }
+        },
         Err(e) => println!("Error: {}", e),
     }
 

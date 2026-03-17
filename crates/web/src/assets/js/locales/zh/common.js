@@ -3,6 +3,8 @@
 
 export default {
 	nav: {
+		dashboard: "仪表板",
+		metrics: "监控",
 		settings: "设置",
 		sessions: "会话",
 		cron: "定时任务",
@@ -149,5 +151,23 @@ export default {
 		permissionDenied: "权限被拒绝",
 		unknownError: "发生未知错误",
 		noResults: "无结果",
+	},
+	tooltips: {
+		home: "ClawMaster - 返回聊天主页",
+		monitor: "系统监控 - 查看指标、性能和资源使用情况",
+		settings: "设置 - 配置提供商、频道、安全和系统偏好",
+		emergencyStop: "紧急停止 - 中止所有正在运行的命令",
+		themeLight: "亮色主题 - 切换到亮色配色方案",
+		themeSystem: "系统主题 - 跟随系统配色方案",
+		themeDark: "暗色主题 - 切换到暗色配色方案",
+		signOut: "退出登录 - 从您的账户登出",
+		newSession: "新建会话 - 创建新的聊天会话",
+		sessionsTab: "聊天会话 - 查看和管理您的对话",
+		cronTab: "定时任务 - 查看和管理定时作业",
+		toggleSessions: "切换会话面板 - 显示或隐藏聊天会话侧边栏",
+		projectFilter: "按项目过滤 - 显示特定项目的会话",
+		mobileMenu: "打开菜单",
+		mobileSessions: "会话 - 查看和管理聊天会话",
+		mobileSettings: "设置 - 配置系统偏好",
 	},
 };

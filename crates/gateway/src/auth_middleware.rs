@@ -264,7 +264,10 @@ pub async fn vault_guard(
         return next.run(request).await;
     }
     // Only block when Sealed (not Uninitialized).
-    if matches!(vault.status().await, Ok(clawmaster_vault::VaultStatus::Sealed)) {
+    if matches!(
+        vault.status().await,
+        Ok(clawmaster_vault::VaultStatus::Sealed)
+    ) {
         return (
             StatusCode::LOCKED,
             Json(serde_json::json!({"error": "vault is sealed", "status": "sealed"})),

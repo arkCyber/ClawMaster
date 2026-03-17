@@ -92,7 +92,11 @@ impl GatewayApprovalBroadcaster {
 
 #[async_trait]
 impl ApprovalBroadcaster for GatewayApprovalBroadcaster {
-    async fn broadcast_request(&self, request_id: &str, command: &str) -> clawmaster_tools::Result<()> {
+    async fn broadcast_request(
+        &self,
+        request_id: &str,
+        command: &str,
+    ) -> clawmaster_tools::Result<()> {
         broadcast(
             &self.state,
             "exec.approval.requested",

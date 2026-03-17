@@ -105,18 +105,21 @@ impl BridgeState {
         let credential_store = runtime.block_on(async {
             // Keep vault metadata up to date so env var encryption status works
             // even when the full gateway server is not running.
-            if let Err(e) = clawmaster_gateway::auth::clawmaster_vault::run_migrations(&db_pool).await {
+            if let Err(e) =
+                clawmaster_gateway::auth::clawmaster_vault::run_migrations(&db_pool).await
+            {
                 emit_log("WARN", "bridge", &format!("vault migration: {e}"));
             }
 
-            let vault = match clawmaster_gateway::auth::clawmaster_vault::Vault::new(db_pool.clone()).await
-            {
-                Ok(vault) => Some(Arc::new(vault)),
-                Err(e) => {
-                    emit_log("WARN", "bridge", &format!("vault init failed: {e}"));
-                    None
-                },
-            };
+            let vault =
+                match clawmaster_gateway::auth::clawmaster_vault::Vault::new(db_pool.clone()).await
+                {
+                    Ok(vault) => Some(Arc::new(vault)),
+                    Err(e) => {
+                        emit_log("WARN", "bridge", &format!("vault init failed: {e}"));
+                        None
+                    },
+                };
 
             match clawmaster_gateway::auth::CredentialStore::with_vault(
                 db_pool.clone(),
@@ -2569,10 +2572,11 @@ pub extern "C" fn clawmaster_save_soul(request_json: *const c_char) -> *mut c_ch
     trace_call("clawmaster_save_soul");
 
     with_ffi_boundary(|| {
-        let request = match parse_ffi_request::<SaveSoulRequest>("clawmaster_save_soul", request_json) {
-            Ok(r) => r,
-            Err(e) => return e,
-        };
+        let request =
+            match parse_ffi_request::<SaveSoulRequest>("clawmaster_save_soul", request_json) {
+                Ok(r) => r,
+                Err(e) => return e,
+            };
 
         emit_log("INFO", "bridge.config", "Saving soul from settings");
         match clawmaster_config::save_soul_for_agent("main", request.soul.as_deref()) {
@@ -2599,11 +2603,13 @@ pub extern "C" fn clawmaster_save_identity(request_json: *const c_char) -> *mut 
     trace_call("clawmaster_save_identity");
 
     with_ffi_boundary(|| {
-        let request =
-            match parse_ffi_request::<SaveIdentityRequest>("clawmaster_save_identity", request_json) {
-                Ok(r) => r,
-                Err(e) => return e,
-            };
+        let request = match parse_ffi_request::<SaveIdentityRequest>(
+            "clawmaster_save_identity",
+            request_json,
+        ) {
+            Ok(r) => r,
+            Err(e) => return e,
+        };
 
         let identity = clawmaster_config::AgentIdentity {
             name: request.name,
@@ -2748,11 +2754,13 @@ pub extern "C" fn clawmaster_delete_env_var(request_json: *const c_char) -> *mut
     trace_call("clawmaster_delete_env_var");
 
     with_ffi_boundary(|| {
-        let request =
-            match parse_ffi_request::<DeleteEnvVarRequest>("clawmaster_delete_env_var", request_json) {
-                Ok(r) => r,
-                Err(e) => return e,
-            };
+        let request = match parse_ffi_request::<DeleteEnvVarRequest>(
+            "clawmaster_delete_env_var",
+            request_json,
+        ) {
+            Ok(r) => r,
+            Err(e) => return e,
+        };
 
         match BRIDGE
             .runtime
@@ -2866,7 +2874,10 @@ pub extern "C" fn clawmaster_auth_password_change(request_json: *const c_char) -
                     );
                     return encode_error("AUTH_INVALID_CURRENT_PASSWORD", &message);
                 }
-                record_error("clawmaster_auth_password_change", "AUTH_PASSWORD_CHANGE_FAILED");
+                record_error(
+                    "clawmaster_auth_password_change",
+                    "AUTH_PASSWORD_CHANGE_FAILED",
+                );
                 return encode_error("AUTH_PASSWORD_CHANGE_FAILED", &message);
             }
 
@@ -2885,7 +2896,10 @@ pub extern "C" fn clawmaster_auth_password_change(request_json: *const c_char) -
             .runtime
             .block_on(BRIDGE.credential_store.add_password(new_password))
         {
-            record_error("clawmaster_auth_password_change", "AUTH_PASSWORD_SET_FAILED");
+            record_error(
+                "clawmaster_auth_password_change",
+                "AUTH_PASSWORD_SET_FAILED",
+            );
             return encode_error("AUTH_PASSWORD_SET_FAILED", &error.to_string());
         } else if let Some(vault) = BRIDGE.credential_store.vault() {
             match BRIDGE.runtime.block_on(vault.initialize(new_password)) {
@@ -2978,7 +2992,10 @@ pub extern "C" fn clawmaster_auth_remove_passkey(request_json: *const c_char) ->
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("clawmaster_auth_remove_passkey", "AUTH_PASSKEY_REMOVE_FAILED");
+                record_error(
+                    "clawmaster_auth_remove_passkey",
+                    "AUTH_PASSKEY_REMOVE_FAILED",
+                );
                 encode_error("AUTH_PASSKEY_REMOVE_FAILED", &error.to_string())
             },
         }
@@ -3002,7 +3019,10 @@ pub extern "C" fn clawmaster_auth_rename_passkey(request_json: *const c_char) ->
 
         let name = request.name.trim();
         if name.is_empty() {
-            record_error("clawmaster_auth_rename_passkey", "AUTH_PASSKEY_NAME_REQUIRED");
+            record_error(
+                "clawmaster_auth_rename_passkey",
+                "AUTH_PASSKEY_NAME_REQUIRED",
+            );
             return encode_error("AUTH_PASSKEY_NAME_REQUIRED", "name cannot be empty");
         }
 
@@ -3012,7 +3032,10 @@ pub extern "C" fn clawmaster_auth_rename_passkey(request_json: *const c_char) ->
         {
             Ok(()) => encode_json(&OkResponse { ok: true }),
             Err(error) => {
-                record_error("clawmaster_auth_rename_passkey", "AUTH_PASSKEY_RENAME_FAILED");
+                record_error(
+                    "clawmaster_auth_rename_passkey",
+                    "AUTH_PASSKEY_RENAME_FAILED",
+                );
                 encode_error("AUTH_PASSKEY_RENAME_FAILED", &error.to_string())
             },
         }
@@ -3184,7 +3207,10 @@ pub extern "C" fn clawmaster_sandbox_check_packages(request_json: *const c_char)
         }
 
         if !is_valid_image_ref(&base) {
-            record_error("clawmaster_sandbox_check_packages", SANDBOX_BASE_IMAGE_INVALID);
+            record_error(
+                "clawmaster_sandbox_check_packages",
+                SANDBOX_BASE_IMAGE_INVALID,
+            );
             return encode_error(
                 SANDBOX_BASE_IMAGE_INVALID,
                 "base image contains invalid characters",
@@ -3261,7 +3287,10 @@ pub extern "C" fn clawmaster_sandbox_build_image(request_json: *const c_char) ->
 
         let name = request.name.trim();
         if name.is_empty() {
-            record_error("clawmaster_sandbox_build_image", SANDBOX_IMAGE_NAME_REQUIRED);
+            record_error(
+                "clawmaster_sandbox_build_image",
+                SANDBOX_IMAGE_NAME_REQUIRED,
+            );
             return encode_error(SANDBOX_IMAGE_NAME_REQUIRED, "name is required");
         }
 
@@ -3307,7 +3336,10 @@ pub extern "C" fn clawmaster_sandbox_build_image(request_json: *const c_char) ->
         }
 
         if let Some(bad) = packages.iter().find(|p| !is_valid_package_name(p)) {
-            record_error("clawmaster_sandbox_build_image", SANDBOX_PACKAGE_NAME_INVALID);
+            record_error(
+                "clawmaster_sandbox_build_image",
+                SANDBOX_PACKAGE_NAME_INVALID,
+            );
             return encode_error(
                 SANDBOX_PACKAGE_NAME_INVALID,
                 &format!("invalid package name: {bad}"),
@@ -3323,9 +3355,13 @@ ENV HOME=/home/sandbox\n\
 WORKDIR /home/sandbox\n"
         );
 
-        let tmp_dir = std::env::temp_dir().join(format!("clawmaster-build-{}", uuid::Uuid::new_v4()));
+        let tmp_dir =
+            std::env::temp_dir().join(format!("clawmaster-build-{}", uuid::Uuid::new_v4()));
         if let Err(error) = std::fs::create_dir_all(&tmp_dir) {
-            record_error("clawmaster_sandbox_build_image", SANDBOX_TMP_DIR_CREATE_FAILED);
+            record_error(
+                "clawmaster_sandbox_build_image",
+                SANDBOX_TMP_DIR_CREATE_FAILED,
+            );
             return encode_error(SANDBOX_TMP_DIR_CREATE_FAILED, &error.to_string());
         }
 

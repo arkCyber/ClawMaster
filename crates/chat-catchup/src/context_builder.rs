@@ -1,10 +1,14 @@
 //! Context builder for creating conversation context from catchup results
 
-use crate::error::{CatchupError, MessageProcessingError};
-use crate::message_processor::{MessageCluster, MessageSummary, ChatMessage};
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use {
+    crate::{
+        error::{CatchupError, MessageProcessingError},
+        message_processor::{ChatMessage, MessageCluster, MessageSummary},
+    },
+    chrono::{DateTime, Utc},
+    serde::{Deserialize, Serialize},
+    std::collections::HashMap,
+};
 
 /// Built conversation context
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,17 +39,11 @@ pub struct ConversationContext {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ContextType {
     /// Full context with all messages
-    Full {
-        messages: Vec<ChatMessage>,
-    },
+    Full { messages: Vec<ChatMessage> },
     /// Clustered context by topic
-    Clustered {
-        clusters: Vec<MessageCluster>,
-    },
+    Clustered { clusters: Vec<MessageCluster> },
     /// Summarized context
-    Summarized {
-        summary: MessageSummary,
-    },
+    Summarized { summary: MessageSummary },
     /// Hybrid context
     Hybrid {
         recent_messages: Vec<ChatMessage>,
@@ -140,7 +138,7 @@ impl ContextBuilder {
         user_id: String,
     ) -> Result<ConversationContext, CatchupError> {
         let start_time = std::time::Instant::now();
-        
+
         // Handle empty messages case - return empty context
         if messages.is_empty() {
             let now = Utc::now();
@@ -151,12 +149,14 @@ impl ContextBuilder {
                 strategy: "full".to_string(),
                 additional: HashMap::new(),
             };
-            
+
             return Ok(ConversationContext {
                 id: uuid::Uuid::new_v4().to_string(),
                 channel_id,
                 user_id,
-                context_type: ContextType::Full { messages: Vec::new() },
+                context_type: ContextType::Full {
+                    messages: Vec::new(),
+                },
                 context_string: String::new(),
                 metadata,
                 time_range: (now, now),
@@ -168,11 +168,9 @@ impl ContextBuilder {
 
         let context_string = self.format_messages(&messages)?;
         let time_range = (messages[0].timestamp, messages.last().unwrap().timestamp);
-        
-        let participants: std::collections::HashSet<_> = messages
-            .iter()
-            .map(|m| m.username.clone())
-            .collect();
+
+        let participants: std::collections::HashSet<_> =
+            messages.iter().map(|m| m.username.clone()).collect();
         let participants: Vec<String> = participants.into_iter().collect();
 
         let topics = self.extract_topics(&messages);
@@ -186,7 +184,7 @@ impl ContextBuilder {
         };
 
         let message_count = messages.len();
-        
+
         Ok(ConversationContext {
             id: uuid::Uuid::new_v4().to_string(),
             channel_id,
@@ -209,10 +207,12 @@ impl ContextBuilder {
         user_id: String,
     ) -> Result<ConversationContext, CatchupError> {
         let start_time = std::time::Instant::now();
-        
+
         if clusters.is_empty() {
             return Err(CatchupError::MessageProcessingFailed(
-                MessageProcessingError::ContextBuildingFailed("No clusters to build context".to_string())
+                MessageProcessingError::ContextBuildingFailed(
+                    "No clusters to build context".to_string(),
+                ),
             ));
         }
 
@@ -223,15 +223,18 @@ impl ContextBuilder {
         for cluster in &clusters {
             let cluster_header = format!("📌 Topic: {}", cluster.topic);
             context_parts.push(cluster_header);
-            
+
             let cluster_messages = self.format_messages(&cluster.messages)?;
             context_parts.push(cluster_messages);
-            
+
             all_messages.extend(cluster.messages.clone());
             all_participants.extend(cluster.participants.iter().cloned());
         }
 
-        let context_string = context_parts.join(&format!("{}{}", self.context_separator, self.context_separator));
+        let context_string = context_parts.join(&format!(
+            "{}{}",
+            self.context_separator, self.context_separator
+        ));
         let time_range = (
             all_messages[0].timestamp,
             all_messages.last().unwrap().timestamp,
@@ -291,7 +294,7 @@ impl ContextBuilder {
         let message_count = summary.message_count;
         let participants = summary.participants.clone();
         let topics = summary.topics.clone();
-        
+
         Ok(ConversationContext {
             id: uuid::Uuid::new_v4().to_string(),
             channel_id,
@@ -317,15 +320,17 @@ impl ContextBuilder {
         let start_time = std::time::Instant::now();
 
         let recent_context = self.format_messages(&recent_messages)?;
-        
+
         let context_string = format!(
             "📝 Older Conversation Summary:\n{}\n\n💬 Recent Messages:\n{}",
-            older_summary.summary,
-            recent_context
+            older_summary.summary, recent_context
         );
 
-        let time_range = (older_summary.time_range.0, recent_messages.last().unwrap().timestamp);
-        
+        let time_range = (
+            older_summary.time_range.0,
+            recent_messages.last().unwrap().timestamp,
+        );
+
         let mut participants = older_summary.participants.clone();
         for message in &recent_messages {
             if !participants.contains(&message.username) {
@@ -343,7 +348,7 @@ impl ContextBuilder {
 
         let message_count = older_summary.message_count + recent_messages.len();
         let topics = older_summary.topics.clone();
-        
+
         Ok(ConversationContext {
             id: uuid::Uuid::new_v4().to_string(),
             channel_id,
@@ -374,7 +379,7 @@ impl ContextBuilder {
                     } else {
                         message.content.clone()
                     }
-                }
+                },
                 MessageFormat::Detailed => {
                     let mut parts = Vec::new();
                     if self.include_timestamps {
@@ -385,14 +390,12 @@ impl ContextBuilder {
                     }
                     parts.push(message.content.clone());
                     parts.join(" ")
-                }
+                },
                 MessageFormat::Compact => message.content.clone(),
-                MessageFormat::Custom(template) => {
-                    template
-                        .replace("{username}", &message.username)
-                        .replace("{timestamp}", &message.timestamp.to_rfc3339())
-                        .replace("{content}", &message.content)
-                }
+                MessageFormat::Custom(template) => template
+                    .replace("{username}", &message.username)
+                    .replace("{timestamp}", &message.timestamp.to_rfc3339())
+                    .replace("{content}", &message.content),
             };
 
             // Check if adding this message would exceed the limit
@@ -427,7 +430,7 @@ impl ContextBuilder {
 
         let mut sorted_words: Vec<_> = word_counts.into_iter().collect();
         sorted_words.sort_by(|a, b| b.1.cmp(&a.1));
-        
+
         sorted_words
             .into_iter()
             .take(5)
@@ -444,33 +447,31 @@ impl Default for ContextBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::message_processor::{ChatMessage, MessageType};
+    use {
+        super::*,
+        crate::message_processor::{ChatMessage, MessageType},
+    };
 
     #[test]
     fn test_full_context_building() {
         let builder = ContextBuilder::new().with_max_length(1000);
-        
-        let messages = vec![
-            ChatMessage {
-                id: "1".to_string(),
-                channel_id: "channel1".to_string(),
-                user_id: "user1".to_string(),
-                username: "User1".to_string(),
-                content: "Hello world".to_string(),
-                timestamp: Utc::now(),
-                is_bot: false,
-                is_system: false,
-                message_type: MessageType::Text,
-                metadata: HashMap::new(),
-            },
-        ];
 
-        let context = builder.build_full_context(
-            messages,
-            "channel1".to_string(),
-            "user1".to_string(),
-        ).unwrap();
+        let messages = vec![ChatMessage {
+            id: "1".to_string(),
+            channel_id: "channel1".to_string(),
+            user_id: "user1".to_string(),
+            username: "User1".to_string(),
+            content: "Hello world".to_string(),
+            timestamp: Utc::now(),
+            is_bot: false,
+            is_system: false,
+            message_type: MessageType::Text,
+            metadata: HashMap::new(),
+        }];
+
+        let context = builder
+            .build_full_context(messages, "channel1".to_string(), "user1".to_string())
+            .unwrap();
 
         assert_eq!(context.message_count, 1);
         assert_eq!(context.participants.len(), 1);
@@ -481,27 +482,23 @@ mod tests {
     #[test]
     fn test_context_length_limit() {
         let builder = ContextBuilder::new().with_max_length(50);
-        
-        let messages = vec![
-            ChatMessage {
-                id: "1".to_string(),
-                channel_id: "channel1".to_string(),
-                user_id: "user1".to_string(),
-                username: "User1".to_string(),
-                content: "This is a very long message that should exceed the limit".to_string(),
-                timestamp: Utc::now(),
-                is_bot: false,
-                is_system: false,
-                message_type: MessageType::Text,
-                metadata: HashMap::new(),
-            },
-        ];
 
-        let context = builder.build_full_context(
-            messages,
-            "channel1".to_string(),
-            "user1".to_string(),
-        ).unwrap();
+        let messages = vec![ChatMessage {
+            id: "1".to_string(),
+            channel_id: "channel1".to_string(),
+            user_id: "user1".to_string(),
+            username: "User1".to_string(),
+            content: "This is a very long message that should exceed the limit".to_string(),
+            timestamp: Utc::now(),
+            is_bot: false,
+            is_system: false,
+            message_type: MessageType::Text,
+            metadata: HashMap::new(),
+        }];
+
+        let context = builder
+            .build_full_context(messages, "channel1".to_string(), "user1".to_string())
+            .unwrap();
 
         assert!(context.context_string.len() <= 50);
     }

@@ -1,12 +1,16 @@
 //! API integration tests for Skills endpoints.
 
-use axum::http::StatusCode;
-use axum_test::TestServer;
-use clawmaster_clawhub::api::{routes, ApiState};
-use clawmaster_clawhub::registry::Registry;
-use clawmaster_clawhub::types::{PublishSkillRequest, SkillFormat, SkillMetadata, SecurityStatus};
-use tempfile::tempdir;
-use time::OffsetDateTime;
+use {
+    axum::http::StatusCode,
+    axum_test::TestServer,
+    clawmaster_clawhub::{
+        api::{ApiState, routes},
+        registry::Registry,
+        types::{PublishSkillRequest, SecurityStatus, SkillFormat, SkillMetadata},
+    },
+    tempfile::tempdir,
+    time::OffsetDateTime,
+};
 
 async fn setup_test_server() -> TestServer {
     let dir = tempdir().unwrap();
@@ -49,10 +53,7 @@ async fn test_publish_and_get_skill() {
     let request = PublishSkillRequest { metadata };
 
     // Publish skill
-    let response = server
-        .post("/skills")
-        .json(&request)
-        .await;
+    let response = server.post("/skills").json(&request).await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let body: serde_json::Value = response.json();
@@ -60,9 +61,7 @@ async fn test_publish_and_get_skill() {
     assert_eq!(body["version"], "1.0.0");
 
     // Get skill
-    let response = server
-        .get("/skills/test-skill/1.0.0")
-        .await;
+    let response = server.get("/skills/test-skill/1.0.0").await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let skill: serde_json::Value = response.json();
@@ -74,9 +73,7 @@ async fn test_publish_and_get_skill() {
 async fn test_get_nonexistent_skill() {
     let server = setup_test_server().await;
 
-    let response = server
-        .get("/skills/nonexistent/1.0.0")
-        .await;
+    let response = server.get("/skills/nonexistent/1.0.0").await;
 
     assert_eq!(response.status_code(), StatusCode::NOT_FOUND);
 }
@@ -112,9 +109,7 @@ async fn test_search_skills() {
     server.post("/skills").json(&request).await;
 
     // Search for it
-    let response = server
-        .get("/skills/search?query=web")
-        .await;
+    let response = server.get("/skills/search?query=web").await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let skills: Vec<serde_json::Value> = response.json();
@@ -129,16 +124,24 @@ async fn test_search_skills_with_category() {
     // Publish skills with different categories
     let mut web_skill = create_test_skill_metadata("web-tool", "1.0.0");
     web_skill.categories = vec!["web".to_string()];
-    server.post("/skills").json(&PublishSkillRequest { metadata: web_skill }).await;
+    server
+        .post("/skills")
+        .json(&PublishSkillRequest {
+            metadata: web_skill,
+        })
+        .await;
 
     let mut data_skill = create_test_skill_metadata("data-tool", "1.0.0");
     data_skill.categories = vec!["data".to_string()];
-    server.post("/skills").json(&PublishSkillRequest { metadata: data_skill }).await;
+    server
+        .post("/skills")
+        .json(&PublishSkillRequest {
+            metadata: data_skill,
+        })
+        .await;
 
     // Search by category
-    let response = server
-        .get("/skills/search?category=web")
-        .await;
+    let response = server.get("/skills/search?category=web").await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let skills: Vec<serde_json::Value> = response.json();
@@ -156,15 +159,18 @@ async fn test_get_skill_install_info() {
     server.post("/skills").json(&request).await;
 
     // Get install info
-    let response = server
-        .get("/skills/installable/1.0.0/install")
-        .await;
+    let response = server.get("/skills/installable/1.0.0/install").await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let info: serde_json::Value = response.json();
     assert_eq!(info["name"], "installable");
     assert_eq!(info["version"], "1.0.0");
-    assert!(info["install_command"].as_str().unwrap().contains("clawmaster skills install"));
+    assert!(
+        info["install_command"]
+            .as_str()
+            .unwrap()
+            .contains("clawmaster skills install")
+    );
 }
 
 #[tokio::test]
@@ -172,7 +178,9 @@ async fn test_duplicate_publish_rejected() {
     let server = setup_test_server().await;
 
     let metadata = create_test_skill_metadata("duplicate", "1.0.0");
-    let request = PublishSkillRequest { metadata: metadata.clone() };
+    let request = PublishSkillRequest {
+        metadata: metadata.clone(),
+    };
 
     // First publish succeeds
     let response = server.post("/skills").json(&request).await;
@@ -196,16 +204,12 @@ async fn test_search_pagination() {
     }
 
     // Get page 1
-    let response = server
-        .get("/skills?page=0&page_size=10")
-        .await;
+    let response = server.get("/skills?page=0&page_size=10").await;
     let page1: Vec<serde_json::Value> = response.json();
     assert_eq!(page1.len(), 10);
 
     // Get page 2
-    let response = server
-        .get("/skills?page=1&page_size=10")
-        .await;
+    let response = server.get("/skills?page=1&page_size=10").await;
     let page2: Vec<serde_json::Value> = response.json();
     assert_eq!(page2.len(), 10);
 
@@ -217,9 +221,7 @@ async fn test_search_pagination() {
 async fn test_empty_search_results() {
     let server = setup_test_server().await;
 
-    let response = server
-        .get("/skills/search?query=nonexistent")
-        .await;
+    let response = server.get("/skills/search?query=nonexistent").await;
 
     assert_eq!(response.status_code(), StatusCode::OK);
     let skills: Vec<serde_json::Value> = response.json();

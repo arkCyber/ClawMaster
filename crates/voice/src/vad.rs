@@ -4,7 +4,7 @@
 //! efficiency and reduce API costs.
 
 use {
-    anyhow::{anyhow, Result},
+    anyhow::{Result, anyhow},
     bytes::Bytes,
     serde::{Deserialize, Serialize},
 };
@@ -41,9 +41,9 @@ impl Default for VadConfig {
     fn default() -> Self {
         Self {
             min_speech_duration: 0.3,  // 300ms minimum
-            max_silence_duration: 0.8,  // 800ms max silence
-            energy_threshold: 0.02,     // 2% energy threshold
-            sample_rate: 16000,         // 16kHz default
+            max_silence_duration: 0.8, // 800ms max silence
+            energy_threshold: 0.02,    // 2% energy threshold
+            sample_rate: 16000,        // 16kHz default
         }
     }
 }
@@ -96,9 +96,21 @@ impl EnergyVad {
         Ok(VadResult {
             has_speech,
             confidence,
-            start_time: if has_speech { Some(0.0) } else { None },
-            end_time: if has_speech { Some(duration) } else { None },
-            duration: if has_speech { Some(duration) } else { None },
+            start_time: if has_speech {
+                Some(0.0)
+            } else {
+                None
+            },
+            end_time: if has_speech {
+                Some(duration)
+            } else {
+                None
+            },
+            duration: if has_speech {
+                Some(duration)
+            } else {
+                None
+            },
         })
     }
 
@@ -123,11 +135,7 @@ impl EnergyVad {
     /// Detect speech segments with timestamps.
     ///
     /// Returns a list of (start_time, end_time) tuples for each speech segment.
-    pub fn detect_segments(
-        &self,
-        samples: &[i16],
-        sample_rate: u32,
-    ) -> Result<Vec<(f32, f32)>> {
+    pub fn detect_segments(&self, samples: &[i16], sample_rate: u32) -> Result<Vec<(f32, f32)>> {
         if samples.is_empty() {
             return Ok(Vec::new());
         }
@@ -202,11 +210,7 @@ pub fn bytes_to_samples(audio: &Bytes) -> Result<Vec<i16>> {
 }
 
 /// Trim silence from the beginning and end of audio samples.
-pub fn trim_silence(
-    samples: &[i16],
-    sample_rate: u32,
-    config: &VadConfig,
-) -> Result<Vec<i16>> {
+pub fn trim_silence(samples: &[i16], sample_rate: u32, config: &VadConfig) -> Result<Vec<i16>> {
     let vad = EnergyVad::new(config.clone());
     let segments = vad.detect_segments(samples, sample_rate)?;
 
@@ -300,25 +304,25 @@ mod tests {
     #[test]
     fn test_detect_segments() {
         let vad = EnergyVad::new(VadConfig::default());
-        
+
         // Create audio with speech-silence-speech pattern
         let mut samples = Vec::new();
-        
+
         // Speech segment 1 (0.5s)
         for i in 0..8000 {
             samples.push((1000.0 * (i as f32 * 0.1).sin()) as i16);
         }
-        
+
         // Silence (1.0s)
         for _ in 0..16000 {
             samples.push(0);
         }
-        
+
         // Speech segment 2 (0.5s)
         for i in 0..8000 {
             samples.push((1000.0 * (i as f32 * 0.1).sin()) as i16);
         }
-        
+
         let segments = vad.detect_segments(&samples, 16000).unwrap();
         assert!(segments.len() >= 1); // Should detect at least one segment
     }
@@ -326,25 +330,25 @@ mod tests {
     #[test]
     fn test_trim_silence() {
         let config = VadConfig::default();
-        
+
         // Create audio with silence-speech-silence
         let mut samples = Vec::new();
-        
+
         // Leading silence (0.2s)
         for _ in 0..3200 {
             samples.push(0);
         }
-        
+
         // Speech (0.5s)
         for i in 0..8000 {
             samples.push((1000.0 * (i as f32 * 0.1).sin()) as i16);
         }
-        
+
         // Trailing silence (0.2s)
         for _ in 0..3200 {
             samples.push(0);
         }
-        
+
         let trimmed = trim_silence(&samples, 16000, &config).unwrap();
         assert!(trimmed.len() < samples.len());
         assert!(trimmed.len() > 0);

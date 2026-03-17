@@ -119,7 +119,9 @@ impl clawmaster_tools::location::LocationRequester for GatewayLocationRequester 
             let inner = self.state.inner.read().await;
             let clients = &inner.clients;
             let client = clients.get(conn_id).ok_or_else(|| {
-                clawmaster_tools::Error::message(format!("no client connection for conn_id {conn_id}"))
+                clawmaster_tools::Error::message(format!(
+                    "no client connection for conn_id {conn_id}"
+                ))
             })?;
             if !client.send(&event_json) {
                 return Err(clawmaster_tools::Error::message(format!(
@@ -225,7 +227,9 @@ impl clawmaster_tools::location::LocationRequester for GatewayLocationRequester 
             clawmaster_tools::Error::message(format!("no session metadata for key {session_key}"))
         })?;
         let binding_json = entry.channel_binding.ok_or_else(|| {
-            clawmaster_tools::Error::message(format!("no channel binding for session {session_key}"))
+            clawmaster_tools::Error::message(format!(
+                "no channel binding for session {session_key}"
+            ))
         })?;
         let reply_target: clawmaster_channels::ChannelReplyTarget =
             serde_json::from_str(&binding_json)?;
@@ -1587,7 +1591,8 @@ pub async fn prepare_gateway(
     // Create shared approval manager from config.
     let approval_manager = Arc::new(approval_manager_from_config(&config));
 
-    let mut services = GatewayServices::noop();
+    let mut services =
+        Arc::try_unwrap(GatewayServices::noop()).unwrap_or_else(|arc| (*arc).clone());
 
     // Wire live logs service if a log buffer is available.
     if let Some(ref buf) = log_buffer {
@@ -1672,15 +1677,16 @@ pub async fn prepare_gateway(
                     "sse" => clawmaster_mcp::registry::TransportType::Sse,
                     _ => clawmaster_mcp::registry::TransportType::Stdio,
                 };
-                let oauth = entry
-                    .oauth
-                    .as_ref()
-                    .map(|o| clawmaster_mcp::registry::McpOAuthConfig {
-                        client_id: o.client_id.clone(),
-                        auth_url: o.auth_url.clone(),
-                        token_url: o.token_url.clone(),
-                        scopes: o.scopes.clone(),
-                    });
+                let oauth =
+                    entry
+                        .oauth
+                        .as_ref()
+                        .map(|o| clawmaster_mcp::registry::McpOAuthConfig {
+                            client_id: o.client_id.clone(),
+                            auth_url: o.auth_url.clone(),
+                            token_url: o.token_url.clone(),
+                            scopes: o.scopes.clone(),
+                        });
                 merged
                     .servers
                     .insert(name.clone(), clawmaster_mcp::McpServerConfig {
@@ -1716,20 +1722,20 @@ pub async fn prepare_gateway(
 
     // Initialize data directory and SQLite database.
     let data_dir = data_dir.unwrap_or_else(clawmaster_config::data_dir);
-    std::fs::create_dir_all(&data_dir).unwrap_or_else(|e| {
-        panic!(
+    std::fs::create_dir_all(&data_dir).map_err(|e| {
+        anyhow::anyhow!(
             "failed to create data directory {}: {e}",
             data_dir.display()
         )
-    });
+    })?;
 
     let config_dir = clawmaster_config::config_dir().unwrap_or_else(|| PathBuf::from(".moltis"));
-    std::fs::create_dir_all(&config_dir).unwrap_or_else(|e| {
-        panic!(
+    std::fs::create_dir_all(&config_dir).map_err(|e| {
+        anyhow::anyhow!(
             "failed to create config directory {}: {e}",
             config_dir.display()
         )
-    });
+    })?;
     log_startup_config_storage_diagnostics();
 
     let openclaw_startup_status = deferred_openclaw_status();
@@ -1810,6 +1816,13 @@ pub async fn prepare_gateway(
     crate::run_migrations(&db_pool)
         .await
         .expect("failed to run gateway migrations");
+
+    // Initialize conversation history store after migrations
+    let conversation_store: Arc<dyn crate::conversation_history::ConversationHistoryStore> =
+        Arc::new(crate::conversation_history::SqliteConversationHistory::new(
+            db_pool.clone(),
+        ));
+    services.conversation_history = Some(Arc::clone(&conversation_store));
 
     // Vault migrations (vault_metadata table).
     #[cfg(feature = "vault")]
@@ -2039,8 +2052,9 @@ pub async fn prepare_gateway(
     }
 
     // Wire stores.
-    let project_store: Arc<dyn ProjectStore> =
-        Arc::new(clawmaster_projects::SqliteProjectStore::new(db_pool.clone()));
+    let project_store: Arc<dyn ProjectStore> = Arc::new(
+        clawmaster_projects::SqliteProjectStore::new(db_pool.clone()),
+    );
     let session_store = Arc::new(SessionStore::new(sessions_dir));
     let event_bus_for_metadata = session_event_bus.clone();
     let session_metadata = Arc::new(SqliteSessionMetadata::with_event_bus(
@@ -2277,8 +2291,8 @@ pub async fn prepare_gateway(
 
     // Build cron notification callback that broadcasts job changes.
     let deferred_for_cron = Arc::clone(&deferred_state);
-    let on_cron_notify: clawmaster_cron::service::NotifyFn =
-        Arc::new(move |notification: clawmaster_cron::types::CronNotification| {
+    let on_cron_notify: clawmaster_cron::service::NotifyFn = Arc::new(
+        move |notification: clawmaster_cron::types::CronNotification| {
             let state_opt = deferred_for_cron.get();
             let Some(state) = state_opt else {
                 return;
@@ -2303,7 +2317,8 @@ pub async fn prepare_gateway(
                 })
                 .await;
             });
-        });
+        },
+    );
 
     // Build rate limit config from moltis config.
     let rate_limit_config = clawmaster_cron::service::RateLimitConfig {
@@ -2325,7 +2340,8 @@ pub async fn prepare_gateway(
     services = services.with_cron(live_cron);
 
     // Build sandbox router from config (shared across sessions).
-    let mut sandbox_config = clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
+    let mut sandbox_config =
+        clawmaster_tools::sandbox::SandboxConfig::from(&config.tools.exec.sandbox);
     sandbox_config.container_prefix = Some(sandbox_container_prefix);
     sandbox_config.timezone = config
         .user
@@ -2991,7 +3007,9 @@ pub async fn prepare_gateway(
                             })
                             .unwrap_or_default();
                         let mut e =
-                            clawmaster_memory::embeddings_openai::OpenAiEmbeddingProvider::new(api_key);
+                            clawmaster_memory::embeddings_openai::OpenAiEmbeddingProvider::new(
+                                api_key,
+                            );
                         if base_url != "https://api.openai.com" {
                             e = e.with_base_url(base_url);
                         }
@@ -3600,7 +3618,8 @@ pub async fn prepare_gateway(
         ) {
             tool_registry.register(Box::new(t.with_env_provider(Arc::clone(&env_provider))));
         }
-        if let Some(t) = clawmaster_tools::web_fetch::WebFetchTool::from_config(&config.tools.web.fetch)
+        if let Some(t) =
+            clawmaster_tools::web_fetch::WebFetchTool::from_config(&config.tools.web.fetch)
         {
             #[cfg(feature = "trusted-network")]
             let t = if let Some(ref url) = proxy_url_for_tools {
@@ -3610,7 +3629,8 @@ pub async fn prepare_gateway(
             };
             tool_registry.register(Box::new(t));
         }
-        if let Some(t) = clawmaster_tools::browser::BrowserTool::from_config(&config.tools.browser) {
+        if let Some(t) = clawmaster_tools::browser::BrowserTool::from_config(&config.tools.browser)
+        {
             let t = if sandbox_router.backend_name() != "none" {
                 t.with_sandbox_router(Arc::clone(&sandbox_router))
             } else {
@@ -3657,7 +3677,9 @@ pub async fn prepare_gateway(
 
         // Register session state tool for per-session persistent KV store.
         tool_registry.register(Box::new(
-            clawmaster_tools::session_state::SessionStateTool::new(Arc::clone(&session_state_store)),
+            clawmaster_tools::session_state::SessionStateTool::new(Arc::clone(
+                &session_state_store,
+            )),
         ));
 
         // Register session lifecycle tools for explicit session creation/deletion.
@@ -3701,7 +3723,9 @@ pub async fn prepare_gateway(
                 }
 
                 let entry = metadata.get(&key).await.ok_or_else(|| {
-                    clawmaster_tools::Error::message(format!("session '{key}' not found after create"))
+                    clawmaster_tools::Error::message(format!(
+                        "session '{key}' not found after create"
+                    ))
                 })?;
                 Ok(serde_json::json!({
                     "entry": {
@@ -3788,6 +3812,29 @@ pub async fn prepare_gateway(
             &data_dir,
         )));
 
+        // Register new P0 tools
+        tool_registry.register(Box::new(clawmaster_tools::loop_detection::LoopDetectionTool::new(
+            clawmaster_tools::loop_detection::LoopDetectionConfig::default(),
+        )));
+        tool_registry.register(Box::new(clawmaster_tools::apply_patch::ApplyPatchTool::new(
+            clawmaster_tools::apply_patch::ApplyPatchConfig::default(),
+        )));
+
+        // Create simple agent registry for agents_list tool
+        let mut agent_registry = clawmaster_tools::agents_list::SimpleAgentRegistry::new();
+        agent_registry.add_agent(clawmaster_tools::agents_list::AgentInfo {
+            id: "default".to_string(),
+            name: "Default Agent".to_string(),
+            description: Some("Default ClawMaster agent".to_string()),
+            model: Some("claude-3-5-sonnet".to_string()),
+            capabilities: vec!["coding".to_string(), "analysis".to_string(), "execution".to_string()],
+            available_for_spawn: true,
+        });
+        tool_registry.register(Box::new(clawmaster_tools::agents_list::AgentsListTool::new(
+            clawmaster_tools::agents_list::AgentsListConfig::default(),
+            Arc::new(agent_registry),
+        )));
+
         // Register built-in voice tools for explicit TTS/STT calls in agents.
         tool_registry.register(Box::new(crate::voice_agent_tools::SpeakTool::new(
             Arc::clone(&state.services.tts),
@@ -3799,15 +3846,15 @@ pub async fn prepare_gateway(
         // Register skill management tools for agent self-extension.
         // Use data_dir so created skills land in the configured workspace root.
         {
-            tool_registry.register(Box::new(clawmaster_tools::skill_tools::CreateSkillTool::new(
-                data_dir.clone(),
-            )));
-            tool_registry.register(Box::new(clawmaster_tools::skill_tools::UpdateSkillTool::new(
-                data_dir.clone(),
-            )));
-            tool_registry.register(Box::new(clawmaster_tools::skill_tools::DeleteSkillTool::new(
-                data_dir.clone(),
-            )));
+            tool_registry.register(Box::new(
+                clawmaster_tools::skill_tools::CreateSkillTool::new(data_dir.clone()),
+            ));
+            tool_registry.register(Box::new(
+                clawmaster_tools::skill_tools::UpdateSkillTool::new(data_dir.clone()),
+            ));
+            tool_registry.register(Box::new(
+                clawmaster_tools::skill_tools::DeleteSkillTool::new(data_dir.clone()),
+            ));
         }
 
         // Register branch session tool for session forking.
@@ -3848,38 +3895,39 @@ pub async fn prepare_gateway(
         if let Some(default_provider) = registry.read().await.first_with_tools() {
             let base_tools = Arc::new(tool_registry.clone_without(&[]));
             let state_for_spawn = Arc::clone(&state);
-            let on_spawn_event: clawmaster_tools::spawn_agent::OnSpawnEvent = Arc::new(move |event| {
-                use clawmaster_agents::runner::RunnerEvent;
-                let state = Arc::clone(&state_for_spawn);
-                let payload = match &event {
-                    RunnerEvent::SubAgentStart { task, model, depth } => {
-                        serde_json::json!({
-                            "state": "sub_agent_start",
+            let on_spawn_event: clawmaster_tools::spawn_agent::OnSpawnEvent =
+                Arc::new(move |event| {
+                    use clawmaster_agents::runner::RunnerEvent;
+                    let state = Arc::clone(&state_for_spawn);
+                    let payload = match &event {
+                        RunnerEvent::SubAgentStart { task, model, depth } => {
+                            serde_json::json!({
+                                "state": "sub_agent_start",
+                                "task": task,
+                                "model": model,
+                                "depth": depth,
+                            })
+                        },
+                        RunnerEvent::SubAgentEnd {
+                            task,
+                            model,
+                            depth,
+                            iterations,
+                            tool_calls_made,
+                        } => serde_json::json!({
+                            "state": "sub_agent_end",
                             "task": task,
                             "model": model,
                             "depth": depth,
-                        })
-                    },
-                    RunnerEvent::SubAgentEnd {
-                        task,
-                        model,
-                        depth,
-                        iterations,
-                        tool_calls_made,
-                    } => serde_json::json!({
-                        "state": "sub_agent_end",
-                        "task": task,
-                        "model": model,
-                        "depth": depth,
-                        "iterations": iterations,
-                        "toolCallsMade": tool_calls_made,
-                    }),
-                    _ => return, // Only broadcast sub-agent lifecycle events.
-                };
-                tokio::spawn(async move {
-                    broadcast(&state, "chat", payload, BroadcastOpts::default()).await;
+                            "iterations": iterations,
+                            "toolCallsMade": tool_calls_made,
+                        }),
+                        _ => return, // Only broadcast sub-agent lifecycle events.
+                    };
+                    tokio::spawn(async move {
+                        broadcast(&state, "chat", payload, BroadcastOpts::default()).await;
+                    });
                 });
-            });
             let spawn_tool = clawmaster_tools::spawn_agent::SpawnAgentTool::new(
                 Arc::clone(&registry),
                 default_provider,
@@ -3927,7 +3975,8 @@ pub async fn prepare_gateway(
     {
         let search_paths = clawmaster_skills::discover::FsSkillDiscoverer::default_paths();
         let watch_dirs: Vec<PathBuf> = search_paths.into_iter().map(|(p, _)| p).collect();
-        if let Ok((_watcher, mut rx)) = clawmaster_skills::watcher::SkillWatcher::start(watch_dirs) {
+        if let Ok((_watcher, mut rx)) = clawmaster_skills::watcher::SkillWatcher::start(watch_dirs)
+        {
             let watcher_state = Arc::clone(&state);
             tokio::spawn(async move {
                 let _watcher = _watcher; // keep alive
@@ -3953,7 +4002,16 @@ pub async fn prepare_gateway(
         });
     }
 
-    let methods = Arc::new(MethodRegistry::new());
+    // Initialize conversation history RPC handlers
+    let conversation_rpc = Arc::new(
+        crate::conversation_history_rpc::ConversationHistoryRpc::new(Arc::clone(
+            &conversation_store,
+        )),
+    );
+
+    let mut methods = MethodRegistry::new();
+    crate::methods::conversation::register(&mut methods, conversation_rpc);
+    let methods = Arc::new(methods);
 
     // Initialize push notification service if the feature is enabled.
     #[cfg(feature = "push-notifications")]
@@ -4570,7 +4628,8 @@ pub async fn prepare_gateway(
                         .set(server_start.elapsed().as_secs_f64());
                     let session_count =
                         metrics_state.inner.read().await.active_sessions.len() as f64;
-                    clawmaster_metrics::gauge!(clawmaster_metrics::session::ACTIVE).set(session_count);
+                    clawmaster_metrics::gauge!(clawmaster_metrics::session::ACTIVE)
+                        .set(session_count);
 
                     let prometheus_text = handle.render();
                     let snapshot =
@@ -6415,7 +6474,10 @@ mod tests {
             sender_id: None,
         };
         let result = registry.dispatch(&payload).await.unwrap();
-        assert!(matches!(result, clawmaster_common::hooks::HookAction::Continue));
+        assert!(matches!(
+            result,
+            clawmaster_common::hooks::HookAction::Continue
+        ));
 
         let memory_dir = tmp.path().join("memory");
         assert!(memory_dir.is_dir());
