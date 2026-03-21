@@ -9,7 +9,153 @@ use {async_trait::async_trait, serde_json::Value};
 
 use {clawmaster_channels::ChannelReplyTarget, clawmaster_tools::sandbox::SandboxRouter};
 
-use crate::state::GatewayState;
+use crate::{
+    event_streams::{LlmEvent, LogLevel, SystemEvent, TokenUsage, ToolEvent, ToolStatus},
+    state::GatewayState,
+};
+
+fn value_to_string(value: &Value) -> String {
+    match value {
+        Value::String(text) => text.clone(),
+        other => other.to_string(),
+    }
+}
+
+fn structured_stream_events(
+    state: &GatewayState,
+    topic: &str,
+    payload: &Value,
+) -> Vec<(&'static str, Value)> {
+    if topic != "chat" {
+        return Vec::new();
+    }
+
+    let Some(chat_state) = payload.get("state").and_then(Value::as_str) else {
+        return Vec::new();
+    };
+
+    let timestamp = chrono::Utc::now().timestamp_millis();
+
+    match chat_state {
+        "tool_call_start" => {
+            let event = ToolEvent {
+                tool_name: payload
+                    .get("toolName")
+                    .and_then(Value::as_str)
+                    .unwrap_or("unknown")
+                    .to_string(),
+                status: ToolStatus::Started,
+                arguments: payload.get("arguments").cloned(),
+                result: None,
+                error: None,
+                duration_ms: payload.get("durationMs").and_then(Value::as_u64),
+                timestamp,
+            };
+            state.event_router.emit_tool(event.clone());
+            serde_json::to_value(event)
+                .ok()
+                .map(|value| vec![("stream.tool", value)])
+                .unwrap_or_default()
+        },
+        "tool_call_end" => {
+            let success = payload
+                .get("success")
+                .and_then(Value::as_bool)
+                .unwrap_or(false);
+            let event = ToolEvent {
+                tool_name: payload
+                    .get("toolName")
+                    .and_then(Value::as_str)
+                    .unwrap_or("unknown")
+                    .to_string(),
+                status: if success {
+                    ToolStatus::Completed
+                } else {
+                    ToolStatus::Failed
+                },
+                arguments: None,
+                result: payload.get("result").cloned(),
+                error: payload.get("error").map(value_to_string),
+                duration_ms: payload.get("durationMs").and_then(Value::as_u64),
+                timestamp,
+            };
+            state.event_router.emit_tool(event.clone());
+            serde_json::to_value(event)
+                .ok()
+                .map(|value| vec![("stream.tool", value)])
+                .unwrap_or_default()
+        },
+        "delta" => {
+            let event = LlmEvent {
+                content: payload
+                    .get("text")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_string(),
+                is_final: false,
+                finish_reason: None,
+                token_usage: None,
+                timestamp,
+            };
+            state.event_router.emit_llm(event.clone());
+            serde_json::to_value(event)
+                .ok()
+                .map(|value| vec![("stream.llm", value)])
+                .unwrap_or_default()
+        },
+        "final" => {
+            let token_usage = match (
+                payload.get("inputTokens").and_then(Value::as_u64),
+                payload.get("outputTokens").and_then(Value::as_u64),
+            ) {
+                (Some(prompt_tokens), Some(completion_tokens)) => Some(TokenUsage {
+                    prompt_tokens: prompt_tokens as u32,
+                    completion_tokens: completion_tokens as u32,
+                    total_tokens: prompt_tokens.saturating_add(completion_tokens) as u32,
+                }),
+                _ => None,
+            };
+            let event = LlmEvent {
+                content: payload
+                    .get("text")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_string(),
+                is_final: true,
+                finish_reason: Some("stop".to_string()),
+                token_usage,
+                timestamp,
+            };
+            state.event_router.emit_llm(event.clone());
+            serde_json::to_value(event)
+                .ok()
+                .map(|value| vec![("stream.llm", value)])
+                .unwrap_or_default()
+        },
+        "thinking" | "retrying" | "error" => {
+            let event = SystemEvent {
+                level: match chat_state {
+                    "thinking" => LogLevel::Debug,
+                    "retrying" => LogLevel::Warning,
+                    "error" => LogLevel::Error,
+                    _ => LogLevel::Info,
+                },
+                message: payload
+                    .get("error")
+                    .map(value_to_string)
+                    .unwrap_or_else(|| chat_state.to_string()),
+                context: Some(payload.clone()),
+                timestamp,
+            };
+            state.event_router.emit_system(event.clone());
+            serde_json::to_value(event)
+                .ok()
+                .map(|value| vec![("stream.system", value)])
+                .unwrap_or_default()
+        },
+        _ => Vec::new(),
+    }
+}
 
 // ── GatewayChatRuntime ──────────────────────────────────────────────────────
 
@@ -30,6 +176,7 @@ impl ChatRuntime for GatewayChatRuntime {
     // ── Broadcasting ────────────────────────────────────────────────────────
 
     async fn broadcast(&self, topic: &str, payload: Value) {
+        let structured_events = structured_stream_events(&self.state, topic, &payload);
         crate::broadcast::broadcast(
             &self.state,
             topic,
@@ -37,6 +184,15 @@ impl ChatRuntime for GatewayChatRuntime {
             crate::broadcast::BroadcastOpts::default(),
         )
         .await;
+        for (event, payload) in structured_events {
+            crate::broadcast::broadcast(
+                &self.state,
+                event,
+                payload,
+                crate::broadcast::BroadcastOpts::default(),
+            )
+            .await;
+        }
     }
 
     // ── Channel reply queue ─────────────────────────────────────────────────
@@ -245,5 +401,60 @@ impl ChatRuntime for GatewayChatRuntime {
                     .collect(),
             })
             .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        auth::{AuthMode, ResolvedAuth},
+        services::GatewayServices,
+    };
+
+    fn test_state() -> Arc<GatewayState> {
+        GatewayState::new(
+            ResolvedAuth {
+                mode: AuthMode::Token,
+                token: None,
+                password: None,
+            },
+            (*GatewayServices::noop()).clone(),
+        )
+    }
+
+    #[test]
+    fn structured_stream_events_maps_tool_call_start() {
+        let state = test_state();
+        let events = structured_stream_events(
+            &state,
+            "chat",
+            &serde_json::json!({
+                "state": "tool_call_start",
+                "toolName": "exec",
+                "arguments": { "command": "pwd" }
+            }),
+        );
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0].0, "stream.tool");
+        assert_eq!(events[0].1["tool_name"], "exec");
+        assert_eq!(events[0].1["status"], "started");
+    }
+
+    #[test]
+    fn structured_stream_events_maps_delta() {
+        let state = test_state();
+        let events = structured_stream_events(
+            &state,
+            "chat",
+            &serde_json::json!({
+                "state": "delta",
+                "text": "hello"
+            }),
+        );
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0].0, "stream.llm");
+        assert_eq!(events[0].1["content"], "hello");
+        assert_eq!(events[0].1["is_final"], false);
     }
 }

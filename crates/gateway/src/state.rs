@@ -87,6 +87,7 @@ use {
 
 use crate::{
     auth::{CredentialStore, ResolvedAuth},
+    event_streams::EventRouter,
     nodes::NodeRegistry,
     pairing::{PairingState, PairingStore},
     services::GatewayServices,
@@ -390,6 +391,8 @@ pub struct GatewayState {
     pub graphql_broadcast: tokio::sync::broadcast::Sender<(String, serde_json::Value)>,
     /// Session event bus for cross-UI synchronisation (macOS ↔ web).
     pub session_event_bus: SessionEventBus,
+    /// Structured event streams for tool, llm, and system events.
+    pub event_router: EventRouter,
     /// Cloud deploy platform (e.g. "flyio", "digitalocean"), read from
     /// `MOLTIS_DEPLOY_PLATFORM`. `None` when running locally.
     pub deploy_platform: Option<String>,
@@ -492,6 +495,7 @@ impl GatewayState {
             tls_active,
             ws_request_logs,
             session_event_bus: session_event_bus.unwrap_or_default(),
+            event_router: EventRouter::new(),
             deploy_platform,
             port,
             started_at: Instant::now(),
@@ -1129,5 +1133,31 @@ mod tests {
 
         // Client 2 should NOT receive it
         assert!(rx2.try_recv().is_err());
+    }
+
+    #[tokio::test]
+    async fn broadcast_delivers_structured_stream_events_to_subscribers() {
+        let state = test_state();
+
+        let (mut client, mut rx) = mock_client("conn-stream-tool");
+        client.subscriptions = Some(["stream.tool".to_string()].into());
+        state.register_client(client).await;
+
+        crate::broadcast::broadcast(
+            &state,
+            "stream.tool",
+            serde_json::json!({
+                "tool_name": "exec",
+                "status": "started"
+            }),
+            crate::broadcast::BroadcastOpts::default(),
+        )
+        .await;
+
+        let msg = rx.try_recv().expect("stream subscriber should receive");
+        let frame: serde_json::Value = serde_json::from_str(&msg).unwrap();
+        assert_eq!(frame["event"], "stream.tool");
+        assert_eq!(frame["payload"]["tool_name"], "exec");
+        assert_eq!(frame["payload"]["status"], "started");
     }
 }

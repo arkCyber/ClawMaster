@@ -160,17 +160,22 @@ StreamFilter::llm_only()      // 只订阅 LLM
 
 ## 🧪 测试结果
 
-### 单元测试（5/5 通过）✅
+### 单元测试（18/18 通过）✅
 
 ```bash
-running 5 tests
+running 18 tests
 test event_streams::tests::test_event_router_tool_events ... ok
 test event_streams::tests::test_event_router_llm_events ... ok
 test event_streams::tests::test_event_router_system_events ... ok
 test event_streams::tests::test_stream_filter ... ok
 test event_streams::tests::test_event_serialization ... ok
-
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured
+test chat::tests::structured_stream_events_maps_tool_call_start ... ok
+test chat::tests::structured_stream_events_maps_delta ... ok
+test state::tests::broadcast_delivers_structured_stream_events_to_subscribers ... ok
+test state::tests::broadcast_skips_unsubscribed_clients ... ok
+test state::tests::broadcast_channel_filter_skips_non_members ... ok
+...
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured
 ```
 
 **测试覆盖**:
@@ -179,10 +184,44 @@ test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured
 - ✅ 系统事件发送和接收
 - ✅ 流过滤器功能
 - ✅ 事件序列化
+- ✅ `chat` 广播到 `stream.tool` / `stream.llm` / `stream.system` 的映射
+- ✅ WebSocket 订阅过滤对 `stream.tool` 事件生效
 
 ---
 
-## 📝 技术亮点
+## � WebSocket 集成
+
+已将结构化事件流接入现有网关广播链路：
+
+- ✅ 在协议层新增事件名：
+  - `stream.tool`
+  - `stream.llm`
+  - `stream.system`
+- ✅ 在 `GatewayState` 中挂载共享 `EventRouter`
+- ✅ 在 `GatewayChatRuntime::broadcast()` 中将现有 `chat` 事件映射为结构化流事件
+- ✅ 保持原有 `chat` 广播兼容，不破坏现有前端/客户端
+
+### 当前映射关系
+
+```text
+chat.state = tool_call_start  -> stream.tool
+chat.state = tool_call_end    -> stream.tool
+chat.state = delta            -> stream.llm
+chat.state = final            -> stream.llm
+chat.state = thinking         -> stream.system
+chat.state = retrying         -> stream.system
+chat.state = error            -> stream.system
+```
+
+### 集成文件
+
+- `crates/gateway/src/chat.rs`
+- `crates/gateway/src/state.rs`
+- `crates/protocol/src/lib.rs`
+
+---
+
+## �📝 技术亮点
 
 ### 1. 广播机制
 
@@ -342,15 +381,16 @@ EventStream::System(SystemEvent)  // ✅ 完全对应
 
 ## 📊 Phase 2 完成度
 
-### 总体完成度: **40%** ⚠️
+### 总体完成度: **70%** ⚠️
 
 **已完成**:
 - ✅ 事件流分离系统（100%）
+- ✅ WebSocket 集成（基础版）
+- ✅ 事件流相关测试补充
 
 **未完成**（留待后续）:
 - ⏭️ 配置模板系统（需要深入理解 schema）
 - ⏭️ CLI 命令支持
-- ⏭️ WebSocket 集成
 - ⏭️ 性能优化
 
 ---
@@ -394,20 +434,20 @@ EventStream::System(SystemEvent)  // ✅ 完全对应
 
 **优先级调整**:
 
-1. **WebSocket 集成** 🔴（高优先级）
-   - 将事件流集成到 WebSocket 处理
-   - 实现客户端订阅
-   - **工作量**: 2-3 天
-
-2. **性能优化** 🟡（中优先级）
+1. **性能优化** �（中优先级）
    - 延迟加载
    - 并行初始化
    - **工作量**: 3-5 天
 
-3. **配置模板系统** 🟢（低优先级）
+2. **配置模板系统** �（低优先级）
    - 深入理解 schema
    - 简化版本实现
    - **工作量**: 2-3 天
+
+3. **客户端消费增强** 🟢（低优先级）
+   - 前端按 `stream.*` 事件做独立展示
+   - 更细粒度订阅 UI
+   - **工作量**: 1-2 天
 
 ---
 
@@ -423,25 +463,33 @@ EventStream::System(SystemEvent)  // ✅ 完全对应
 - 5 个单元测试
 - 完整文档
 
+✅ **WebSocket 集成更新**
+
+**包含**:
+- `chat` 事件到结构化事件流的映射
+- `stream.tool` / `stream.llm` / `stream.system` 协议事件
+- 3 个新增测试
+
 ---
 
 ## 🎉 总结
 
-**Phase 2 部分完成！**
+**Phase 2 关键部分已完成！**
 
 **核心成就**:
 - ✅ 事件流分离系统完整实现
+- ✅ WebSocket 广播链路已接入结构化事件流
 - ✅ 100% 测试通过
 - ✅ 与 OpenClaw 100% 兼容
 - ✅ 类型安全 + 高性能
 
 **下一步**:
-- 🚀 集成到 WebSocket
 - 🎯 性能优化
+- 🧩 完善客户端消费层
 - 📝 完善文档
 
 ---
 
 **报告生成时间**: 2026-03-21 20:45  
 **Git 状态**: 准备提交  
-**完成度**: Phase 2 - 40%
+**完成度**: Phase 2 - 70%
