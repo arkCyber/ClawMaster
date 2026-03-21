@@ -63,9 +63,13 @@ impl ChannelPlugin for SignalChannel {
                 inbound_mode: InboundMode::Polling,
                 supports_outbound: true,
                 supports_streaming: false,
-                supports_voice: false,
-                supports_images: true,
-                supports_files: true,
+                supports_interactive: false,
+                supports_threads: false,
+                supports_voice_ingest: false,
+                supports_pairing: false,
+                supports_otp: false,
+                supports_reactions: true,
+                supports_location: false,
             },
         }
     }

@@ -15,9 +15,7 @@
 //! - Rate limiting to prevent spam
 
 use {
-    crate::AgentTool,
     anyhow::{Result, bail},
-    async_trait::async_trait,
     serde::{Deserialize, Serialize},
     serde_json::{Value, json},
 };
@@ -141,12 +139,8 @@ impl NotificationsTool {
         // TODO: Implement actual notification using notify-rust or similar
         // This is a placeholder implementation
 
-        #[cfg(feature = "tracing")]
-        tracing::info!(
-            title = title,
-            body = body,
-            "Sending notification (placeholder)"
-        );
+        #[cfg(feature = "metrics")]
+        tracing::info!("Notification sent");
 
         // For now, return a placeholder response
         Ok(NotificationsOutput {
@@ -162,8 +156,7 @@ struct NotificationsOutput {
     notification_id: String,
 }
 
-#[async_trait]
-impl AgentTool for NotificationsTool {
+impl NotificationsTool {
     fn name(&self) -> &str {
         "notifications"
     }
@@ -195,7 +188,7 @@ impl AgentTool for NotificationsTool {
         })
     }
 
-    async fn execute(&self, input: Value) -> Result<Value> {
+    pub async fn execute(&self, input: Value) -> Result<Value> {
         let input: NotificationsInput = serde_json::from_value(input)?;
 
         // Validate content

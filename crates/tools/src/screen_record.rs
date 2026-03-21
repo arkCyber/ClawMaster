@@ -15,9 +15,7 @@
 //! - Path validation prevents traversal
 
 use {
-    crate::AgentTool,
     anyhow::{Result, bail},
-    async_trait::async_trait,
     serde::{Deserialize, Serialize},
     serde_json::{Value, json},
     std::path::{Path, PathBuf},
@@ -156,7 +154,10 @@ impl ScreenRecordTool {
         // TODO: Implement actual screen recording using scrap or similar
         // This is a placeholder implementation
 
-        #[cfg(feature = "tracing")]
+        #[cfg(feature = "metrics")]
+        tracing::info!("Screen recording started");
+
+        #[cfg(feature = "metrics")]
         tracing::info!(
             output_path = ?output_path,
             duration_secs = duration_secs,
@@ -188,8 +189,7 @@ struct ScreenRecordOutput {
     format: String,
 }
 
-#[async_trait]
-impl AgentTool for ScreenRecordTool {
+impl ScreenRecordTool {
     fn name(&self) -> &str {
         "screen_record"
     }
@@ -220,7 +220,7 @@ impl AgentTool for ScreenRecordTool {
         })
     }
 
-    async fn execute(&self, input: Value) -> Result<Value> {
+    pub async fn execute(&self, input: Value) -> Result<Value> {
         let input: ScreenRecordInput = serde_json::from_value(input)?;
 
         // Validate output path

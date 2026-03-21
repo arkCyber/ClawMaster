@@ -250,25 +250,26 @@ pub(super) fn register(reg: &mut MethodRegistry) {
                 let params = ctx
                     .params
                     .as_object()
-                    .ok_or_else(|| anyhow::anyhow!("params must be an object"))?;
+                    .ok_or_else(|| ErrorShape::new(error_codes::INVALID_REQUEST, "params must be an object"))?;
 
                 let signature = params
                     .get("signature")
                     .and_then(|v| v.as_str())
-                    .ok_or_else(|| anyhow::anyhow!("signature required"))?;
+                    .ok_or_else(|| ErrorShape::new(error_codes::INVALID_REQUEST, "signature required"))?;
 
                 let data = params
                     .get("data")
                     .and_then(|v| v.as_str())
-                    .ok_or_else(|| anyhow::anyhow!("data required"))?;
+                    .ok_or_else(|| ErrorShape::new(error_codes::INVALID_REQUEST, "data required"))?;
 
                 let public_key = params
                     .get("public_key")
                     .and_then(|v| v.as_str())
-                    .ok_or_else(|| anyhow::anyhow!("public_key required"))?;
+                    .ok_or_else(|| ErrorShape::new(error_codes::INVALID_REQUEST, "public_key required"))?;
 
                 // Verify signature using ed25519
-                let verified = verify_ed25519_signature(signature, data, public_key)?;
+                let verified = verify_ed25519_signature(signature, data, public_key)
+                    .map_err(|e| ErrorShape::new(error_codes::INTERNAL, e.to_string()))?;
 
                 Ok(serde_json::json!({
                     "verified": verified,

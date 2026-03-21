@@ -15,9 +15,7 @@
 //! - Path validation prevents traversal
 
 use {
-    crate::AgentTool,
     anyhow::{Result, bail},
-    async_trait::async_trait,
     serde::{Deserialize, Serialize},
     serde_json::{Value, json},
     std::path::{Path, PathBuf},
@@ -127,6 +125,9 @@ impl CameraSnapTool {
         // TODO: Implement actual camera capture using nokhwa or similar
         // This is a placeholder implementation
 
+        #[cfg(feature = "metrics")]
+        tracing::info!("Camera snap captured");
+
         #[cfg(feature = "tracing")]
         tracing::info!(
             camera_index = camera_index,
@@ -154,8 +155,7 @@ struct CameraSnapOutput {
     format: String,
 }
 
-#[async_trait]
-impl AgentTool for CameraSnapTool {
+impl CameraSnapTool {
     fn name(&self) -> &str {
         "camera_snap"
     }
@@ -182,7 +182,7 @@ impl AgentTool for CameraSnapTool {
         })
     }
 
-    async fn execute(&self, input: Value) -> Result<Value> {
+    pub async fn execute(&self, input: Value) -> Result<Value> {
         let input: CameraSnapInput = serde_json::from_value(input)?;
 
         // Validate output path

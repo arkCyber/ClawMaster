@@ -16,6 +16,8 @@ base64                 = { workspace = true }
 bytes                  = { workspace = true }
 chrono                 = { features = ["serde"], optional = true, workspace = true }
 chrono-tz              = { workspace = true }
+ed25519-dalek          = { workspace = true }
+hex                    = { workspace = true }
 dashmap                = { workspace = true }
 futures                = { workspace = true }
 gix                    = { workspace = true }
