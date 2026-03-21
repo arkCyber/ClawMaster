@@ -20,5 +20,9 @@ uuid           = { workspace = true }
 default = []
 metrics = ["dep:clawmaster-metrics"]
 
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }
+
 [lints]
 workspace = true
