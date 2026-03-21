@@ -30,6 +30,7 @@ pub mod conversation_history;
 pub mod conversation_history_rpc;
 pub mod cron;
 pub mod env_routes;
+pub mod event_streams;
 #[cfg(feature = "graphql")]
 pub mod graphql_routes;
 pub mod health_routes;
