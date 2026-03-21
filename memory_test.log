@@ -42,3 +42,143 @@
    Compiling secrecy v0.8.0
    Compiling tree-sitter v0.26.6
    Compiling reqwest v0.12.28
+   Compiling clawmaster-common v0.10.18 (/Users/arksong/ClawMaster/crates/common)
+   Compiling clawmaster-config v0.10.18 (/Users/arksong/ClawMaster/crates/config)
+   Compiling clawmaster-metrics v0.10.18 (/Users/arksong/ClawMaster/crates/metrics)
+   Compiling sqlx v0.8.6
+   Compiling icu_locale v2.1.1
+   Compiling regex v1.12.3
+   Compiling fsevent-sys v4.1.0
+   Compiling notify v7.0.0
+   Compiling clawmaster-sessions v0.10.18 (/Users/arksong/ClawMaster/crates/sessions)
+   Compiling strum v0.27.2
+   Compiling icu_segmenter v2.1.2
+   Compiling clawmaster-skills v0.10.18 (/Users/arksong/ClawMaster/crates/skills)
+   Compiling clawmaster-agentic-loop v0.10.18 (/Users/arksong/ClawMaster/crates/agentic-loop)
+   Compiling itertools v0.14.0
+   Compiling notify-debouncer-full v0.4.0
+   Compiling bytemuck v1.25.0
+   Compiling text-splitter v0.29.3
+   Compiling clawmaster-agents v0.10.18 (/Users/arksong/ClawMaster/crates/agents)
+   Compiling tree-sitter-go v0.25.0
+   Compiling tree-sitter-python v0.25.0
+   Compiling tree-sitter-javascript v0.25.0
+   Compiling tree-sitter-rust v0.24.0
+   Compiling clawmaster-memory v0.10.18 (/Users/arksong/ClawMaster/crates/memory)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 04s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_memory-3d7fb8e08ffcf325)
+
+running 110 tests
+test chunker::tests::test_zero_chunk_size ... ok
+test chunker::tests::test_empty ... ok
+test embeddings_openai::tests::endpoint_from_host_base_uses_v1_embeddings ... ok
+test embeddings_openai::tests::endpoint_from_v1_base_appends_embeddings_once ... ok
+test embeddings_openai::tests::endpoint_preserves_explicit_embeddings_url ... ok
+test chunker::tests::test_single_small_chunk ... ok
+test chunker::tests::test_line_numbers_are_1_based ... ok
+test chunker::tests::test_multiple_chunks_with_overlap ... ok
+test embeddings_openai::tests::endpoint_from_custom_version_suffix_keeps_version ... ok
+test embeddings_fallback::tests::test_fallback_to_second ... ok
+test embeddings_fallback::tests::test_fallback_first_succeeds ... ok
+test embeddings_fallback::tests::test_all_fail ... ok
+test reranking::tests::test_noop_reranker ... ok
+test reranking::tests::test_parse_scores_valid ... ok
+test reranking::tests::test_parse_scores_clamps_values ... ok
+test manager::tests::test_sha256_hex ... ok
+test reranking::tests::test_parse_scores_with_surrounding_text ... ok
+test reranking::tests::test_reranker_handles_empty_results ... ok
+test reranking::tests::test_reranker_reorders_results ... ok
+test reranking::tests::test_reranker_respects_top_k ... ok
+test search::tests::test_citation_mode_from_str ... ok
+test search::tests::test_merge_empty ... ok
+test search::tests::test_merge_results_deduplication ... ok
+test search::tests::test_merge_rrf_deduplication ... ok
+test search::tests::test_merge_rrf_empty ... ok
+test search::tests::test_merge_rrf_single_source ... ok
+test search::tests::test_merge_strategy_from_str ... ok
+test search::tests::test_rrf_vs_linear_produce_different_rankings ... ok
+test search::tests::test_should_include_citations_auto_empty ... ok
+test search::tests::test_should_include_citations_auto_multiple_files ... ok
+test search::tests::test_should_include_citations_off ... ok
+test search::tests::test_should_include_citations_auto_single_file ... ok
+test search::tests::test_should_include_citations_on ... ok
+test search::tests::test_text_with_citation ... ok
+test search::tests::test_text_with_citation_trims_whitespace ... ok
+test session_export::tests::test_export_creates_file ... ok
+test session_export::tests::test_sanitize_content_basic ... ok
+test session_export::tests::test_sanitize_content_removes_system_tags ... ok
+test session_export::tests::test_sanitize_content_truncates_long_content ... ok
+test session_export::tests::test_transcript_to_markdown ... ok
+test splitter::tests::byte_offset_to_line_conversion ... ok
+test splitter::tests::content_smaller_than_chunk_size ... ok
+test splitter::tests::empty_input_returns_empty ... ok
+test splitter::tests::line_numbers_are_correct_for_code_chunks ... ok
+test splitter::tests::python_def_boundaries_preserved ... ok
+test splitter::tests::rust_function_boundaries_preserved ... ok
+test splitter::tests::single_line_content ... ok
+test splitter::tests::unknown_extension_falls_back_to_markdown ... ok
+test store_sqlite::tests::test_blob_roundtrip ... ok
+test manager::tests::test_memory_writer_rejects_invalid_names ... ok
+test store_sqlite::tests::test_cosine_similarity ... ok
+test contract::tests::contract_empty_search_returns_empty ... ok
+test manager::tests::test_memory_writer_rejects_path_traversal ... ok
+test schema::tests::test_run_migrations ... ok
+test manager::tests::test_memory_writer_rejects_absolute_paths ... ok
+test store_sqlite::tests::test_sanitize_fts5_query_basic ... ok
+test store_sqlite::tests::test_sanitize_fts5_query_dots ... ok
+test store_sqlite::tests::test_sanitize_fts5_query_empty ... ok
+test store_sqlite::tests::test_sanitize_fts5_query_special_chars ... ok
+test manager::tests::test_memory_writer_disabled_without_data_dir ... ok
+test contract::tests::contract_ingest_then_search ... ok
+test contract::tests::contract_keyword_search_finds_exact_match ... ok
+test manager::tests::test_keyword_only_mode ... ok
+test store_sqlite::tests::test_chunk_crud ... ok
+test manager::tests::test_memory_writer_reindexes ... ok
+test manager::tests::test_memory_writer_returns_correct_result ... ok
+test manager::tests::test_search_returns_synced_content ... ok
+test contract::tests::contract_delete_removes_from_search ... ok
+test manager::tests::test_keyword_search_through_manager ... ok
+test manager::tests::test_memory_writer_append ... ok
+test manager::tests::test_memory_writer_size_limit ... ok
+test manager::tests::test_sync_removes_deleted_files ... ok
+test manager::tests::test_embedding_cache_hits ... ok
+test manager::tests::test_memory_writer_creates_parent_dir ... ok
+test manager::tests::test_sync_detects_changes ... ok
+test store_sqlite::tests::test_embedding_cache ... ok
+test manager::tests::test_sync_and_search ... ok
+test tools::tests::test_memory_get_tool_missing_param ... ok
+test embeddings_batch::tests::test_below_threshold_uses_inner ... ok
+test embeddings_batch::tests::test_single_embed_uses_inner ... ok
+test writer::tests::allows_root_memory_files ... ok
+test writer::tests::allows_single_level_memory_files ... ok
+test writer::tests::rejects_invalid_paths ... ok
+test manager::tests::test_memory_writer_overwrite ... ok
+test store_sqlite::tests::test_keyword_search_with_special_chars ... ok
+test store_sqlite::tests::test_file_crud ... ok
+test store_sqlite::tests::test_vector_search ... ok
+test tools::tests::test_memory_get_tool_not_found ... ok
+test tools::tests::test_memory_save_rejects_absolute_paths ... ok
+test tools::tests::test_memory_save_missing_content ... ok
+test store_sqlite::tests::test_keyword_search ... ok
+test tools::tests::test_memory_save_rejects_invalid_names ... ok
+test tools::tests::test_memory_save_rejects_path_traversal ... ok
+test tools::tests::test_memory_get_tool_schema ... ok
+test tools::tests::test_memory_save_custom_file ... ok
+test tools::tests::test_memory_search_tool_schema ... ok
+test tools::tests::test_memory_search_tool_missing_query ... ok
+test tools::tests::test_memory_get_tool_execute ... ok
+test tools::tests::test_memory_save_creates_memory_dir ... ok
+test tools::tests::test_memory_save_tool_schema ... ok
+test tools::tests::test_memory_save_content_size_limit ... ok
+test manager::tests::test_multi_file_topic_separation ... ok
+test tools::tests::test_memory_save_overwrite ... ok
+test tools::tests::test_memory_save_round_trip ... ok
+test tools::tests::test_memory_save_reindexes ... ok
+test tools::tests::test_memory_save_append_default ... ok
+test tools::tests::test_memory_search_tool_execute ... ok
+test tools::tests::test_tools_round_trip ... ok
+test manager::tests::test_scale_many_files ... ok
+test session_export::tests::test_cleanup_removes_excess_exports ... ok
+
+test result: ok. 110 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
