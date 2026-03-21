@@ -20,6 +20,7 @@ pub mod apply_patch;
 pub mod gateway_config;
 pub mod image_tool;
 pub mod loop_detection;
+pub mod news_tool;
 pub mod pdf_tool;
 
 static SHARED_CLIENT: std::sync::OnceLock<reqwest::Client> = std::sync::OnceLock::new();
@@ -84,3 +85,10 @@ pub mod wasm_limits;
 pub mod wasm_tool_runner;
 pub mod web_fetch;
 pub mod web_search;
+
+// File system tools - DO-178C Level A compliant
+pub mod read_file;
+pub mod write_file;
+pub mod list_directory;
+pub mod search_files;
+pub mod grep_tool;
