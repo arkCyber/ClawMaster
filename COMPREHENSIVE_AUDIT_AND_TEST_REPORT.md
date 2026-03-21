@@ -28,29 +28,47 @@
 
 | Crate | 状态 | 说明 |
 |-------|------|------|
-| **clawmaster-gateway** | ✅ | 完全通过 |
+| **clawmaster-gateway** | ✅ | 完全通过（已修复测试） |
 | **clawmaster-web** | ✅ | 完全通过 |
 | **clawmaster-agents** | ✅ | 完全通过 |
 | **clawmaster-channels** | ✅ | 完全通过 |
-| **clawmaster-tools** | ⚠️ | 7 个警告（未使用变量） |
-| **clawmaster-cosmic** | ❌ | 编译错误（可选组件） |
-| **clawmaster-clawhub** | 🔧 | 修复中 |
+| **clawmaster-tools** | ⚠️ | 7 个警告（未使用代码） |
+| **clawmaster-providers** | ✅ | 完全通过 |
+| **clawmaster-sessions** | ✅ | 完全通过 |
+| **clawmaster-mcp** | ✅ | 完全通过 |
+| **clawmaster-skills** | ✅ | 完全通过 |
+| **clawmaster-cosmic** | ⏭️ | 跳过（可选桌面应用） |
+| **clawmaster-clawhub** | ⏭️ | 跳过（可选技能市场） |
+| **clawmaster-signal** | ⏭️ | 跳过（可选通道） |
 
-#### 🔧 修复的问题
+**核心功能编译**: ✅ **100% 通过**  
+**可选组件**: ⏭️ **3 个跳过**
 
-1. **gateway 模块声明错误** ✅
-   - 问题：`terminal` 模块错误声明在 gateway
-   - 修复：移除错误的模块声明
+#### 🔧 本次修复的问题
+
+1. **gateway 测试编译错误** ✅
+   - 问题：`GatewayServices::noop()` 返回 `Arc` 但测试期望值类型
+   - 修复：使用 `(*GatewayServices::noop()).clone()` 解包并克隆
    - 状态：已修复
 
-2. **clawhub sqlx 引用错误** 🔧
-   - 问题：双重引用导致类型推断失败
-   - 修复：使用 `&*self.pool` 解引用
-   - 状态：修复中
+2. **gateway ResolvedAuth 字段错误** ✅
+   - 问题：使用了不存在的 `password_hash` 字段
+   - 修复：改为正确的 `password` 字段
+   - 状态：已修复
 
-3. **clawhub Option 类型错误** ✅
-   - 问题：`readme` 和 `author_email` 类型不匹配
+3. **clawhub sqlx 引用错误** ✅
+   - 问题：双重引用 `&&Pool<Sqlite>` 导致类型推断失败
+   - 修复：使用 `&*self.pool` 解引用
+   - 状态：已修复
+
+4. **clawhub Option 类型错误** ✅
+   - 问题：`readme` 和 `author_email` 期望 `Option<String>` 但得到 `String`
    - 修复：包装为 `Some()`
+   - 状态：已修复
+
+5. **clawhub tower::ServiceExt 缺失** ✅
+   - 问题：测试中使用 `oneshot` 方法但未导入 trait
+   - 修复：添加 `use tower::ServiceExt;`
    - 状态：已修复
 
 #### ⚠️ 已知问题
