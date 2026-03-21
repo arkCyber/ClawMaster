@@ -154,19 +154,42 @@ impl Registry {
     /// # Errors
     /// Returns an error if the tool is not found.
     pub async fn get_tool(&self, name: &str, version: &str) -> Result<ToolMetadata> {
-        let row = sqlx::query!(
+        #[derive(sqlx::FromRow)]
+        struct ToolRow {
+            name: String,
+            version: String,
+            description: String,
+            author: String,
+            license: String,
+            keywords: String,
+            category: String,
+            tool_type: String,
+            wasm_hash: String,
+            wasm_size: i64,
+            wasm_url: String,
+            signature: String,
+            public_key: String,
+            downloads: i64,
+            security_status: String,
+            created_at: String,
+            updated_at: String,
+        }
+
+        let row = sqlx::query_as::<_, ToolRow>(
             r#"
             SELECT
-                name, version, description, readme, author, author_email,
-                license, repository, homepage, tool_type, keywords, categories,
-                wasm_hash, wasm_size, signature, public_key,
-                security_status, downloads, published_at, updated_at
+                name, version, description, author, license,
+                keywords, category, tool_type,
+                wasm_hash, wasm_size, wasm_url,
+                signature, public_key,
+                downloads, security_status,
+                created_at, updated_at
             FROM tools
-            WHERE name = ?1 AND version = ?2
-            "#,
-            name,
-            version
+            WHERE name = ? AND version = ?
+            "#
         )
+        .bind(name)
+        .bind(version)
         .fetch_optional(&self.pool)
         .await?
         .ok_or_else(|| Error::ToolNotFound {

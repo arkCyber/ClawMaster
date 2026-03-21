@@ -149,20 +149,20 @@ impl<'a> SkillsRegistry<'a> {
     /// # Errors
     /// Returns an error if the skill is not found.
     pub async fn get_skill(&self, name: &str, version: &str) -> Result<SkillMetadata> {
-        let row = sqlx::query_as!(
-            SkillRow,
+        let row = sqlx::query_as::<_, SkillRow>(
             r#"
             SELECT
                 name, version, description, readme, author, author_email,
                 license, repository, homepage, keywords, categories,
                 wasm_hash, wasm_size, wasm_url, signature, public_key,
-                security_status, downloads, published_at, updated_at
+                skill_format, github_repo, commit_sha, downloads, stars,
+                security_status, published_at, updated_at
             FROM skills
-            WHERE name = ?1 AND version = ?2
+            WHERE name = ? AND version = ?
             "#,
-            name,
-            version
         )
+        .bind(name)
+        .bind(version)
         .fetch_optional(&self.pool)
         .await?
         .ok_or_else(|| Error::ToolNotFound {

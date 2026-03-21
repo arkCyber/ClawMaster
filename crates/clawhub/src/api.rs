@@ -13,12 +13,13 @@ use {
         },
     },
     axum::{
-        Json, Router,
         extract::{Path, Query, State},
         http::StatusCode,
         response::IntoResponse,
         routing::{get, post},
+        Json, Router,
     },
+    tower::ServiceExt,
     std::sync::Arc,
     tracing::{debug, info},
 };

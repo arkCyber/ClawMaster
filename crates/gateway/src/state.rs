@@ -901,7 +901,7 @@ mod tests {
                 token: None,
                 password: None,
             },
-            GatewayServices::noop(),
+            Arc::new(GatewayServices::noop()),
         )
     }
 
