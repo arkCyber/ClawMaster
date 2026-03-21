@@ -1,0 +1,96 @@
+   Compiling wasm-metadata v0.227.1
+   Compiling wit-component v0.227.1
+   Compiling wit-bindgen-rust v0.41.0
+   Compiling wit-bindgen-rust-macro v0.41.0
+   Compiling wit-bindgen v0.41.0
+   Compiling clawmaster-wasm-web-fetch v0.10.18 (/Users/arksong/ClawMaster/crates/wasm-tools/web-fetch)
+   Compiling clawmaster-wasm-web-search v0.10.18 (/Users/arksong/ClawMaster/crates/wasm-tools/web-search)
+   Compiling clawmaster-wasm-calc v0.10.18 (/Users/arksong/ClawMaster/crates/wasm-tools/calc)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.63s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_wasm_calc-3207a4f2cc65f8bb)
+
+running 38 tests
+test tests::double_negative ... ok
+test tests::addition ... ok
+test tests::decimal_numbers ... ok
+test tests::division ... ok
+test tests::division_by_zero ... ok
+test tests::empty_expression ... ok
+test tests::execute_impl_invalid_json ... ok
+test tests::execute_impl_basic ... ok
+test tests::execute_impl_expr_alias ... ok
+test tests::execute_impl_missing_param ... ok
+test tests::exponent_too_large ... ok
+test tests::expression_too_long ... ok
+test tests::float_result_serialized_as_float ... ok
+test tests::integer_result_serialized_as_integer ... ok
+test tests::invalid_exponent_literal ... ok
+test tests::leading_decimal ... ok
+test tests::lone_dot_is_error ... ok
+test tests::missing_closing_paren ... ok
+test tests::mixed_precedence ... ok
+test tests::modulo ... ok
+test tests::modulo_by_zero ... ok
+test tests::mul_before_add ... ok
+test tests::multiplication ... ok
+test tests::negative_zero_normalised ... ok
+test tests::normalized_expression_strips_spaces ... ok
+test tests::parentheses_override_precedence ... ok
+test tests::power ... ok
+test tests::power_right_associative ... ok
+test tests::scientific_negative_exponent ... ok
+test tests::scientific_notation ... ok
+test tests::scientific_positive_exponent ... ok
+test tests::subtraction ... ok
+test tests::unary_minus ... ok
+test tests::unary_minus_in_expression ... ok
+test tests::unary_plus ... ok
+test tests::unexpected_token ... ok
+test tests::unsupported_character ... ok
+test tests::whitespace_only ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_wasm_web_fetch-430ff9c29af9e81a)
+
+running 19 tests
+test tests::finds_header_case_insensitive ... ok
+test tests::html_empty_mode_defaults_to_markdown ... ok
+test tests::collapses_whitespace ... ok
+test tests::html_markdown_mode ... ok
+test tests::empty_html ... ok
+test tests::html_text_mode ... ok
+test tests::invalid_json_falls_back_to_text ... ok
+test tests::json_content_type_prettifies ... ok
+test tests::missing_header_returns_none ... ok
+test tests::nested_tags ... ok
+test tests::plain_text_passthrough ... ok
+test tests::no_truncation_needed ... ok
+test tests::strips_script_content ... ok
+test tests::strips_style_content ... ok
+test tests::strips_tags ... ok
+test tests::truncate_multibyte_backs_up ... ok
+test tests::truncates_ascii ... ok
+test tests::truncates_at_valid_utf8_boundary ... ok
+test tests::unknown_content_type_treated_as_text ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_wasm_web_search-9b96a214813789d9)
+
+running 12 tests
+test tests::description_defaults_to_empty ... ok
+test tests::encodes_spaces ... ok
+test tests::encodes_special_chars ... ok
+test tests::handles_missing_web_key ... ok
+test tests::encodes_unicode ... ok
+test tests::handles_empty_results_array ... ok
+test tests::empty_string ... ok
+test tests::parses_normal_results ... ok
+test tests::preserves_unreserved_chars ... ok
+test tests::skips_empty_title_and_url ... ok
+test tests::skips_results_missing_title ... ok
+test tests::skips_results_missing_url ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

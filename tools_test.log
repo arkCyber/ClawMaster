@@ -1,0 +1,540 @@
+warning: unexpected `cfg` condition value: `tracing`
+   --> crates/tools/src/camera_snap.rs:131:15
+    |
+131 |         #[cfg(feature = "tracing")]
+    |               ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: expected values for `feature` are: `default`, `embedded-wasm`, `metrics`, and `wasm`
+    = help: consider adding `tracing` as a feature in `Cargo.toml`
+    = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+    = note: `#[warn(unexpected_cfgs)]` on by default
+
+warning: unused variable: `camera_index`
+   --> crates/tools/src/camera_snap.rs:122:9
+    |
+122 |         camera_index: u32,
+    |         ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_camera_index`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `title`
+   --> crates/tools/src/notifications.rs:135:9
+    |
+135 |         title: &str,
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_title`
+
+warning: unused variable: `body`
+   --> crates/tools/src/notifications.rs:136:9
+    |
+136 |         body: &str,
+    |         ^^^^ help: if this is intentional, prefix it with an underscore: `_body`
+
+warning: methods `description` and `parameters_json_schema` are never used
+   --> crates/tools/src/camera_snap.rs:163:8
+    |
+158 | impl CameraSnapTool {
+    | ------------------- methods in this implementation
+...
+163 |     fn description(&self) -> &str {
+    |        ^^^^^^^^^^^
+...
+167 |     fn parameters_json_schema(&self) -> Value {
+    |        ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: methods `description` and `parameters_json_schema` are never used
+   --> crates/tools/src/notifications.rs:164:8
+    |
+159 | impl NotificationsTool {
+    | ---------------------- methods in this implementation
+...
+164 |     fn description(&self) -> &str {
+    |        ^^^^^^^^^^^
+...
+168 |     fn parameters_json_schema(&self) -> Value {
+    |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: methods `description` and `parameters_json_schema` are never used
+   --> crates/tools/src/screen_record.rs:197:8
+    |
+192 | impl ScreenRecordTool {
+    | --------------------- methods in this implementation
+...
+197 |     fn description(&self) -> &str {
+    |        ^^^^^^^^^^^
+...
+201 |     fn parameters_json_schema(&self) -> Value {
+    |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-tools` (lib test) generated 7 warnings (run `cargo fix --lib -p clawmaster-tools --tests` to apply 3 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-d05cc8c7fbd82497)
+
+running 459 tests
+test apply_patch::tests::test_parse_range ... ok
+test approval::tests::test_allowlist_matching ... ok
+test agents_list::tests::test_simple_registry ... ok
+test agents_list::tests::test_allowlist ... ok
+test agents_list::tests::test_wildcard_allowlist ... ok
+test approval::tests::test_extract_first_bin ... ok
+test approval::tests::test_is_safe_command ... ok
+test apply_patch::tests::test_parse_patch ... ok
+test approval::tests::test_parse_security_level_aliases ... ok
+test approval::tests::test_parse_approval_mode_aliases ... ok
+test agents_list::tests::test_tool_get_action ... ok
+test agents_list::tests::test_tool_get_not_allowed ... ok
+test apply_patch::tests::test_apply_simple_patch ... ok
+test apply_patch::tests::test_apply_patch_to_file ... ok
+test agents_list::tests::test_tool_list_action ... ok
+test agents_list::tests::test_tool_with_allowlist ... ok
+test browser::tests::test_tool_name ... ok
+test browser::tests::test_parameters_schema_has_required_action ... ok
+test browser::tests::test_disabled_returns_none ... ok
+test apply_patch::tests::test_tool_execute ... ok
+test calc::tests::evaluates_operator_precedence ... ok
+test calc::tests::evaluates_parentheses_and_unary_minus ... ok
+test calc::tests::power_is_right_associative ... ok
+test calc::tests::rejects_division_by_zero ... ok
+test calc::tests::rejects_expressions_that_are_too_long ... ok
+test calc::tests::rejects_invalid_characters ... ok
+test calc::tests::rejects_too_large_exponent ... ok
+test calc::tests::supports_floating_point_results ... ok
+test camera_snap::tests::test_camera_snap_tool_creation ... ok
+test calc::tests::execute_returns_structured_result ... ok
+test calc::tests::execute_supports_expr_alias ... ok
+test camera_snap::tests::test_validate_path_rejects_traversal ... ok
+test camera_snap::tests::test_validate_path_accepts_valid ... ok
+test camera_snap::tests::test_execute_rejects_invalid_filename ... ok
+test camera_snap::tests::test_execute_with_valid_input ... ok
+test approval::tests::test_dangerous_rm_rf_root ... ok
+test approval::tests::test_dangerous_truncate ... ok
+test approval::tests::test_dangerous_git_clean_force ... ok
+test approval::tests::test_dangerous_git_stash_drop ... ok
+test approval::tests::test_dangerous_docker_prune ... ok
+test approval::tests::test_dangerous_mkfs ... ok
+test approval::tests::test_dangerous_rm_rf_home ... ok
+test approval::tests::test_dangerous_drop_table ... ok
+test approval::tests::test_dangerous_git_reset_hard ... ok
+test approval::tests::test_dangerous_terraform_destroy ... ok
+test approval::tests::test_safe_commands_not_flagged ... ok
+test approval::tests::test_dangerous_forces_approval_when_full ... ok
+test approval::tests::test_approval_on_miss_safe ... ok
+test approval::tests::test_deny_security_level ... ok
+test contract::tests::contract_output_is_truncated_at_limit ... ok
+test approval::tests::test_approval_off_mode ... ok
+test approval::tests::test_approval_on_miss_unsafe ... ok
+test contract::tests::contract_error_returns_structured_result ... ok
+test approval::tests::test_dangerous_overridden_by_allowlist ... ok
+test approval::tests::test_dangerous_git_force_push ... ok
+test approval::tests::test_approval_always_mode ... ok
+test approval::tests::test_dangerous_forces_approval_when_mode_off ... ok
+test cron_tool::tests::test_normalize_wake_mode_aliases ... ok
+test cron_tool::tests::test_add_rejects_ambiguous_schedule_without_kind ... ok
+test cron_tool::tests::test_parameters_schema_has_no_one_of ... ok
+test cron_tool::tests::test_list_empty ... ok
+test cron_tool::tests::test_status ... ok
+test cron_tool::tests::test_unknown_action ... ok
+test cron_tool::tests::test_runs_empty ... ok
+test cron_tool::tests::test_add_and_list ... ok
+test cron_tool::tests::test_add_with_wake_mode_alias ... ok
+test cron_tool::tests::test_add_with_wake_mode ... ok
+test cron_tool::tests::test_add_infers_payload_kind_for_main_session ... ok
+test cron_tool::tests::test_add_accepts_alias_fields_and_duration_strings ... ok
+test cron_tool::tests::test_add_accepts_execution_target_and_image ... ok
+test cron_tool::tests::test_add_accepts_payload_string_shorthand ... ok
+test cron_tool::tests::test_update_wake_mode ... ok
+test cron_tool::tests::test_update_accepts_host_execution_string ... ok
+test cron_tool::tests::test_remove ... ok
+test exec::tests::test_exec_command_bad_working_dir_error_message ... ok
+test exec::tests::test_is_container_not_running_exec_error ... ok
+test exec::tests::test_exec_echo ... ok
+test exec::tests::test_exec_exit_code ... ok
+test cron_tool::tests::test_add_accepts_cron_expression_string_schedule ... ok
+test cron_tool::tests::test_update_accepts_schedule_string_patch ... ok
+test cron_tool::tests::test_add_infers_schedule_kind_from_expr_without_kind ... ok
+test exec::tests::test_exec_tool_retries_container_not_running_when_cleanup_fails ... ok
+test exec::tests::test_exec_stderr ... ok
+test exec::tests::test_exec_tool_retries_container_not_running_with_cleanup ... ok
+test exec::tests::test_exec_tool_stops_after_max_container_retries ... ok
+test exec::tests::truncate_output_for_display_handles_multibyte_boundary ... ok
+test exec::tests::test_redaction_needles ... ok
+test gateway_config::tests::test_status ... ok
+test gateway_config::tests::test_set_config_disabled ... ok
+test gateway_config::tests::test_restart_disabled ... ok
+test gateway_config::tests::test_set_config ... ok
+test gateway_config::tests::test_version ... ok
+test gateway_config::tests::test_get_config ... ok
+test gateway_config::tests::test_restart ... ok
+test image_cache::tests::test_image_tag_deterministic ... ok
+test gateway_config::tests::test_list_config ... ok
+test image_cache::tests::test_image_tag_different_skill ... ok
+test image_cache::tests::test_image_tag_different_content ... ok
+test image_cache::tests::test_image_tag_format ... ok
+test image_tool::tests::test_analyze_url ... ok
+test image_cache::tests::test_cached_image_serde ... ok
+test image_tool::tests::test_disabled ... ok
+test image_tool::tests::test_analyze_base64 ... ok
+test image_tool::tests::test_analyze_with_prompt ... ok
+test image_tool::tests::test_url_fetch_disabled ... ok
+test image_tool::tests::test_formats ... ok
+test location::tests::channel_location_not_supported_for_non_channel_session ... ok
+test location::tests::channel_location_default_trait_returns_not_supported ... ok
+test location::tests::channel_location_fallback_no_session ... ok
+test location::tests::cached_location_returns_immediately ... ok
+test grep_tool::tests::test_grep_in_file ... ok
+test grep_tool::tests::test_grep_case_insensitive ... ok
+test location::tests::missing_conn_id_returns_error ... ok
+test location::tests::format_address_empty ... ok
+test location::tests::permission_denied_returns_error_json ... ok
+test grep_tool::tests::test_grep_recursive ... ok
+test list_directory::tests::test_list_simple_directory ... ok
+test location::tests::tool_schema_is_valid ... ok
+test list_directory::tests::test_hides_hidden_files ... ok
+test list_directory::tests::test_list_recursive ... ok
+test loop_detection::tests::test_generic_repeat_detection ... ok
+test loop_detection::tests::test_loop_detection_config_default ... ok
+test loop_detection::tests::test_session_reset ... ok
+test loop_detection::tests::test_tool_execute_check ... ok
+test location::tests::format_address_village_only ... ok
+test location::tests::format_address_suburb_fallback ... ok
+test location::tests::format_address_full ... ok
+test exec::tests::test_exec_tool_with_env_provider ... ok
+test loop_detection::tests::test_tool_execute_reset ... ok
+test exec::tests::test_exec_tool ... ok
+test loop_detection::tests::test_tool_execute_stats ... ok
+test exec::tests::test_completion_callback_fires ... ok
+test map::tests::build_links_special_chars_in_label ... ok
+test map::tests::build_links_with_label ... ok
+test map::tests::build_links_without_label ... ok
+test map::tests::auto_zoom_nearby_points ... ok
+test map::tests::auto_zoom_same_point ... ok
+test exec::tests::test_exec_tool_empty_working_dir ... ok
+test map::tests::center_for_points_handles_date_line ... ok
+test map::tests::auto_zoom_distant_points ... ok
+test map::tests::auto_zoom_multiple_points ... ok
+test exec::tests::test_no_callback_by_default ... ok
+test exec::tests::test_exec_tool_safe_command_no_approval_needed ... ok
+test branch_session::tests::test_fork_point_beyond_count ... ok
+test map::tests::execute_rejects_missing_destinations ... ok
+test map::tests::execute_validates_latitude_range ... ok
+test map::tests::execute_validates_points_latitude_range ... ok
+test map::tests::execute_validates_longitude_range ... ok
+test map::tests::draw_marker_has_border ... ok
+test map::tests::execute_validates_user_latitude_range ... ok
+test map::tests::draw_marker_edge_clipping ... ok
+test map::tests::draw_marker_center_pixel ... ok
+test map::tests::execute_validates_user_longitude_range ... ok
+test map::tests::tile_coords_at_zoom_0 ... ok
+test map::tests::tile_coords_known_location ... ok
+test map::tests::urlencoded_basic ... ok
+test map::tests::tool_schema_is_valid ... ok
+test news_tool::tests::test_format_news_result ... ok
+test branch_session::tests::test_fork_all_messages ... ok
+test nodes::tests::nodes_list_empty ... ok
+test nodes::tests::nodes_describe_not_found ... ok
+test nodes::tests::nodes_select_clear_assignment ... ok
+test nodes::tests::nodes_select_missing_session_key ... ok
+test nodes::tests::nodes_describe_by_name ... ok
+test nodes::tests::nodes_describe_by_id ... ok
+test nodes::tests::tool_schemas_valid ... ok
+test nodes::tests::nodes_list_returns_all_connected ... ok
+test nodes::tests::nodes_select_assigns_node ... ok
+test notifications::tests::test_notifications_tool_creation ... ok
+test notifications::tests::test_execute_rejects_empty_title ... ok
+test notifications::tests::test_execute_with_valid_input ... ok
+test notifications::tests::test_validate_content_accepts_valid ... ok
+test notifications::tests::test_validate_content_rejects_empty_title ... ok
+test notifications::tests::test_validate_content_rejects_html ... ok
+test notifications::tests::test_validate_content_rejects_long_title ... ok
+test params::tests::bool_param_returns_value_or_default ... ok
+test params::tests::require_str_errors_when_missing ... ok
+test params::tests::str_param_any_finds_first_match ... ok
+test branch_session::tests::test_branch_at_midpoint ... ok
+test params::tests::str_param_extracts_trimmed_value ... ok
+test params::tests::str_param_returns_none_for_empty_string ... ok
+test params::tests::str_param_returns_none_for_missing_key ... ok
+test exec::tests::test_env_var_redaction_base64_exfiltration ... ok
+test params::tests::str_param_returns_none_for_whitespace_only ... ok
+test params::tests::u64_param_returns_value_or_default ... ok
+test exec::tests::test_env_var_redaction_hex_exfiltration ... ok
+test pdf_tool::tests::test_disabled ... ok
+test pdf_tool::tests::test_extract_text ... ok
+test pdf_tool::tests::test_extract_page ... ok
+test pdf_tool::tests::test_extract_text_from_url ... ok
+test pdf_tool::tests::test_invalid_page_number ... ok
+test pdf_tool::tests::test_metadata ... ok
+test policy::tests::test_allow_all ... ok
+test pdf_tool::tests::test_url_fetch_disabled ... ok
+test policy::tests::test_deny_wins ... ok
+test policy::tests::test_empty_allow_permits_all ... ok
+test policy::tests::test_merge_deny_accumulates ... ok
+test policy::tests::test_prefix_pattern ... ok
+test policy::tests::test_profiles ... ok
+test process::tests::test_invalid_session_names ... ok
+test process::tests::test_generate_session_name ... ok
+test pdf_tool::tests::test_page_count ... ok
+test policy::tests::test_resolve_global_policy ... ok
+test policy::tests::test_resolve_deny_wins_across_layers ... ok
+test process::tests::test_process_action_deserialize_list ... ok
+test process::tests::test_process_action_invalid_action ... ok
+test process::tests::test_process_action_missing_required_field ... ok
+test process::tests::test_process_result_err ... ok
+test process::tests::test_process_result_ok ... ok
+test process::tests::test_process_action_deserialize_kill ... ok
+test process::tests::test_process_action_deserialize_start_no_name ... ok
+test process::tests::test_process_action_deserialize_poll ... ok
+test process::tests::test_process_action_deserialize_send_keys ... ok
+test process::tests::test_process_action_deserialize_start ... ok
+test process::tests::test_process_action_deserialize_paste ... ok
+test process::tests::test_process_action_deserialize_start_empty_name ... ok
+test process::tests::test_process_result_serialization ... ok
+test process::tests::test_process_tool_invalid_params ... ok
+test process::tests::test_process_tool_invalid_session_name_on_kill ... ok
+test process::tests::test_process_tool_invalid_session_name_on_paste ... ok
+test process::tests::test_process_tool_invalid_session_name_on_poll ... ok
+test process::tests::test_process_tool_invalid_session_name_on_send_keys ... ok
+test process::tests::test_process_tool_schema ... ok
+test process::tests::test_session_name_too_long ... ok
+test process::tests::test_valid_session_names ... ok
+test process::tests::test_process_tool_start_without_command ... ok
+test read_file::tests::test_tool_name_and_schema ... ok
+test read_file::tests::test_rejects_path_traversal ... ok
+test read_file::tests::test_rejects_nonexistent_file ... ok
+test read_file::tests::test_truncates_long_lines ... ok
+test read_file::tests::test_read_multiline_file ... ok
+test screen_record::tests::test_screen_record_tool_creation ... ok
+test screen_record::tests::test_validate_params ... ok
+test read_file::tests::test_respects_file_size_limit ... ok
+test screen_record::tests::test_execute_rejects_invalid_duration ... ok
+test read_file::tests::test_rejects_directory ... ok
+test read_file::tests::test_read_simple_file ... ok
+test screen_record::tests::test_execute_with_valid_input ... ok
+test read_file::tests::test_workspace_only_mode ... ok
+test screen_record::tests::test_validate_path_rejects_traversal ... ok
+test send_image::tests::mime_lookup_covers_supported_formats ... ok
+test search_files::tests::test_rejects_absolute_pattern ... ok
+test send_image::tests::encodes_ppm_as_data_uri ... ok
+test send_image::tests::rejects_missing_path_parameter ... ok
+test send_image::tests::rejects_nonexistent_file ... ok
+test send_image::tests::rejects_file_without_extension ... ok
+test send_image::tests::rejects_unsupported_extension ... ok
+test read_file::tests::test_respects_allowed_extensions ... ok
+test send_image::tests::encodes_valid_png_as_data_uri ... ok
+test send_image::tests::includes_caption_when_provided ... ok
+test session_state::tests::test_clear_via_tool ... ok
+test send_image::tests::rejects_directory ... ok
+test session_state::tests::test_missing_session_key ... ok
+test session_state::tests::test_list_via_tool ... ok
+test send_image::tests::rejects_oversized_file ... ok
+test search_files::tests::test_search_by_extension ... ok
+test search_files::tests::test_search_recursive ... ok
+test exec::tests::test_env_var_redaction_file_exfiltration ... ok
+test session_state::tests::test_unknown_operation ... ok
+test session_state::tests::test_set_and_get_via_tool ... ok
+test sessions_communicate::tests::sessions_send_rejects_missing_target ... ok
+test sessions_communicate::tests::sessions_history_rejects_missing_session ... ok
+test sessions_communicate::tests::sessions_send_calls_callback_and_wraps_context ... ok
+test sessions_communicate::tests::sessions_history_reads_paginated_messages ... ok
+test sessions_manage::tests::sessions_create_generates_key_when_missing ... ok
+test sessions_communicate::tests::test_send_denied_when_can_send_false ... ok
+test skill_tools::tests::test_create_invalid_name ... ok
+test skill_tools::tests::test_create_duplicate_fails ... ok
+test sessions_communicate::tests::test_list_filtered_by_key_prefix ... ok
+test skill_tools::tests::test_create_skill ... ok
+test sessions_communicate::tests::sessions_list_filters_and_limits ... ok
+test skill_tools::tests::test_delete_nonexistent_fails ... ok
+test sessions_communicate::tests::test_no_policy_allows_all ... ok
+test skill_tools::tests::test_update_nonexistent_fails ... ok
+test skill_tools::tests::test_create_with_allowed_tools ... ok
+test skill_tools::tests::test_delete_skill ... ok
+test skill_tools::tests::test_update_skill ... ok
+test spawn_agent::tests::test_identity_injected_into_system_prompt ... ok
+test sessions_manage::tests::sessions_delete_rejects_missing_session ... ok
+test spawn_agent::tests::test_load_memory_missing_file_returns_none ... ok
+test spawn_agent::tests::test_load_memory_empty_returns_none ... ok
+test spawn_agent::tests::test_depth_limit_rejects ... ok
+test spawn_agent::tests::test_missing_task_parameter ... ok
+test spawn_agent::tests::test_no_identity_uses_default_prompt ... ok
+test sessions_manage::tests::sessions_create_marks_existing_session_as_not_created ... ok
+test spawn_agent::tests::test_resolve_preset_errors_when_name_missing ... ok
+test sessions_manage::tests::sessions_delete_deletes_existing_session ... ok
+test spawn_agent::tests::test_resolve_preset_uses_default_when_missing ... ok
+test spawn_agent::tests::test_resolve_preset_uses_explicit_name ... ok
+test spawn_agent::tests::test_load_memory_truncates ... ok
+test spawn_agent::tests::test_memory_injected_into_system_prompt ... ok
+test ssrf::tests::allowlist_cidr_match ... ok
+test ssrf::tests::allowlist_non_match ... ok
+test spawn_agent::tests::test_build_sub_tools_applies_allow_and_deny ... ok
+test spawn_agent::tests::test_build_sub_tools_delegate_only_uses_delegate_set ... ok
+test sessions_manage::tests::sessions_delete_rejects_main_session ... ok
+test ssrf::tests::private_ip_v4::case_1 ... ok
+test ssrf::tests::private_ip_v4::case_2 ... ok
+test ssrf::tests::private_ip_v4::case_3 ... ok
+test ssrf::tests::private_ip_v4::case_4 ... ok
+test ssrf::tests::private_ip_v4::case_5 ... ok
+test ssrf::tests::private_ip_v4::case_6 ... ok
+test ssrf::tests::private_ip_v4::case_7 ... ok
+test ssrf::tests::private_ip_v4::case_8 ... ok
+test ssrf::tests::private_ip_v6::case_1 ... ok
+test ssrf::tests::private_ip_v6::case_2 ... ok
+test ssrf::tests::private_ip_v6::case_3 ... ok
+test ssrf::tests::private_ip_v6::case_4 ... ok
+test ssrf::tests::allowlist_permits_private_blocking ... ok
+test ssrf::tests::blocks_localhost_blocking ... ok
+test ssrf::tests::allowlist_permits_private_async ... ok
+test ssrf::tests::blocks_localhost_async ... ok
+test ssrf::tests::private_ip_v6::case_5 ... ok
+test task_list::tests::create_and_list_tasks ... ok
+test task_list::tests::claim_moves_task_to_in_progress ... ok
+test task_list::tests::claim_rejects_non_pending_task ... ok
+test task_list::tests::claim_rejects_when_blocked_dependencies_incomplete ... ok
+test spawn_agent::tests::test_context_passed_to_sub_agent ... ok
+test spawn_agent::tests::test_spawn_agent_excluded_from_sub_registry ... ok
+test spawn_agent::tests::test_sub_agent_runs_and_returns_result ... ok
+test exec::tests::test_exec_tool_approval_denied ... ok
+test wasm_component::tests::http_host_domain_allowlist_blocks_disallowed_host ... ok
+test wasm_component::tests::http_host_rejects_invalid_method ... ok
+test wasm_component::tests::http_host_blocks_private_address_without_allowlist ... ok
+test wasm_component::tests::http_host_rejects_non_http_scheme ... ok
+test wasm_component::tests::marshal_tool_result_boolean ... ok
+test wasm_component::tests::marshal_tool_result_integer ... ok
+test wasm_component::tests::marshal_tool_result_json ... ok
+test wasm_component::tests::marshal_tool_result_number ... ok
+test wasm_component::tests::marshal_tool_result_text ... ok
+test wasm_component::tests::http_host_new_inside_tokio_runtime ... ok
+test wasm_limits::tests::config_deser_and_conversion ... ok
+test wasm_limits::tests::resolve_prefers_tool_override ... ok
+test map::tests::fetch_tile_server_error ... ok
+test wasm_limits::wasm_tests::memory_growth_beyond_limit_rejected ... ok
+test wasm_component::tests::http_host_enforces_max_response_bytes ... ok
+test wasm_limits::wasm_tests::table_growth_beyond_limit_rejected ... ok
+test wasm_tool_runner::tests::caching_runner_returns_cached_value ... ok
+skipping calc wasm runner tests: missing calc wasm artifact at /Users/arksong/ClawMaster/crates/tools/../../target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm; run `just wasm-tools` first
+skipping calc wasm runner tests: missing calc wasm artifact at /Users/arksong/ClawMaster/crates/tools/../../target/wasm32-wasip2/release/clawmaster_wasm_calc.wasm; run `just wasm-tools` first
+test wasm_tool_runner::tests::calc_wasm_matches_native_for_expressions ... ok
+test wasm_tool_runner::tests::calc_wasm_low_fuel_fails ... ok
+test wasm_tool_runner::tests::decode_http_result_maps_err ... ok
+test wasm_tool_runner::tests::decode_http_result_maps_ok ... ok
+test wasm_tool_runner::tests::decode_result_maps_err_variant ... ok
+test location::tests::reverse_geocode_fallback_on_error ... ok
+test wasm_tool_runner::tests::decode_result_maps_ok_value ... ok
+test wasm_tool_runner::tests::marshal_http_value_boolean ... ok
+test wasm_tool_runner::tests::marshal_http_value_integer ... ok
+test wasm_tool_runner::tests::marshal_http_value_invalid_json_becomes_string ... ok
+test wasm_tool_runner::tests::marshal_http_value_json ... ok
+test wasm_tool_runner::tests::marshal_http_value_nan_becomes_null ... ok
+test location::tests::reverse_geocode_with_mock_server ... ok
+test wasm_tool_runner::tests::marshal_http_value_number ... ok
+test wasm_tool_runner::tests::marshal_http_value_text ... ok
+test wasm_tool_runner::tests::marshal_pure_value_invalid_json_becomes_string ... ok
+skipping web_fetch http runner test: missing web_fetch wasm artifact at /Users/arksong/ClawMaster/crates/tools/../../target/wasm32-wasip2/release/clawmaster_wasm_web_fetch.wasm; run `just wasm-tools` first
+test map::tests::fetch_tile_with_mock ... ok
+test wasm_tool_runner::tests::marshal_pure_value_nan_becomes_null ... ok
+test web_fetch::tests::test_cache_disabled_zero_ttl ... ok
+test wasm_tool_runner::tests::web_fetch_http_runner_fetches_from_local_server ... ok
+test web_fetch::tests::test_cache_hit_and_miss ... ok
+test web_fetch::tests::test_extract_content_json ... ok
+test web_fetch::tests::test_extract_content_plain_text ... ok
+test web_fetch::tests::test_from_config_disabled ... ok
+test web_fetch::tests::test_from_config_enabled ... ok
+test web_fetch::tests::test_from_config_has_no_proxy_by_default ... ok
+test web_fetch::tests::test_from_config_parses_ssrf_allowlist ... ok
+test web_fetch::tests::test_html_to_text_basic ... ok
+test web_fetch::tests::test_html_to_text_strips_scripts ... ok
+test web_fetch::tests::test_html_to_text_entities ... ok
+test web_fetch::tests::test_html_to_text_strips_styles ... ok
+test wasm_component::tests::http_host_injects_secret_headers ... ok
+test wasm_component::tests::http_host_secret_headers_override_guest_headers ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_1 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_2 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_3 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_4 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_5 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_6 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_7 ... ok
+test web_fetch::tests::test_is_private_ip_v4::case_8 ... ok
+test web_fetch::tests::test_is_private_ip_v6::case_1 ... ok
+test web_fetch::tests::test_is_private_ip_v6::case_2 ... ok
+test web_fetch::tests::test_is_private_ip_v6::case_3 ... ok
+test web_fetch::tests::test_is_private_ip_v6::case_4 ... ok
+test web_fetch::tests::test_is_private_ip_v6::case_5 ... ok
+test web_fetch::tests::test_is_ssrf_allowed_empty_blocks_all ... ok
+test web_fetch::tests::test_is_ssrf_allowed_ipv6 ... ok
+test web_fetch::tests::test_is_ssrf_allowed_matching_cidr ... ok
+test web_fetch::tests::test_is_ssrf_allowed_non_matching ... ok
+test web_fetch::tests::test_is_ssrf_allowed_single_host ... ok
+test web_fetch::tests::test_missing_url_param ... ok
+test web_fetch::tests::test_ssrf_blocks_link_local ... ok
+test web_fetch::tests::test_ssrf_blocks_localhost_url ... ok
+test web_fetch::tests::test_ssrf_blocks_private_ip ... ok
+test web_fetch::tests::test_ssrf_check_allowlist_permits_private_ip ... ok
+test web_fetch::tests::test_ssrf_check_allowlist_still_blocks_non_matching ... ok
+test web_fetch::tests::test_tool_name_and_schema ... ok
+test web_fetch::tests::test_truncation ... ok
+test web_fetch::tests::test_truncation_utf8_boundary ... ok
+test web_fetch::tests::test_with_proxy ... ok
+test web_fetch::tests::test_unsupported_scheme ... ok
+test web_search::tests::test_brave_response_parsing ... ok
+test web_search::tests::test_brave_missing_api_key_returns_hint ... ok
+test web_search::tests::test_brave_response_parsing_tolerates_nulls ... ok
+test web_search::tests::test_cache_disabled_when_zero_ttl ... ok
+test web_search::tests::test_cache_hit_and_miss ... ok
+test web_search::tests::test_count_clamping ... ok
+test web_search::tests::test_ddg_cooldown_blocks_after_captcha ... ok
+test web_search::tests::test_current_api_key_prefers_configured_value ... ok
+test web_search::tests::test_ddg_cooldown_expires ... ok
+test web_search::tests::test_decode_html_entities_basic ... ok
+test web_search::tests::test_env_value_with_provider_uses_runtime_env_values ... ok
+test web_search::tests::test_extract_href_before ... ok
+test web_search::tests::test_from_config_can_enable_ddg_fallback ... ok
+test web_search::tests::test_from_config_disabled ... ok
+test web_search::tests::test_from_config_none_without_key_or_fallback ... ok
+test web_search::tests::test_missing_query_param ... ok
+test web_search::tests::test_parse_duckduckgo_html_empty ... ok
+test web_search::tests::test_parse_duckduckgo_html_basic ... ok
+test web_search::tests::test_parse_duckduckgo_html_respects_max ... ok
+test web_search::tests::test_parse_duckduckgo_html_with_entities ... ok
+test web_search::tests::test_perplexity_missing_api_key_returns_hint ... ok
+test web_search::tests::test_resolve_ddg_redirect_not_a_redirect ... ok
+test web_search::tests::test_perplexity_response_parsing ... ok
+test web_search::tests::test_resolve_ddg_redirect_protocol_relative ... ok
+test web_search::tests::test_resolve_ddg_redirect_standard ... ok
+test web_search::tests::test_resolve_perplexity_base_url_openrouter_prefix ... ok
+test web_search::tests::test_resolve_perplexity_base_url_pplx_prefix ... ok
+test web_search::tests::test_resolve_perplexity_base_url_respects_override ... ok
+test web_search::tests::test_strip_tags_basic ... ok
+test web_search::tests::test_tool_name_and_schema ... ok
+test web_search::tests::test_urlencoding ... ok
+test write_file::tests::test_rejects_path_traversal ... ok
+test write_file::tests::test_respects_size_limit ... ok
+test write_file::tests::test_write_new_file ... ok
+test write_file::tests::test_creates_directories ... ok
+test write_file::tests::test_creates_backup ... ok
+test write_file::tests::test_overwrites_existing_file ... ok
+test exec::tests::test_exec_timeout ... ok
+test wasm_tool_runner::tests::register_wasm_tools_succeeds_with_available_components ... ok
+test wasm_engine::tests::compile_component_round_trip_and_cache_hit ... ok
+test wasm_engine::tests::compile_component_different_bytes_different_entries ... ok
+test wasm_engine::tests::compile_component_concurrent_access ... ok
+test wasm_engine::tests::compile_module_core_wasm ... ok
+test wasm_limits::wasm_tests::fuel_exhaustion_returns_error ... ok
+test map::tests::compose_map_with_mock_tiles ... ok
+test wasm_component::tests::http_host_maps_timeout_errors ... ok
+test map::tests::magick_fallback_produces_image ... ok
+test exec::tests::test_exec_tool_approval_approved ... ok
+test location::tests::channel_location_success ... ok
+test location::tests::browser_location_success ... ok
+test location::tests::precision_coarse_is_forwarded ... ok
+test location::tests::precision_defaults_to_precise ... ok
+test contract::tests::contract_timeout_is_enforced ... ok
+test map::tests::execute_clamps_zoom ... ok
+test spawn_agent::tests::test_timeout_cancels_long_running_agent ... ok
+test map::tests::execute_graceful_without_screenshot ... ok
+test map::tests::execute_supports_points_input ... ok
+test map::tests::execute_includes_label_in_result ... ok
+test news_tool::tests::test_news_query has been running for over 60 seconds
+test news_tool::tests::test_news_query ... ok
+
+test result: ok. 459 passed; 0 failed; 0 ignored; 0 measured; 161 filtered out; finished in 83.33s
+

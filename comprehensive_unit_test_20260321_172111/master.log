@@ -4,5 +4,3 @@ ClawMaster 全面工具功能测试
 测试目录: comprehensive_unit_test_20260321_172111
 ========================================
 
-./comprehensive_unit_test.sh: line 33: declare: -A: invalid option
-declare: usage: declare [-afFirtx] [-p] [name[=value] ...]
