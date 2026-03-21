@@ -2712,3 +2712,188 @@ ClawMaster Development:
 [2m2026-03-21T09:04:41.386837Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m4
 [2m2026-03-21T09:04:41.387328Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"9f7ae601-d9c1-457f-8973-10a56d9466ed" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m4 [3mresponse[0m[2m=[0m [3msilent[0m[2m=[0mtrue
 [2m2026-03-21T09:04:41.406125Z[0m [32m INFO[0m [2mclawmaster_cron::service[0m[2m:[0m cron job finished [3mid[0m[2m=[0m__heartbeat__ [3mstatus[0m[2m=[0mOk [3mduration_ms[0m[2m=[0m40628
+[2m2026-03-21T09:34:41.413266Z[0m [32m INFO[0m [2mclawmaster_cron::service[0m[2m:[0m executing cron job [3mid[0m[2m=[0m__heartbeat__ [3mname[0m[2m=[0m__heartbeat__
+[2m2026-03-21T09:34:41.418573Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m chat.clear [3msession[0m[2m=[0mcron:heartbeat
+[2m2026-03-21T09:34:41.449384Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m chat.send_sync [3mrun_id[0m[2m=[0mca35aeef-f3af-4728-913d-f250f3b7d5ae [3muser_message[0m[2m=[0m# Heartbeat Configuration
+
+This file defines the heartbeat behavior for background monitoring.
+
+## Heartbeat Prompt
+
+You are running a background heartbeat check. Be concise and actionable.
+
+### Priority 1: Critical Issues (Immediate Alert)
+
+**System Health**:
+- ❌ Check error logs in `~/.clawmaster/logs/` for CRITICAL or ERROR entries
+- ❌ Monitor memory usage - alert if > 80%
+- ❌ Check disk space - alert if < 10% free
+- ❌ Verify gateway is responding - `curl http://localhost:3000/health`
+- ❌ Check database integrity - no corruption
+
+**Security**:
+- 🔒 Scan for failed authentication attempts (> 5 in 5 minutes)
+- 🔒 Check for unauthorized file access attempts
+- 🔒 Verify SSL certificates are valid (> 7 days remaining)
+- 🔒 Review API key usage for anomalies
+
+### Priority 2: Important Tasks (Desktop Notification)
+
+**Scheduled Tasks**:
+- 📅 Review cron jobs - check for missed executions
+- 📅 Check pending reminders from calendar
+- 📅 Update task status in project tracker
+- 📅 Verify backup jobs completed successfully
+
+**Development**:
+- 🔧 Check for failed CI/CD builds
+- 🔧 Monitor test coverage - alert if < 80%
+- 🔧 Review pending code reviews
+- 🔧 Check for outdated dependencies (security updates)
+
+**Communication**:
+- 💬 Check for unread messages in monitored channels
+- 💬 Review pending notifications
+- 💬 Check for @mentions or direct messages
+- 💬 Scan for urgent keywords ("URGENT", "ASAP", "紧急")
+
+### Priority 3: Informational (Log Only)
+
+**Metrics & Analytics**:
+- 📊 Log system uptime
+- 📊 Record API request counts
+- 📊 Track tool usage statistics
+- 📊 Monitor LLM token consumption
+
+**Maintenance**:
+- 🧹 Clean up old log files (> 30 days)
+- 🧹 Archive completed sessions
+- 🧹 Compact database if needed
+- 🧹 Update MEMORY.md index
+
+## Heartbeat Actions
+
+**When Issues Found**:
+1. **Critical** → Send immediate alert + log to `heartbeat.log`
+2. **Important** → Desktop notification + log
+3. **Info** → Log only, no alert
+
+**Alert Format**:
+```
+🚨 [CRITICAL] System Health Alert
+- Issue: Memory usage at 85%
+- Action: Consider restarting gateway
+- Time: 2026-03-21 09:30:00 CST
+```
+
+## Heartbeat Frequency
+
+**Default Schedule**:
+- Every 5 minutes during working hours (9:00-18:00 CST)
+- Every 15 minutes outside working hours
+- Every 30 minutes during sleep hours (23:00-07:00 CST)
+
+**Configurable in** `clawmaster.toml`:
+```toml
+[heartbeat]
+enabled = true
+interval_seconds = 300  # 5 minutes
+working_hours = "09:00-18:00"
+timezone = "Asia/Shanghai"
+```
+
+## Smart Heartbeat
+
+**Adaptive Frequency**:
+- Increase frequency when issues detected
+- Decrease frequency when system is stable
+- Skip heartbeat if no activity for > 1 hour
+
+**Context-Aware**:
+- Check relevant services based on recent activity
+- Focus on tools that were recently used
+- Monitor channels with recent messages
+
+## Cost Guard
+
+**Token Optimization**:
+- If this file is empty or comment-only, heartbeat LLM turns are skipped
+- Use cached results for repeated checks (5 min cache)
+- Batch multiple checks in single LLM call
+- Skip checks if system is idle
+
+**Estimated Cost**:
+- ~100 tokens per heartbeat check
+- ~1,200 tokens per hour (5 min intervals)
+- ~$0.001 per hour with GPT-4o-mini
+
+## Heartbeat Output
+
+**Success**:
+```
+✅ Heartbeat OK - All systems normal
+- Uptime: 15h 23m
+- Memory: 45% (226MB / 500MB)
+- Disk: 65% free
+- No critical issues
+```
+
+**Issues Found**:
+```
+⚠️ Heartbeat Warning - 2 issues found
+1. [IMPORTANT] Pending code review: PR #123
+2. [INFO] Log file size > 100MB, consider rotation
+```
+
+---
+
+## Examples
+
+### Minimal Heartbeat (Low Cost)
+```markdown
+Check for:
+- Critical errors in logs
+- System resource usage > 80%
+- Unread urgent messages
+```
+
+### Comprehensive Heartbeat (Full Monitoring)
+```markdown
+Monitor all categories:
+- System health, security, tasks, development, communication, metrics
+- Adaptive frequency based on activity
+- Smart alerts with context
+```
+
+### Custom Heartbeat (Project-Specific)
+```markdown
+ClawMaster Development:
+- Check CI/CD status
+- Monitor test coverage
+- Review pending PRs
+- Check dependency updates
+```
+
+---
+
+**To enable heartbeat**: Keep this file with content above.  
+**To disable heartbeat**: Delete all content or keep only comments.  
+**To customize**: Edit the priorities and checks above.
+
+**Last Updated**: 2026-03-21  
+**Version**: 2.0  
+**Maintained by**: arkSong [3mmodel[0m[2m=[0mollama::qwen3.5:9b [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mcron:heartbeat [3mreply_medium[0m[2m=[0mText
+[2m2026-03-21T09:34:41.458133Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m35 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T09:34:41.458529Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m35 [3mtool_schemas_count[0m[2m=[0m35
+[2m2026-03-21T09:34:41.458621Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m2
+[2m2026-03-21T09:35:10.287274Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m16498 [3moutput_tokens[0m[2m=[0m137
+[2m2026-03-21T09:35:10.287881Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_amnn4cs2 [3margs[0m[2m=[0m{"command":"tail -50 ~/.clawmaster/logs/heartbeat.log 2>/dev/null || echo \"No heartbeat log yet\"","timeout":10,"working_dir":null,"node":null}
+[2m2026-03-21T09:35:10.302933Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m exec tool invoked [3mcommand[0m[2m=[0m"tail -50 ~/.clawmaster/logs/heartbeat.log 2>/dev/null || echo \"No heartbeat log yet\"" [3mtimeout_secs[0m[2m=[0m10 [3mworking_dir[0m[2m=[0mSome("/home/sandbox") [3mis_sandboxed[0m[2m=[0mtrue
+[2m2026-03-21T09:35:10.303422Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m sandbox ensure_ready [3msession[0m[2m=[0m"cron:heartbeat" [3msandbox_id[0m[2m=[0mSession/cron-heartbeat [3mbackend[0m[2m=[0m"podman" [3mimage[0m[2m=[0m"ubuntu:25.10"
+[2m2026-03-21T09:35:10.508522Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_amnn4cs2 [3merror[0m[2m=[0mpodman run failed: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-21T09:35:10.508714Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m4
+[2m2026-03-21T09:35:15.564350Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m16722 [3moutput_tokens[0m[2m=[0m107
+[2m2026-03-21T09:35:15.564490Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T09:35:15.565149Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"ca35aeef-f3af-4728-913d-f250f3b7d5ae" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m [3msilent[0m[2m=[0mtrue
+[2m2026-03-21T09:35:15.592615Z[0m [32m INFO[0m [2mclawmaster_cron::service[0m[2m:[0m cron job finished [3mid[0m[2m=[0m__heartbeat__ [3mstatus[0m[2m=[0mOk [3mduration_ms[0m[2m=[0m34156
