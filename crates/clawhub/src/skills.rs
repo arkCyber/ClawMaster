@@ -163,7 +163,7 @@ impl<'a> SkillsRegistry<'a> {
         )
         .bind(name)
         .bind(version)
-        .fetch_optional(&self.pool)
+        .fetch_optional(&*self.pool)
         .await?
         .ok_or_else(|| Error::ToolNotFound {
             name: name.to_string(),
@@ -207,9 +207,9 @@ impl<'a> SkillsRegistry<'a> {
             name: row.name,
             version: row.version,
             description: row.description,
-            readme: row.readme,
+            readme: Some(row.readme),
             author: row.author,
-            author_email: row.author_email,
+            author_email: Some(row.author_email),
             license: row.license,
             repository: row.repository,
             homepage: row.homepage,

@@ -225,14 +225,14 @@ mod tests {
             client_conn_id: "conn-1".to_string(),
             client_role: "operator".to_string(),
             client_scopes: vec!["operator.write".to_string()],
-            state: Arc::new(GatewayState::new(
+            state: GatewayState::new(
                 ResolvedAuth {
                     mode: AuthMode::Token,
                     token: None,
                     password: None,
                 },
-                GatewayServices::noop(),
-            )),
+                (*GatewayServices::noop()).clone(),
+            ),
             channel: None,
         };
 

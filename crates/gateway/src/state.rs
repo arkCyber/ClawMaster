@@ -901,7 +901,7 @@ mod tests {
                 token: None,
                 password: None,
             },
-            Arc::new(GatewayServices::noop()),
+            (*GatewayServices::noop()).clone(),
         )
     }
 

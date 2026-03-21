@@ -680,7 +680,7 @@ mod tests {
                     token: None,
                     password: None,
                 },
-                GatewayServices::noop(),
+                (*GatewayServices::noop()).clone(),
             ),
             channel: None,
         };
