@@ -14,7 +14,6 @@ default-members = [
   "crates/channels",
   "crates/chat",
   # "crates/clawhub",  # Optional: GitHub integration (requires sqlx offline mode setup)
-  "crates/cli",
   "crates/cosmic-client",
   "crates/fault-recovery",
   "crates/common",
@@ -193,6 +192,7 @@ reqwest = { features = ["json", "multipart", "stream"], version = "0.12" }
 uuid = { features = ["v4"], version = "1" }
 # Async
 async-stream = "0.3"
+async-trait  = "0.1"
 dashmap        = "6.1.0"
 directories    = "5.0.1"
 dotenvy        = "0.15.7"
@@ -220,6 +220,7 @@ genai        = "0.5"
 async-graphql      = "7"
 async-graphql-axum = "7"
 gix                = "0.78"
+hmac               = "0.12"
 llama-cpp-2        = "0.1"
 mockito            = "1.7"
 native-tls         = "0.2"
@@ -325,7 +326,6 @@ tower-service = "0.3"
 zeroize       = { features = ["derive"], version = "1" }
 
 # Workspace crates
-clawmaster                 = { path = "crates/cli" }
 clawmaster-agents          = { path = "crates/agents" }
 clawmaster-audit-log       = { path = "crates/audit-log" }
 clawmaster-backup-recovery = { path = "crates/backup-recovery" }
