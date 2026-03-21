@@ -15,7 +15,11 @@ pub mod system_info;
 use std::{path::PathBuf, pin::Pin};
 
 use {
-    anyhow::Result, async_trait::async_trait, tokio::sync::RwLock, tokio_stream::Stream,
+    anyhow::Result,
+    async_trait::async_trait,
+    std::sync::{Arc, LazyLock, Weak},
+    tokio::sync::{Mutex, RwLock},
+    tokio_stream::Stream,
     tracing::info,
 };
 
@@ -32,6 +36,15 @@ pub use {
 pub fn loaded_llama_model_bytes() -> u64 {
     backend::loaded_llama_model_bytes()
 }
+
+struct ActiveGgufProvider {
+    model_id: String,
+    inner: Weak<RwLock<Option<Arc<dyn LocalBackend>>>>,
+    selected_backend: Weak<RwLock<Option<BackendType>>>,
+}
+
+static ACTIVE_GGUF_PROVIDER: LazyLock<Mutex<Option<ActiveGgufProvider>>> =
+    LazyLock::new(|| Mutex::new(None));
 
 /// Configuration for the local LLM provider.
 #[derive(Debug, Clone)]
@@ -72,8 +85,8 @@ impl Default for LocalLlmConfig {
 /// loads the model on first use.
 pub struct LocalLlmProvider {
     config: LocalLlmConfig,
-    inner: RwLock<Option<Box<dyn LocalBackend>>>,
-    selected_backend: RwLock<Option<BackendType>>,
+    inner: Arc<RwLock<Option<Arc<dyn LocalBackend>>>>,
+    selected_backend: Arc<RwLock<Option<BackendType>>>,
 }
 
 impl LocalLlmProvider {
@@ -81,8 +94,50 @@ impl LocalLlmProvider {
     pub fn new(config: LocalLlmConfig) -> Self {
         Self {
             config,
-            inner: RwLock::new(None),
-            selected_backend: RwLock::new(None),
+            inner: Arc::new(RwLock::new(None)),
+            selected_backend: Arc::new(RwLock::new(None)),
+        }
+    }
+
+    async fn prepare_for_backend_load(&self, backend_type: BackendType) {
+        if backend_type != BackendType::Gguf {
+            return;
+        }
+
+        let mut active = ACTIVE_GGUF_PROVIDER.lock().await;
+        let Some(current) = active.as_ref() else {
+            return;
+        };
+
+        if current.model_id == self.config.model_id {
+            return;
+        }
+
+        if let Some(previous_inner) = current.inner.upgrade() {
+            let mut guard = previous_inner.write().await;
+            *guard = None;
+        }
+        if let Some(previous_backend) = current.selected_backend.upgrade() {
+            let mut guard = previous_backend.write().await;
+            *guard = None;
+        }
+
+        *active = None;
+        tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+    }
+
+    async fn mark_backend_loaded(&self, backend_type: BackendType) {
+        let mut selected = self.selected_backend.write().await;
+        *selected = Some(backend_type);
+        drop(selected);
+
+        if backend_type == BackendType::Gguf {
+            let mut active = ACTIVE_GGUF_PROVIDER.lock().await;
+            *active = Some(ActiveGgufProvider {
+                model_id: self.config.model_id.clone(),
+                inner: Arc::downgrade(&self.inner),
+                selected_backend: Arc::downgrade(&self.selected_backend),
+            });
         }
     }
 
@@ -124,10 +179,13 @@ impl LocalLlmProvider {
             "loading local LLM model"
         );
 
-        *self.selected_backend.write().await = Some(backend_type);
+        self.prepare_for_backend_load(backend_type).await;
 
-        let backend = backend::create_backend(backend_type, &self.config).await?;
-        *guard = Some(backend);
+        let backend: Arc<dyn LocalBackend> =
+            Arc::from(backend::create_backend(backend_type, &self.config).await?);
+        *guard = Some(Arc::clone(&backend));
+        drop(guard);
+        self.mark_backend_loaded(backend_type).await;
 
         Ok(())
     }
@@ -168,7 +226,9 @@ impl LlmProvider for LocalLlmProvider {
         let guard = self.inner.read().await;
         let backend = guard
             .as_ref()
+            .cloned()
             .ok_or_else(|| anyhow::anyhow!("backend should be loaded after ensure_loaded"))?;
+        drop(guard);
         if tools.is_empty() {
             backend.complete(messages).await
         } else {
@@ -187,10 +247,11 @@ impl LlmProvider for LocalLlmProvider {
             }
 
             let guard = self.inner.read().await;
-            let Some(backend) = guard.as_ref() else {
+            let Some(backend) = guard.as_ref().cloned() else {
                 yield StreamEvent::Error("backend should be loaded after ensure_loaded".into());
                 return;
             };
+            drop(guard);
 
             let mut stream = backend.stream(&messages);
             while let Some(event) = futures::StreamExt::next(&mut stream).await {
@@ -234,7 +295,48 @@ pub fn log_system_info() {
 
 #[cfg(test)]
 mod tests {
-    use {super::*, clawmaster_agents::model::LlmProvider};
+    use {
+        super::*,
+        clawmaster_agents::model::{LlmProvider, Usage},
+        std::sync::Arc,
+    };
+
+    struct FakeBackend {
+        model_id: String,
+        backend_type: BackendType,
+    }
+
+    #[async_trait]
+    impl LocalBackend for FakeBackend {
+        fn backend_type(&self) -> BackendType {
+            self.backend_type
+        }
+
+        fn model_id(&self) -> &str {
+            &self.model_id
+        }
+
+        fn context_window(&self) -> u32 {
+            1024
+        }
+
+        async fn complete(&self, _messages: &[ChatMessage]) -> Result<CompletionResponse> {
+            Ok(CompletionResponse {
+                text: Some("ok".into()),
+                tool_calls: Vec::new(),
+                usage: Usage::default(),
+            })
+        }
+
+        fn stream<'a>(
+            &'a self,
+            _messages: &'a [ChatMessage],
+        ) -> Pin<Box<dyn Stream<Item = StreamEvent> + Send + 'a>> {
+            Box::pin(tokio_stream::iter(vec![
+                StreamEvent::Done(Usage::default()),
+            ]))
+        }
+    }
 
     #[test]
     fn test_default_config() {
@@ -267,5 +369,68 @@ mod tests {
             Some(clawmaster_config::ToolMode::Text)
         );
         assert!(provider.supports_tools());
+    }
+
+    #[tokio::test]
+    async fn gguf_switch_clears_previous_loaded_provider() {
+        let first = LocalLlmProvider::new(LocalLlmConfig {
+            model_id: "model-a".into(),
+            ..Default::default()
+        });
+        let second = LocalLlmProvider::new(LocalLlmConfig {
+            model_id: "model-b".into(),
+            ..Default::default()
+        });
+
+        {
+            let mut guard = first.inner.write().await;
+            *guard = Some(Arc::new(FakeBackend {
+                model_id: "model-a".into(),
+                backend_type: BackendType::Gguf,
+            }));
+        }
+        {
+            let mut guard = first.selected_backend.write().await;
+            *guard = Some(BackendType::Gguf);
+        }
+
+        first.mark_backend_loaded(BackendType::Gguf).await;
+        second.prepare_for_backend_load(BackendType::Gguf).await;
+
+        assert!(first.inner.read().await.is_none());
+        assert!(first.selected_backend.read().await.is_none());
+    }
+
+    #[tokio::test]
+    async fn non_gguf_switch_does_not_clear_previous_gguf_provider() {
+        let first = LocalLlmProvider::new(LocalLlmConfig {
+            model_id: "model-a".into(),
+            ..Default::default()
+        });
+        let second = LocalLlmProvider::new(LocalLlmConfig {
+            model_id: "model-b".into(),
+            ..Default::default()
+        });
+
+        {
+            let mut guard = first.inner.write().await;
+            *guard = Some(Arc::new(FakeBackend {
+                model_id: "model-a".into(),
+                backend_type: BackendType::Gguf,
+            }));
+        }
+        {
+            let mut guard = first.selected_backend.write().await;
+            *guard = Some(BackendType::Gguf);
+        }
+
+        first.mark_backend_loaded(BackendType::Gguf).await;
+        second.prepare_for_backend_load(BackendType::Mlx).await;
+
+        assert!(first.inner.read().await.is_some());
+        assert_eq!(
+            *first.selected_backend.read().await,
+            Some(BackendType::Gguf)
+        );
     }
 }

@@ -1,0 +1,14 @@
+[2m2026-03-20T08:10:16.088281Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 激活指定节点
+
+✅ 响应:
+你可以使用以下命令激活指定节点：
+
+`nodes activate <节点名称>`
+
+这将激活指定的节点。
+
+例如，如果你想激活名为"node1"的节点，请使用以下命令：
+
+`nodes activate node1`

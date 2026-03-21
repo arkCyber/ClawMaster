@@ -1,9 +1,11 @@
 //! Data models for the ClawMaster cosmic client
 
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use uuid::Uuid;
+use {
+    chrono::{DateTime, Utc},
+    serde::{Deserialize, Serialize},
+    std::collections::HashMap,
+    uuid::Uuid,
+};
 
 /// Session information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -297,17 +299,17 @@ impl Session {
             metadata: HashMap::new(),
         }
     }
-    
+
     /// Get formatted duration since creation
     pub fn duration(&self) -> chrono::Duration {
         Utc::now() - self.created_at
     }
-    
+
     /// Get formatted duration as string
     pub fn duration_string(&self) -> String {
         let duration = self.duration();
         let total_minutes = duration.num_minutes();
-        
+
         if total_minutes < 60 {
             format!("{}m", total_minutes)
         } else if total_minutes < 1440 {
@@ -330,7 +332,7 @@ impl Message {
             metadata: HashMap::new(),
         }
     }
-    
+
     /// Get formatted timestamp
     pub fn timestamp(&self) -> String {
         self.created_at.format("%H:%M:%S").to_string()
@@ -354,12 +356,12 @@ impl SystemStatus {
         matches!(self.connection_status, ConnectionStatus::Connected)
             && self.memory_usage.usage_percentage() < 90.0
     }
-    
+
     /// Get uptime as formatted string
     pub fn uptime_string(&self) -> String {
         let hours = self.uptime_seconds / 3600;
         let minutes = (self.uptime_seconds % 3600) / 60;
-        
+
         if hours < 24 {
             format!("{}h {}m", hours, minutes)
         } else {

@@ -1,10 +1,9 @@
 //! Extended China-specific Skills (10 additional skills)
-//! 
+//!
 //! This module provides additional Skills for popular Chinese services.
 //! 扩展的中国大陆服务专用 Skills
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all extended China-specific skills (10 additional skills)
 pub fn china_extended_skills() -> Vec<SkillContent> {
@@ -14,16 +13,13 @@ pub fn china_extended_skills() -> Vec<SkillContent> {
         zhihu_skill(),
         kuaishou_skill(),
         xigua_skill(),
-        
         // E-commerce & Delivery (3)
         eleme_skill(),
         pinduoduo_skill(),
         suning_skill(),
-        
         // Transportation & Travel (2)
         didi_skill(),
         ctrip_skill(),
-        
         // Finance & Payment (1)
         wepay_skill(),
     ]
@@ -669,23 +665,23 @@ mod tests {
     #[test]
     fn test_all_extended_skills_have_metadata() {
         let skills = china_extended_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_extended_skill_names() {
         let skills = china_extended_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"xiaohongshu"));
         assert!(names.contains(&"zhihu"));
         assert!(names.contains(&"eleme"));
@@ -696,31 +692,35 @@ mod tests {
     #[test]
     fn test_extended_skills_categories() {
         let skills = china_extended_skills();
-        
+
         // Social & Content: 4
         let social_content = vec!["xiaohongshu", "zhihu", "kuaishou", "xigua"];
-        let social_count = skills.iter()
+        let social_count = skills
+            .iter()
             .filter(|s| social_content.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(social_count, 4);
-        
+
         // E-commerce & Delivery: 3
         let ecommerce = vec!["eleme", "pinduoduo", "suning"];
-        let ecommerce_count = skills.iter()
+        let ecommerce_count = skills
+            .iter()
             .filter(|s| ecommerce.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(ecommerce_count, 3);
-        
+
         // Transportation & Travel: 2
         let transport = vec!["didi", "ctrip"];
-        let transport_count = skills.iter()
+        let transport_count = skills
+            .iter()
             .filter(|s| transport.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(transport_count, 2);
-        
+
         // Finance & Payment: 1
         let finance = vec!["wepay"];
-        let finance_count = skills.iter()
+        let finance_count = skills
+            .iter()
             .filter(|s| finance.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(finance_count, 1);

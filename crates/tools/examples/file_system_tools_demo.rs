@@ -1,17 +1,19 @@
 //! File System Tools Demo
 //! 演示 5 个文件系统工具的实际使用
 
-use clawmaster_agents::tool_registry::AgentTool;
-use clawmaster_tools::{
-    read_file::{ReadFileTool, ReadFileConfig},
-    write_file::{WriteFileTool, WriteFileConfig},
-    list_directory::{ListDirectoryTool, ListDirectoryConfig},
-    search_files::{SearchFilesTool, SearchFilesConfig},
-    grep_tool::{GrepTool, GrepConfig},
+use {
+    clawmaster_agents::tool_registry::AgentTool,
+    clawmaster_tools::{
+        grep_tool::{GrepConfig, GrepTool},
+        list_directory::{ListDirectoryConfig, ListDirectoryTool},
+        read_file::{ReadFileConfig, ReadFileTool},
+        search_files::{SearchFilesConfig, SearchFilesTool},
+        write_file::{WriteFileConfig, WriteFileTool},
+    },
+    serde_json::json,
+    std::fs,
+    tempfile::TempDir,
 };
-use serde_json::json;
-use std::fs;
-use tempfile::TempDir;
 
 #[tokio::main]
 async fn main() {
@@ -24,7 +26,7 @@ async fn main() {
     // 创建测试环境
     let temp_dir = TempDir::new().unwrap();
     let test_path = temp_dir.path();
-    
+
     println!("📁 测试目录: {}", test_path.display());
     println!();
 
@@ -33,7 +35,11 @@ async fn main() {
     fs::write(test_path.join("data.txt"), "Line 1\nLine 2\nLine 3").unwrap();
     fs::create_dir(test_path.join("subdir")).unwrap();
     fs::write(test_path.join("subdir/nested.txt"), "Nested file content").unwrap();
-    fs::write(test_path.join("main.rs"), "fn main() {\n    println!(\"Hello, World!\");\n}").unwrap();
+    fs::write(
+        test_path.join("main.rs"),
+        "fn main() {\n    println!(\"Hello, World!\");\n}",
+    )
+    .unwrap();
     fs::write(test_path.join("test.js"), "function test() { return 42; }").unwrap();
 
     println!("✓ 测试环境准备完成\n");
@@ -45,8 +51,8 @@ async fn main() {
     println!("📝 自然语言请求: 请读取 hello.txt 文件的内容");
     println!();
 
-    let read_tool = ReadFileTool::new(ReadFileConfig::default())
-        .with_workspace_root(test_path.to_path_buf());
+    let read_tool =
+        ReadFileTool::new(ReadFileConfig::default()).with_workspace_root(test_path.to_path_buf());
 
     let input = json!({
         "path": "hello.txt"
@@ -61,7 +67,7 @@ async fn main() {
             println!("{}", serde_json::to_string_pretty(&result).unwrap());
             println!();
             println!("📄 文件内容: {}", result["content"].as_str().unwrap());
-        }
+        },
         Err(e) => println!("❌ 错误: {}", e),
     }
     println!();
@@ -73,8 +79,8 @@ async fn main() {
     println!("📝 自然语言请求: 创建一个新文件 output.txt，内容为 'Test Output'");
     println!();
 
-    let write_tool = WriteFileTool::new(WriteFileConfig::default())
-        .with_workspace_root(test_path.to_path_buf());
+    let write_tool =
+        WriteFileTool::new(WriteFileConfig::default()).with_workspace_root(test_path.to_path_buf());
 
     let input = json!({
         "path": "output.txt",
@@ -89,12 +95,12 @@ async fn main() {
             println!("✅ 输出结果:");
             println!("{}", serde_json::to_string_pretty(&result).unwrap());
             println!();
-            
+
             // 验证文件已创建
             let content = fs::read_to_string(test_path.join("output.txt")).unwrap();
             println!("📄 验证文件内容:");
             println!("{}", content);
-        }
+        },
         Err(e) => println!("❌ 错误: {}", e),
     }
     println!();
@@ -123,7 +129,7 @@ async fn main() {
             println!("{}", serde_json::to_string_pretty(&result).unwrap());
             println!();
             println!("📊 找到 {} 个条目", result["count"]);
-        }
+        },
         Err(e) => println!("❌ 错误: {}", e),
     }
     println!();
@@ -151,7 +157,7 @@ async fn main() {
             println!("{}", serde_json::to_string_pretty(&result).unwrap());
             println!();
             println!("📊 找到 {} 个文件", result["count"]);
-        }
+        },
         Err(e) => println!("❌ 错误: {}", e),
     }
     println!();
@@ -163,8 +169,8 @@ async fn main() {
     println!("📝 自然语言请求: 在所有文件中搜索包含 'Hello' 的行");
     println!();
 
-    let grep_tool = GrepTool::new(GrepConfig::default())
-        .with_workspace_root(test_path.to_path_buf());
+    let grep_tool =
+        GrepTool::new(GrepConfig::default()).with_workspace_root(test_path.to_path_buf());
 
     let input = json!({
         "pattern": "Hello",
@@ -181,7 +187,7 @@ async fn main() {
             println!("{}", serde_json::to_string_pretty(&result).unwrap());
             println!();
             println!("📊 找到 {} 个匹配", result["count"]);
-        }
+        },
         Err(e) => println!("❌ 错误: {}", e),
     }
     println!();
@@ -205,7 +211,7 @@ async fn main() {
         Err(e) => {
             println!("✅ 正确拒绝:");
             println!("   错误信息: {}", e);
-        }
+        },
     }
     println!();
 

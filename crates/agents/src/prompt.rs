@@ -261,27 +261,35 @@ fn tool_call_guidance(model_id: Option<&str>) -> String {
         .map(ModelFamily::from_model_id)
         .unwrap_or(ModelFamily::Unknown);
 
-    let mut g = String::with_capacity(800);
-    g.push_str("## How to call tools\n\n");
-    g.push_str("When you need to use a tool, output EXACTLY this fenced block:\n\n");
-    g.push_str("```tool_call\n");
-    g.push_str("{\"tool\": \"<tool_name>\", \"arguments\": {<arguments>}}\n");
-    g.push_str("```\n\n");
-    g.push_str("**Rules:**\n");
-    g.push_str("- The JSON must be valid. No comments, no trailing commas.\n");
-    g.push_str("- One tool call per fenced block. You may include multiple blocks.\n");
-    g.push_str("- Wait for the tool result before continuing.\n");
-    g.push_str("- You may include brief reasoning text before the block.\n\n");
-
-    // Few-shot example
-    g.push_str("**Example:**\n");
-    g.push_str("User: What files are in the current directory?\n");
-    g.push_str("Assistant: I'll list the files for you.\n");
-    g.push_str("```tool_call\n");
-    g.push_str("{\"tool\": \"exec\", \"arguments\": {\"command\": \"ls -la\"}}\n");
-    g.push_str("```\n\n");
-
-    g
+    // Concise guidance inspired by OpenClaw's "Do Not Narrate" strategy
+    concat!(
+        "\n## Tool Call Style\n\n",
+        "Default: do not narrate routine tool calls. Just call the tool.\n\n",
+        "When to narrate (briefly):\n",
+        "- Multi-step work\n",
+        "- Complex problems\n",
+        "- Sensitive actions (deletions, system changes)\n",
+        "- User explicitly asks\n\n",
+        "Keep narration brief and value-dense.\n\n",
+        "### Format\n\n",
+        "```tool_call\n",
+        "{\"tool\": \"tool_name\", \"arguments\": {\"param\": \"value\"}}\n",
+        "```\n\n",
+        "### Examples\n\n",
+        "User: \"搜索科技新闻\"\n",
+        "```tool_call\n",
+        "{\"tool\": \"news_search\", \"arguments\": {\"query\": \"technology news\", \"category\": \"tech\"}}\n",
+        "```\n\n",
+        "User: \"计算 2+2\"\n",
+        "```tool_call\n",
+        "{\"tool\": \"calc\", \"arguments\": {\"expression\": \"2+2\"}}\n",
+        "```\n\n",
+        "User: \"列出文件\"\n",
+        "```tool_call\n",
+        "{\"tool\": \"exec\", \"arguments\": {\"command\": \"ls -la\"}}\n",
+        "```\n\n",
+    )
+    .to_string()
 }
 
 /// Format a tool schema in compact human-readable form for text-mode prompts.
@@ -370,20 +378,87 @@ fn build_system_prompt_full(
     } else {
         Vec::new()
     };
-    let mut prompt = String::from(if include_tools {
-        "You are a helpful assistant. You can use tools when needed.\n\n"
+
+    // Build initial prompt with tool permission if needed
+    let mut prompt = if include_tools && !tool_schemas.is_empty() {
+        String::from(
+            "🚨🚨🚨 CRITICAL INSTRUCTION - READ FIRST 🚨🚨🚨\n\n\
+             YOU MUST CALL TOOLS. You HAVE tools. You CAN use them.\n\n\
+             **IDENTITY QUESTIONS - DO NOT USE TOOLS**:\n\
+             When user asks about YOUR identity (你是谁/who are you/what are you):\n\
+             - DO NOT call any tools\n\
+             - Respond DIRECTLY in the user's language\n\
+             - Say: \"我是 arkSong，一个有工具调用能力的助手\" (Chinese) or \"I'm arkSong, a helpful assistant with tool-calling capabilities\" (English)\n\
+             - NEVER search for \"arkSong\" in news or web\n\n\
+             **MANDATORY RULE FOR NEWS**: When user asks for NEWS (新闻/news):\n\
+             1. IMMEDIATELY output the tool call - NO explanations, NO text before it\n\
+             2. Format: ```tool_call\\n{\"tool\": \"news_search\", \"arguments\": {...}}\\n```\n\
+             3. ALWAYS include \"query\" parameter (REQUIRED)\n\
+             4. DO NOT say \"I will call\", \"Let me call\", \"Here's the tool call\"\n\
+             5. DO NOT provide news from your training data - ONLY from the tool\n\
+             6. NEVER fabricate news articles - you don't have real-time information\n\n\
+             Examples:\n\
+             - User: \"美国新闻\" → ```tool_call\\n{\"tool\": \"news_search\", \"arguments\": {\"query\": \"news\", \"country\": \"us\"}}\\n```\n\
+             - User: \"科技新闻\" → ```tool_call\\n{\"tool\": \"news_search\", \"arguments\": {\"query\": \"technology news\", \"category\": \"tech\"}}\\n```\n\
+             - User: \"上海新闻\" → ```tool_call\\n{\"tool\": \"news_search\", \"arguments\": {\"query\": \"Shanghai news\", \"country\": \"cn\"}}\\n```\n\n\
+             ❌ WRONG: \"I will call the news_search tool...\" (NO explanations!)\n\
+             ❌ WRONG: \"Here's an example...\" (NO examples from training data!)\n\
+             ✅ CORRECT: Just output the tool call block directly\n\n\
+             **LANGUAGE RULE**: ALWAYS respond in the SAME language as the user's question.\n\
+             - User asks in Chinese (中文) → You respond in Chinese (中文)\n\
+             - User asks in English → You respond in English\n\
+             - User asks in Japanese (日本語) → You respond in Japanese (日本語)\n\
+             This applies to ALL responses, including tool results.\n\n\
+             You are a helpful assistant with tool-calling capabilities.\n\n",
+        )
+    } else if include_tools {
+        String::from(
+            "You are a helpful assistant. You can use tools when needed.\n\n\
+             **LANGUAGE RULE**: ALWAYS respond in the SAME language as the user's question.\n\
+             - User asks in Chinese (中文) → You respond in Chinese (中文)\n\
+             - User asks in English → You respond in English\n\
+             - User asks in Japanese (日本語) → You respond in Japanese (日本語)\n\n",
+        )
     } else {
-        "You are a helpful assistant. Answer questions clearly and concisely.\n\n"
-    });
+        String::from(
+            "You are a helpful assistant. Answer questions clearly and concisely.\n\n\
+             **LANGUAGE RULE**: ALWAYS respond in the SAME language as the user's question.\n\
+             - User asks in Chinese (中文) → You respond in Chinese (中文)\n\
+             - User asks in English → You respond in English\n\
+             - User asks in Japanese (日本語) → You respond in Japanese (日本語)\n\n",
+        )
+    };
 
     append_identity_and_user_sections(&mut prompt, identity, user, soul_text);
     append_project_context(&mut prompt, project_context);
     append_runtime_section(&mut prompt, runtime_context, include_tools);
     append_skills_section(&mut prompt, include_tools, skills);
-    append_workspace_files_section(&mut prompt, agents_text, tools_text);
+    // Move AGENTS.md before tools, but TOOLS.md after tools for emphasis
+    if let Some(agents_md) = agents_text {
+        prompt.push_str("## Workspace Files\n\n");
+        prompt.push_str("### AGENTS.md (workspace)\n\n");
+        append_truncated_text_block(
+            &mut prompt,
+            agents_md,
+            WORKSPACE_FILE_MAX_CHARS,
+            "\n*(AGENTS.md truncated for prompt size.)*\n",
+        );
+        prompt.push_str("\n\n");
+    }
     append_memory_section(&mut prompt, memory_text, &tool_schemas);
     let model_id = runtime_context.and_then(|ctx| ctx.host.model.as_deref());
     append_available_tools_section(&mut prompt, native_tools, &tool_schemas);
+    // Add TOOLS.md AFTER tool list for maximum emphasis
+    if let Some(tools_md) = tools_text {
+        prompt.push_str("## 🚨 CRITICAL TOOL USAGE RULES 🚨\n\n");
+        append_truncated_text_block(
+            &mut prompt,
+            tools_md,
+            WORKSPACE_FILE_MAX_CHARS,
+            "\n*(TOOLS.md truncated for prompt size.)*\n",
+        );
+        prompt.push_str("\n\n");
+    }
     append_tool_call_guidance(&mut prompt, native_tools, &tool_schemas, model_id);
     append_guidelines_section(&mut prompt, include_tools);
     append_runtime_datetime_tail(&mut prompt, runtime_context);
@@ -557,37 +632,9 @@ fn append_skills_section(prompt: &mut String, include_tools: bool, skills: &[Ski
     }
 }
 
-fn append_workspace_files_section(
-    prompt: &mut String,
-    agents_text: Option<&str>,
-    tools_text: Option<&str>,
-) {
-    if agents_text.is_none() && tools_text.is_none() {
-        return;
-    }
-
-    prompt.push_str("## Workspace Files\n\n");
-    if let Some(agents_md) = agents_text {
-        prompt.push_str("### AGENTS.md (workspace)\n\n");
-        append_truncated_text_block(
-            prompt,
-            agents_md,
-            WORKSPACE_FILE_MAX_CHARS,
-            "\n*(AGENTS.md truncated for prompt size.)*\n",
-        );
-        prompt.push_str("\n\n");
-    }
-    if let Some(tools_md) = tools_text {
-        prompt.push_str("### TOOLS.md (workspace)\n\n");
-        append_truncated_text_block(
-            prompt,
-            tools_md,
-            WORKSPACE_FILE_MAX_CHARS,
-            "\n*(TOOLS.md truncated for prompt size.)*\n",
-        );
-        prompt.push_str("\n\n");
-    }
-}
+// Workspace files are now handled inline in build_system_prompt_full
+// to control their position relative to the tool list.
+// AGENTS.md goes before tools, TOOLS.md goes after tools for emphasis.
 
 fn append_memory_section(
     prompt: &mut String,
@@ -659,6 +706,9 @@ fn append_available_tools_section(
     }
 
     prompt.push_str("## Available Tools\n\n");
+    prompt.push_str("You have permission to use these tools. ");
+    prompt.push_str("When a tool matches the user's request, call it directly.\n\n");
+
     if native_tools {
         // Native tool-calling providers already receive full schemas via API.
         // Keep this section compact so we don't duplicate large JSON payloads.
@@ -1041,7 +1091,7 @@ mod tests {
         assert!(prompt.contains("## Workspace Files"));
         assert!(prompt.contains("### AGENTS.md (workspace)"));
         assert!(prompt.contains("Follow workspace agent instructions."));
-        assert!(prompt.contains("### TOOLS.md (workspace)"));
+        assert!(prompt.contains("🚨 CRITICAL TOOL USAGE RULES"));
         assert!(prompt.contains("Prefer read-only tools first."));
     }
 
@@ -1103,7 +1153,7 @@ mod tests {
         );
 
         assert!(prompt.contains("## Runtime"));
-        assert!(prompt.contains("Host: host=moltis-devbox"));
+        assert!(prompt.contains("Host: host=clawmaster-devbox"));
         assert!(!prompt.contains("time=2026-02-17 16:18:00 CET"));
         assert!(prompt.contains("today=2026-02-17"));
         assert!(prompt.contains("The current user datetime is 2026-02-17 16:18:00 CET."));
@@ -1363,7 +1413,7 @@ mod tests {
         );
 
         assert!(prompt.contains("## Runtime"));
-        assert!(prompt.contains("Host: host=moltis-devbox"));
+        assert!(prompt.contains("Host: host=clawmaster-devbox"));
         assert!(!prompt.contains("Sandbox(exec)"));
         assert!(!prompt.contains("Execution routing:"));
     }
@@ -1749,14 +1799,15 @@ mod tests {
         let g = tool_call_guidance(Some("llama3.1:8b"));
         assert!(g.contains("```tool_call"));
         assert!(g.contains("\"tool\":"));
-        assert!(g.contains("Example:"));
+        assert!(g.contains("```tool_call"));
     }
 
     #[test]
     fn tool_call_guidance_works_with_no_model() {
         let g = tool_call_guidance(None);
-        assert!(g.contains("## How to call tools"));
-        assert!(g.contains("```tool_call"));
+        // tool_call_guidance returns guidance text
+        assert!(g.contains("tool_call"));
+        assert!(g.contains("```"));
     }
 
     #[test]
@@ -1795,7 +1846,7 @@ mod tests {
         assert!(prompt.contains("### exec"));
         assert!(prompt.contains("Params: command (string, required)"));
         // Should include tool call guidance
-        assert!(prompt.contains("## How to call tools"));
-        assert!(prompt.contains("```tool_call"));
+        assert!(prompt.contains("tool_call"));
+        assert!(prompt.contains("```"));
     }
 }

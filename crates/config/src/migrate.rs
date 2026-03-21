@@ -54,14 +54,20 @@ fn migrate_v0_to_v1(config: &mut serde_json::Map<String, serde_json::Value>) -> 
     }
 
     // 2. Convert old format to new format
-    if let Some(providers) = config.get_mut("providers") {
-        if let Some(arr) = providers.as_array_mut() {
-            for provider in arr {
-                if let Some(obj) = provider.as_object_mut() {
-                    // Add default enabled field if missing
-                    obj.entry("enabled".to_string())
-                        .or_insert(serde_json::Value::Bool(true));
+    if let Some(providers) = config
+        .get_mut("providers")
+        .and_then(|providers| providers.as_array_mut())
+    {
+        for provider in providers {
+            if let Some(obj) = provider.as_object_mut() {
+                if let Some(provider_type) = obj.get("type").and_then(|v| v.as_str())
+                    && provider_type == "openrouter"
+                {
+                    obj.insert("name".to_string(), serde_json::json!("openrouter"));
                 }
+                // Add default enabled field if missing
+                obj.entry("enabled".to_string())
+                    .or_insert(serde_json::Value::Bool(true));
             }
         }
     }

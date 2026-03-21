@@ -1,0 +1,58 @@
+PASS: calc - 基础加法 (5s)
+FAIL: calc - 基础减法
+FAIL: calc - 基础乘法
+FAIL: calc - 基础除法
+FAIL: calc - 复杂表达式
+FAIL: calc - 幂运算
+PASS: calc - 取模运算 (5s)
+FAIL: calc - 嵌套括号
+FAIL: calc - 浮点数运算
+PASS: calc - 负数运算 (5s)
+PASS: exec - 显示当前目录 (10s)
+FAIL: exec - 列出文件（简单）
+FAIL: exec - 列出文件（详细）
+PASS: exec - 统计文件数量 (5s)
+PASS: exec - 查找 Rust 文件 (5s)
+FAIL: exec - 显示环境变量
+FAIL: exec - 显示系统信息
+FAIL: exec - 显示日期
+PASS: exec - 创建临时文件 (5s)
+PASS: exec - 文本处理 - grep (5s)
+PASS: exec - 文本处理 - sed (5s)
+PASS: exec - 文本处理 - awk (5s)
+PASS: exec - 管道组合 (5s)
+PASS: exec - 条件判断 (5s)
+PASS: exec - 循环处理 (5s)
+FAIL: web_fetch - 获取 JSON API
+PASS: web_fetch - 获取用户代理信息 (5s)
+FAIL: web_fetch - 获取 IP 信息
+FAIL: web_fetch - 获取 headers
+FAIL: web_fetch - 测试 UTF-8 编码
+FAIL: web_fetch - 测试 gzip 压缩
+PASS: web_fetch - 获取 UUID (5s)
+PASS: web_fetch - 测试延迟响应 (5s)
+PASS: sessions - 列出所有会话 (5s)
+PASS: sessions - 显示会话统计 (5s)
+SKIP: sessions_history - 需要活动会话
+SKIP: sessions_send - 需要目标会话
+SKIP: branch_session - 需要活动会话
+PASS: config - 验证配置文件 (5s)
+PASS: config - 显示配置路径 (4s)
+PASS: config - 检查配置版本 (4s)
+SKIP: config_show - 可能包含敏感信息
+SKIP: config_edit - 需要交互式编辑
+PASS: sandbox - 列出沙箱包 (6s)
+SKIP: sandbox_build - 需要 Docker 环境
+SKIP: sandbox_remove - 需要已存在的沙箱
+SKIP: sandbox_clean - 可能删除重要数据
+SKIP: sandbox_exec - 需要运行中的沙箱
+FAIL: 综合 - 计算并格式化输出
+PASS: 综合 - 文件统计分析 (5s)
+PASS: 综合 - JSON 数据处理 (5s)
+PASS: 综合 - 多步骤处理 (5s)
+PASS: 综合 - 条件过滤 (5s)
+PASS: 综合 - 数据转换 (5s)
+PASS: 综合 - 字符串操作 (5s)
+PASS: 综合 - 排序操作 (5s)
+PASS: 综合 - 去重操作 (5s)
+PASS: 综合 - 统计分析 (5s)

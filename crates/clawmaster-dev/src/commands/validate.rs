@@ -1,8 +1,10 @@
-//! Validate project command
+//! Validation command
 
-use anyhow::Result;
-use colored::Colorize;
-use std::path::Path;
+use {
+    anyhow::Result,
+    colored::Colorize,
+    std::{path::Path, process::Command},
+};
 
 pub async fn execute() -> Result<()> {
     println!("{} Validating project", "🔍".bright_green());
@@ -10,14 +12,32 @@ pub async fn execute() -> Result<()> {
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    // Check for required files
-    if !Path::new("Cargo.toml").exists() && !Path::new("plugin.toml").exists() && !Path::new("SKILL.md").exists() {
-        errors.push("No project manifest found (Cargo.toml, plugin.toml, or SKILL.md)");
+    // 1. Check project structure
+    println!("\n  {} Checking project structure...", "📁".bright_yellow());
+    match check_project_structure() {
+        Ok(msgs) => {
+            for msg in msgs {
+                println!("    {} {}", "✓".bright_green(), msg);
+            }
+        },
+        Err(e) => {
+            errors.push(format!("Project structure: {}", e));
+            println!("    {} {}", "✗".bright_red(), e);
+        },
     }
 
-    // Check for README
-    if !Path::new("README.md").exists() {
-        warnings.push("README.md not found");
+    // 2. Check dependencies
+    println!("\n  {} Checking dependencies...", "📦".bright_yellow());
+    match check_dependencies() {
+        Ok(msgs) => {
+            for msg in msgs {
+                println!("    {} {}", "✓".bright_green(), msg);
+            }
+        },
+        Err(e) => {
+            warnings.push(format!("Dependencies: {}", e));
+            println!("    {} {}", "⚠".bright_yellow(), e);
+        },
     }
 
     // Check for LICENSE
@@ -43,4 +63,47 @@ pub async fn execute() -> Result<()> {
 
     println!("\n{} Validation passed!", "✅".bright_green());
     Ok(())
+}
+
+fn check_project_structure() -> Result<Vec<String>> {
+    let mut messages = Vec::new();
+
+    let required_files = vec![
+        ("Cargo.toml", "Cargo manifest"),
+        ("README.md", "README file"),
+    ];
+
+    for (file, desc) in required_files {
+        if Path::new(file).exists() {
+            messages.push(format!("{} exists", desc));
+        } else {
+            anyhow::bail!("Missing {}", desc);
+        }
+    }
+
+    if Path::new("plugin.toml").exists() {
+        messages.push("Plugin manifest exists".to_string());
+    } else if Path::new("SKILL.md").exists() {
+        messages.push("Skill manifest exists".to_string());
+    } else {
+        anyhow::bail!("Missing plugin.toml or SKILL.md");
+    }
+
+    if Path::new("src").exists() {
+        messages.push("Source directory exists".to_string());
+    } else {
+        anyhow::bail!("Missing src directory");
+    }
+
+    Ok(messages)
+}
+
+fn check_dependencies() -> Result<Vec<String>> {
+    let output = Command::new("cargo").arg("tree").output()?;
+
+    if !output.status.success() {
+        anyhow::bail!("Failed to check dependencies");
+    }
+
+    Ok(vec!["Dependencies are valid".to_string()])
 }

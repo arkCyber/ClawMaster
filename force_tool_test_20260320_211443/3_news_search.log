@@ -1,0 +1,8 @@
+[2m2026-03-20T13:15:15.816072Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 搜索最新科技新闻
+
+✅ 响应:
+我会记住你的名字是 arkSong。为了记住这个信息，用 `memory_save` 令可以将信息保存到你的长期记忆中：
+
+`memory_save key="name" value="arkSong"`

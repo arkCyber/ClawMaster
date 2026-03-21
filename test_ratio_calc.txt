@@ -1,0 +1,16 @@
+Test case 1: parse_single_fenced_block
+Text: "Let me check that.\n```tool_call\n{\"tool\": \"exec\", \"arguments\": {\"command\": \"ls -la\"}}\n```\nDone."
+
+Total length: ~100 chars
+Tool block length: ~80 chars (from ``` to ```)
+Ratio: 80/100 = 80% ✓ Should pass with 50% threshold
+
+Test case 2: mixed_fenced_and_invoke
+Text: "Step 1:\n```tool_call\n{\"tool\": \"exec\", \"arguments\": {\"command\": \"mkdir test\"}}\n```\nStep 2:\n<invoke name=\"exec\"><arg name=\"command\">cd test</arg></invoke>"
+
+Total length: ~150 chars
+Fenced block: ~75 chars
+Invoke block: not counted by fenced parser
+Ratio: 75/150 = 50% ✗ Fails with >50% threshold (needs to be >=50%)
+
+The issue: I'm using > 50 instead of >= 50

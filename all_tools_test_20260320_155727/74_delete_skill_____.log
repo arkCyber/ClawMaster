@@ -1,0 +1,10 @@
+[2m2026-03-20T08:12:09.932295Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 清理未使用的技能
+
+✅ 响应:
+你可以使用以下命令清理未使用的技能：
+
+`skill cleanup`
+
+这将删除所有未使用的技能。

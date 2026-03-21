@@ -1,8 +1,10 @@
 //! Plugin sandboxing for security isolation
 
-use anyhow::Result;
-use serde::{Deserialize, Serialize};
-use std::time::Duration;
+use {
+    anyhow::Result,
+    serde::{Deserialize, Serialize},
+    std::time::Duration,
+};
 
 /// Sandbox configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -53,9 +55,9 @@ impl PluginSandbox {
     {
         // Spawn in a separate task with timeout
         let timeout = self.config.timeout;
-        
+
         let handle = tokio::task::spawn_blocking(f);
-        
+
         match tokio::time::timeout(timeout, handle).await {
             Ok(Ok(result)) => result,
             Ok(Err(e)) => anyhow::bail!("sandbox task panicked: {:?}", e),
@@ -73,9 +75,10 @@ impl PluginSandbox {
             return true;
         }
 
-        self.config.allowed_paths.iter().any(|allowed| {
-            path.starts_with(allowed)
-        })
+        self.config
+            .allowed_paths
+            .iter()
+            .any(|allowed| path.starts_with(allowed))
     }
 
     /// Check if network access is allowed
@@ -106,7 +109,7 @@ mod tests {
     #[tokio::test]
     async fn test_sandbox_execute_success() {
         let sandbox = PluginSandbox::new(SandboxConfig::default()).unwrap();
-        
+
         let result = sandbox.execute(|| Ok(42)).await.unwrap();
         assert_eq!(result, 42);
     }
@@ -115,14 +118,16 @@ mod tests {
     async fn test_sandbox_execute_timeout() {
         let mut config = SandboxConfig::default();
         config.timeout = Duration::from_millis(100);
-        
+
         let sandbox = PluginSandbox::new(config).unwrap();
-        
-        let result = sandbox.execute(|| {
-            std::thread::sleep(Duration::from_secs(1));
-            Ok(42)
-        }).await;
-        
+
+        let result = sandbox
+            .execute(|| {
+                std::thread::sleep(Duration::from_secs(1));
+                Ok(42)
+            })
+            .await;
+
         assert!(result.is_err());
     }
 
@@ -131,9 +136,9 @@ mod tests {
         let mut config = SandboxConfig::default();
         config.allow_filesystem = true;
         config.allowed_paths = vec!["/tmp".to_string()];
-        
+
         let sandbox = PluginSandbox::new(config).unwrap();
-        
+
         assert!(sandbox.is_path_allowed("/tmp/test.txt"));
         assert!(!sandbox.is_path_allowed("/etc/passwd"));
     }
@@ -142,7 +147,7 @@ mod tests {
     fn test_sandbox_network_allowed() {
         let mut config = SandboxConfig::default();
         config.allow_network = true;
-        
+
         let sandbox = PluginSandbox::new(config).unwrap();
         assert!(sandbox.is_network_allowed());
     }
@@ -157,9 +162,9 @@ mod tests {
             allow_filesystem: false,
             allowed_paths: vec![],
         };
-        
+
         let sandbox = PluginSandbox::new(config).unwrap();
-        
+
         assert_eq!(sandbox.memory_limit_mb(), 256);
         assert_eq!(sandbox.cpu_limit_percent(), 50);
         assert_eq!(sandbox.timeout(), Duration::from_secs(10));

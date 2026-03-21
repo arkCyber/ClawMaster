@@ -1,0 +1,5 @@
+=== Test: pdf - 提取文本 ===
+Input: Extract text from report.pdf
+Time: Fri Mar 20 06:33:51 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

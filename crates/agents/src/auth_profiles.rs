@@ -25,7 +25,7 @@ pub async fn refresh_if_needed(profile: &mut AuthProfile) -> anyhow::Result<()> 
             Ok(())
         },
         Credentials::OAuth {
-            access_token,
+            access_token: _,
             refresh_token,
             expires_at,
         } => {
@@ -48,7 +48,7 @@ pub async fn refresh_if_needed(profile: &mut AuthProfile) -> anyhow::Result<()> 
             }
 
             // Need to refresh
-            let Some(rt) = refresh_token else {
+            let Some(_rt) = refresh_token else {
                 return Err(anyhow::anyhow!(
                     "OAuth token expired but no refresh token available"
                 ));

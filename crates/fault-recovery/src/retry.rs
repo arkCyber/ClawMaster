@@ -2,21 +2,23 @@
 //!
 //! DO-178C Level A Compliant Retry Mechanism
 
-use crate::{FaultError, FaultResult};
-use std::time::Duration;
+use {
+    crate::{FaultError, FaultResult},
+    std::time::Duration,
+};
 
 /// Retry policy configuration
 #[derive(Debug, Clone)]
 pub struct RetryPolicy {
     /// Maximum number of retry attempts
     pub max_attempts: usize,
-    
+
     /// Initial backoff duration
     pub initial_backoff: Duration,
-    
+
     /// Maximum backoff duration
     pub max_backoff: Duration,
-    
+
     /// Backoff multiplier
     pub multiplier: f64,
 }
@@ -66,14 +68,10 @@ impl RetryExecutor {
                         tracing::info!("Operation succeeded after {} attempts", attempt);
                     }
                     return Ok(result);
-                }
+                },
                 Err(e) => {
                     if attempt >= self.policy.max_attempts {
-                        tracing::error!(
-                            "Operation failed after {} attempts: {}",
-                            attempt,
-                            e
-                        );
+                        tracing::error!("Operation failed after {} attempts: {}", attempt, e);
                         return Err(FaultError::MaxRetriesExceeded(format!(
                             "Failed after {} attempts: {}",
                             attempt, e
@@ -93,7 +91,7 @@ impl RetryExecutor {
 
                     // Calculate next backoff
                     backoff = self.calculate_next_backoff(backoff);
-                }
+                },
             }
         }
     }
@@ -113,9 +111,13 @@ impl Default for RetryExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
-    use std::sync::Arc;
+    use {
+        super::*,
+        std::sync::{
+            Arc,
+            atomic::{AtomicUsize, Ordering},
+        },
+    };
 
     #[tokio::test]
     async fn test_retry_success_first_attempt() {

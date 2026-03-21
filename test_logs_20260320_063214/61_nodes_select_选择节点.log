@@ -1,0 +1,5 @@
+=== Test: nodes_select - 选择节点 ===
+Input: Select node 'node1'
+Time: Fri Mar 20 06:33:16 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

@@ -27,7 +27,7 @@ fn test_skill_update_serialization() {
 async fn test_check_updates_empty() {
     let tmp = tempfile::tempdir().unwrap();
     let result = check_updates(tmp.path()).await;
-    
+
     // Should succeed even with no installed skills
     assert!(result.is_ok());
     assert_eq!(result.unwrap().len(), 0);

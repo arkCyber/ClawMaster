@@ -2,16 +2,19 @@
 //!
 //! DO-178C Level A Compliant Path Validation
 
-use crate::{ValidationError, ValidationResult};
-use std::path::{Path, PathBuf};
+use {
+    crate::{ValidationError, ValidationResult},
+    std::path::{Path, PathBuf},
+};
 
 /// Maximum path length
 const MAX_PATH_LENGTH: usize = 4096;
 
 /// Dangerous path components
+/// Used for path validation security checks
 const DANGEROUS_COMPONENTS: &[&str] = &[
-    "..",           // Parent directory traversal
-    "~",            // Home directory (when at start)
+    "..", // Parent directory traversal
+    "~",  // Home directory (when at start)
 ];
 
 /// Dangerous path prefixes (absolute paths to system directories)
@@ -44,7 +47,14 @@ pub fn validate_path(path: &str) -> ValidationResult<PathBuf> {
         return Err(ValidationError::NullByte);
     }
 
-    // Check for path traversal
+    // Check for dangerous components (path traversal, home directory)
+    for component in DANGEROUS_COMPONENTS {
+        if path.contains(component) {
+            return Err(ValidationError::PathTraversal);
+        }
+    }
+
+    // Additional check for path traversal
     if path.contains("..") {
         return Err(ValidationError::PathTraversal);
     }
@@ -52,9 +62,10 @@ pub fn validate_path(path: &str) -> ValidationResult<PathBuf> {
     // Check for dangerous absolute paths
     for prefix in DANGEROUS_PREFIXES {
         if path.starts_with(prefix) {
-            return Err(ValidationError::Dangerous(
-                format!("Access to system directory not allowed: {}", prefix)
-            ));
+            return Err(ValidationError::Dangerous(format!(
+                "Access to system directory not allowed: {}",
+                prefix
+            )));
         }
     }
 
@@ -85,9 +96,9 @@ pub fn validate_path_in_directory(path: &str, allowed_dir: &Path) -> ValidationR
     };
 
     // Canonicalize to resolve symlinks and .. components
-    let canonical = abs_path.canonicalize().map_err(|e| {
-        ValidationError::Invalid(format!("Cannot resolve path: {}", e))
-    })?;
+    let canonical = abs_path
+        .canonicalize()
+        .map_err(|e| ValidationError::Invalid(format!("Cannot resolve path: {}", e)))?;
 
     let canonical_allowed = allowed_dir.canonicalize().map_err(|e| {
         ValidationError::Invalid(format!("Cannot resolve allowed directory: {}", e))
@@ -96,7 +107,7 @@ pub fn validate_path_in_directory(path: &str, allowed_dir: &Path) -> ValidationR
     // Check if path is within allowed directory
     if !canonical.starts_with(&canonical_allowed) {
         return Err(ValidationError::Dangerous(
-            "Path is outside allowed directory".to_string()
+            "Path is outside allowed directory".to_string(),
         ));
     }
 
@@ -167,14 +178,14 @@ pub fn validate_filename(filename: &str) -> ValidationResult<String> {
     // Check for path separators
     if filename.contains('/') || filename.contains('\\') {
         return Err(ValidationError::ForbiddenChar(
-            "Path separators not allowed in filename".to_string()
+            "Path separators not allowed in filename".to_string(),
         ));
     }
 
     // Check for parent directory reference
     if filename == ".." || filename == "." {
         return Err(ValidationError::Dangerous(
-            "Special directory names not allowed".to_string()
+            "Special directory names not allowed".to_string(),
         ));
     }
 
@@ -197,7 +208,10 @@ mod tests {
         let long_path = "a".repeat(MAX_PATH_LENGTH + 1);
         let result = validate_path(&long_path);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::TooLong { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::TooLong { .. }
+        ));
     }
 
     #[test]
@@ -211,7 +225,10 @@ mod tests {
     fn test_validate_path_traversal() {
         let result = validate_path("../etc/passwd");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::PathTraversal));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::PathTraversal
+        ));
     }
 
     #[test]
@@ -252,14 +269,20 @@ mod tests {
         let long_name = "a".repeat(256);
         let result = validate_filename(&long_name);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::TooLong { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::TooLong { .. }
+        ));
     }
 
     #[test]
     fn test_validate_filename_path_separator() {
         let result = validate_filename("dir/file.txt");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::ForbiddenChar(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::ForbiddenChar(_)
+        ));
     }
 
     #[test]

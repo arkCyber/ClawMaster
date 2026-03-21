@@ -2,11 +2,12 @@
 //!
 //! DO-178C Level A Compliant Health Check Service
 
-use crate::{Criticality, HealthCheck, HealthCheckResult, HealthStatus, SystemHealth};
-use std::sync::Arc;
-use std::time::Instant;
-use tokio::sync::RwLock;
-use tracing::{debug, error, warn};
+use {
+    crate::{Criticality, HealthCheck, HealthCheckResult, HealthStatus, SystemHealth},
+    std::{sync::Arc, time::Instant},
+    tokio::sync::RwLock,
+    tracing::{debug, error, warn},
+};
 
 /// Health check service
 ///
@@ -44,14 +45,11 @@ impl HealthCheckService {
 
         for check in &self.checks {
             let check_start = Instant::now();
-            
-            match tokio::time::timeout(
-                tokio::time::Duration::from_secs(5),
-                check.check()
-            ).await {
+
+            match tokio::time::timeout(tokio::time::Duration::from_secs(5), check.check()).await {
                 Ok(status) => {
                     let duration_ms = check_start.elapsed().as_millis() as u64;
-                    
+
                     let mut result = HealthCheckResult::new(
                         check.name().to_string(),
                         status.clone(),
@@ -72,7 +70,7 @@ impl HealthCheckService {
                                 reason = reason,
                                 "Health check failed"
                             );
-                        }
+                        },
                         HealthStatus::Degraded { reason } => {
                             warn!(
                                 check = check.name(),
@@ -80,25 +78,25 @@ impl HealthCheckService {
                                 reason = reason,
                                 "Health check degraded"
                             );
-                        }
+                        },
                         HealthStatus::Healthy => {
                             debug!(
                                 check = check.name(),
                                 duration_ms = duration_ms,
                                 "Health check passed"
                             );
-                        }
+                        },
                     }
 
                     results.push(result);
-                }
+                },
                 Err(_) => {
                     // Timeout
                     error!(
                         check = check.name(),
                         "Health check timed out after 5 seconds"
                     );
-                    
+
                     results.push(HealthCheckResult::new(
                         check.name().to_string(),
                         HealthStatus::Unhealthy {
@@ -107,7 +105,7 @@ impl HealthCheckService {
                         check.criticality(),
                         5000,
                     ));
-                }
+                },
             }
         }
 
@@ -162,8 +160,7 @@ impl Default for HealthCheckService {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use async_trait::async_trait;
+    use {super::*, async_trait::async_trait};
 
     struct MockHealthCheck {
         name: String,
@@ -199,13 +196,13 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_service_all_healthy() {
         let mut service = HealthCheckService::new();
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "db",
             HealthStatus::Healthy,
             Criticality::Critical,
         )));
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "cache",
             HealthStatus::Healthy,
@@ -213,7 +210,7 @@ mod tests {
         )));
 
         let health = service.check_health().await;
-        
+
         assert!(health.status.is_healthy());
         assert!(health.is_ready());
         assert_eq!(health.checks.len(), 2);
@@ -222,7 +219,7 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_service_critical_failure() {
         let mut service = HealthCheckService::new();
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "db",
             HealthStatus::Unhealthy {
@@ -232,7 +229,7 @@ mod tests {
         )));
 
         let health = service.check_health().await;
-        
+
         assert!(health.status.is_unhealthy());
         assert!(!health.is_ready());
     }
@@ -240,7 +237,7 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_service_degraded() {
         let mut service = HealthCheckService::new();
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "db",
             HealthStatus::Degraded {
@@ -250,7 +247,7 @@ mod tests {
         )));
 
         let health = service.check_health().await;
-        
+
         assert!(health.status.is_degraded());
         assert!(!health.is_ready());
     }
@@ -258,7 +255,7 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_service_last_health() {
         let mut service = HealthCheckService::new();
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "test",
             HealthStatus::Healthy,
@@ -276,13 +273,13 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_service_critical_checks() {
         let mut service = HealthCheckService::new();
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "db",
             HealthStatus::Healthy,
             Criticality::Critical,
         )));
-        
+
         service.register(Arc::new(MockHealthCheck::new(
             "cache",
             HealthStatus::Healthy,

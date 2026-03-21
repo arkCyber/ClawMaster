@@ -12,16 +12,12 @@
 //! Compliance: DO-178C §6.3.3 - Fault detection and recovery
 
 pub mod circuit_breaker;
-pub mod retry;
+pub mod deadlock;
 pub mod degradation;
 pub mod isolation;
-pub mod deadlock;
+pub mod retry;
 
-pub use circuit_breaker::*;
-pub use retry::*;
-pub use degradation::*;
-pub use isolation::*;
-pub use deadlock::*;
+pub use {circuit_breaker::*, deadlock::*, degradation::*, isolation::*, retry::*};
 
 use thiserror::Error;
 
@@ -32,19 +28,19 @@ use thiserror::Error;
 pub enum FaultError {
     #[error("Circuit breaker open: {0}")]
     CircuitBreakerOpen(String),
-    
+
     #[error("Max retries exceeded: {0}")]
     MaxRetriesExceeded(String),
-    
+
     #[error("Service degraded: {0}")]
     ServiceDegraded(String),
-    
+
     #[error("Fault isolated: {0}")]
     FaultIsolated(String),
-    
+
     #[error("Deadlock detected: {0}")]
     DeadlockDetected(String),
-    
+
     #[error("Operation failed: {0}")]
     OperationFailed(String),
 }

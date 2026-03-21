@@ -4,6 +4,33 @@ use crate::broadcast::{BroadcastOpts, broadcast};
 
 use super::MethodRegistry;
 
+/// Verify Ed25519 signature
+fn verify_ed25519_signature(signature: &str, data: &str, public_key: &str) -> anyhow::Result<bool> {
+    use ed25519_dalek::{Signature, Verifier, VerifyingKey};
+
+    let sig_bytes =
+        hex::decode(signature).map_err(|e| anyhow::anyhow!("Invalid signature hex: {}", e))?;
+    let signature = Signature::from_bytes(
+        &sig_bytes
+            .try_into()
+            .map_err(|_| anyhow::anyhow!("Signature must be 64 bytes"))?,
+    );
+
+    let pk_bytes =
+        hex::decode(public_key).map_err(|e| anyhow::anyhow!("Invalid public key hex: {}", e))?;
+    let verifying_key = VerifyingKey::from_bytes(
+        &pk_bytes
+            .try_into()
+            .map_err(|_| anyhow::anyhow!("Public key must be 32 bytes"))?,
+    )
+    .map_err(|e| anyhow::anyhow!("Invalid public key: {}", e))?;
+
+    match verifying_key.verify(data.as_bytes(), &signature) {
+        Ok(()) => Ok(true),
+        Err(_) => Ok(false),
+    }
+}
+
 /// Helper to get the pairing store, falling back to in-memory state.
 fn get_pairing_store(
     state: &crate::state::GatewayState,
@@ -215,10 +242,40 @@ pub(super) fn register(reg: &mut MethodRegistry) {
         }),
     );
 
-    // node.pair.verify (placeholder — signature verification)
+    // node.pair.verify - verify pairing signature
     reg.register(
         "node.pair.verify",
-        Box::new(|_ctx| Box::pin(async move { Ok(serde_json::json!({ "verified": true })) })),
+        Box::new(|ctx| {
+            Box::pin(async move {
+                let params = ctx
+                    .params
+                    .as_object()
+                    .ok_or_else(|| anyhow::anyhow!("params must be an object"))?;
+
+                let signature = params
+                    .get("signature")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| anyhow::anyhow!("signature required"))?;
+
+                let data = params
+                    .get("data")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| anyhow::anyhow!("data required"))?;
+
+                let public_key = params
+                    .get("public_key")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| anyhow::anyhow!("public_key required"))?;
+
+                // Verify signature using ed25519
+                let verified = verify_ed25519_signature(signature, data, public_key)?;
+
+                Ok(serde_json::json!({
+                    "verified": verified,
+                    "timestamp": chrono::Utc::now().timestamp()
+                }))
+            })
+        }),
     );
 
     // device.pair.list

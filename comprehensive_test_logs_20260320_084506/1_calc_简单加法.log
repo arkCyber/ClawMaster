@@ -1,0 +1,8 @@
+=== Test: calc - 简单加法 ===
+Input: 计算 123 + 456
+Time: Fri Mar 20 08:45:06 CST 2026
+
+[2m2026-03-20T00:45:06.676096Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 计算 123 + 456
+

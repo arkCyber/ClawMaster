@@ -2,18 +2,19 @@
 //!
 //! DO-178C Level A Compliant Fault Isolation
 
-use crate::{FaultError, FaultResult};
-use parking_lot::RwLock;
-use std::collections::HashMap;
-use std::sync::Arc;
-use time::OffsetDateTime;
+use {
+    crate::{FaultError, FaultResult},
+    parking_lot::RwLock,
+    std::{collections::HashMap, sync::Arc},
+    time::OffsetDateTime,
+};
 
 /// Isolation status
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum IsolationStatus {
     /// Component is active
     Active,
-    
+
     /// Component is isolated due to faults
     Isolated,
 }
@@ -50,14 +51,11 @@ impl IsolationManager {
     /// Register component
     pub fn register(&self, component_id: &str) {
         let mut components = self.components.write();
-        components.insert(
-            component_id.to_string(),
-            ComponentState {
-                status: IsolationStatus::Active,
-                fault_count: 0,
-                faults: Vec::new(),
-            },
-        );
+        components.insert(component_id.to_string(), ComponentState {
+            status: IsolationStatus::Active,
+            fault_count: 0,
+            faults: Vec::new(),
+        });
     }
 
     /// Report fault for component
@@ -65,7 +63,7 @@ impl IsolationManager {
     /// DO-178C §6.3.3: Fault reporting
     pub fn report_fault(&self, component_id: &str, description: String) -> FaultResult<()> {
         let mut components = self.components.write();
-        
+
         let state = components
             .get_mut(component_id)
             .ok_or_else(|| FaultError::OperationFailed("Component not registered".to_string()))?;
@@ -91,7 +89,7 @@ impl IsolationManager {
     /// DO-178C §6.3.3: Component isolation
     pub fn isolate(&self, component_id: &str) -> FaultResult<()> {
         let mut components = self.components.write();
-        
+
         let state = components
             .get_mut(component_id)
             .ok_or_else(|| FaultError::OperationFailed("Component not registered".to_string()))?;
@@ -107,7 +105,7 @@ impl IsolationManager {
     /// Restore component
     pub fn restore(&self, component_id: &str) -> FaultResult<()> {
         let mut components = self.components.write();
-        
+
         let state = components
             .get_mut(component_id)
             .ok_or_else(|| FaultError::OperationFailed("Component not registered".to_string()))?;
@@ -140,7 +138,10 @@ impl IsolationManager {
     /// Get fault count
     pub fn get_fault_count(&self, component_id: &str) -> usize {
         let components = self.components.read();
-        components.get(component_id).map(|s| s.fault_count).unwrap_or(0)
+        components
+            .get(component_id)
+            .map(|s| s.fault_count)
+            .unwrap_or(0)
     }
 
     /// Execute with isolation check
@@ -178,7 +179,7 @@ mod tests {
     fn test_isolation_manager_creation() {
         let manager = IsolationManager::new();
         manager.register("component1");
-        
+
         assert!(!manager.is_isolated("component1"));
         assert_eq!(manager.get_fault_count("component1"), 0);
     }
@@ -188,8 +189,12 @@ mod tests {
         let manager = IsolationManager::new();
         manager.register("component1");
 
-        manager.report_fault("component1", "Error 1".to_string()).unwrap();
-        manager.report_fault("component1", "Error 2".to_string()).unwrap();
+        manager
+            .report_fault("component1", "Error 1".to_string())
+            .unwrap();
+        manager
+            .report_fault("component1", "Error 2".to_string())
+            .unwrap();
 
         assert_eq!(manager.get_fault_count("component1"), 2);
     }
@@ -204,7 +209,10 @@ mod tests {
         manager.isolate("component1").unwrap();
 
         assert!(manager.is_isolated("component1"));
-        assert_eq!(manager.get_status("component1"), Some(IsolationStatus::Isolated));
+        assert_eq!(
+            manager.get_status("component1"),
+            Some(IsolationStatus::Isolated)
+        );
     }
 
     #[test]
@@ -212,7 +220,9 @@ mod tests {
         let manager = IsolationManager::new();
         manager.register("component1");
 
-        manager.report_fault("component1", "Error".to_string()).unwrap();
+        manager
+            .report_fault("component1", "Error".to_string())
+            .unwrap();
         manager.isolate("component1").unwrap();
 
         assert!(manager.is_isolated("component1"));

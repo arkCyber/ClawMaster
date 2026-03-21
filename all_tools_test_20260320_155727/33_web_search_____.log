@@ -1,0 +1,10 @@
+[2m2026-03-20T08:03:09.438626Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 搜索 Tokio 官方文档
+
+✅ 响应:
+你可以使用以下命令搜索 Tokio 官方文档：
+
+`memory_search query="Tokio官方文档"`
+
+这将在记忆中搜索与 "Tokio 官方文档" 相关的信息。

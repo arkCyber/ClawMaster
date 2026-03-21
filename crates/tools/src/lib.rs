@@ -87,8 +87,20 @@ pub mod web_fetch;
 pub mod web_search;
 
 // File system tools - DO-178C Level A compliant
-pub mod read_file;
-pub mod write_file;
-pub mod list_directory;
-pub mod search_files;
 pub mod grep_tool;
+pub mod list_directory;
+pub mod read_file;
+pub mod read_file;
+pub mod search_files;
+pub mod write_file;
+
+// Node tools
+pub mod camera_snap;
+pub mod notifications;
+pub mod screen_record;
+
+pub use {
+    camera_snap::{CameraSnapConfig, CameraSnapTool},
+    notifications::{NotificationsConfig, NotificationsTool},
+    screen_record::{ScreenRecordConfig, ScreenRecordTool},
+};

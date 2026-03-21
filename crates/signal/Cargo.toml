@@ -1,0 +1,38 @@
+[package]
+name = "clawmaster-signal"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+# Async runtime
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# HTTP/WebSocket
+reqwest = { workspace = true }
+tokio-tungstenite = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Crypto
+base64 = { workspace = true }
+hex = { workspace = true }
+
+# Workspace crates
+clawmaster-channels = { workspace = true }
+clawmaster-common = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+
+[lints]
+workspace = true

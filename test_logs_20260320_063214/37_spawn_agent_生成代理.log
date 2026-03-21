@@ -1,0 +1,5 @@
+=== Test: spawn_agent - 生成代理 ===
+Input: Spawn a new agent for monitoring
+Time: Fri Mar 20 06:32:51 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

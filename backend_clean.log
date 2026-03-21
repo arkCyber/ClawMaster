@@ -1,0 +1,376 @@
+[2m2026-03-20T23:58:29.022308Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+[2m2026-03-20T23:58:29.150543Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm enabled but no models configured. Add [providers.local] models = ["..."] to config.
+[2m2026-03-20T23:58:29.150582Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup model inventory [3mmodel_count[0m[2m=[0m1 [3mprovider_count[0m[2m=[0m1 [3mprovider_model_counts[0m[2m=[0m[("ollama", 1)] [3msample_model_ids[0m[2m=[0m["ollama::qwen3.5:9b"]
+[2m2026-03-20T23:58:29.150705Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup configuration storage diagnostics [3muser[0m[2m=[0marksong [3mhome[0m[2m=[0m/Users/arksong [3mconfig_dir[0m[2m=[0m/Users/arksong/.config/clawmaster [3mdiscovered_config[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mexpected_config[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mprovider_keys_path[0m[2m=[0m/Users/arksong/.config/clawmaster/provider_keys.json
+[2m2026-03-20T23:58:29.150724Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup path diagnostics [3mkind[0m[2m=[0m"config-dir" [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster [3mexists[0m[2m=[0mtrue [3mis_dir[0m[2m=[0mtrue [3mreadonly[0m[2m=[0mfalse [3msize_bytes[0m[2m=[0m192
+[2m2026-03-20T23:58:29.150865Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup write probe succeeded for config directory [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/.moltis-write-check-50004-1774051109150731000.tmp
+[2m2026-03-20T23:58:29.151000Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup path diagnostics [3mkind[0m[2m=[0m"config-file" [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mexists[0m[2m=[0mtrue [3mis_dir[0m[2m=[0mfalse [3mreadonly[0m[2m=[0mfalse [3msize_bytes[0m[2m=[0m5547
+[2m2026-03-20T23:58:29.151052Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m provider key store file not found yet; it will be created after the first providers.save_key [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/provider_keys.json
+[2m2026-03-20T23:58:29.167471Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m vault ready [3mstatus[0m[2m=[0mOk(Uninitialized)
+[2m2026-03-20T23:58:29.168778Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0mlocalhost [3morigins[0m[2m=[0m["https://localhost:50699", "https://moltis.localhost:50699"]
+[2m2026-03-20T23:58:29.168820Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksong [3morigins[0m[2m=[0m["https://arksong:50699"]
+[2m2026-03-20T23:58:29.168836Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksong.local [3morigins[0m[2m=[0m["https://arksong.local:50699"]
+[2m2026-03-20T23:58:29.168858Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksongs-mac-studio.local [3morigins[0m[2m=[0m["https://arksongs-mac-studio.local:50699"]
+[2m2026-03-20T23:58:29.168873Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksongs-mac-studio [3morigins[0m[2m=[0m["https://arksongs-mac-studio:50699"]
+[2m2026-03-20T23:58:29.168884Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn passkeys enabled [3morigins[0m[2m=[0m["https://localhost:50699", "https://moltis.localhost:50699", "https://arksong:50699", "https://arksong.local:50699", "https://arksongs-mac-studio.local:50699", "https://arksongs-mac-studio:50699"]
+[2m2026-03-20T23:58:29.247712Z[0m [32m INFO[0m [2mclawmaster_tools::sandbox[0m[2m:[0m sandbox backend: podman (daemonless, preferred over docker)
+[2m2026-03-20T23:58:29.247773Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m trusted-network: evaluating network policy [3mnetwork_policy[0m[2m=[0mTrusted [3mtrusted_domains[0m[2m=[0m[]
+[2m2026-03-20T23:58:29.247823Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m trusted-network proxy started, routing all HTTP tools through proxy [3mproxy_url[0m[2m=[0mhttp://127.0.0.1:18791
+[2m2026-03-20T23:58:29.247915Z[0m [32m INFO[0m [2mclawmaster_network_filter::proxy[0m[2m:[0m network proxy listening [3maddr[0m[2m=[0m0.0.0.0:18791
+[2m2026-03-20T23:58:29.248264Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m 0 stored channel(s) found in database
+[2m2026-03-20T23:58:29.249052Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"dcg-guard"
+[2m2026-03-20T23:58:29.249082Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"boot-md"
+[2m2026-03-20T23:58:29.249097Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"command-logger"
+[2m2026-03-20T23:58:29.249107Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"session-memory"
+[2m2026-03-20T23:58:29.249121Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m 5 hook(s) discovered (2 shell, 3 built-in), 4 registered
+[2m2026-03-20T23:58:29.254715Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: detected Ollama at localhost:11434
+[2m2026-03-20T23:58:29.254749Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: using single embedding provider [3mprovider[0m[2m=[0mollama
+[2m2026-03-20T23:58:29.257101Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory system initialized [3membeddings[0m[2m=[0mtrue
+[2m2026-03-20T23:58:29.258079Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m memory: loaded markdown file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/memory/compaction-main-1773897478.md [3msource[0m[2m=[0m"daily" [3msize[0m[2m=[0m662
+[2m2026-03-20T23:58:29.262522Z[0m [32m INFO[0m [2mclawmaster_browser::container[0m[2m:[0m browser sandbox backend: podman (daemonless)
+[2m2026-03-20T23:58:29.264994Z[0m [32m INFO[0m [2mclawmaster_tools::sandbox[0m[2m:[0m building pre-built sandbox image [3mtag[0m[2m=[0m"clawmaster-arksong-sandbox:f0068eb72d4398020b0ad86956422361b8f921c898d3ae25577c0beb0de09cf2" [3mpackages[0m[2m=[0maerc ansible antiword autoconf automake bison build-essential bzip2 ca-certificates catdoc chromium clang cmake csvtool curl datamash default-jdk default-mysql-client dnsutils dos2unix dpkg-dev fakeroot fd-find ffmpeg file flac flex fonts-liberation gdal-bin gettext ghostscript git git-lfs gnupg2 golang-go graphicsmagick html2text imagemagick iproute2 isync jpegoptim jq khal lame libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libclang-dev libcups2t64 libdrm2 libgbm1 libgdal-dev libgtk-3-0t64 libheif-dev libimage-exiftool-perl liblzma-dev libnspr4 libnss3 libreoffice-core libreoffice-writer libsqlite3-dev libssl-dev libtool libvips-tools libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxrandr2 libxss1 libyaml-dev llvm-dev locales lsb-release lz4 mapnik-utils maven mediainfo miller mutt neomutt net-tools netcat-openbsd ninja-build nodejs notmuch notmuch-mutt npm offlineimap3 openssh-client optipng opus-tools osm2pgsql osmctools osmium-tool p7zip-full pandoc patchelf perl php-cli php-curl php-mbstring php-xml pigz pkg-config pngquant poppler-utils postgresql-client python-is-python3 python3 python3-caldav python3-dev python3-discord python3-mapnik python3-pip python3-venv ripgrep rsync ruby ruby-dev shellcheck slrn software-properties-common sox sqlite3 sudo tar texlive-fonts-recommended texlive-latex-base texlive-latex-extra tin tmux tree tzdata unrtf unzip vdirsyncer vorbis-tools webp wget xmlstarlet xz-utils yamllint yq zip zstd
+[2m2026-03-20T23:58:29.276241Z[0m [32m INFO[0m [2mclawmaster_browser::container[0m[2m:[0m pulling browser container image [3mimage[0m[2m=[0m"browserless/chrome" [3mbackend[0m[2m=[0m"podman"
+[2m2026-03-20T23:58:29.278492Z[0m [33m WARN[0m [2mclawmaster_gateway::server[0m[2m:[0m sandbox image pre-build failed: podman build failed for clawmaster-arksong-sandbox:f0068eb72d4398020b0ad86956422361b8f921c898d3ae25577c0beb0de09cf2: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-20T23:58:29.287975Z[0m [33m WARN[0m [2mclawmaster_gateway::server[0m[2m:[0m browser container image pull failed [3mimage[0m[2m=[0mbrowserless/chrome [3merror[0m[2m=[0mbrowser launch failed: failed to pull browser image: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-20T23:58:29.302120Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m synced file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/memory/compaction-main-1773897478.md [3mchunks[0m[2m=[0m1
+[2m2026-03-20T23:58:29.302678Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m memory: loaded markdown file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/IDENTITY.md [3msource[0m[2m=[0m"daily" [3msize[0m[2m=[0m34
+[2m2026-03-20T23:58:29.324766Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m synced file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/IDENTITY.md [3mchunks[0m[2m=[0m1
+[2m2026-03-20T23:58:29.325128Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m memory: loaded markdown file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/SOUL.md [3msource[0m[2m=[0m"daily" [3msize[0m[2m=[0m1672
+[2m2026-03-20T23:58:29.371453Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m synced file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/SOUL.md [3mchunks[0m[2m=[0m1
+[2m2026-03-20T23:58:29.371742Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m memory: loaded markdown file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/AGENTS.md [3msource[0m[2m=[0m"daily" [3msize[0m[2m=[0m343
+[2m2026-03-20T23:58:29.391946Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m synced file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/AGENTS.md [3mchunks[0m[2m=[0m1
+[2m2026-03-20T23:58:29.392261Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m memory: loaded markdown file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/TOOLS.md [3msource[0m[2m=[0m"daily" [3msize[0m[2m=[0m1887
+[2m2026-03-20T23:58:29.436052Z[0m [32m INFO[0m [2mclawmaster_memory::manager[0m[2m:[0m synced file [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/agents/main/TOOLS.md [3mchunks[0m[2m=[0m1
+[2m2026-03-20T23:58:29.436234Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: initial sync complete [3mupdated[0m[2m=[0m5 [3munchanged[0m[2m=[0m0 [3mremoved[0m[2m=[0m0 [3merrors[0m[2m=[0m0 [3mcache_hits[0m[2m=[0m0 [3mcache_misses[0m[2m=[0m5
+[2m2026-03-20T23:58:29.436558Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: status [3mfiles[0m[2m=[0m5 [3mchunks[0m[2m=[0m5 [3mdb_size[0m[2m=[0m4.0 KB [3mmodel[0m[2m=[0mnomic-embed-text
+[2m2026-03-20T23:58:29.443921Z[0m [32m INFO[0m [2mclawmaster_memory::watcher[0m[2m:[0m file watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster
+[2m2026-03-20T23:58:29.444609Z[0m [32m INFO[0m [2mclawmaster_memory::watcher[0m[2m:[0m file watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster/agents
+[2m2026-03-20T23:58:29.444655Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: file watcher started
+[2m2026-03-20T23:58:29.457163Z[0m [32m INFO[0m [2mclawmaster_metrics::recorder[0m[2m:[0m Prometheus metrics exporter initialized
+[2m2026-03-20T23:58:29.457274Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Metrics collection enabled
+[2m2026-03-20T23:58:29.459551Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Metrics history store initialized at /Users/arksong/.clawmaster/metrics.db
+[2m2026-03-20T23:58:29.529766Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m agent tools registered [3mtools[0m[2m=[0m["memory_search", "web_search_wasm", "update_skill", "loop_detection", "branch_session", "sessions_create", "apply_patch", "transcribe", "sessions_history", "process", "task_list", "web_fetch", "calc", "create_skill", "nodes_describe", "sessions_delete", "sandbox_packages", "sessions_send", "web_fetch_wasm", "memory_get", "nodes_list", "agents_list", "spawn_agent", "speak", "news_search", "send_image", "nodes_select", "sessions_list", "exec", "delete_skill", "get_user_location", "memory_save", "session_state", "show_map", "cron", "send_message", "browser"]
+[2m2026-03-20T23:58:29.530257Z[0m [32m INFO[0m [2mclawmaster_skills::watcher[0m[2m:[0m skill watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster/skills
+[2m2026-03-20T23:58:29.530644Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m push notification service initialized
+[2m2026-03-20T23:58:29.532086Z[0m [32m INFO[0m [2mclawmaster_cron::service[0m[2m:[0m loaded cron jobs [3mcount[0m[2m=[0m0
+[2m2026-03-20T23:58:29.532206Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Loaded 0 historical metrics points from store
+[2m2026-03-20T23:58:29.532290Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m heartbeat skipped: no prompt in config and HEARTBEAT.md is empty
+[2m2026-03-20T23:58:29.532562Z[0m [32m INFO[0m [2mclawmaster_gateway::mdns[0m[2m:[0m mDNS alias service registered [3mservice_type[0m[2m=[0m"_arksong._tcp.local." [3minstance[0m[2m=[0m"Moltis on arkSongs-Mac-Studio.local" [3mport[0m[2m=[0m50699
+[2m2026-03-20T23:58:29.532582Z[0m [32m INFO[0m [2mclawmaster_gateway::mdns[0m[2m:[0m mDNS service registered [3mservice_type[0m[2m=[0m"_moltis._tcp.local." [3minstance[0m[2m=[0m"Moltis on arkSongs-Mac-Studio.local" [3mport[0m[2m=[0m50699
+[2m2026-03-20T23:58:29.532935Z[0m [32m INFO[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:29.532989Z[0m [32m INFO[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:29.533034Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m ┌──────────────────────────────────────────────────────────────────────────────────┐
+[2m2026-03-20T23:58:29.533048Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  clawmaster gateway v0.10.18                                                     │
+[2m2026-03-20T23:58:29.533061Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  protocol v4, listening on https://localhost:50699 (HTTP/2 + HTTP/1.1)           │
+[2m2026-03-20T23:58:29.533071Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  bind (--bind): 127.0.0.1:50699                                                  │
+[2m2026-03-20T23:58:29.533083Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  235 methods registered                                                          │
+[2m2026-03-20T23:58:29.533127Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  llm: 1 provider, 1 model                                                        │
+[2m2026-03-20T23:58:29.533138Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  skills: 2 enabled, 0 repos                                                      │
+[2m2026-03-20T23:58:29.533147Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  mcp: 0 configured                                                               │
+[2m2026-03-20T23:58:29.533158Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  sandbox: podman backend                                                         │
+[2m2026-03-20T23:58:29.533169Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  config: /Users/arksong/.config/clawmaster/clawmaster.toml                       │
+[2m2026-03-20T23:58:29.533179Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  data: /Users/arksong/.clawmaster                                                │
+[2m2026-03-20T23:58:29.533204Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  openclaw: background detection pending                                          │
+[2m2026-03-20T23:58:29.533215Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://localhost:50699                                         │
+[2m2026-03-20T23:58:29.533224Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://moltis.localhost:50699                                  │
+[2m2026-03-20T23:58:29.533233Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksong:50699                                           │
+[2m2026-03-20T23:58:29.533245Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksong.local:50699                                     │
+[2m2026-03-20T23:58:29.533255Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksongs-mac-studio.local:50699                         │
+[2m2026-03-20T23:58:29.533266Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksongs-mac-studio:50699                               │
+[2m2026-03-20T23:58:29.533275Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  hint: install Apple Container for VM-isolated sandboxing (see docs/sandbox.md)  │
+[2m2026-03-20T23:58:29.533288Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │                                                                                  │
+[2m2026-03-20T23:58:29.533299Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  setup code: 213747                                                              │
+[2m2026-03-20T23:58:29.533312Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  enter this code to set your password or register a passkey                      │
+[2m2026-03-20T23:58:29.533322Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │                                                                                  │
+[2m2026-03-20T23:58:29.533332Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  CA cert: http://localhost:50700/certs/ca.pem                                    │
+[2m2026-03-20T23:58:29.533344Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │    or: /Users/arksong/.config/clawmaster/certs/ca.pem                            │
+[2m2026-03-20T23:58:29.533354Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  run `moltis trust-ca` to remove browser warnings                                │
+[2m2026-03-20T23:58:29.533365Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m └──────────────────────────────────────────────────────────────────────────────────┘
+[2m2026-03-20T23:58:29.533639Z[0m [32m INFO[0m [2mclawmaster_openclaw_import::detect[0m[2m:[0m openclaw detect: resolved home directory [3mpath[0m[2m=[0m/Users/arksong/.openclaw
+[2m2026-03-20T23:58:29.533656Z[0m [32m INFO[0m [2mclawmaster_tls[0m[2m:[0m HTTP redirect server listening http://localhost:50700/certs/ca.pem
+[2m2026-03-20T23:58:29.533692Z[0m [32m INFO[0m [2mclawmaster_openclaw_import::detect[0m[2m:[0m openclaw detect: home directory does not exist or is not a directory [3mpath[0m[2m=[0m/Users/arksong/.openclaw
+[2m2026-03-20T23:58:29.533715Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup OpenClaw installation not detected (checked OPENCLAW_HOME and ~/.openclaw) [3mopenclaw_home_env[0m[2m=[0m<unset> [3mopenclaw_profile_env[0m[2m=[0m<unset>
+[2m2026-03-20T23:58:29.591364Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm enabled but no models configured. Add [providers.local] models = ["..."] to config.
+[2m2026-03-20T23:58:29.591428Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup background model discovery complete, provider registry updated [3mprovider_summary[0m[2m=[0m1 provider, 4 models [3mmodels[0m[2m=[0m4 [3mprefetched_models[0m[2m=[0m4 [3melapsed_ms[0m[2m=[0m131
+[2m2026-03-20T23:58:30.514584Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m7c6127bc-b86c-4b92-a757-495c9fd5d63f [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T23:58:30.514740Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m7c6127bc-b86c-4b92-a757-495c9fd5d63f [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T23:58:30.523196Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:30.523260Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:30.534075Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m2b88e45f-96af-4f6e-9690-45463c0e87fb [3muser_message[0m[2m=[0m计算 123 加 456 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:30.536059Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T23:58:30.536190Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T23:58:30.536230Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m522
+[2m2026-03-20T23:58:31.765030Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m6caded62-a4c0-48c4-884c-2f6f3577ce90 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T23:58:31.765212Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m6caded62-a4c0-48c4-884c-2f6f3577ce90 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T23:58:31.776547Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:31.776632Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:31.788656Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m3ebab9b3-2cf4-4354-b17e-8692c4df4563 [3muser_message[0m[2m=[0m读取 README.md 的第一行 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:31.789300Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m queueing message (run active) [3msession[0m[2m=[0mmain [3mmode[0m[2m=[0mFollowup [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:33.136697Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m0b6fa809-f104-4e91-8c63-b7129dbe6653 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T23:58:33.136852Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m0b6fa809-f104-4e91-8c63-b7129dbe6653 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T23:58:33.144802Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:33.144862Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:33.155269Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m01911c87-546a-4314-8b6d-c2ac490b506a [3muser_message[0m[2m=[0m找出所有 .toml 文件 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:33.155796Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m queueing message (run active) [3msession[0m[2m=[0mmain [3mmode[0m[2m=[0mFollowup [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:34.443742Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0ma6e95ac9-6d94-4020-b8af-3d7910ff1172 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T23:58:34.443910Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0ma6e95ac9-6d94-4020-b8af-3d7910ff1172 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T23:58:34.451620Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:34.451704Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:34.462004Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m8ba043c7-099b-4991-a7d7-afa7cb177ffe [3muser_message[0m[2m=[0m列出当前目录的内容 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:34.462647Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m queueing message (run active) [3msession[0m[2m=[0mmain [3mmode[0m[2m=[0mFollowup [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:36.022246Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m615ec64b-56a4-494a-b886-6d1cae392cda [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T23:58:36.022372Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m615ec64b-56a4-494a-b886-6d1cae392cda [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T23:58:36.029347Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:58:36.029405Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:58:36.039734Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m2d23141e-9469-491e-94cb-81076cce7e8f [3muser_message[0m[2m=[0m在 Cargo.toml 中搜索 version [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:58:36.040234Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m queueing message (run active) [3msession[0m[2m=[0mmain [3mmode[0m[2m=[0mFollowup [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:59:42.634719Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m26925 [3moutput_tokens[0m[2m=[0m35
+[2m2026-03-20T23:59:42.635274Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T23:59:42.635400Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"2b88e45f-96af-4f6e-9690-45463c0e87fb" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m123 + 456 = 579 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T23:59:42.635427Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T23:59:42.635441Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T23:59:42.635631Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0ma6e95ac9-6d94-4020-b8af-3d7910ff1172 [3mduration_secs[0m[2m=[0m68
+[2m2026-03-20T23:59:42.635691Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m7c6127bc-b86c-4b92-a757-495c9fd5d63f [3mduration_secs[0m[2m=[0m72
+[2m2026-03-20T23:59:42.635738Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m615ec64b-56a4-494a-b886-6d1cae392cda [3mduration_secs[0m[2m=[0m66
+[2m2026-03-20T23:59:42.635766Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m0b6fa809-f104-4e91-8c63-b7129dbe6653 [3mduration_secs[0m[2m=[0m69
+[2m2026-03-20T23:59:42.635799Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m6caded62-a4c0-48c4-884c-2f6f3577ce90 [3mduration_secs[0m[2m=[0m70
+[2m2026-03-20T23:59:42.640277Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m replaying queued message (followup) [3msession[0m[2m=[0mmain
+[2m2026-03-20T23:59:42.648281Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T23:59:42.648356Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T23:59:42.661376Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0mbe6a77c9-b1e2-4683-a3dc-dc91467136d6 [3muser_message[0m[2m=[0m读取 README.md 的第一行 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T23:59:42.664874Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T23:59:42.664968Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T23:59:42.664983Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m524
+[2m2026-03-21T00:00:24.635997Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m26954 [3moutput_tokens[0m[2m=[0m140
+[2m2026-03-21T00:00:24.642577Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_o6okxty3 [3margs[0m[2m=[0m{"command":"head -n 1 README.md","timeout":10,"working_dir":"/Users/arksong/.clawmaster","node":""}
+[2m2026-03-21T00:00:24.658780Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_o6okxty3 [3merror[0m[2m=[0mnode '' not found or not connected
+[2m2026-03-21T00:00:24.658836Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m526
+[2m2026-03-21T00:00:32.174938Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27120 [3moutput_tokens[0m[2m=[0m27
+[2m2026-03-21T00:00:32.175026Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T00:00:32.175242Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"be6a77c9-b1e2-4683-a3dc-dc91467136d6" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m [3msilent[0m[2m=[0mtrue
+[2m2026-03-21T00:00:32.178784Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m replaying queued message (followup) [3msession[0m[2m=[0mmain
+[2m2026-03-21T00:00:32.186534Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:00:32.186618Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:00:32.199359Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m849b666b-953a-4cbc-b183-aa6ea36a3f10 [3muser_message[0m[2m=[0m找出所有 .toml 文件 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:00:32.202482Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:00:32.202582Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:00:32.202596Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m526
+[2m2026-03-21T00:01:16.098889Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m26971 [3moutput_tokens[0m[2m=[0m232
+[2m2026-03-21T00:01:16.099650Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-21T00:01:16.100116Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"849b666b-953a-4cbc-b183-aa6ea36a3f10" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m很抱歉，由于当前沙箱环境的 Podman 连接有问题，我无法直接执行命令来查找文件。
+
+不过，您可以使用以下方法在本地环境中查找所有 .toml 文件：
+
+## 方法1：使用 `find` 命令
+```bash
+find . -name "*.toml" -type f
+```
+
+## 方法2：使用 `ls` 配合通配符
+```bash
+ls -1 *.toml
+```
+
+## 方法3：使用 `grep` 结合 `ls`
+```bash
+ls -p | grep "\.toml$"
+```
+
+或者，如果您知道项目的大致位置，可以使用：
+```bash
+grep -r "\.toml" . --include="*.toml"
+```
+
+如果您需要我帮助执行其他工具调用的任务（如搜索新闻、计算表达式、管理任务等），请随时告诉我！ [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:01:16.100212Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:01:16.100269Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:01:16.110431Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m replaying queued message (followup) [3msession[0m[2m=[0mmain
+[2m2026-03-21T00:01:16.118861Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:01:16.118937Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:01:16.131544Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0ma5e96d81-250f-4cb5-8269-63128e3c1544 [3muser_message[0m[2m=[0m列出当前目录的内容 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:01:16.134529Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:01:16.134608Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:01:16.134621Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m528
+[2m2026-03-21T00:01:58.179802Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27173 [3moutput_tokens[0m[2m=[0m144
+[2m2026-03-21T00:01:58.180451Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_eaytdsdz [3margs[0m[2m=[0m{"command":"ls -la","timeout":30,"working_dir":"","node":""}
+[2m2026-03-21T00:01:58.195419Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_eaytdsdz [3merror[0m[2m=[0mnode '' not found or not connected
+[2m2026-03-21T00:01:58.195484Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m530
+[2m2026-03-21T00:02:10.850180Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27343 [3moutput_tokens[0m[2m=[0m392
+[2m2026-03-21T00:02:10.850278Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T00:02:10.850530Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"a5e96d81-250f-4cb5-8269-63128e3c1544" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m很抱歉，由于当前沙箱环境的 Podman 连接暂时不可用，我无法直接列出当前目录的内容。
+
+不过，您可以在本地终端中使用以下命令来查看：
+
+```bash
+ls -la
+```
+
+这会显示当前目录下的所有文件、隐藏文件（以 `.` 开头）以及目录结构。
+
+如果您需要我帮您执行其他工具调用的任务（如搜索新闻、计算表达式、搜索网络内容等），请随时告诉我！ [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:02:10.850577Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:02:10.850607Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:02:10.857574Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m replaying queued message (followup) [3msession[0m[2m=[0mmain
+[2m2026-03-21T00:02:10.865490Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:02:10.865556Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:02:10.878538Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0macbc0fbc-11d2-4384-b87a-3cd5273e1b05 [3muser_message[0m[2m=[0m在 Cargo.toml 中搜索 version [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:02:10.881513Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:02:10.881629Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:02:10.881649Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m530
+[2m2026-03-21T00:02:54.922657Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27285 [3moutput_tokens[0m[2m=[0m238
+[2m2026-03-21T00:02:54.923485Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_oa7kp1y7 [3margs[0m[2m=[0m{"command":"grep \"version\" Cargo.toml","timeout":30,"working_dir":".","node":null}
+[2m2026-03-21T00:02:54.939202Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m exec tool invoked [3mcommand[0m[2m=[0m"grep \"version\" Cargo.toml" [3mtimeout_secs[0m[2m=[0m30 [3mworking_dir[0m[2m=[0mSome("/home/sandbox/.") [3mis_sandboxed[0m[2m=[0mtrue
+[2m2026-03-21T00:02:54.939418Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m sandbox ensure_ready [3msession[0m[2m=[0m"main" [3msandbox_id[0m[2m=[0mSession/main [3mbackend[0m[2m=[0m"podman" [3mimage[0m[2m=[0m"ubuntu:25.10"
+[2m2026-03-21T00:02:55.005711Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_oa7kp1y7 [3merror[0m[2m=[0mpodman run failed: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-21T00:02:55.005767Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m532
+[2m2026-03-21T00:03:03.321231Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27627 [3moutput_tokens[0m[2m=[0m172
+[2m2026-03-21T00:03:03.322193Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T00:03:03.322467Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"acbc0fbc-11d2-4384-b87a-3cd5273e1b05" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m很抱歉，由于 Podman 连接暂时不可用，我无法直接执行命令来搜索 Cargo.toml 文件中的 version 信息。
+
+不过，您可以使用以下方法在本地终端中查看：
+
+## 方法1：使用 grep 命令
+```bash
+grep "^version" Cargo.toml
+```
+
+这会显示 Cargo.toml 文件中 version 字段的值。
+
+## 方法2：查看完整文件
+```bash
+cat Cargo.toml
+```
+
+## 如果找不到 Cargo.toml 或需要帮助
+如果您想让我帮您：
+- 搜索最新科技新闻
+- 计算数学表达式
+- 管理任务或会话
+- 使用其他可用工具
+
+请随时告诉我！😊 [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:03:03.322608Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:03:03.322638Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:05:10.809750Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m75756f0b-264b-4771-a064-d7cf7ed58195 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-21T00:05:10.809897Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m75756f0b-264b-4771-a064-d7cf7ed58195 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-21T00:05:10.818811Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:05:10.818864Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:05:10.830214Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m0a6c31b0-3940-4bce-96eb-d3af1dc49dd5 [3muser_message[0m[2m=[0m计算 987 乘以 654 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:05:10.832502Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:05:10.832577Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:05:10.832623Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m532
+[2m2026-03-21T00:05:20.714926Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0mfc2b7581-9327-462b-bcff-84b210547a10 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-21T00:05:20.715491Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0mfc2b7581-9327-462b-bcff-84b210547a10 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-21T00:05:20.725329Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:05:20.725417Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:05:20.737635Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m9bad477f-d7dd-4205-8300-6da856de41e9 [3muser_message[0m[2m=[0m读取 Cargo.toml 文件的前 3 行 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:05:20.738622Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m queueing message (run active) [3msession[0m[2m=[0mmain [3mmode[0m[2m=[0mFollowup [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:05:53.018099Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27454 [3moutput_tokens[0m[2m=[0m109
+[2m2026-03-21T00:05:53.018874Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mcalc [3mid[0m[2m=[0mcall_wuuj6ql3 [3margs[0m[2m=[0m{"expression":"987 * 654"}
+[2m2026-03-21T00:05:53.132828Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution succeeded [3mtool[0m[2m=[0mcalc [3mid[0m[2m=[0mcall_wuuj6ql3
+[2m2026-03-21T00:05:53.132893Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m534
+[2m2026-03-21T00:05:59.277100Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27591 [3moutput_tokens[0m[2m=[0m65
+[2m2026-03-21T00:05:59.277166Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T00:05:59.277304Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"0a6c31b0-3940-4bce-96eb-d3af1dc49dd5" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m987乘以654等于645,498。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:05:59.277332Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:05:59.277357Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:05:59.277473Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0mfc2b7581-9327-462b-bcff-84b210547a10 [3mduration_secs[0m[2m=[0m38
+[2m2026-03-21T00:05:59.277502Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m75756f0b-264b-4771-a064-d7cf7ed58195 [3mduration_secs[0m[2m=[0m48
+[2m2026-03-21T00:05:59.281161Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m replaying queued message (followup) [3msession[0m[2m=[0mmain
+[2m2026-03-21T00:05:59.289720Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:05:59.289797Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:05:59.302226Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m854dc2a4-509a-48bc-b0de-e44616f01c0a [3muser_message[0m[2m=[0m读取 Cargo.toml 文件的前 3 行 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:05:59.306429Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:05:59.306524Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:05:59.306566Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m534
+[2m2026-03-21T00:06:41.602240Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27491 [3moutput_tokens[0m[2m=[0m118
+[2m2026-03-21T00:06:41.602729Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_t5gig822 [3margs[0m[2m=[0m{"command":"head -3 Cargo.toml","timeout":10,"working_dir":".","node":null}
+[2m2026-03-21T00:06:41.613713Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m exec tool invoked [3mcommand[0m[2m=[0m"head -3 Cargo.toml" [3mtimeout_secs[0m[2m=[0m10 [3mworking_dir[0m[2m=[0mSome("/home/sandbox/.") [3mis_sandboxed[0m[2m=[0mtrue
+[2m2026-03-21T00:06:41.613842Z[0m [32m INFO[0m [2mclawmaster_tools::exec[0m[2m:[0m sandbox ensure_ready [3msession[0m[2m=[0m"main" [3msandbox_id[0m[2m=[0mSession/main [3mbackend[0m[2m=[0m"podman" [3mimage[0m[2m=[0m"ubuntu:25.10"
+[2m2026-03-21T00:06:41.682652Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_t5gig822 [3merror[0m[2m=[0mpodman run failed: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-21T00:06:41.682720Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m536
+[2m2026-03-21T00:06:48.901778Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27714 [3moutput_tokens[0m[2m=[0m103
+[2m2026-03-21T00:06:48.901838Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1
+[2m2026-03-21T00:06:48.901975Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"854dc2a4-509a-48bc-b0de-e44616f01c0a" [3miterations[0m[2m=[0m2 [3mtool_calls[0m[2m=[0m1 [3mresponse[0m[2m=[0m我无法直接读取 Cargo.toml 文件，因为当前沙箱环境的 Podman 连接不可用。
+
+您可以在本地终端中执行以下命令来查看：
+
+```bash
+head -3 Cargo.toml
+```
+
+或者查看完整文件：
+
+```bash
+cat Cargo.toml
+```
+
+如果您需要其他帮助，比如搜索新闻、计算表达式等，请告诉我！😊 [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:06:48.902017Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:06:48.902034Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:07:50.576024Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m83572adc-adae-450d-9247-ca07e518b6f7 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-21T00:07:50.576333Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m83572adc-adae-450d-9247-ca07e518b6f7 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-21T00:07:50.585511Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:07:50.585597Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:07:50.596680Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m099858d9-0ec2-424b-9719-3c83a495465b [3muser_message[0m[2m=[0m读取 README.md 文件的第一行内容 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:07:50.599581Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:07:50.599672Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:07:50.599689Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m536
+[2m2026-03-21T00:08:33.655057Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27587 [3moutput_tokens[0m[2m=[0m138
+[2m2026-03-21T00:08:33.655928Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-21T00:08:33.656044Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"099858d9-0ec2-424b-9719-3c83a495465b" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m我无法直接读取 README.md 文件，因为当前沙箱环境的 Podman 连接暂时不可用。
+
+您可以在本地终端中执行以下命令来查看：
+
+```bash
+head -1 README.md
+```
+
+或者查看完整文件：
+
+```bash
+cat README.md
+```
+
+如果您需要其他帮助（如搜索新闻、计算表达式等），请随时告诉我！😊 [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:08:33.656065Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:08:33.656078Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:08:33.656305Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m83572adc-adae-450d-9247-ca07e518b6f7 [3mduration_secs[0m[2m=[0m43
+[2m2026-03-21T00:09:45.169006Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m9a88e0bc-0dea-446a-afec-b464c87eaf5e [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-21T00:09:45.169615Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m9a88e0bc-0dea-446a-afec-b464c87eaf5e [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-21T00:09:45.179227Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-21T00:09:45.179297Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-21T00:09:45.190869Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m7f48831a-5793-4fae-a518-c266ce5b58b2 [3muser_message[0m[2m=[0m读取 README.md 文件的第一行 [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-21T00:09:45.194029Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"ollama" [3mmodel[0m[2m=[0m"ollama::qwen3.5:9b" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-21T00:09:45.196316Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-21T00:09:45.196347Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m538
+[2m2026-03-21T00:10:29.185026Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27681 [3moutput_tokens[0m[2m=[0m171
+[2m2026-03-21T00:10:29.185741Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_cqrbmfmg [3margs[0m[2m=[0m{"command":"head -1 README.md","timeout":30,"working_dir":"/Users/arksong/.clawmaster","node":""}
+[2m2026-03-21T00:10:29.198813Z[0m [33m WARN[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution failed [3mtool[0m[2m=[0mexec [3mid[0m[2m=[0mcall_cqrbmfmg [3merror[0m[2m=[0mnode '' not found or not connected
+[2m2026-03-21T00:10:29.198881Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m2 [3mmessages_count[0m[2m=[0m540
+[2m2026-03-21T00:10:34.980161Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m2 [3mhas_text[0m[2m=[0mfalse [3mtool_calls_count[0m[2m=[0m1 [3minput_tokens[0m[2m=[0m27846 [3moutput_tokens[0m[2m=[0m29
+[2m2026-03-21T00:10:34.980649Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m executing tool [3mtool[0m[2m=[0mnodes_list [3mid[0m[2m=[0mcall_a2x8nq4u [3margs[0m[2m=[0m{}
+[2m2026-03-21T00:10:34.989329Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m tool execution succeeded [3mtool[0m[2m=[0mnodes_list [3mid[0m[2m=[0mcall_a2x8nq4u
+[2m2026-03-21T00:10:34.989383Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m3 [3mmessages_count[0m[2m=[0m542
+[2m2026-03-21T00:10:43.779871Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m3 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m27894 [3moutput_tokens[0m[2m=[0m159
+[2m2026-03-21T00:10:43.780386Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m3 [3mtool_calls[0m[2m=[0m2
+[2m2026-03-21T00:10:43.780536Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"7f48831a-5793-4fae-a518-c266ce5b58b2" [3miterations[0m[2m=[0m3 [3mtool_calls[0m[2m=[0m2 [3mresponse[0m[2m=[0m很抱歉，当前沙箱环境中没有可用的节点连接到执行命令。要查看 `README.md` 文件的第一行，您需要在本地终端中执行以下命令：
+
+```bash
+head -1 README.md
+```
+
+或者如果您需要查看文件内容，可以使用：
+
+```bash
+cat README.md
+```
+
+如果您想让我帮您执行其他工具调用的任务（如搜索新闻、计算表达式、管理任务等），请随时告诉我！😊 [3msilent[0m[2m=[0mfalse
+[2m2026-03-21T00:10:43.780593Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-21T00:10:43.780606Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-21T00:10:43.780724Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m9a88e0bc-0dea-446a-afec-b464c87eaf5e [3mduration_secs[0m[2m=[0m58

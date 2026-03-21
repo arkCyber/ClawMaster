@@ -1,0 +1,5 @@
+=== Test: nodes_list - 按类型列出 ===
+Input: List compute nodes
+Time: Fri Mar 20 06:33:12 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

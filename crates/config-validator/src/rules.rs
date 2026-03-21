@@ -2,8 +2,7 @@
 //!
 //! DO-178C Level A Compliant Validation Rules
 
-use crate::ValidationIssue;
-use clawmaster_config::MoltisConfig;
+use {crate::ValidationIssue, clawmaster_config::MoltisConfig};
 
 /// Validation rule trait
 ///
@@ -11,10 +10,10 @@ use clawmaster_config::MoltisConfig;
 pub trait ValidationRule: Send + Sync {
     /// Validate the configuration
     fn validate(&self, config: &MoltisConfig) -> Vec<ValidationIssue>;
-    
+
     /// Get the name of this rule
     fn name(&self) -> &str;
-    
+
     /// Get the description of this rule
     fn description(&self) -> &str;
 }
@@ -27,10 +26,10 @@ pub struct SecurityBaselineRule;
 impl ValidationRule for SecurityBaselineRule {
     fn validate(&self, _config: &MoltisConfig) -> Vec<ValidationIssue> {
         let issues = Vec::new();
-        
+
         // Note: Actual validation would check tools.exec configuration
         // Simplified for now due to complex config structure
-        
+
         issues
     }
 
@@ -140,7 +139,7 @@ mod tests {
         let config = create_test_config();
         let rule = SecurityBaselineRule;
         let issues = rule.validate(&config);
-        
+
         // Simplified implementation returns no issues
         assert!(issues.is_empty());
         assert_eq!(rule.name(), "security_baseline");
@@ -151,7 +150,7 @@ mod tests {
         let config = create_test_config();
         let rule = ResourceLimitsRule;
         let issues = rule.validate(&config);
-        
+
         assert!(issues.is_empty());
         assert_eq!(rule.name(), "resource_limits");
     }
@@ -161,7 +160,7 @@ mod tests {
         let config = create_test_config();
         let rule = PathPermissionRule;
         let issues = rule.validate(&config);
-        
+
         assert!(issues.is_empty());
         assert_eq!(rule.name(), "path_permission");
     }
@@ -171,7 +170,7 @@ mod tests {
         let config = create_test_config();
         let rule = ConflictDetectionRule;
         let issues = rule.validate(&config);
-        
+
         assert!(issues.is_empty());
         assert_eq!(rule.name(), "conflict_detection");
     }
@@ -181,7 +180,7 @@ mod tests {
         let config = create_test_config();
         let rule = NetworkSecurityRule;
         let issues = rule.validate(&config);
-        
+
         assert!(issues.is_empty());
         assert_eq!(rule.name(), "network_security");
     }

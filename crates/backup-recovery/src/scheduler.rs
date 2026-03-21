@@ -2,21 +2,21 @@
 //!
 //! DO-178C Level A Compliant Backup Scheduling
 
-use crate::{BackupManager, BackupMetadata, BackupResult, BackupType};
-use std::path::PathBuf;
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::sync::RwLock;
+use {
+    crate::{BackupManager, BackupResult},
+    std::{path::PathBuf, sync::Arc, time::Duration},
+    tokio::sync::RwLock,
+};
 
 /// Backup schedule configuration
 #[derive(Debug, Clone)]
 pub struct ScheduleConfig {
     /// Full backup interval
     pub full_backup_interval: Duration,
-    
+
     /// Incremental backup interval
     pub incremental_backup_interval: Duration,
-    
+
     /// Source paths to backup
     pub source_paths: Vec<PathBuf>,
 }
@@ -109,10 +109,10 @@ impl BackupScheduler {
                         Ok(metadata) => {
                             tracing::info!("Full backup created: {}", metadata.id);
                             *last_full.write().await = Some(metadata.id);
-                        }
+                        },
                         Err(e) => {
                             tracing::error!("Full backup failed: {}", e);
-                        }
+                        },
                     }
                 }
             }
@@ -146,13 +146,16 @@ impl BackupScheduler {
                         continue;
                     }
 
-                    match manager.create_incremental_backup(source_path, parent_id).await {
+                    match manager
+                        .create_incremental_backup(source_path, parent_id)
+                        .await
+                    {
                         Ok(metadata) => {
                             tracing::info!("Incremental backup created: {}", metadata.id);
-                        }
+                        },
                         Err(e) => {
                             tracing::error!("Incremental backup failed: {}", e);
-                        }
+                        },
                     }
                 }
             }
@@ -162,8 +165,7 @@ impl BackupScheduler {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_scheduler_creation() {

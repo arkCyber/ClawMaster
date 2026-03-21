@@ -1,9 +1,11 @@
 //! Configuration management for the cosmic client
 
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
-use tracing::{debug, info, warn};
+use {
+    anyhow::{Context, Result},
+    serde::{Deserialize, Serialize},
+    std::path::PathBuf,
+    tracing::{debug, info, warn},
+};
 
 /// Configuration for the cosmic UI
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -174,152 +176,155 @@ impl CosmicConfig {
     /// Load configuration from file
     pub async fn load() -> Result<Self> {
         let config_path = Self::config_path();
-        
+
         if !config_path.exists() {
             debug!("Config file not found, creating default config");
             let default_config = Self::default();
             default_config.save().await?;
             return Ok(default_config);
         }
-        
+
         debug!("Loading config from: {:?}", config_path);
-        
-        let content = tokio::fs::read_to_string(&config_path).await
+
+        let content = tokio::fs::read_to_string(&config_path)
+            .await
             .context("Failed to read config file")?;
-            
-        let config: Self = toml::from_str(&content)
-            .context("Failed to parse config file")?;
-            
+
+        let config: Self = toml::from_str(&content).context("Failed to parse config file")?;
+
         info!("Configuration loaded successfully");
         Ok(config)
     }
-    
+
     /// Save configuration to file
     pub async fn save(&self) -> Result<()> {
         let config_path = Self::config_path();
-        
+
         // Create config directory if it doesn't exist
         if let Some(parent) = config_path.parent() {
-            tokio::fs::create_dir_all(parent).await
+            tokio::fs::create_dir_all(parent)
+                .await
                 .context("Failed to create config directory")?;
         }
-        
-        let content = toml::to_string_pretty(self)
-            .context("Failed to serialize config")?;
-            
-        tokio::fs::write(&config_path, content).await
+
+        let content = toml::to_string_pretty(self).context("Failed to serialize config")?;
+
+        tokio::fs::write(&config_path, content)
+            .await
             .context("Failed to write config file")?;
-            
+
         debug!("Configuration saved to: {:?}", config_path);
         Ok(())
     }
-    
+
     /// Get the configuration file path
     pub fn config_path() -> PathBuf {
         let config_dir = dirs::config_dir()
             .unwrap_or_else(|| PathBuf::from(".config"))
             .join("clawmaster");
-            
+
         config_dir.join("cosmic.toml")
     }
-    
+
     /// Get the data directory
     pub fn data_dir() -> PathBuf {
         let data_dir = dirs::data_dir()
             .unwrap_or_else(|| PathBuf::from(".local/share"))
             .join("clawmaster");
-            
+
         data_dir
     }
-    
+
     /// Get the cache directory
     pub fn cache_dir() -> PathBuf {
         let cache_dir = dirs::cache_dir()
             .unwrap_or_else(|| PathBuf::from(".cache"))
             .join("clawmaster");
-            
+
         cache_dir
     }
-    
+
     /// Update gateway URL
     pub fn set_gateway_url(&mut self, url: String) {
         self.gateway_url = url;
     }
-    
+
     /// Get current theme name
     pub fn theme_name(&self) -> &str {
         &self.theme.name
     }
-    
+
     /// Set theme
     pub fn set_theme(&mut self, theme: String) {
         self.theme.name = theme;
     }
-    
+
     /// Get font size
     pub fn font_size(&self) -> f32 {
         self.theme.font_size
     }
-    
+
     /// Set font size
     pub fn set_font_size(&mut self, size: f32) {
         self.theme.font_size = size.clamp(8.0, 32.0);
     }
-    
+
     /// Validate configuration
     pub fn validate(&self) -> Result<()> {
         // Validate gateway URL
         if self.gateway_url.is_empty() {
             return Err(anyhow::anyhow!("Gateway URL cannot be empty"));
         }
-        
+
         if let Err(e) = url::Url::parse(&self.gateway_url) {
             warn!("Invalid gateway URL: {}", e);
             return Err(anyhow::anyhow!("Invalid gateway URL: {}", e));
         }
-        
+
         // Validate UI settings
         if self.ui.messages_per_page == 0 {
             return Err(anyhow::anyhow!("Messages per page must be greater than 0"));
         }
-        
+
         if self.ui.auto_refresh_interval == 0 {
-            return Err(anyhow::anyhow!("Auto refresh interval must be greater than 0"));
+            return Err(anyhow::anyhow!(
+                "Auto refresh interval must be greater than 0"
+            ));
         }
-        
+
         // Validate theme settings
         if self.theme.font_size <= 0.0 {
             return Err(anyhow::anyhow!("Font size must be greater than 0"));
         }
-        
+
         // Validate window settings
         if self.window.default_width < 400 {
             return Err(anyhow::anyhow!("Window width must be at least 400"));
         }
-        
+
         if self.window.default_height < 300 {
             return Err(anyhow::anyhow!("Window height must be at least 300"));
         }
-        
+
         // Validate network settings
         if self.network.connection_timeout == 0 {
             return Err(anyhow::anyhow!("Connection timeout must be greater than 0"));
         }
-        
+
         Ok(())
     }
-    
+
     /// Reset to default values
     pub fn reset_to_defaults(&mut self) {
         *self = Self::default();
     }
-    
+
     /// Merge with another configuration
     pub fn merge(&mut self, other: &Self) {
         if other.gateway_url != Self::default().gateway_url {
             self.gateway_url = other.gateway_url.clone();
         }
-        
+
         // Merge UI settings
         if other.ui.language != Self::default().ui.language {
             self.ui.language = other.ui.language.clone();
@@ -333,7 +338,7 @@ impl CosmicConfig {
         if other.ui.messages_per_page != Self::default().ui.messages_per_page {
             self.ui.messages_per_page = other.ui.messages_per_page;
         }
-        
+
         // Merge theme settings
         if other.theme.name != Self::default().theme.name {
             self.theme.name = other.theme.name.clone();
@@ -341,7 +346,7 @@ impl CosmicConfig {
         if other.theme.font_size != Self::default().theme.font_size {
             self.theme.font_size = other.theme.font_size;
         }
-        
+
         // Merge window settings
         if other.window.default_width != Self::default().window.default_width {
             self.window.default_width = other.window.default_width;
@@ -354,20 +359,19 @@ impl CosmicConfig {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
-    
+    use {super::*, tempfile::TempDir};
+
     #[tokio::test]
     async fn test_default_config() {
         let config = CosmicConfig::default();
         assert!(config.validate().is_ok());
     }
-    
+
     #[tokio::test]
     async fn test_config_save_load() {
         let temp_dir = TempDir::new().unwrap();
         let config_path = temp_dir.path().join("test_config.toml");
-        
+
         let original_config = CosmicConfig {
             gateway_url: "http://localhost:8080".to_string(),
             ui: UiSettings {
@@ -376,30 +380,30 @@ mod tests {
             },
             ..Default::default()
         };
-        
+
         // Save config
         let content = toml::to_string_pretty(&original_config).unwrap();
         tokio::fs::write(&config_path, content).await.unwrap();
-        
+
         // Load config
         let loaded_content: String = tokio::fs::read_to_string(&config_path).await.unwrap();
         let loaded_config: CosmicConfig = toml::from_str(&loaded_content).unwrap();
-        
+
         assert_eq!(loaded_config.gateway_url, "http://localhost:8080");
         assert_eq!(loaded_config.ui.language, "zh");
     }
-    
+
     #[test]
     fn test_config_validation() {
         let mut config = CosmicConfig::default();
-        
+
         // Valid config should pass
         assert!(config.validate().is_ok());
-        
+
         // Empty gateway URL should fail
         config.gateway_url = String::new();
         assert!(config.validate().is_err());
-        
+
         // Invalid URL should fail
         config.gateway_url = "not-a-url".to_string();
         assert!(config.validate().is_err());

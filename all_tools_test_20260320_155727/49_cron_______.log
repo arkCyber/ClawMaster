@@ -1,0 +1,8 @@
+[2m2026-03-20T08:06:29.943180Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 创建一个每天早上9点运行的定时任务
+
+✅ 响应:
+你可以使用以下命令创建一个每天早上9点运行的定时任务：
+
+`cron add cron_expression="0 9 * * *"`

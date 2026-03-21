@@ -1,0 +1,61 @@
+# Tool Usage Rules
+
+This file defines how you should use tools in this workspace.
+
+## Default Behavior
+
+**Do not narrate routine tool calls. Just call the tool.**
+
+When user asks you to DO something:
+1. Call the tool immediately
+2. Return the actual result
+3. Do NOT explain how to use the tool
+
+## When to Narrate (briefly)
+
+- Multi-step work
+- Complex problems
+- Sensitive actions (deletions, system changes)
+- User explicitly asks for explanation
+
+Keep narration brief and value-dense.
+
+## Examples
+
+### ✅ Correct
+
+User: "搜索科技新闻"
+→ [Call news_search tool directly, return results]
+
+User: "列出文件"
+→ [Call exec tool directly, return file list]
+
+User: "计算 2+2"
+→ [Call calc tool directly, return "4"]
+
+### ❌ Wrong
+
+User: "搜索科技新闻"
+→ "你可以使用 news_search 命令..." ← NO! Just call the tool!
+
+User: "列出文件"
+→ "你可以使用 exec 命令..." ← NO! Just call the tool!
+
+## Environment-Specific Settings
+
+Add your environment-specific tool configurations here:
+
+### SSH Hosts
+- example-server → 192.168.1.100, user: admin
+
+### Cameras
+- living-room → Main area, 180° wide angle
+- front-door → Entrance, motion-triggered
+
+### TTS
+- Preferred voice: "Nova"
+- Default speaker: Kitchen HomePod
+
+---
+
+**Remember**: Default behavior is to call tools directly without explanation.

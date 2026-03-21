@@ -107,7 +107,12 @@ impl GrepTool {
         Ok(matches)
     }
 
-    fn search_directory(&self, dir_path: &Path, pattern: &Regex, recursive: bool) -> Result<Vec<Value>> {
+    fn search_directory(
+        &self,
+        dir_path: &Path,
+        pattern: &Regex,
+        recursive: bool,
+    ) -> Result<Vec<Value>> {
         let mut all_matches = Vec::new();
 
         if let Ok(entries) = fs::read_dir(dir_path) {
@@ -117,7 +122,7 @@ impl GrepTool {
                 }
 
                 let path = entry.path();
-                
+
                 if path.is_file() {
                     if let Ok(matches) = self.search_in_file(&path, pattern) {
                         all_matches.extend(matches);
@@ -177,10 +182,7 @@ impl AgentTool for GrepTool {
             .and_then(Value::as_str)
             .ok_or_else(|| anyhow::anyhow!("Missing 'pattern' parameter"))?;
 
-        let path_str = params
-            .get("path")
-            .and_then(Value::as_str)
-            .unwrap_or(".");
+        let path_str = params.get("path").and_then(Value::as_str).unwrap_or(".");
 
         let recursive = params
             .get("recursive")
@@ -212,19 +214,19 @@ impl AgentTool for GrepTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_grep_in_file() {
         let temp_dir = TempDir::new().unwrap();
         fs::write(
             temp_dir.path().join("test.txt"),
-            "Hello World\nFoo Bar\nHello Again"
-        ).unwrap();
+            "Hello World\nFoo Bar\nHello Again",
+        )
+        .unwrap();
 
-        let tool = GrepTool::new(GrepConfig::default())
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool =
+            GrepTool::new(GrepConfig::default()).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool
             .execute(json!({"pattern": "Hello", "path": "test.txt"}))
@@ -239,8 +241,8 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         fs::write(temp_dir.path().join("test.txt"), "hello HELLO HeLLo").unwrap();
 
-        let tool = GrepTool::new(GrepConfig::default())
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool =
+            GrepTool::new(GrepConfig::default()).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool
             .execute(json!({"pattern": "hello", "path": "test.txt"}))
@@ -256,8 +258,8 @@ mod tests {
         fs::create_dir(temp_dir.path().join("sub")).unwrap();
         fs::write(temp_dir.path().join("sub/test.txt"), "pattern").unwrap();
 
-        let tool = GrepTool::new(GrepConfig::default())
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool =
+            GrepTool::new(GrepConfig::default()).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool
             .execute(json!({"pattern": "pattern", "path": ".", "recursive": true}))

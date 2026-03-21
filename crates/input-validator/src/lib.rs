@@ -18,11 +18,7 @@ pub mod message;
 pub mod parameter;
 pub mod sanitize;
 
-pub use command::*;
-pub use file::*;
-pub use message::*;
-pub use parameter::*;
-pub use sanitize::*;
+pub use {command::*, file::*, message::*, parameter::*, sanitize::*};
 
 use thiserror::Error;
 
@@ -33,31 +29,31 @@ use thiserror::Error;
 pub enum ValidationError {
     #[error("Invalid input: {0}")]
     Invalid(String),
-    
+
     #[error("Potentially dangerous input detected: {0}")]
     Dangerous(String),
-    
+
     #[error("Input too long: {actual} bytes (max: {max})")]
     TooLong { actual: usize, max: usize },
-    
+
     #[error("Invalid format: {0}")]
     InvalidFormat(String),
-    
+
     #[error("Forbidden character detected: {0}")]
     ForbiddenChar(String),
-    
+
     #[error("Path traversal attempt detected")]
     PathTraversal,
-    
+
     #[error("Null byte detected")]
     NullByte,
-    
+
     #[error("Shell injection attempt detected")]
     ShellInjection,
-    
+
     #[error("XSS attempt detected")]
     XssAttempt,
-    
+
     #[error("SQL injection attempt detected")]
     SqlInjection,
 }
@@ -74,7 +70,10 @@ mod tests {
         let err = ValidationError::Invalid("test".to_string());
         assert_eq!(err.to_string(), "Invalid input: test");
 
-        let err = ValidationError::TooLong { actual: 100, max: 50 };
+        let err = ValidationError::TooLong {
+            actual: 100,
+            max: 50,
+        };
         assert_eq!(err.to_string(), "Input too long: 100 bytes (max: 50)");
     }
 }

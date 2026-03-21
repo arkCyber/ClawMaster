@@ -1,0 +1,5 @@
+=== Test: show_map - 路线地图 ===
+Input: Show route from Beijing to Shanghai
+Time: Fri Mar 20 06:32:56 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

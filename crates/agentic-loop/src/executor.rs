@@ -1,9 +1,10 @@
-use crate::{ToolCall, ToolRegistry, ToolResult};
-use anyhow::{Context, Result};
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::time::timeout;
-use tracing::{debug, error};
+use {
+    crate::{ToolCall, ToolRegistry, ToolResult},
+    anyhow::{Context, Result},
+    std::{sync::Arc, time::Duration},
+    tokio::time::timeout,
+    tracing::{debug, error},
+};
 
 /// Tool executor with timeout and error handling
 pub struct ToolExecutor {
@@ -48,7 +49,7 @@ impl ToolExecutor {
                     success: true,
                     error: None,
                 })
-            }
+            },
             Ok(Err(e)) => {
                 error!("Tool {} failed: {}", tool_call.tool_name, e);
                 Ok(ToolResult {
@@ -57,16 +58,19 @@ impl ToolExecutor {
                     success: false,
                     error: Some(e.to_string()),
                 })
-            }
+            },
             Err(_) => {
-                error!("Tool {} timed out after {}s", tool_call.tool_name, self.timeout_seconds);
+                error!(
+                    "Tool {} timed out after {}s",
+                    tool_call.tool_name, self.timeout_seconds
+                );
                 Ok(ToolResult {
                     tool_name: tool_call.tool_name.clone(),
                     output: String::new(),
                     success: false,
                     error: Some(format!("Timeout after {}s", self.timeout_seconds)),
                 })
-            }
+            },
         }
     }
 
@@ -91,9 +95,7 @@ impl ToolExecutor {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::Tool;
-    use async_trait::async_trait;
+    use {super::*, crate::Tool, async_trait::async_trait};
 
     struct TestTool;
 

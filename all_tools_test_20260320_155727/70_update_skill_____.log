@@ -1,0 +1,14 @@
+[2m2026-03-20T08:11:12.478397Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 更新现有技能
+
+✅ 响应:
+你可以使用以下命令更新现有技能：
+
+`skill update <技能名称> <新技能内容>`
+
+这将更新现有的技能。
+
+例如，如果你想更新名为"code_analyzer"的技能，请使用以下命令：
+
+`skill update code_analyzer "更新后的技能内容"`

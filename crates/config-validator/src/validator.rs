@@ -2,13 +2,15 @@
 //!
 //! DO-178C Level A Compliant Configuration Validator
 
-use crate::{
-    ConflictDetectionRule, NetworkSecurityRule, PathPermissionRule, ResourceLimitsRule,
-    SecurityBaselineRule, Severity, ValidationIssue, ValidationRule,
+use {
+    crate::{
+        ConflictDetectionRule, NetworkSecurityRule, PathPermissionRule, ResourceLimitsRule,
+        SecurityBaselineRule, Severity, ValidationIssue, ValidationRule,
+    },
+    clawmaster_config::MoltisConfig,
+    std::sync::Arc,
+    tracing::{debug, error, info, warn},
 };
-use clawmaster_config::MoltisConfig;
-use std::sync::Arc;
-use tracing::{debug, error, info, warn};
 
 /// Configuration validator
 ///
@@ -59,7 +61,10 @@ impl ConfigValidator {
     ///
     /// DO-178C §11.13: Comprehensive validation
     pub fn validate(&self, config: &MoltisConfig) -> ValidationReport {
-        info!("Starting configuration validation with {} rules", self.rules.len());
+        info!(
+            "Starting configuration validation with {} rules",
+            self.rules.len()
+        );
 
         let mut all_issues = Vec::new();
 
@@ -76,7 +81,7 @@ impl ConfigValidator {
                             message = issue.message,
                             "Critical validation issue"
                         );
-                    }
+                    },
                     Severity::Error => {
                         error!(
                             rule = rule.name(),
@@ -84,7 +89,7 @@ impl ConfigValidator {
                             message = issue.message,
                             "Validation error"
                         );
-                    }
+                    },
                     Severity::Warning => {
                         warn!(
                             rule = rule.name(),
@@ -92,7 +97,7 @@ impl ConfigValidator {
                             message = issue.message,
                             "Validation warning"
                         );
-                    }
+                    },
                     Severity::Info => {
                         info!(
                             rule = rule.name(),
@@ -100,7 +105,7 @@ impl ConfigValidator {
                             message = issue.message,
                             "Validation info"
                         );
-                    }
+                    },
                 }
             }
 
@@ -206,27 +211,42 @@ impl ValidationReport {
 
     /// Get count of critical issues
     pub fn critical_count(&self) -> usize {
-        self.issues.iter().filter(|i| i.severity == Severity::Critical).count()
+        self.issues
+            .iter()
+            .filter(|i| i.severity == Severity::Critical)
+            .count()
     }
 
     /// Get count of error issues
     pub fn error_count(&self) -> usize {
-        self.issues.iter().filter(|i| i.severity == Severity::Error).count()
+        self.issues
+            .iter()
+            .filter(|i| i.severity == Severity::Error)
+            .count()
     }
 
     /// Get count of warning issues
     pub fn warning_count(&self) -> usize {
-        self.issues.iter().filter(|i| i.severity == Severity::Warning).count()
+        self.issues
+            .iter()
+            .filter(|i| i.severity == Severity::Warning)
+            .count()
     }
 
     /// Get count of info issues
     pub fn info_count(&self) -> usize {
-        self.issues.iter().filter(|i| i.severity == Severity::Info).count()
+        self.issues
+            .iter()
+            .filter(|i| i.severity == Severity::Info)
+            .count()
     }
 
     /// Get issues by severity
     pub fn issues_by_severity(&self, severity: Severity) -> Vec<&ValidationIssue> {
-        self.issues.iter().filter(|i| i.severity == severity).collect()
+        self.issues
+            .iter()
+            .filter(|i| i.severity == severity)
+            .collect()
     }
 
     /// Format issues for display
@@ -339,10 +359,8 @@ mod tests {
 
     #[test]
     fn test_validation_report_format() {
-        let issues = vec![
-            ValidationIssue::critical("test", "test message")
-                .with_suggestion("fix this"),
-        ];
+        let issues =
+            vec![ValidationIssue::critical("test", "test message").with_suggestion("fix this")];
 
         let report = ValidationReport::new(issues);
         let formatted = report.format_all();
@@ -357,14 +375,12 @@ mod tests {
         let report = ValidationReport::new(vec![]);
         assert!(report.is_valid());
 
-        let report_with_warning = ValidationReport::new(vec![
-            ValidationIssue::warning("test", "warning"),
-        ]);
+        let report_with_warning =
+            ValidationReport::new(vec![ValidationIssue::warning("test", "warning")]);
         assert!(report_with_warning.is_valid()); // Warnings don't fail validation
 
-        let report_with_error = ValidationReport::new(vec![
-            ValidationIssue::error("test", "error"),
-        ]);
+        let report_with_error =
+            ValidationReport::new(vec![ValidationIssue::error("test", "error")]);
         assert!(!report_with_error.is_valid());
     }
 }

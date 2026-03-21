@@ -1,0 +1,13 @@
+Test case: Does fenced parser match "TOOL_CALL" without backticks?
+
+Input text:
+TOOL_CALL
+{"tool": "news_search", "arguments": {"query": "news", "location": "USA"}}
+
+Expected: Should NOT match (no ```tool_call marker)
+Actual: Let's check the code...
+
+The fenced parser looks for: "```tool_call"
+So "TOOL_CALL" without backticks should NOT match.
+
+This means the problem is elsewhere - possibly in the model's actual output format.

@@ -14,15 +14,11 @@
 
 pub mod backup;
 pub mod recovery;
+pub mod retention;
 pub mod scheduler;
 pub mod verification;
-pub mod retention;
 
-pub use backup::*;
-pub use recovery::*;
-pub use scheduler::*;
-pub use verification::*;
-pub use retention::*;
+pub use {backup::*, recovery::*, retention::*, scheduler::*, verification::*};
 
 use thiserror::Error;
 
@@ -33,19 +29,19 @@ use thiserror::Error;
 pub enum BackupError {
     #[error("IO error: {0}")]
     IoError(String),
-    
+
     #[error("Compression error: {0}")]
     CompressionError(String),
-    
+
     #[error("Verification error: {0}")]
     VerificationError(String),
-    
+
     #[error("Recovery error: {0}")]
     RecoveryError(String),
-    
+
     #[error("Backup not found: {0}")]
     BackupNotFound(String),
-    
+
     #[error("Invalid backup: {0}")]
     InvalidBackup(String),
 }

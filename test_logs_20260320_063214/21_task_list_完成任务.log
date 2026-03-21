@@ -1,0 +1,5 @@
+=== Test: task_list - 完成任务 ===
+Input: Mark task 1 as complete
+Time: Fri Mar 20 06:32:34 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

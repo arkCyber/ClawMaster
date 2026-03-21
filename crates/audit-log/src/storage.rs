@@ -2,10 +2,12 @@
 //!
 //! DO-178C Level A Compliant Storage Implementation
 
-use crate::{AuditError, AuditEvent, AuditResult, EventFilter};
-use async_trait::async_trait;
-use sqlx::{Pool, Row, Sqlite, SqlitePool};
-use std::sync::Arc;
+use {
+    crate::{AuditError, AuditEvent, AuditResult, EventFilter},
+    async_trait::async_trait,
+    sqlx::{Pool, Row, Sqlite, SqlitePool},
+    std::sync::Arc,
+};
 
 /// SQLite storage implementation
 pub struct SqliteStorage {
@@ -98,7 +100,9 @@ impl crate::LogStorage for SqliteStorage {
     }
 
     async fn query(&self, filter: EventFilter) -> AuditResult<Vec<AuditEvent>> {
-        let mut query = String::from("SELECT id, timestamp, severity, category, event_data, metadata FROM audit_events WHERE 1=1");
+        let mut query = String::from(
+            "SELECT id, timestamp, severity, category, event_data, metadata FROM audit_events WHERE 1=1",
+        );
         let mut params: Vec<String> = Vec::new();
 
         if let Some(severity) = filter.severity {
@@ -135,24 +139,35 @@ impl crate::LogStorage for SqliteStorage {
 
         let mut events = Vec::new();
         for row in rows {
-            let id: String = row.try_get("id")
+            let id: String = row
+                .try_get("id")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
-            let timestamp: String = row.try_get("timestamp")
+            let timestamp: String = row
+                .try_get("timestamp")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
-            let severity: String = row.try_get("severity")
+            let severity: String = row
+                .try_get("severity")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
-            let category: String = row.try_get("category")
+            let category: String = row
+                .try_get("category")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
-            let event_data: String = row.try_get("event_data")
+            let event_data: String = row
+                .try_get("event_data")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
-            let metadata: String = row.try_get("metadata")
+            let metadata: String = row
+                .try_get("metadata")
                 .map_err(|e| AuditError::DatabaseError(e.to_string()))?;
 
             // Parse event (simplified)
             let event = AuditEvent {
-                id: id.parse().map_err(|e: uuid::Error| AuditError::InvalidEvent(e.to_string()))?,
-                timestamp: time::OffsetDateTime::parse(&timestamp, &time::format_description::well_known::Rfc3339)
-                    .map_err(|e| AuditError::InvalidEvent(e.to_string()))?,
+                id: id
+                    .parse()
+                    .map_err(|e: uuid::Error| AuditError::InvalidEvent(e.to_string()))?,
+                timestamp: time::OffsetDateTime::parse(
+                    &timestamp,
+                    &time::format_description::well_known::Rfc3339,
+                )
+                .map_err(|e| AuditError::InvalidEvent(e.to_string()))?,
                 severity: match severity.as_str() {
                     "Critical" => crate::EventSeverity::Critical,
                     "High" => crate::EventSeverity::High,
@@ -252,22 +267,21 @@ impl crate::LogStorage for MemoryStorage {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{AuthEvent, EventSeverity, LogStorage};
+    use {
+        super::*,
+        crate::{AuthEvent, EventSeverity, LogStorage},
+    };
 
     #[tokio::test]
     async fn test_memory_storage() {
         let storage = MemoryStorage::new();
 
-        let event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         storage.store_batch(&[event.clone()]).await.unwrap();
 
@@ -282,23 +296,17 @@ mod tests {
     async fn test_memory_storage_filter() {
         let storage = MemoryStorage::new();
 
-        let event1 = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event1 = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
-        let event2 = AuditEvent::auth(
-            EventSeverity::Low,
-            AuthEvent::Logout {
-                username: "user1".to_string(),
-                session_id: "session1".to_string(),
-            },
-        );
+        let event2 = AuditEvent::auth(EventSeverity::Low, AuthEvent::Logout {
+            username: "user1".to_string(),
+            session_id: "session1".to_string(),
+        });
 
         storage.store_batch(&[event1, event2]).await.unwrap();
 
@@ -317,15 +325,12 @@ mod tests {
         let storage = MemoryStorage::new();
 
         for i in 0..10 {
-            let event = AuditEvent::auth(
-                EventSeverity::Info,
-                AuthEvent::LoginAttempt {
-                    username: format!("user{}", i),
-                    success: true,
-                    ip_address: None,
-                    user_agent: None,
-                },
-            );
+            let event = AuditEvent::auth(EventSeverity::Info, AuthEvent::LoginAttempt {
+                username: format!("user{}", i),
+                success: true,
+                ip_address: None,
+                user_agent: None,
+            });
             storage.store_batch(&[event]).await.unwrap();
         }
 

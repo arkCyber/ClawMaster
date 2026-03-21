@@ -7,6 +7,9 @@ import { chatAddMsg, chatAddMsgWithImages, updateCommandInputUI } from "./chat-u
 import { highlightCodeBlocks } from "./code-highlight.js";
 import { SessionHeader } from "./components/session-header.js";
 import { formatBytes, formatTokens, renderMarkdown, sendRpc, warmAudioPlayback } from "./helpers.js";
+
+// Global keyboard handler for stopping generation
+var escKeyHandler = null;
 import {
 	clearPendingImages,
 	getPendingImages,
@@ -1377,6 +1380,18 @@ registerPrefix(
 			initMediaDrop(S.chatMsgBox, inputArea);
 		}
 
+		// Add Esc key handler to stop generation
+		escKeyHandler = (e) => {
+			if (e.key === "Escape") {
+				const activeSession = sessionStore.activeSession.value;
+				if (activeSession && activeSession.replying) {
+					e.preventDefault();
+					sendRpc("chat.abort", { sessionKey: activeSession.key }).catch(() => {});
+				}
+			}
+		};
+		document.addEventListener("keydown", escKeyHandler);
+
 		S.chatInput.focus();
 	},
 	function teardownChat() {
@@ -1387,6 +1402,10 @@ registerPrefix(
 		if (chatMoreModalKeydownHandler) {
 			document.removeEventListener("keydown", chatMoreModalKeydownHandler);
 			chatMoreModalKeydownHandler = null;
+		}
+		if (escKeyHandler) {
+			document.removeEventListener("keydown", escKeyHandler);
+			escKeyHandler = null;
 		}
 		disposeSessionControlsVisibility?.();
 		disposeSessionControlsVisibility = null;

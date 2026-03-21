@@ -14,8 +14,7 @@
 pub mod rules;
 pub mod validator;
 
-pub use rules::*;
-pub use validator::*;
+pub use {rules::*, validator::*};
 
 use thiserror::Error;
 
@@ -26,19 +25,19 @@ use thiserror::Error;
 pub enum ValidationError {
     #[error("Security violation: {0}")]
     SecurityViolation(String),
-    
+
     #[error("Configuration conflict: {0}")]
     Conflict(String),
-    
+
     #[error("Invalid value for {field}: {reason}")]
     InvalidValue { field: String, reason: String },
-    
+
     #[error("Missing required field: {0}")]
     MissingField(String),
-    
+
     #[error("Resource limit exceeded: {0}")]
     ResourceLimit(String),
-    
+
     #[error("Path permission error: {0}")]
     PathPermission(String),
 }
@@ -53,13 +52,13 @@ pub type ValidationResult<T = ()> = Result<T, ValidationError>;
 pub enum Severity {
     /// Critical - prevents system startup
     Critical,
-    
+
     /// Error - should be fixed but allows startup
     Error,
-    
+
     /// Warning - should be reviewed
     Warning,
-    
+
     /// Info - informational only
     Info,
 }
@@ -162,8 +161,8 @@ mod tests {
         assert_eq!(issue.message, "test message");
         assert!(issue.suggestion.is_none());
 
-        let issue_with_suggestion = ValidationIssue::error("test", "test")
-            .with_suggestion("fix this");
+        let issue_with_suggestion =
+            ValidationIssue::error("test", "test").with_suggestion("fix this");
         assert!(issue_with_suggestion.suggestion.is_some());
     }
 }

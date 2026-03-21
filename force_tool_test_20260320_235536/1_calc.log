@@ -1,0 +1,14 @@
+[2m2026-03-20T15:55:36.195979Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 计算 123 + 456
+
+❌ 错误: IO error: Connection refused (os error 61)
+
+💡 提示:
+  1. 确保后端服务器正在运行: clawmaster gateway
+  2. 检查服务器地址: export CLAWMASTER_GATEWAY_URL=http://localhost:3000
+  3. 检查服务器日志查看详细错误信息
+Error: IO error: Connection refused (os error 61)
+
+Caused by:
+    Connection refused (os error 61)

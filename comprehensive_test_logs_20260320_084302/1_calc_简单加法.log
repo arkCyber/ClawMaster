@@ -1,0 +1,5 @@
+=== Test: calc - 简单加法 ===
+Input: 计算 123 + 456
+Time: Fri Mar 20 08:43:02 CST 2026
+
+./comprehensive_test_all_tools.sh: line 81: timeout: command not found

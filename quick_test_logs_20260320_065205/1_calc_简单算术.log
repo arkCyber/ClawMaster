@@ -1,0 +1,35 @@
+=== Test: calc_简单算术 ===
+Input: 计算 123 + 456
+Time: Fri Mar 20 06:52:05 CST 2026
+
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:12:7
+   |
+12 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+    Finished `release` profile [optimized] target(s) in 0.77s
+     Running `target/release/clawmaster agent --message '计算 123 + 456'`
+[2m2026-03-19T22:52:07.091723Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+Error: run_agent requires a configured provider and tool registry; use run_agent_loop instead

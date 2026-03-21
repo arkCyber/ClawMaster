@@ -1,0 +1,10 @@
+[2m2026-03-20T07:59:59.877399Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 向 main 会话发送消息：Hello
+
+✅ 响应:
+你可以使用以下命令向 main 会话发送消息：
+
+`sessions_send session_name=main message="Hello"`
+
+这将向 main 会话发送一个消息 "Hello"。

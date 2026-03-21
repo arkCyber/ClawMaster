@@ -1,0 +1,5 @@
+=== Test: branch_session - 创建分支 ===
+Input: Branch current session
+Time: Fri Mar 20 06:33:37 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

@@ -1,0 +1,12 @@
+[2m2026-03-20T08:02:12.016632Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 显示所有保存的记忆
+
+✅ 响应:
+以下是你保存的记忆：
+
+* preferred_language：Rust
+* project_deadline：2026-04-01
+* default_theme：dark
+
+这些信息将在你下次使用时被读取。

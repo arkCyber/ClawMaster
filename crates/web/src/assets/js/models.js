@@ -39,7 +39,31 @@ export function selectModel(m) {
 	S.setSelectedModelId(m.id);
 	updateModelComboLabel(m);
 	localStorage.setItem("clawmaster-model", m.id);
-	setSessionModel(S.activeSessionKey, m.id);
+	
+	// Hot-swap for local-llm models
+	if (m.provider === "local-llm" && m.id.startsWith("local-llm::")) {
+		sendRpc("models.reload", { model_id: m.id })
+			.then((result) => {
+				if (result.success) {
+					console.log("Model hot-swap initiated:", result.message);
+					// Update session after successful reload
+					setSessionModel(S.activeSessionKey, m.id);
+				} else {
+					console.warn("Model hot-swap failed:", result.message);
+					// Still update session
+					setSessionModel(S.activeSessionKey, m.id);
+				}
+			})
+			.catch((err) => {
+				console.error("Model hot-swap error:", err);
+				// Fallback to normal session update
+				setSessionModel(S.activeSessionKey, m.id);
+			});
+	} else {
+		// Non-local-llm models use normal flow
+		setSessionModel(S.activeSessionKey, m.id);
+	}
+	
 	closeModelDropdown();
 	// Show notice if model doesn't support tools
 	showModelNotice(m);

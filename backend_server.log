@@ -1,0 +1,1758 @@
+[2m2026-03-20T08:33:42.634984Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+[2m2026-03-20T08:33:42.690557Z[0m [32m INFO[0m [2mclawmaster_providers::local_gguf[0m[2m:[0m local-llm system info [3mtotal_ram_gb[0m[2m=[0m96 [3mavailable_ram_gb[0m[2m=[0m56 [3mhas_metal[0m[2m=[0mtrue [3mhas_cuda[0m[2m=[0mfalse [3mtier[0m[2m=[0mlarge (32GB+)
+[2m2026-03-20T08:33:42.690617Z[0m [32m INFO[0m [2mclawmaster_providers::local_gguf[0m[2m:[0m local-llm model cache directory [3mcache_dir[0m[2m=[0m/Users/arksong/.clawmaster/models
+[2m2026-03-20T08:33:42.690623Z[0m [32m INFO[0m [2mclawmaster_providers::local_gguf[0m[2m:[0m suggested local model for your system [3mmodel[0m[2m=[0m"mlx-llama-3.1-70b-4bit" [3mdisplay_name[0m[2m=[0m"Llama 3.1 70B (4-bit MLX)" [3mmin_ram_gb[0m[2m=[0m48 [3mbackend[0m[2m=[0mMLX
+[2m2026-03-20T08:33:42.690684Z[0m [32m INFO[0m [2mclawmaster_providers::local_gguf[0m[2m:[0m cached local models in model cache directory [3mcached_models[0m[2m=[0m["llama-3.2-1b-q4_k_m", "qwen2.5-coder-14b-q4_k_m", "mistral-7b-q5_k_m", "llama-3.1-8b-q4_k_m"] [3mcached_count[0m[2m=[0m4
+[2m2026-03-20T08:33:42.690707Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm model configured (will load on first use) [3mmodel[0m[2m=[0mcustom-qwen2.5-coder-32b-instruct-q4_k_m-gguf [3mdisplay_name[0m[2m=[0mcustom-qwen2.5-coder-32b-instruct-q4_k_m-gguf (local)
+[2m2026-03-20T08:33:42.690748Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm model configured (will load on first use) [3mmodel[0m[2m=[0mmistral-7b-q5_k_m [3mdisplay_name[0m[2m=[0mMistral 7B Instruct (Q5_K_M)
+[2m2026-03-20T08:33:42.690754Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm model configured (will load on first use) [3mmodel[0m[2m=[0mllama-3.1-8b-q4_k_m [3mdisplay_name[0m[2m=[0mLlama 3.1 8B (Q4_K_M)
+[2m2026-03-20T08:33:42.690758Z[0m [32m INFO[0m [2mclawmaster_providers[0m[2m:[0m local-llm model configured (will load on first use) [3mmodel[0m[2m=[0mllama-3.2-1b-q4_k_m [3mdisplay_name[0m[2m=[0mLlama 3.2 1B (Q4_K_M)
+[2m2026-03-20T08:33:42.690838Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup model inventory [3mmodel_count[0m[2m=[0m4 [3mprovider_count[0m[2m=[0m1 [3mprovider_model_counts[0m[2m=[0m[("local-llm", 4)] [3msample_model_ids[0m[2m=[0m["local-llm::custom-qwen2.5-coder-32b-instruct-q4_k_m-gguf", "local-llm::llama-3.1-8b-q4_k_m", "local-llm::llama-3.2-1b-q4_k_m", "local-llm::mistral-7b-q5_k_m"]
+[2m2026-03-20T08:33:42.691380Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup configuration storage diagnostics [3muser[0m[2m=[0marksong [3mhome[0m[2m=[0m/Users/arksong [3mconfig_dir[0m[2m=[0m/Users/arksong/.config/clawmaster [3mdiscovered_config[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mexpected_config[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mprovider_keys_path[0m[2m=[0m/Users/arksong/.config/clawmaster/provider_keys.json
+[2m2026-03-20T08:33:42.691463Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup path diagnostics [3mkind[0m[2m=[0m"config-dir" [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster [3mexists[0m[2m=[0mtrue [3mis_dir[0m[2m=[0mtrue [3mreadonly[0m[2m=[0mfalse [3msize_bytes[0m[2m=[0m224
+[2m2026-03-20T08:33:42.691592Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup write probe succeeded for config directory [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/.moltis-write-check-85683-1773995622691480000.tmp
+[2m2026-03-20T08:33:42.691680Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup path diagnostics [3mkind[0m[2m=[0m"config-file" [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/clawmaster.toml [3mexists[0m[2m=[0mtrue [3mis_dir[0m[2m=[0mfalse [3mreadonly[0m[2m=[0mfalse [3msize_bytes[0m[2m=[0m36757
+[2m2026-03-20T08:33:42.691692Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m provider key store file not found yet; it will be created after the first providers.save_key [3mpath[0m[2m=[0m/Users/arksong/.config/clawmaster/provider_keys.json
+[2m2026-03-20T08:33:42.695487Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m vault ready [3mstatus[0m[2m=[0mOk(Uninitialized)
+[2m2026-03-20T08:33:42.696273Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0mlocalhost [3morigins[0m[2m=[0m["https://localhost:59233", "https://moltis.localhost:59233"]
+[2m2026-03-20T08:33:42.696305Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksong [3morigins[0m[2m=[0m["https://arksong:59233"]
+[2m2026-03-20T08:33:42.696316Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksong.local [3morigins[0m[2m=[0m["https://arksong.local:59233"]
+[2m2026-03-20T08:33:42.696368Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksongs-mac-studio.local [3morigins[0m[2m=[0m["https://arksongs-mac-studio.local:59233"]
+[2m2026-03-20T08:33:42.696377Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn RP registered [3mrp_id[0m[2m=[0marksongs-mac-studio [3morigins[0m[2m=[0m["https://arksongs-mac-studio:59233"]
+[2m2026-03-20T08:33:42.696383Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m WebAuthn passkeys enabled [3morigins[0m[2m=[0m["https://localhost:59233", "https://moltis.localhost:59233", "https://arksong:59233", "https://arksong.local:59233", "https://arksongs-mac-studio.local:59233", "https://arksongs-mac-studio:59233"]
+[2m2026-03-20T08:33:42.711233Z[0m [32m INFO[0m [2mclawmaster_tools::sandbox[0m[2m:[0m sandbox backend: podman (daemonless, preferred over docker)
+[2m2026-03-20T08:33:42.711315Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m trusted-network: evaluating network policy [3mnetwork_policy[0m[2m=[0mTrusted [3mtrusted_domains[0m[2m=[0m[]
+[2m2026-03-20T08:33:42.711339Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m trusted-network proxy started, routing all HTTP tools through proxy [3mproxy_url[0m[2m=[0mhttp://127.0.0.1:18791
+[2m2026-03-20T08:33:42.711466Z[0m [32m INFO[0m [2mclawmaster_network_filter::proxy[0m[2m:[0m network proxy listening [3maddr[0m[2m=[0m0.0.0.0:18791
+[2m2026-03-20T08:33:42.712323Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m 0 stored channel(s) found in database
+[2m2026-03-20T08:33:42.713199Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"dcg-guard"
+[2m2026-03-20T08:33:42.713243Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"boot-md"
+[2m2026-03-20T08:33:42.713267Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"command-logger"
+[2m2026-03-20T08:33:42.713276Z[0m [32m INFO[0m [2mclawmaster_common::hooks[0m[2m:[0m hook handler registered [3mhandler[0m[2m=[0m"session-memory"
+[2m2026-03-20T08:33:42.713302Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m 5 hook(s) discovered (2 shell, 3 built-in), 4 registered
+[2m2026-03-20T08:33:42.714277Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: no embedding provider found, using keyword-only search
+[2m2026-03-20T08:33:42.715470Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory system initialized [3membeddings[0m[2m=[0mfalse
+[2m2026-03-20T08:33:42.716900Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: initial sync complete [3mupdated[0m[2m=[0m0 [3munchanged[0m[2m=[0m5 [3mremoved[0m[2m=[0m0 [3merrors[0m[2m=[0m0 [3mcache_hits[0m[2m=[0m0 [3mcache_misses[0m[2m=[0m0
+[2m2026-03-20T08:33:42.717290Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: status [3mfiles[0m[2m=[0m5 [3mchunks[0m[2m=[0m5 [3mdb_size[0m[2m=[0m116.0 KB [3mmodel[0m[2m=[0mnone (keyword-only)
+[2m2026-03-20T08:33:42.723770Z[0m [32m INFO[0m [2mclawmaster_tools::sandbox[0m[2m:[0m building pre-built sandbox image [3mtag[0m[2m=[0m"clawmaster-arksong-sandbox:f0068eb72d4398020b0ad86956422361b8f921c898d3ae25577c0beb0de09cf2" [3mpackages[0m[2m=[0maerc ansible antiword autoconf automake bison build-essential bzip2 ca-certificates catdoc chromium clang cmake csvtool curl datamash default-jdk default-mysql-client dnsutils dos2unix dpkg-dev fakeroot fd-find ffmpeg file flac flex fonts-liberation gdal-bin gettext ghostscript git git-lfs gnupg2 golang-go graphicsmagick html2text imagemagick iproute2 isync jpegoptim jq khal lame libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libclang-dev libcups2t64 libdrm2 libgbm1 libgdal-dev libgtk-3-0t64 libheif-dev libimage-exiftool-perl liblzma-dev libnspr4 libnss3 libreoffice-core libreoffice-writer libsqlite3-dev libssl-dev libtool libvips-tools libxcomposite1 libxdamage1 libxfixes3 libxkbcommon0 libxrandr2 libxss1 libyaml-dev llvm-dev locales lsb-release lz4 mapnik-utils maven mediainfo miller mutt neomutt net-tools netcat-openbsd ninja-build nodejs notmuch notmuch-mutt npm offlineimap3 openssh-client optipng opus-tools osm2pgsql osmctools osmium-tool p7zip-full pandoc patchelf perl php-cli php-curl php-mbstring php-xml pigz pkg-config pngquant poppler-utils postgresql-client python-is-python3 python3 python3-caldav python3-dev python3-discord python3-mapnik python3-pip python3-venv ripgrep rsync ruby ruby-dev shellcheck slrn software-properties-common sox sqlite3 sudo tar texlive-fonts-recommended texlive-latex-base texlive-latex-extra tin tmux tree tzdata unrtf unzip vdirsyncer vorbis-tools webp wget xmlstarlet xz-utils yamllint yq zip zstd
+[2m2026-03-20T08:33:42.725150Z[0m [32m INFO[0m [2mclawmaster_browser::container[0m[2m:[0m browser sandbox backend: podman (daemonless)
+[2m2026-03-20T08:33:42.725227Z[0m [32m INFO[0m [2mclawmaster_memory::watcher[0m[2m:[0m file watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster
+[2m2026-03-20T08:33:42.725784Z[0m [32m INFO[0m [2mclawmaster_memory::watcher[0m[2m:[0m file watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster/agents
+[2m2026-03-20T08:33:42.725796Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m memory: file watcher started
+[2m2026-03-20T08:33:42.735240Z[0m [33m WARN[0m [2mclawmaster_gateway::server[0m[2m:[0m sandbox image pre-build failed: podman build failed for clawmaster-arksong-sandbox:f0068eb72d4398020b0ad86956422361b8f921c898d3ae25577c0beb0de09cf2: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-20T08:33:42.735297Z[0m [32m INFO[0m [2mclawmaster_browser::container[0m[2m:[0m pulling browser container image [3mimage[0m[2m=[0m"browserless/chrome" [3mbackend[0m[2m=[0m"podman"
+[2m2026-03-20T08:33:42.745932Z[0m [33m WARN[0m [2mclawmaster_gateway::server[0m[2m:[0m browser container image pull failed [3mimage[0m[2m=[0mbrowserless/chrome [3merror[0m[2m=[0mbrowser launch failed: failed to pull browser image: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:58126: connect: connection refused
+[2m2026-03-20T08:33:42.915673Z[0m [32m INFO[0m [2mclawmaster_metrics::recorder[0m[2m:[0m Prometheus metrics exporter initialized
+[2m2026-03-20T08:33:42.915863Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Metrics collection enabled
+[2m2026-03-20T08:33:42.917723Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Metrics history store initialized at /Users/arksong/.clawmaster/metrics.db
+[2m2026-03-20T08:33:42.985838Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m agent tools registered [3mtools[0m[2m=[0m["nodes_select", "transcribe", "cron", "memory_search", "send_image", "process", "loop_detection", "update_skill", "show_map", "news_search", "sessions_list", "speak", "sessions_history", "browser", "task_list", "memory_save", "agents_list", "web_search_wasm", "get_user_location", "memory_get", "session_state", "sessions_send", "sandbox_packages", "web_fetch_wasm", "send_message", "sessions_delete", "apply_patch", "branch_session", "spawn_agent", "delete_skill", "sessions_create", "exec", "nodes_list", "calc", "create_skill", "nodes_describe", "web_fetch"]
+[2m2026-03-20T08:33:42.986352Z[0m [32m INFO[0m [2mclawmaster_skills::watcher[0m[2m:[0m skill watcher: watching directory [3mdir[0m[2m=[0m/Users/arksong/.clawmaster/skills
+[2m2026-03-20T08:33:42.986698Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m push notification service initialized
+[2m2026-03-20T08:33:42.988783Z[0m [32m INFO[0m [2mclawmaster_cron::service[0m[2m:[0m loaded cron jobs [3mcount[0m[2m=[0m0
+[2m2026-03-20T08:33:42.988986Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m heartbeat skipped: no prompt in config and HEARTBEAT.md is empty
+[2m2026-03-20T08:33:42.989295Z[0m [32m INFO[0m [2mclawmaster_gateway::mdns[0m[2m:[0m mDNS alias service registered [3mservice_type[0m[2m=[0m"_arksong._tcp.local." [3minstance[0m[2m=[0m"Moltis on arkSongs-Mac-Studio.local" [3mport[0m[2m=[0m59233
+[2m2026-03-20T08:33:42.989314Z[0m [32m INFO[0m [2mclawmaster_gateway::mdns[0m[2m:[0m mDNS service registered [3mservice_type[0m[2m=[0m"_moltis._tcp.local." [3minstance[0m[2m=[0m"Moltis on arkSongs-Mac-Studio.local" [3mport[0m[2m=[0m59233
+[2m2026-03-20T08:33:42.989931Z[0m [32m INFO[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:33:42.990002Z[0m [32m INFO[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:33:42.990060Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m ┌──────────────────────────────────────────────────────────────────────────────────┐
+[2m2026-03-20T08:33:42.990072Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  clawmaster gateway v0.10.18                                                     │
+[2m2026-03-20T08:33:42.990081Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  protocol v4, listening on https://localhost:59233 (HTTP/2 + HTTP/1.1)           │
+[2m2026-03-20T08:33:42.990089Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  bind (--bind): 127.0.0.1:59233                                                  │
+[2m2026-03-20T08:33:42.990098Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  235 methods registered                                                          │
+[2m2026-03-20T08:33:42.990107Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  llm: 1 provider, 4 models                                                       │
+[2m2026-03-20T08:33:42.990128Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  skills: 2 enabled, 0 repos                                                      │
+[2m2026-03-20T08:33:42.990142Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  mcp: 0 configured                                                               │
+[2m2026-03-20T08:33:42.990231Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  sandbox: podman backend                                                         │
+[2m2026-03-20T08:33:42.990246Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  config: /Users/arksong/.config/clawmaster/clawmaster.toml                       │
+[2m2026-03-20T08:33:42.990257Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  data: /Users/arksong/.clawmaster                                                │
+[2m2026-03-20T08:33:42.990267Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  openclaw: background detection pending                                          │
+[2m2026-03-20T08:33:42.990284Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://localhost:59233                                         │
+[2m2026-03-20T08:33:42.990292Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://moltis.localhost:59233                                  │
+[2m2026-03-20T08:33:42.990305Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksong:59233                                           │
+[2m2026-03-20T08:33:42.990322Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksong.local:59233                                     │
+[2m2026-03-20T08:33:42.990334Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksongs-mac-studio.local:59233                         │
+[2m2026-03-20T08:33:42.990343Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  passkey origin: https://arksongs-mac-studio:59233                               │
+[2m2026-03-20T08:33:42.990352Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  hint: install Apple Container for VM-isolated sandboxing (see docs/sandbox.md)  │
+[2m2026-03-20T08:33:42.990362Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │                                                                                  │
+[2m2026-03-20T08:33:42.990373Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  setup code: 798009                                                              │
+[2m2026-03-20T08:33:42.990383Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  enter this code to set your password or register a passkey                      │
+[2m2026-03-20T08:33:42.990391Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │                                                                                  │
+[2m2026-03-20T08:33:42.990401Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  CA cert: http://localhost:59234/certs/ca.pem                                    │
+[2m2026-03-20T08:33:42.990411Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │    or: /Users/arksong/.config/clawmaster/certs/ca.pem                            │
+[2m2026-03-20T08:33:42.990420Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m │  run `moltis trust-ca` to remove browser warnings                                │
+[2m2026-03-20T08:33:42.990431Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m └──────────────────────────────────────────────────────────────────────────────────┘
+[2m2026-03-20T08:33:42.990561Z[0m [32m INFO[0m [2mclawmaster_tls[0m[2m:[0m HTTP redirect server listening http://localhost:59234/certs/ca.pem
+[2m2026-03-20T08:33:42.990574Z[0m [32m INFO[0m [2mclawmaster_openclaw_import::detect[0m[2m:[0m openclaw detect: resolved home directory [3mpath[0m[2m=[0m/Users/arksong/.openclaw
+[2m2026-03-20T08:33:42.990567Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m Loaded 360 historical metrics points from store
+[2m2026-03-20T08:33:42.990628Z[0m [32m INFO[0m [2mclawmaster_openclaw_import::detect[0m[2m:[0m openclaw detect: home directory does not exist or is not a directory [3mpath[0m[2m=[0m/Users/arksong/.openclaw
+[2m2026-03-20T08:33:42.990651Z[0m [32m INFO[0m [2mclawmaster_gateway::server[0m[2m:[0m startup OpenClaw installation not detected (checked OPENCLAW_HOME and ~/.openclaw) [3mopenclaw_home_env[0m[2m=[0m<unset> [3mopenclaw_profile_env[0m[2m=[0m<unset>
+[2m2026-03-20T08:33:43.488060Z[0m [32m INFO[0m [2mclawmaster_web::terminal[0m[2m:[0m terminal ws: new connection [3mconn_id[0m[2m=[0mff670e64-44ed-4174-af19-81d935ac743b [3mremote[0m[2m=[0m127.0.0.1:60567
+[2m2026-03-20T08:33:43.502414Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m868e4067-ac54-4257-9144-f5dd1191c8db [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:33:43.504643Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m868e4067-ac54-4257-9144-f5dd1191c8db [3mclient_id[0m[2m=[0mweb-chat-ui [3mclient_version[0m[2m=[0m0.1.0 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:33:43.505641Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m models.list response [3mmodel_count[0m[2m=[0m4
+[2m2026-03-20T08:33:49.092634Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0mde339b9e-4ac0-4a31-aa35-76cce7c54ec1 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:33:49.092772Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0mde339b9e-4ac0-4a31-aa35-76cce7c54ec1 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:33:49.093496Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:33:49.093553Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:33:49.093632Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:33:49.097928Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:33:49.098008Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:33:49.110696Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0ma2d0d157-22a6-4575-9967-cc57ce891412 [3muser_message[0m[2m=[0m计算 123 + 456 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:33:49.113036Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:33:49.113162Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:33:49.113382Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m285
+[2m2026-03-20T08:33:49.113565Z[0m [32m INFO[0m [2mclawmaster_providers::local_llm[0m[2m:[0m loading local LLM model [3mmodel[0m[2m=[0mllama-3.1-8b-q4_k_m [3mbackend[0m[2m=[0mGguf
+[2m2026-03-20T08:33:49.113611Z[0m [32m INFO[0m [2mclawmaster_providers::local_llm::models[0m[2m:[0m model found in cache [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf [3mmodel[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+ggml_metal_device_init: tensor API disabled for pre-M5 and pre-A19 devices
+ggml_metal_library_init: using embedded metal library
+ggml_metal_library_init: loaded in 0.007 sec
+ggml_metal_rsets_init: creating a residency set collection (keep_alive = 180 s)
+ggml_metal_device_init: GPU name:   Apple M3 Ultra
+ggml_metal_device_init: GPU family: MTLGPUFamilyApple9  (1009)
+ggml_metal_device_init: GPU family: MTLGPUFamilyCommon3 (3003)
+ggml_metal_device_init: GPU family: MTLGPUFamilyMetal3  (5001)
+ggml_metal_device_init: simdgroup reduction   = true
+ggml_metal_device_init: simdgroup matrix mul. = true
+ggml_metal_device_init: has unified memory    = true
+ggml_metal_device_init: has bfloat            = true
+ggml_metal_device_init: has tensor            = false
+ggml_metal_device_init: use residency sets    = true
+ggml_metal_device_init: use shared buffers    = true
+ggml_metal_device_init: recommendedMaxWorkingSetSize  = 77309.41 MB
+llama_model_load_from_file_impl: using device Metal (Apple M3 Ultra) (unknown id) - 73727 MiB free
+llama_model_loader: loaded meta data with 33 key-value pairs and 292 tensors from /Users/arksong/.clawmaster/models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf (version GGUF V3 (latest))
+llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+llama_model_loader: - kv   0:                       general.architecture str              = llama
+llama_model_loader: - kv   1:                               general.type str              = model
+llama_model_loader: - kv   2:                               general.name str              = Meta Llama 3.1 8B Instruct
+llama_model_loader: - kv   3:                           general.finetune str              = Instruct
+llama_model_loader: - kv   4:                           general.basename str              = Meta-Llama-3.1
+llama_model_loader: - kv   5:                         general.size_label str              = 8B
+llama_model_loader: - kv   6:                            general.license str              = llama3.1
+llama_model_loader: - kv   7:                               general.tags arr[str,6]       = ["facebook", "meta", "pytorch", "llam...
+llama_model_loader: - kv   8:                          general.languages arr[str,8]       = ["en", "de", "fr", "it", "pt", "hi", ...
+llama_model_loader: - kv   9:                          llama.block_count u32              = 32
+llama_model_loader: - kv  10:                       llama.context_length u32              = 131072
+llama_model_loader: - kv  11:                     llama.embedding_length u32              = 4096
+llama_model_loader: - kv  12:                  llama.feed_forward_length u32              = 14336
+llama_model_loader: - kv  13:                 llama.attention.head_count u32              = 32
+llama_model_loader: - kv  14:              llama.attention.head_count_kv u32              = 8
+llama_model_loader: - kv  15:                       llama.rope.freq_base f32              = 500000.000000
+llama_model_loader: - kv  16:     llama.attention.layer_norm_rms_epsilon f32              = 0.000010
+llama_model_loader: - kv  17:                          general.file_type u32              = 15
+llama_model_loader: - kv  18:                           llama.vocab_size u32              = 128256
+llama_model_loader: - kv  19:                 llama.rope.dimension_count u32              = 128
+llama_model_loader: - kv  20:                       tokenizer.ggml.model str              = gpt2
+llama_model_loader: - kv  21:                         tokenizer.ggml.pre str              = llama-bpe
+llama_model_loader: - kv  22:                      tokenizer.ggml.tokens arr[str,128256]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+llama_model_loader: - kv  23:                  tokenizer.ggml.token_type arr[i32,128256]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+llama_model_loader: - kv  24:                      tokenizer.ggml.merges arr[str,280147]  = ["Ġ Ġ", "Ġ ĠĠĠ", "ĠĠ ĠĠ", "...
+llama_model_loader: - kv  25:                tokenizer.ggml.bos_token_id u32              = 128000
+llama_model_loader: - kv  26:                tokenizer.ggml.eos_token_id u32              = 128009
+llama_model_loader: - kv  27:                    tokenizer.chat_template str              = {{- bos_token }}\n{%- if custom_tools ...
+llama_model_loader: - kv  28:               general.quantization_version u32              = 2
+llama_model_loader: - kv  29:                      quantize.imatrix.file str              = /models_out/Meta-Llama-3.1-8B-Instruc...
+llama_model_loader: - kv  30:                   quantize.imatrix.dataset str              = /training_dir/calibration_datav3.txt
+llama_model_loader: - kv  31:             quantize.imatrix.entries_count i32              = 224
+llama_model_loader: - kv  32:              quantize.imatrix.chunks_count i32              = 125
+llama_model_loader: - type  f32:   66 tensors
+llama_model_loader: - type q4_K:  193 tensors
+llama_model_loader: - type q6_K:   33 tensors
+print_info: file format = GGUF V3 (latest)
+print_info: file type   = Q4_K - Medium
+print_info: file size   = 4.58 GiB (4.89 BPW) 
+init_tokenizer: initializing tokenizer for type 2
+load: 0 unused tokens
+load: control token: 128254 '<|reserved_special_token_246|>' is not marked as EOG
+load: control token: 128252 '<|reserved_special_token_244|>' is not marked as EOG
+load: control token: 128251 '<|reserved_special_token_243|>' is not marked as EOG
+load: control token: 128250 '<|reserved_special_token_242|>' is not marked as EOG
+load: control token: 128248 '<|reserved_special_token_240|>' is not marked as EOG
+load: control token: 128247 '<|reserved_special_token_239|>' is not marked as EOG
+load: control token: 128245 '<|reserved_special_token_237|>' is not marked as EOG
+load: control token: 128244 '<|reserved_special_token_236|>' is not marked as EOG
+load: control token: 128243 '<|reserved_special_token_235|>' is not marked as EOG
+load: control token: 128240 '<|reserved_special_token_232|>' is not marked as EOG
+load: control token: 128238 '<|reserved_special_token_230|>' is not marked as EOG
+load: control token: 128235 '<|reserved_special_token_227|>' is not marked as EOG
+load: control token: 128234 '<|reserved_special_token_226|>' is not marked as EOG
+load: control token: 128229 '<|reserved_special_token_221|>' is not marked as EOG
+load: control token: 128227 '<|reserved_special_token_219|>' is not marked as EOG
+load: control token: 128226 '<|reserved_special_token_218|>' is not marked as EOG
+load: control token: 128224 '<|reserved_special_token_216|>' is not marked as EOG
+load: control token: 128223 '<|reserved_special_token_215|>' is not marked as EOG
+load: control token: 128221 '<|reserved_special_token_213|>' is not marked as EOG
+load: control token: 128219 '<|reserved_special_token_211|>' is not marked as EOG
+load: control token: 128218 '<|reserved_special_token_210|>' is not marked as EOG
+load: control token: 128217 '<|reserved_special_token_209|>' is not marked as EOG
+load: control token: 128216 '<|reserved_special_token_208|>' is not marked as EOG
+load: control token: 128215 '<|reserved_special_token_207|>' is not marked as EOG
+load: control token: 128213 '<|reserved_special_token_205|>' is not marked as EOG
+load: control token: 128211 '<|reserved_special_token_203|>' is not marked as EOG
+load: control token: 128210 '<|reserved_special_token_202|>' is not marked as EOG
+load: control token: 128209 '<|reserved_special_token_201|>' is not marked as EOG
+load: control token: 128208 '<|reserved_special_token_200|>' is not marked as EOG
+load: control token: 128207 '<|reserved_special_token_199|>' is not marked as EOG
+load: control token: 128204 '<|reserved_special_token_196|>' is not marked as EOG
+load: control token: 128202 '<|reserved_special_token_194|>' is not marked as EOG
+load: control token: 128197 '<|reserved_special_token_189|>' is not marked as EOG
+load: control token: 128195 '<|reserved_special_token_187|>' is not marked as EOG
+load: control token: 128194 '<|reserved_special_token_186|>' is not marked as EOG
+load: control token: 128191 '<|reserved_special_token_183|>' is not marked as EOG
+load: control token: 128190 '<|reserved_special_token_182|>' is not marked as EOG
+load: control token: 128188 '<|reserved_special_token_180|>' is not marked as EOG
+load: control token: 128187 '<|reserved_special_token_179|>' is not marked as EOG
+load: control token: 128185 '<|reserved_special_token_177|>' is not marked as EOG
+load: control token: 128184 '<|reserved_special_token_176|>' is not marked as EOG
+load: control token: 128183 '<|reserved_special_token_175|>' is not marked as EOG
+load: control token: 128178 '<|reserved_special_token_170|>' is not marked as EOG
+load: control token: 128177 '<|reserved_special_token_169|>' is not marked as EOG
+load: control token: 128176 '<|reserved_special_token_168|>' is not marked as EOG
+load: control token: 128175 '<|reserved_special_token_167|>' is not marked as EOG
+load: control token: 128174 '<|reserved_special_token_166|>' is not marked as EOG
+load: control token: 128173 '<|reserved_special_token_165|>' is not marked as EOG
+load: control token: 128172 '<|reserved_special_token_164|>' is not marked as EOG
+load: control token: 128169 '<|reserved_special_token_161|>' is not marked as EOG
+load: control token: 128167 '<|reserved_special_token_159|>' is not marked as EOG
+load: control token: 128166 '<|reserved_special_token_158|>' is not marked as EOG
+load: control token: 128160 '<|reserved_special_token_152|>' is not marked as EOG
+load: control token: 128159 '<|reserved_special_token_151|>' is not marked as EOG
+load: control token: 128157 '<|reserved_special_token_149|>' is not marked as EOG
+load: control token: 128156 '<|reserved_special_token_148|>' is not marked as EOG
+load: control token: 128154 '<|reserved_special_token_146|>' is not marked as EOG
+load: control token: 128152 '<|reserved_special_token_144|>' is not marked as EOG
+load: control token: 128151 '<|reserved_special_token_143|>' is not marked as EOG
+load: control token: 128150 '<|reserved_special_token_142|>' is not marked as EOG
+load: control token: 128147 '<|reserved_special_token_139|>' is not marked as EOG
+load: control token: 128144 '<|reserved_special_token_136|>' is not marked as EOG
+load: control token: 128142 '<|reserved_special_token_134|>' is not marked as EOG
+load: control token: 128141 '<|reserved_special_token_133|>' is not marked as EOG
+load: control token: 128140 '<|reserved_special_token_132|>' is not marked as EOG
+load: control token: 128133 '<|reserved_special_token_125|>' is not marked as EOG
+load: control token: 128130 '<|reserved_special_token_122|>' is not marked as EOG
+load: control token: 128128 '<|reserved_special_token_120|>' is not marked as EOG
+load: control token: 128127 '<|reserved_special_token_119|>' is not marked as EOG
+load: control token: 128126 '<|reserved_special_token_118|>' is not marked as EOG
+load: control token: 128125 '<|reserved_special_token_117|>' is not marked as EOG
+load: control token: 128124 '<|reserved_special_token_116|>' is not marked as EOG
+load: control token: 128123 '<|reserved_special_token_115|>' is not marked as EOG
+load: control token: 128122 '<|reserved_special_token_114|>' is not marked as EOG
+load: control token: 128121 '<|reserved_special_token_113|>' is not marked as EOG
+load: control token: 128120 '<|reserved_special_token_112|>' is not marked as EOG
+load: control token: 128119 '<|reserved_special_token_111|>' is not marked as EOG
+load: control token: 128116 '<|reserved_special_token_108|>' is not marked as EOG
+load: control token: 128115 '<|reserved_special_token_107|>' is not marked as EOG
+load: control token: 128114 '<|reserved_special_token_106|>' is not marked as EOG
+load: control token: 128113 '<|reserved_special_token_105|>' is not marked as EOG
+load: control token: 128111 '<|reserved_special_token_103|>' is not marked as EOG
+load: control token: 128110 '<|reserved_special_token_102|>' is not marked as EOG
+load: control token: 128107 '<|reserved_special_token_99|>' is not marked as EOG
+load: control token: 128106 '<|reserved_special_token_98|>' is not marked as EOG
+load: control token: 128105 '<|reserved_special_token_97|>' is not marked as EOG
+load: control token: 128104 '<|reserved_special_token_96|>' is not marked as EOG
+load: control token: 128103 '<|reserved_special_token_95|>' is not marked as EOG
+load: control token: 128100 '<|reserved_special_token_92|>' is not marked as EOG
+load: control token: 128097 '<|reserved_special_token_89|>' is not marked as EOG
+load: control token: 128096 '<|reserved_special_token_88|>' is not marked as EOG
+load: control token: 128094 '<|reserved_special_token_86|>' is not marked as EOG
+load: control token: 128093 '<|reserved_special_token_85|>' is not marked as EOG
+load: control token: 128090 '<|reserved_special_token_82|>' is not marked as EOG
+load: control token: 128089 '<|reserved_special_token_81|>' is not marked as EOG
+load: control token: 128087 '<|reserved_special_token_79|>' is not marked as EOG
+load: control token: 128085 '<|reserved_special_token_77|>' is not marked as EOG
+load: control token: 128080 '<|reserved_special_token_72|>' is not marked as EOG
+load: control token: 128077 '<|reserved_special_token_69|>' is not marked as EOG
+load: control token: 128076 '<|reserved_special_token_68|>' is not marked as EOG
+load: control token: 128073 '<|reserved_special_token_65|>' is not marked as EOG
+load: control token: 128070 '<|reserved_special_token_62|>' is not marked as EOG
+load: control token: 128069 '<|reserved_special_token_61|>' is not marked as EOG
+load: control token: 128067 '<|reserved_special_token_59|>' is not marked as EOG
+load: control token: 128064 '<|reserved_special_token_56|>' is not marked as EOG
+load: control token: 128062 '<|reserved_special_token_54|>' is not marked as EOG
+load: control token: 128061 '<|reserved_special_token_53|>' is not marked as EOG
+load: control token: 128060 '<|reserved_special_token_52|>' is not marked as EOG
+load: control token: 128054 '<|reserved_special_token_46|>' is not marked as EOG
+load: control token: 128045 '<|reserved_special_token_37|>' is not marked as EOG
+load: control token: 128044 '<|reserved_special_token_36|>' is not marked as EOG
+load: control token: 128043 '<|reserved_special_token_35|>' is not marked as EOG
+load: control token: 128042 '<|reserved_special_token_34|>' is not marked as EOG
+load: control token: 128038 '<|reserved_special_token_30|>' is not marked as EOG
+load: control token: 128037 '<|reserved_special_token_29|>' is not marked as EOG
+load: control token: 128035 '<|reserved_special_token_27|>' is not marked as EOG
+load: control token: 128034 '<|reserved_special_token_26|>' is not marked as EOG
+load: control token: 128033 '<|reserved_special_token_25|>' is not marked as EOG
+load: control token: 128032 '<|reserved_special_token_24|>' is not marked as EOG
+load: control token: 128030 '<|reserved_special_token_22|>' is not marked as EOG
+load: control token: 128029 '<|reserved_special_token_21|>' is not marked as EOG
+load: control token: 128028 '<|reserved_special_token_20|>' is not marked as EOG
+load: control token: 128026 '<|reserved_special_token_18|>' is not marked as EOG
+load: control token: 128025 '<|reserved_special_token_17|>' is not marked as EOG
+load: control token: 128024 '<|reserved_special_token_16|>' is not marked as EOG
+load: control token: 128022 '<|reserved_special_token_14|>' is not marked as EOG
+load: control token: 128020 '<|reserved_special_token_12|>' is not marked as EOG
+load: control token: 128017 '<|reserved_special_token_9|>' is not marked as EOG
+load: control token: 128016 '<|reserved_special_token_8|>' is not marked as EOG
+load: control token: 128015 '<|reserved_special_token_7|>' is not marked as EOG
+load: control token: 128014 '<|reserved_special_token_6|>' is not marked as EOG
+load: control token: 128013 '<|reserved_special_token_5|>' is not marked as EOG
+load: control token: 128011 '<|reserved_special_token_3|>' is not marked as EOG
+load: control token: 128010 '<|python_tag|>' is not marked as EOG
+load: control token: 128006 '<|start_header_id|>' is not marked as EOG
+load: control token: 128003 '<|reserved_special_token_1|>' is not marked as EOG
+load: control token: 128002 '<|reserved_special_token_0|>' is not marked as EOG
+load: control token: 128000 '<|begin_of_text|>' is not marked as EOG
+load: control token: 128041 '<|reserved_special_token_33|>' is not marked as EOG
+load: control token: 128063 '<|reserved_special_token_55|>' is not marked as EOG
+load: control token: 128046 '<|reserved_special_token_38|>' is not marked as EOG
+load: control token: 128007 '<|end_header_id|>' is not marked as EOG
+load: control token: 128065 '<|reserved_special_token_57|>' is not marked as EOG
+load: control token: 128171 '<|reserved_special_token_163|>' is not marked as EOG
+load: control token: 128162 '<|reserved_special_token_154|>' is not marked as EOG
+load: control token: 128165 '<|reserved_special_token_157|>' is not marked as EOG
+load: control token: 128057 '<|reserved_special_token_49|>' is not marked as EOG
+load: control token: 128050 '<|reserved_special_token_42|>' is not marked as EOG
+load: control token: 128056 '<|reserved_special_token_48|>' is not marked as EOG
+load: control token: 128230 '<|reserved_special_token_222|>' is not marked as EOG
+load: control token: 128098 '<|reserved_special_token_90|>' is not marked as EOG
+load: control token: 128153 '<|reserved_special_token_145|>' is not marked as EOG
+load: control token: 128084 '<|reserved_special_token_76|>' is not marked as EOG
+load: control token: 128082 '<|reserved_special_token_74|>' is not marked as EOG
+load: control token: 128102 '<|reserved_special_token_94|>' is not marked as EOG
+load: control token: 128253 '<|reserved_special_token_245|>' is not marked as EOG
+load: control token: 128179 '<|reserved_special_token_171|>' is not marked as EOG
+load: control token: 128071 '<|reserved_special_token_63|>' is not marked as EOG
+load: control token: 128135 '<|reserved_special_token_127|>' is not marked as EOG
+load: control token: 128161 '<|reserved_special_token_153|>' is not marked as EOG
+load: control token: 128164 '<|reserved_special_token_156|>' is not marked as EOG
+load: control token: 128134 '<|reserved_special_token_126|>' is not marked as EOG
+load: control token: 128249 '<|reserved_special_token_241|>' is not marked as EOG
+load: control token: 128004 '<|finetune_right_pad_id|>' is not marked as EOG
+load: control token: 128036 '<|reserved_special_token_28|>' is not marked as EOG
+load: control token: 128148 '<|reserved_special_token_140|>' is not marked as EOG
+load: control token: 128181 '<|reserved_special_token_173|>' is not marked as EOG
+load: control token: 128222 '<|reserved_special_token_214|>' is not marked as EOG
+load: control token: 128075 '<|reserved_special_token_67|>' is not marked as EOG
+load: control token: 128241 '<|reserved_special_token_233|>' is not marked as EOG
+load: control token: 128051 '<|reserved_special_token_43|>' is not marked as EOG
+load: control token: 128068 '<|reserved_special_token_60|>' is not marked as EOG
+load: control token: 128149 '<|reserved_special_token_141|>' is not marked as EOG
+load: control token: 128201 '<|reserved_special_token_193|>' is not marked as EOG
+load: control token: 128058 '<|reserved_special_token_50|>' is not marked as EOG
+load: control token: 128146 '<|reserved_special_token_138|>' is not marked as EOG
+load: control token: 128143 '<|reserved_special_token_135|>' is not marked as EOG
+load: control token: 128023 '<|reserved_special_token_15|>' is not marked as EOG
+load: control token: 128039 '<|reserved_special_token_31|>' is not marked as EOG
+load: control token: 128132 '<|reserved_special_token_124|>' is not marked as EOG
+load: control token: 128101 '<|reserved_special_token_93|>' is not marked as EOG
+load: control token: 128212 '<|reserved_special_token_204|>' is not marked as EOG
+load: control token: 128189 '<|reserved_special_token_181|>' is not marked as EOG
+load: control token: 128225 '<|reserved_special_token_217|>' is not marked as EOG
+load: control token: 128129 '<|reserved_special_token_121|>' is not marked as EOG
+load: control token: 128005 '<|reserved_special_token_2|>' is not marked as EOG
+load: control token: 128078 '<|reserved_special_token_70|>' is not marked as EOG
+load: control token: 128163 '<|reserved_special_token_155|>' is not marked as EOG
+load: control token: 128072 '<|reserved_special_token_64|>' is not marked as EOG
+load: control token: 128112 '<|reserved_special_token_104|>' is not marked as EOG
+load: control token: 128186 '<|reserved_special_token_178|>' is not marked as EOG
+load: control token: 128095 '<|reserved_special_token_87|>' is not marked as EOG
+load: control token: 128109 '<|reserved_special_token_101|>' is not marked as EOG
+load: control token: 128099 '<|reserved_special_token_91|>' is not marked as EOG
+load: control token: 128138 '<|reserved_special_token_130|>' is not marked as EOG
+load: control token: 128193 '<|reserved_special_token_185|>' is not marked as EOG
+load: control token: 128199 '<|reserved_special_token_191|>' is not marked as EOG
+load: control token: 128048 '<|reserved_special_token_40|>' is not marked as EOG
+load: control token: 128088 '<|reserved_special_token_80|>' is not marked as EOG
+load: control token: 128192 '<|reserved_special_token_184|>' is not marked as EOG
+load: control token: 128136 '<|reserved_special_token_128|>' is not marked as EOG
+load: control token: 128092 '<|reserved_special_token_84|>' is not marked as EOG
+load: control token: 128158 '<|reserved_special_token_150|>' is not marked as EOG
+load: control token: 128049 '<|reserved_special_token_41|>' is not marked as EOG
+load: control token: 128031 '<|reserved_special_token_23|>' is not marked as EOG
+load: control token: 128255 '<|reserved_special_token_247|>' is not marked as EOG
+load: control token: 128182 '<|reserved_special_token_174|>' is not marked as EOG
+load: control token: 128066 '<|reserved_special_token_58|>' is not marked as EOG
+load: control token: 128180 '<|reserved_special_token_172|>' is not marked as EOG
+load: control token: 128233 '<|reserved_special_token_225|>' is not marked as EOG
+load: control token: 128079 '<|reserved_special_token_71|>' is not marked as EOG
+load: control token: 128081 '<|reserved_special_token_73|>' is not marked as EOG
+load: control token: 128231 '<|reserved_special_token_223|>' is not marked as EOG
+load: control token: 128196 '<|reserved_special_token_188|>' is not marked as EOG
+load: control token: 128047 '<|reserved_special_token_39|>' is not marked as EOG
+load: control token: 128083 '<|reserved_special_token_75|>' is not marked as EOG
+load: control token: 128139 '<|reserved_special_token_131|>' is not marked as EOG
+load: control token: 128131 '<|reserved_special_token_123|>' is not marked as EOG
+load: control token: 128118 '<|reserved_special_token_110|>' is not marked as EOG
+load: control token: 128053 '<|reserved_special_token_45|>' is not marked as EOG
+load: control token: 128220 '<|reserved_special_token_212|>' is not marked as EOG
+load: control token: 128108 '<|reserved_special_token_100|>' is not marked as EOG
+load: control token: 128091 '<|reserved_special_token_83|>' is not marked as EOG
+load: control token: 128203 '<|reserved_special_token_195|>' is not marked as EOG
+load: control token: 128059 '<|reserved_special_token_51|>' is not marked as EOG
+load: control token: 128019 '<|reserved_special_token_11|>' is not marked as EOG
+load: control token: 128170 '<|reserved_special_token_162|>' is not marked as EOG
+load: control token: 128205 '<|reserved_special_token_197|>' is not marked as EOG
+load: control token: 128040 '<|reserved_special_token_32|>' is not marked as EOG
+load: control token: 128200 '<|reserved_special_token_192|>' is not marked as EOG
+load: control token: 128236 '<|reserved_special_token_228|>' is not marked as EOG
+load: control token: 128145 '<|reserved_special_token_137|>' is not marked as EOG
+load: control token: 128168 '<|reserved_special_token_160|>' is not marked as EOG
+load: control token: 128214 '<|reserved_special_token_206|>' is not marked as EOG
+load: control token: 128137 '<|reserved_special_token_129|>' is not marked as EOG
+load: control token: 128232 '<|reserved_special_token_224|>' is not marked as EOG
+load: control token: 128239 '<|reserved_special_token_231|>' is not marked as EOG
+load: control token: 128055 '<|reserved_special_token_47|>' is not marked as EOG
+load: control token: 128228 '<|reserved_special_token_220|>' is not marked as EOG
+load: control token: 128206 '<|reserved_special_token_198|>' is not marked as EOG
+load: control token: 128018 '<|reserved_special_token_10|>' is not marked as EOG
+load: control token: 128012 '<|reserved_special_token_4|>' is not marked as EOG
+load: control token: 128198 '<|reserved_special_token_190|>' is not marked as EOG
+load: control token: 128021 '<|reserved_special_token_13|>' is not marked as EOG
+load: control token: 128086 '<|reserved_special_token_78|>' is not marked as EOG
+load: control token: 128074 '<|reserved_special_token_66|>' is not marked as EOG
+load: control token: 128027 '<|reserved_special_token_19|>' is not marked as EOG
+load: control token: 128242 '<|reserved_special_token_234|>' is not marked as EOG
+load: control token: 128155 '<|reserved_special_token_147|>' is not marked as EOG
+load: control token: 128052 '<|reserved_special_token_44|>' is not marked as EOG
+load: control token: 128246 '<|reserved_special_token_238|>' is not marked as EOG
+load: control token: 128117 '<|reserved_special_token_109|>' is not marked as EOG
+load: control token: 128237 '<|reserved_special_token_229|>' is not marked as EOG
+load: printing all EOG tokens:
+load:   - 128001 ('<|end_of_text|>')
+load:   - 128008 ('<|eom_id|>')
+load:   - 128009 ('<|eot_id|>')
+load: special tokens cache size = 256
+load: token to piece cache size = 0.7999 MB
+print_info: arch             = llama
+print_info: vocab_only       = 0
+print_info: no_alloc         = 0
+print_info: n_ctx_train      = 131072
+print_info: n_embd           = 4096
+print_info: n_embd_inp       = 4096
+print_info: n_layer          = 32
+print_info: n_head           = 32
+print_info: n_head_kv        = 8
+print_info: n_rot            = 128
+print_info: n_swa            = 0
+print_info: is_swa_any       = 0
+print_info: n_embd_head_k    = 128
+print_info: n_embd_head_v    = 128
+print_info: n_gqa            = 4
+print_info: n_embd_k_gqa     = 1024
+print_info: n_embd_v_gqa     = 1024
+print_info: f_norm_eps       = 0.0e+00
+print_info: f_norm_rms_eps   = 1.0e-05
+print_info: f_clamp_kqv      = 0.0e+00
+print_info: f_max_alibi_bias = 0.0e+00
+print_info: f_logit_scale    = 0.0e+00
+print_info: f_attn_scale     = 0.0e+00
+print_info: n_ff             = 14336
+print_info: n_expert         = 0
+print_info: n_expert_used    = 0
+print_info: n_expert_groups  = 0
+print_info: n_group_used     = 0
+print_info: causal attn      = 1
+print_info: pooling type     = 0
+print_info: rope type        = 0
+print_info: rope scaling     = linear
+print_info: freq_base_train  = 500000.0
+print_info: freq_scale_train = 1
+print_info: n_ctx_orig_yarn  = 131072
+print_info: rope_yarn_log_mul= 0.0000
+print_info: rope_finetuned   = unknown
+print_info: model type       = 8B
+print_info: model params     = 8.03 B
+print_info: general.name     = Meta Llama 3.1 8B Instruct
+print_info: vocab type       = BPE
+print_info: n_vocab          = 128256
+print_info: n_merges         = 280147
+print_info: BOS token        = 128000 '<|begin_of_text|>'
+print_info: EOS token        = 128009 '<|eot_id|>'
+print_info: EOT token        = 128001 '<|end_of_text|>'
+print_info: EOM token        = 128008 '<|eom_id|>'
+print_info: LF token         = 198 'Ċ'
+print_info: EOG token        = 128001 '<|end_of_text|>'
+print_info: EOG token        = 128008 '<|eom_id|>'
+print_info: EOG token        = 128009 '<|eot_id|>'
+print_info: max token length = 256
+load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)
+load_tensors: layer   0 assigned to device Metal, is_swa = 0
+load_tensors: layer   1 assigned to device Metal, is_swa = 0
+load_tensors: layer   2 assigned to device Metal, is_swa = 0
+load_tensors: layer   3 assigned to device Metal, is_swa = 0
+load_tensors: layer   4 assigned to device Metal, is_swa = 0
+load_tensors: layer   5 assigned to device Metal, is_swa = 0
+load_tensors: layer   6 assigned to device Metal, is_swa = 0
+load_tensors: layer   7 assigned to device Metal, is_swa = 0
+load_tensors: layer   8 assigned to device Metal, is_swa = 0
+load_tensors: layer   9 assigned to device Metal, is_swa = 0
+load_tensors: layer  10 assigned to device Metal, is_swa = 0
+load_tensors: layer  11 assigned to device Metal, is_swa = 0
+load_tensors: layer  12 assigned to device Metal, is_swa = 0
+load_tensors: layer  13 assigned to device Metal, is_swa = 0
+load_tensors: layer  14 assigned to device Metal, is_swa = 0
+load_tensors: layer  15 assigned to device Metal, is_swa = 0
+load_tensors: layer  16 assigned to device Metal, is_swa = 0
+load_tensors: layer  17 assigned to device Metal, is_swa = 0
+load_tensors: layer  18 assigned to device Metal, is_swa = 0
+load_tensors: layer  19 assigned to device Metal, is_swa = 0
+load_tensors: layer  20 assigned to device Metal, is_swa = 0
+load_tensors: layer  21 assigned to device Metal, is_swa = 0
+load_tensors: layer  22 assigned to device Metal, is_swa = 0
+load_tensors: layer  23 assigned to device Metal, is_swa = 0
+load_tensors: layer  24 assigned to device Metal, is_swa = 0
+load_tensors: layer  25 assigned to device Metal, is_swa = 0
+load_tensors: layer  26 assigned to device Metal, is_swa = 0
+load_tensors: layer  27 assigned to device Metal, is_swa = 0
+load_tensors: layer  28 assigned to device Metal, is_swa = 0
+load_tensors: layer  29 assigned to device Metal, is_swa = 0
+load_tensors: layer  30 assigned to device Metal, is_swa = 0
+load_tensors: layer  31 assigned to device Metal, is_swa = 0
+load_tensors: layer  32 assigned to device Metal, is_swa = 0
+create_tensor: loading tensor token_embd.weight
+create_tensor: loading tensor output_norm.weight
+create_tensor: loading tensor output.weight
+create_tensor: loading tensor blk.0.attn_norm.weight
+create_tensor: loading tensor blk.0.attn_q.weight
+create_tensor: loading tensor blk.0.attn_k.weight
+create_tensor: loading tensor blk.0.attn_v.weight
+create_tensor: loading tensor blk.0.attn_output.weight
+create_tensor: loading tensor blk.0.ffn_norm.weight
+create_tensor: loading tensor rope_freqs.weight
+create_tensor: loading tensor blk.0.ffn_gate.weight
+create_tensor: loading tensor blk.0.ffn_down.weight
+create_tensor: loading tensor blk.0.ffn_up.weight
+create_tensor: loading tensor blk.1.attn_norm.weight
+create_tensor: loading tensor blk.1.attn_q.weight
+create_tensor: loading tensor blk.1.attn_k.weight
+create_tensor: loading tensor blk.1.attn_v.weight
+create_tensor: loading tensor blk.1.attn_output.weight
+create_tensor: loading tensor blk.1.ffn_norm.weight
+create_tensor: loading tensor blk.1.ffn_gate.weight
+create_tensor: loading tensor blk.1.ffn_down.weight
+create_tensor: loading tensor blk.1.ffn_up.weight
+create_tensor: loading tensor blk.2.attn_norm.weight
+create_tensor: loading tensor blk.2.attn_q.weight
+create_tensor: loading tensor blk.2.attn_k.weight
+create_tensor: loading tensor blk.2.attn_v.weight
+create_tensor: loading tensor blk.2.attn_output.weight
+create_tensor: loading tensor blk.2.ffn_norm.weight
+create_tensor: loading tensor blk.2.ffn_gate.weight
+create_tensor: loading tensor blk.2.ffn_down.weight
+create_tensor: loading tensor blk.2.ffn_up.weight
+create_tensor: loading tensor blk.3.attn_norm.weight
+create_tensor: loading tensor blk.3.attn_q.weight
+create_tensor: loading tensor blk.3.attn_k.weight
+create_tensor: loading tensor blk.3.attn_v.weight
+create_tensor: loading tensor blk.3.attn_output.weight
+create_tensor: loading tensor blk.3.ffn_norm.weight
+create_tensor: loading tensor blk.3.ffn_gate.weight
+create_tensor: loading tensor blk.3.ffn_down.weight
+create_tensor: loading tensor blk.3.ffn_up.weight
+create_tensor: loading tensor blk.4.attn_norm.weight
+create_tensor: loading tensor blk.4.attn_q.weight
+create_tensor: loading tensor blk.4.attn_k.weight
+create_tensor: loading tensor blk.4.attn_v.weight
+create_tensor: loading tensor blk.4.attn_output.weight
+create_tensor: loading tensor blk.4.ffn_norm.weight
+create_tensor: loading tensor blk.4.ffn_gate.weight
+create_tensor: loading tensor blk.4.ffn_down.weight
+create_tensor: loading tensor blk.4.ffn_up.weight
+create_tensor: loading tensor blk.5.attn_norm.weight
+create_tensor: loading tensor blk.5.attn_q.weight
+create_tensor: loading tensor blk.5.attn_k.weight
+create_tensor: loading tensor blk.5.attn_v.weight
+create_tensor: loading tensor blk.5.attn_output.weight
+create_tensor: loading tensor blk.5.ffn_norm.weight
+create_tensor: loading tensor blk.5.ffn_gate.weight
+create_tensor: loading tensor blk.5.ffn_down.weight
+create_tensor: loading tensor blk.5.ffn_up.weight
+create_tensor: loading tensor blk.6.attn_norm.weight
+create_tensor: loading tensor blk.6.attn_q.weight
+create_tensor: loading tensor blk.6.attn_k.weight
+create_tensor: loading tensor blk.6.attn_v.weight
+create_tensor: loading tensor blk.6.attn_output.weight
+create_tensor: loading tensor blk.6.ffn_norm.weight
+create_tensor: loading tensor blk.6.ffn_gate.weight
+create_tensor: loading tensor blk.6.ffn_down.weight
+create_tensor: loading tensor blk.6.ffn_up.weight
+create_tensor: loading tensor blk.7.attn_norm.weight
+create_tensor: loading tensor blk.7.attn_q.weight
+create_tensor: loading tensor blk.7.attn_k.weight
+create_tensor: loading tensor blk.7.attn_v.weight
+create_tensor: loading tensor blk.7.attn_output.weight
+create_tensor: loading tensor blk.7.ffn_norm.weight
+create_tensor: loading tensor blk.7.ffn_gate.weight
+create_tensor: loading tensor blk.7.ffn_down.weight
+create_tensor: loading tensor blk.7.ffn_up.weight
+create_tensor: loading tensor blk.8.attn_norm.weight
+create_tensor: loading tensor blk.8.attn_q.weight
+create_tensor: loading tensor blk.8.attn_k.weight
+create_tensor: loading tensor blk.8.attn_v.weight
+create_tensor: loading tensor blk.8.attn_output.weight
+create_tensor: loading tensor blk.8.ffn_norm.weight
+create_tensor: loading tensor blk.8.ffn_gate.weight
+create_tensor: loading tensor blk.8.ffn_down.weight
+create_tensor: loading tensor blk.8.ffn_up.weight
+create_tensor: loading tensor blk.9.attn_norm.weight
+create_tensor: loading tensor blk.9.attn_q.weight
+create_tensor: loading tensor blk.9.attn_k.weight
+create_tensor: loading tensor blk.9.attn_v.weight
+create_tensor: loading tensor blk.9.attn_output.weight
+create_tensor: loading tensor blk.9.ffn_norm.weight
+create_tensor: loading tensor blk.9.ffn_gate.weight
+create_tensor: loading tensor blk.9.ffn_down.weight
+create_tensor: loading tensor blk.9.ffn_up.weight
+create_tensor: loading tensor blk.10.attn_norm.weight
+create_tensor: loading tensor blk.10.attn_q.weight
+create_tensor: loading tensor blk.10.attn_k.weight
+create_tensor: loading tensor blk.10.attn_v.weight
+create_tensor: loading tensor blk.10.attn_output.weight
+create_tensor: loading tensor blk.10.ffn_norm.weight
+create_tensor: loading tensor blk.10.ffn_gate.weight
+create_tensor: loading tensor blk.10.ffn_down.weight
+create_tensor: loading tensor blk.10.ffn_up.weight
+create_tensor: loading tensor blk.11.attn_norm.weight
+create_tensor: loading tensor blk.11.attn_q.weight
+create_tensor: loading tensor blk.11.attn_k.weight
+create_tensor: loading tensor blk.11.attn_v.weight
+create_tensor: loading tensor blk.11.attn_output.weight
+create_tensor: loading tensor blk.11.ffn_norm.weight
+create_tensor: loading tensor blk.11.ffn_gate.weight
+create_tensor: loading tensor blk.11.ffn_down.weight
+create_tensor: loading tensor blk.11.ffn_up.weight
+create_tensor: loading tensor blk.12.attn_norm.weight
+create_tensor: loading tensor blk.12.attn_q.weight
+create_tensor: loading tensor blk.12.attn_k.weight
+create_tensor: loading tensor blk.12.attn_v.weight
+create_tensor: loading tensor blk.12.attn_output.weight
+create_tensor: loading tensor blk.12.ffn_norm.weight
+create_tensor: loading tensor blk.12.ffn_gate.weight
+create_tensor: loading tensor blk.12.ffn_down.weight
+create_tensor: loading tensor blk.12.ffn_up.weight
+create_tensor: loading tensor blk.13.attn_norm.weight
+create_tensor: loading tensor blk.13.attn_q.weight
+create_tensor: loading tensor blk.13.attn_k.weight
+create_tensor: loading tensor blk.13.attn_v.weight
+create_tensor: loading tensor blk.13.attn_output.weight
+create_tensor: loading tensor blk.13.ffn_norm.weight
+create_tensor: loading tensor blk.13.ffn_gate.weight
+create_tensor: loading tensor blk.13.ffn_down.weight
+create_tensor: loading tensor blk.13.ffn_up.weight
+create_tensor: loading tensor blk.14.attn_norm.weight
+create_tensor: loading tensor blk.14.attn_q.weight
+create_tensor: loading tensor blk.14.attn_k.weight
+create_tensor: loading tensor blk.14.attn_v.weight
+create_tensor: loading tensor blk.14.attn_output.weight
+create_tensor: loading tensor blk.14.ffn_norm.weight
+create_tensor: loading tensor blk.14.ffn_gate.weight
+create_tensor: loading tensor blk.14.ffn_down.weight
+create_tensor: loading tensor blk.14.ffn_up.weight
+create_tensor: loading tensor blk.15.attn_norm.weight
+create_tensor: loading tensor blk.15.attn_q.weight
+create_tensor: loading tensor blk.15.attn_k.weight
+create_tensor: loading tensor blk.15.attn_v.weight
+create_tensor: loading tensor blk.15.attn_output.weight
+create_tensor: loading tensor blk.15.ffn_norm.weight
+create_tensor: loading tensor blk.15.ffn_gate.weight
+create_tensor: loading tensor blk.15.ffn_down.weight
+create_tensor: loading tensor blk.15.ffn_up.weight
+create_tensor: loading tensor blk.16.attn_norm.weight
+create_tensor: loading tensor blk.16.attn_q.weight
+create_tensor: loading tensor blk.16.attn_k.weight
+create_tensor: loading tensor blk.16.attn_v.weight
+create_tensor: loading tensor blk.16.attn_output.weight
+create_tensor: loading tensor blk.16.ffn_norm.weight
+create_tensor: loading tensor blk.16.ffn_gate.weight
+create_tensor: loading tensor blk.16.ffn_down.weight
+create_tensor: loading tensor blk.16.ffn_up.weight
+create_tensor: loading tensor blk.17.attn_norm.weight
+create_tensor: loading tensor blk.17.attn_q.weight
+create_tensor: loading tensor blk.17.attn_k.weight
+create_tensor: loading tensor blk.17.attn_v.weight
+create_tensor: loading tensor blk.17.attn_output.weight
+create_tensor: loading tensor blk.17.ffn_norm.weight
+create_tensor: loading tensor blk.17.ffn_gate.weight
+create_tensor: loading tensor blk.17.ffn_down.weight
+create_tensor: loading tensor blk.17.ffn_up.weight
+create_tensor: loading tensor blk.18.attn_norm.weight
+create_tensor: loading tensor blk.18.attn_q.weight
+create_tensor: loading tensor blk.18.attn_k.weight
+create_tensor: loading tensor blk.18.attn_v.weight
+create_tensor: loading tensor blk.18.attn_output.weight
+create_tensor: loading tensor blk.18.ffn_norm.weight
+create_tensor: loading tensor blk.18.ffn_gate.weight
+create_tensor: loading tensor blk.18.ffn_down.weight
+create_tensor: loading tensor blk.18.ffn_up.weight
+create_tensor: loading tensor blk.19.attn_norm.weight
+create_tensor: loading tensor blk.19.attn_q.weight
+create_tensor: loading tensor blk.19.attn_k.weight
+create_tensor: loading tensor blk.19.attn_v.weight
+create_tensor: loading tensor blk.19.attn_output.weight
+create_tensor: loading tensor blk.19.ffn_norm.weight
+create_tensor: loading tensor blk.19.ffn_gate.weight
+create_tensor: loading tensor blk.19.ffn_down.weight
+create_tensor: loading tensor blk.19.ffn_up.weight
+create_tensor: loading tensor blk.20.attn_norm.weight
+create_tensor: loading tensor blk.20.attn_q.weight
+create_tensor: loading tensor blk.20.attn_k.weight
+create_tensor: loading tensor blk.20.attn_v.weight
+create_tensor: loading tensor blk.20.attn_output.weight
+create_tensor: loading tensor blk.20.ffn_norm.weight
+create_tensor: loading tensor blk.20.ffn_gate.weight
+create_tensor: loading tensor blk.20.ffn_down.weight
+create_tensor: loading tensor blk.20.ffn_up.weight
+create_tensor: loading tensor blk.21.attn_norm.weight
+create_tensor: loading tensor blk.21.attn_q.weight
+create_tensor: loading tensor blk.21.attn_k.weight
+create_tensor: loading tensor blk.21.attn_v.weight
+create_tensor: loading tensor blk.21.attn_output.weight
+create_tensor: loading tensor blk.21.ffn_norm.weight
+create_tensor: loading tensor blk.21.ffn_gate.weight
+create_tensor: loading tensor blk.21.ffn_down.weight
+create_tensor: loading tensor blk.21.ffn_up.weight
+create_tensor: loading tensor blk.22.attn_norm.weight
+create_tensor: loading tensor blk.22.attn_q.weight
+create_tensor: loading tensor blk.22.attn_k.weight
+create_tensor: loading tensor blk.22.attn_v.weight
+create_tensor: loading tensor blk.22.attn_output.weight
+create_tensor: loading tensor blk.22.ffn_norm.weight
+create_tensor: loading tensor blk.22.ffn_gate.weight
+create_tensor: loading tensor blk.22.ffn_down.weight
+create_tensor: loading tensor blk.22.ffn_up.weight
+create_tensor: loading tensor blk.23.attn_norm.weight
+create_tensor: loading tensor blk.23.attn_q.weight
+create_tensor: loading tensor blk.23.attn_k.weight
+create_tensor: loading tensor blk.23.attn_v.weight
+create_tensor: loading tensor blk.23.attn_output.weight
+create_tensor: loading tensor blk.23.ffn_norm.weight
+create_tensor: loading tensor blk.23.ffn_gate.weight
+create_tensor: loading tensor blk.23.ffn_down.weight
+create_tensor: loading tensor blk.23.ffn_up.weight
+create_tensor: loading tensor blk.24.attn_norm.weight
+create_tensor: loading tensor blk.24.attn_q.weight
+create_tensor: loading tensor blk.24.attn_k.weight
+create_tensor: loading tensor blk.24.attn_v.weight
+create_tensor: loading tensor blk.24.attn_output.weight
+create_tensor: loading tensor blk.24.ffn_norm.weight
+create_tensor: loading tensor blk.24.ffn_gate.weight
+create_tensor: loading tensor blk.24.ffn_down.weight
+create_tensor: loading tensor blk.24.ffn_up.weight
+create_tensor: loading tensor blk.25.attn_norm.weight
+create_tensor: loading tensor blk.25.attn_q.weight
+create_tensor: loading tensor blk.25.attn_k.weight
+create_tensor: loading tensor blk.25.attn_v.weight
+create_tensor: loading tensor blk.25.attn_output.weight
+create_tensor: loading tensor blk.25.ffn_norm.weight
+create_tensor: loading tensor blk.25.ffn_gate.weight
+create_tensor: loading tensor blk.25.ffn_down.weight
+create_tensor: loading tensor blk.25.ffn_up.weight
+create_tensor: loading tensor blk.26.attn_norm.weight
+create_tensor: loading tensor blk.26.attn_q.weight
+create_tensor: loading tensor blk.26.attn_k.weight
+create_tensor: loading tensor blk.26.attn_v.weight
+create_tensor: loading tensor blk.26.attn_output.weight
+create_tensor: loading tensor blk.26.ffn_norm.weight
+create_tensor: loading tensor blk.26.ffn_gate.weight
+create_tensor: loading tensor blk.26.ffn_down.weight
+create_tensor: loading tensor blk.26.ffn_up.weight
+create_tensor: loading tensor blk.27.attn_norm.weight
+create_tensor: loading tensor blk.27.attn_q.weight
+create_tensor: loading tensor blk.27.attn_k.weight
+create_tensor: loading tensor blk.27.attn_v.weight
+create_tensor: loading tensor blk.27.attn_output.weight
+create_tensor: loading tensor blk.27.ffn_norm.weight
+create_tensor: loading tensor blk.27.ffn_gate.weight
+create_tensor: loading tensor blk.27.ffn_down.weight
+create_tensor: loading tensor blk.27.ffn_up.weight
+create_tensor: loading tensor blk.28.attn_norm.weight
+create_tensor: loading tensor blk.28.attn_q.weight
+create_tensor: loading tensor blk.28.attn_k.weight
+create_tensor: loading tensor blk.28.attn_v.weight
+create_tensor: loading tensor blk.28.attn_output.weight
+create_tensor: loading tensor blk.28.ffn_norm.weight
+create_tensor: loading tensor blk.28.ffn_gate.weight
+create_tensor: loading tensor blk.28.ffn_down.weight
+create_tensor: loading tensor blk.28.ffn_up.weight
+create_tensor: loading tensor blk.29.attn_norm.weight
+create_tensor: loading tensor blk.29.attn_q.weight
+create_tensor: loading tensor blk.29.attn_k.weight
+create_tensor: loading tensor blk.29.attn_v.weight
+create_tensor: loading tensor blk.29.attn_output.weight
+create_tensor: loading tensor blk.29.ffn_norm.weight
+create_tensor: loading tensor blk.29.ffn_gate.weight
+create_tensor: loading tensor blk.29.ffn_down.weight
+create_tensor: loading tensor blk.29.ffn_up.weight
+create_tensor: loading tensor blk.30.attn_norm.weight
+create_tensor: loading tensor blk.30.attn_q.weight
+create_tensor: loading tensor blk.30.attn_k.weight
+create_tensor: loading tensor blk.30.attn_v.weight
+create_tensor: loading tensor blk.30.attn_output.weight
+create_tensor: loading tensor blk.30.ffn_norm.weight
+create_tensor: loading tensor blk.30.ffn_gate.weight
+create_tensor: loading tensor blk.30.ffn_down.weight
+create_tensor: loading tensor blk.30.ffn_up.weight
+create_tensor: loading tensor blk.31.attn_norm.weight
+create_tensor: loading tensor blk.31.attn_q.weight
+create_tensor: loading tensor blk.31.attn_k.weight
+create_tensor: loading tensor blk.31.attn_v.weight
+create_tensor: loading tensor blk.31.attn_output.weight
+create_tensor: loading tensor blk.31.ffn_norm.weight
+create_tensor: loading tensor blk.31.ffn_gate.weight
+create_tensor: loading tensor blk.31.ffn_down.weight
+create_tensor: loading tensor blk.31.ffn_up.weight
+load_tensors: tensor 'token_embd.weight' (q4_K) (and 0 others) cannot be used with preferred buffer type CPU_REPACK, using CPU instead
+ggml_metal_log_allocated_size: allocated buffer, size =  4685.33 MiB, ( 4685.78 / 73728.00)
+load_tensors: offloading output layer to GPU
+load_tensors: offloading 31 repeating layers to GPU
+load_tensors: offloaded 33/33 layers to GPU
+load_tensors:   CPU_Mapped model buffer size =   281.81 MiB
+load_tensors: Metal_Mapped model buffer size =  4685.30 MiB
+........................................................................................
+[2m2026-03-20T08:33:49.374965Z[0m [32m INFO[0m [2mclawmaster_providers::local_llm::backend::gguf[0m[2m:[0m loaded GGUF model [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/models/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf [3mmodel[0m[2m=[0mllama-3.1-8b-q4_k_m [3mcontext_size[0m[2m=[0m128000 [3mmodel_size_bytes[0m[2m=[0m4912898304
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_rms_norm_mul_f32_4', name = 'kernel_rms_norm_mul_f32_4'
+ggml_metal_library_compile_pipeline: loaded kernel_rms_norm_mul_f32_4                     0x30a61bb80 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mm_q4_K_f32', name = 'kernel_mul_mm_q4_K_f32_bci=0_bco=0'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mm_q4_K_f32_bci=0_bco=0            0x30a61f050 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mm_q6_K_f32', name = 'kernel_mul_mm_q6_K_f32_bci=0_bco=0'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mm_q6_K_f32_bci=0_bco=0            0x30a61f910 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_rope_norm_f32', name = 'kernel_rope_norm_f32_imrope=0'
+ggml_metal_library_compile_pipeline: loaded kernel_rope_norm_f32_imrope=0                 0x30a61dfb0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_set_rows_f16_i64', name = 'kernel_set_rows_f16_i64'
+ggml_metal_library_compile_pipeline: loaded kernel_set_rows_f16_i64                       0x30a620410 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_cpy_f32_f16', name = 'kernel_cpy_f32_f16'
+ggml_metal_library_compile_pipeline: loaded kernel_cpy_f32_f16                            0x30a61f500 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_flash_attn_ext_blk', name = 'kernel_flash_attn_ext_blk_nqptg=8_ncpsg=64'
+ggml_metal_library_compile_pipeline: loaded kernel_flash_attn_ext_blk_nqptg=8_ncpsg=64      0x30a621d20 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_flash_attn_ext_f16_dk128_dv128', name = 'kernel_flash_attn_ext_f16_dk128_dv128_mask=1_sinks=0_bias=0_scap=0_kvpad=0_bcm=0_ns10=1024_ns20=1024_nsg=4'
+ggml_metal_library_compile_pipeline: loaded kernel_flash_attn_ext_f16_dk128_dv128_mask=1_sinks=0_bias=0_scap=0_kvpad=0_bcm=0_ns10=1024_ns20=1024_nsg=4      0x30a621600 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_add_fuse_1', name = 'kernel_add_fuse_1'
+ggml_metal_library_compile_pipeline: loaded kernel_add_fuse_1                             0x30a6226e0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_swiglu_f32', name = 'kernel_swiglu_f32'
+ggml_metal_library_compile_pipeline: loaded kernel_swiglu_f32                             0x30a61ece0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_rms_norm_f32_4', name = 'kernel_rms_norm_f32_4'
+ggml_metal_library_compile_pipeline: loaded kernel_rms_norm_f32_4                         0x30a624440 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_row_c4_fuse_1', name = 'kernel_mul_row_c4_fuse_1'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_row_c4_fuse_1                      0x30a625c90 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mm_q4_K_f32', name = 'kernel_mul_mm_q4_K_f32_bci=0_bco=1'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mm_q4_K_f32_bci=0_bco=1            0x30c6e18f0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mm_q6_K_f32', name = 'kernel_mul_mm_q6_K_f32_bci=0_bco=1'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mm_q6_K_f32_bci=0_bco=1            0x30c6e21c0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_flash_attn_ext_f16_dk128_dv128', name = 'kernel_flash_attn_ext_f16_dk128_dv128_mask=1_sinks=0_bias=0_scap=0_kvpad=0_bcm=1_ns10=1024_ns20=1024_nsg=4'
+ggml_metal_library_compile_pipeline: loaded kernel_flash_attn_ext_f16_dk128_dv128_mask=1_sinks=0_bias=0_scap=0_kvpad=0_bcm=1_ns10=1024_ns20=1024_nsg=4      0x30c6a25c0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_get_rows_f32', name = 'kernel_get_rows_f32'
+ggml_metal_library_compile_pipeline: loaded kernel_get_rows_f32                           0x30c6e3380 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_add_row_c4_fuse_1', name = 'kernel_add_row_c4_fuse_1'
+ggml_metal_library_compile_pipeline: loaded kernel_add_row_c4_fuse_1                      0x30c6e3bc0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mv_q4_K_f32', name = 'kernel_mul_mv_q4_K_f32_nsg=2'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mv_q4_K_f32_nsg=2                  0x30c6e4ca0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_mul_mv_q6_K_f32', name = 'kernel_mul_mv_q6_K_f32_nsg=2'
+ggml_metal_library_compile_pipeline: loaded kernel_mul_mv_q6_K_f32_nsg=2                  0x30c6e5560 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_flash_attn_ext_vec_f16_dk128_dv128', name = 'kernel_flash_attn_ext_vec_f16_dk128_dv128_mask=1_sink=0_bias=0_scap=0_kvpad=0_ns10=1024_ns20=1024_nsg=4_nwg=32'
+ggml_metal_library_compile_pipeline: loaded kernel_flash_attn_ext_vec_f16_dk128_dv128_mask=1_sink=0_bias=0_scap=0_kvpad=0_ns10=1024_ns20=1024_nsg=4_nwg=32      0x16991d6b0 | th_max = 1024 | th_width =   32
+ggml_metal_library_compile_pipeline: compiling pipeline: base = 'kernel_flash_attn_ext_vec_reduce', name = 'kernel_flash_attn_ext_vec_reduce_dv=128_nwg=32'
+ggml_metal_library_compile_pipeline: loaded kernel_flash_attn_ext_vec_reduce_dv=128_nwg=32      0x169905fe0 | th_max = 1024 | th_width =   32
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:34:04.185623Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m11846 [3moutput_tokens[0m[2m=[0m5
+[2m2026-03-20T08:34:04.186078Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:34:04.186226Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"a2d0d157-22a6-4575-9967-cc57ce891412" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m结果是 579。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:34:04.186476Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:34:04.186501Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:34:04.186636Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0mde339b9e-4ac0-4a31-aa35-76cce7c54ec1 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:34:04.222155Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m3364d7fa-88c2-4cdc-a54f-5edd2310bba6 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:34:04.222310Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m3364d7fa-88c2-4cdc-a54f-5edd2310bba6 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:34:04.222704Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:34:04.222724Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:34:04.222746Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:34:04.225537Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:34:04.225590Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:34:04.238548Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m475d9c04-2434-441a-b93d-3ed1a56b0561 [3muser_message[0m[2m=[0m计算 2 的 10 次方 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:34:04.240874Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:34:04.240965Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:34:04.240981Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m287
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:34:19.472247Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m11869 [3moutput_tokens[0m[2m=[0m6
+[2m2026-03-20T08:34:19.472600Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:34:19.472721Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"475d9c04-2434-441a-b93d-3ed1a56b0561" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m结果是 1024。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:34:19.472744Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:34:19.472759Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:34:19.472935Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m3364d7fa-88c2-4cdc-a54f-5edd2310bba6 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:34:20.384368Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m217e2132-d063-4eca-b30a-f689de030936 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:34:20.384497Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m217e2132-d063-4eca-b30a-f689de030936 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:34:20.384889Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:34:20.384916Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:34:20.384944Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:34:20.387710Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:34:20.387767Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:34:20.399950Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m659cfe90-b23e-4268-831e-10955bf036c2 [3muser_message[0m[2m=[0m搜索最新科技新闻 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:34:20.402136Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:34:20.402226Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:34:20.402240Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m289
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:34:35.315213Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m11889 [3moutput_tokens[0m[2m=[0m18
+[2m2026-03-20T08:34:35.315585Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:34:35.315702Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"659cfe90-b23e-4268-831e-10955bf036c2" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令搜索最新的科技新闻：
+
+`news_search category="tech"` [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:34:35.315728Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:34:35.315740Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:34:35.315902Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m217e2132-d063-4eca-b30a-f689de030936 [3mduration_secs[0m[2m=[0m14
+[2m2026-03-20T08:34:35.502952Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m9e2794a0-e39e-450f-a267-094913a68ba1 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:34:35.503096Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m9e2794a0-e39e-450f-a267-094913a68ba1 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:34:35.503537Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:34:35.503576Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:34:35.503606Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:34:35.506635Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:34:35.506696Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:34:35.519331Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m7f9d88cc-aa92-4bd1-a501-c1d9d0164c5c [3muser_message[0m[2m=[0m记住：我喜欢 Rust [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:34:35.521433Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:34:35.521513Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:34:35.521526Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m291
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:34:51.173226Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m11923 [3moutput_tokens[0m[2m=[0m46
+[2m2026-03-20T08:34:51.173567Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:34:51.173712Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"7f9d88cc-aa92-4bd1-a501-c1d9d0164c5c" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m我会记住你喜欢 Rust。为了记住你的偏好，用 `memory_save` 令可以将信息保存到你的长期记忆中：
+
+`memory_save key="preferred_language" value="Rust"` [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:34:51.173744Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:34:51.173764Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:34:51.173988Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m9e2794a0-e39e-450f-a267-094913a68ba1 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:34:51.747636Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m77e9e6cd-c22f-43a9-9cb3-bb9273aae8f2 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:34:51.747755Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m77e9e6cd-c22f-43a9-9cb3-bb9273aae8f2 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:34:51.748188Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:34:51.748232Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:34:51.748262Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:34:51.752954Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:34:51.753033Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:34:51.766881Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0mb5d17011-b0bc-43f9-948a-86c712b66491 [3muser_message[0m[2m=[0m我喜欢什么编程语言 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:34:51.769012Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:34:51.769085Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:34:51.769098Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m293
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:35:06.777424Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m11985 [3moutput_tokens[0m[2m=[0m8
+[2m2026-03-20T08:35:06.777774Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:35:06.777896Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"b5d17011-b0bc-43f9-948a-86c712b66491" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你喜欢使用 Rust 编程语言。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:35:06.777920Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:35:06.777932Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:35:06.778092Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m77e9e6cd-c22f-43a9-9cb3-bb9273aae8f2 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:35:06.871175Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0medd821b0-c96d-497c-82b8-13d2a19b1b70 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:35:06.871287Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0medd821b0-c96d-497c-82b8-13d2a19b1b70 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:35:06.871671Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:35:06.871706Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:35:06.871744Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:35:06.874648Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:35:06.874705Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:35:06.887524Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m21c124cc-e85b-4416-8b50-909d6c980970 [3muser_message[0m[2m=[0m列出当前目录的文件 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:35:06.889831Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:35:06.889913Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:35:06.889929Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m295
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:35:22.515133Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m12009 [3moutput_tokens[0m[2m=[0m29
+[2m2026-03-20T08:35:22.515482Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:35:22.515603Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"21c124cc-e85b-4416-8b50-909d6c980970" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令列出当前目录的文件：
+
+`sandobox ls`
+
+这将列出当前目录中的文件和子目录。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:35:22.515627Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:35:22.515645Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:35:22.515805Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0medd821b0-c96d-497c-82b8-13d2a19b1b70 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:35:23.013179Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m739b60c6-b871-49e7-a53d-264778cae193 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:35:23.013283Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m739b60c6-b871-49e7-a53d-264778cae193 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:35:23.013657Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:35:23.013686Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:35:23.013716Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:35:23.017911Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:35:23.018004Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:35:23.031705Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m74685247-41a5-4f50-aa78-b2f23363f427 [3muser_message[0m[2m=[0m显示所有任务 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:35:23.034049Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:35:23.034135Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:35:23.034150Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m297
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:35:38.342940Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m12051 [3moutput_tokens[0m[2m=[0m22
+[2m2026-03-20T08:35:38.343302Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:35:38.343433Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"74685247-41a5-4f50-aa78-b2f23363f427" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令显示所有任务：
+
+`task_list`
+
+这将列出所有当前的任务。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:35:38.343461Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:35:38.343479Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:35:38.343590Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m739b60c6-b871-49e7-a53d-264778cae193 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:35:39.138554Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m485d0eff-c914-4d1b-8281-d65bb56f39f7 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:35:39.138697Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m485d0eff-c914-4d1b-8281-d65bb56f39f7 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:35:39.139153Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:35:39.139180Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:35:39.139220Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:35:39.143820Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:35:39.143904Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:35:39.156847Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m7e08346b-a3c9-462b-83f7-5ee022d1e03d [3muser_message[0m[2m=[0m显示所有会话 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:35:39.158939Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:35:39.159057Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:35:39.159107Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m299
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:35:54.446566Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m12087 [3moutput_tokens[0m[2m=[0m24
+[2m2026-03-20T08:35:54.446921Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:35:54.447038Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"7e08346b-a3c9-462b-83f7-5ee022d1e03d" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令显示所有会话：
+
+`sessions_list`
+
+这将列出所有当前的会话。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:35:54.447061Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:35:54.447073Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:35:54.447232Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m485d0eff-c914-4d1b-8281-d65bb56f39f7 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:35:55.275444Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0mab46dfc5-a110-4331-a867-5c6f54163007 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:35:55.275594Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0mab46dfc5-a110-4331-a867-5c6f54163007 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:35:55.276088Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:35:55.276138Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:35:55.276174Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:35:55.279184Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:35:55.279243Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:35:55.295010Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m2b641aa3-c083-4eda-9e58-a435be4fc43c [3muser_message[0m[2m=[0m搜索 Rust 教程 [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:35:55.297532Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:35:55.297597Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:35:55.297613Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m301
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:36:10.772110Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m12125 [3moutput_tokens[0m[2m=[0m35
+[2m2026-03-20T08:36:10.772456Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:36:10.772575Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"2b641aa3-c083-4eda-9e58-a435be4fc43c" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令搜索 Rust 教程：
+
+`memory_search query="Rust"`
+
+这将在记忆中搜索与 "Rust" 相关的信息。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:36:10.772600Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:36:10.772612Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:36:10.772763Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0mab46dfc5-a110-4331-a867-5c6f54163007 [3mduration_secs[0m[2m=[0m15
+[2m2026-03-20T08:36:11.409980Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: new connection [3mconn_id[0m[2m=[0m47618d45-cf1e-4c9f-b888-cea71b41b021 [3mremote_ip[0m[2m=[0m127.0.0.1
+[2m2026-03-20T08:36:11.410096Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: handshake complete [3mconn_id[0m[2m=[0m47618d45-cf1e-4c9f-b888-cea71b41b021 [3mclient_id[0m[2m=[0mclawmaster-cli [3mclient_version[0m[2m=[0m0.10.18 [3mrole[0m[2m=[0moperator
+[2m2026-03-20T08:36:11.410559Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m checking local model cache [3mprovider_name[0m[2m=[0m"local-llm" [3mmodel_to_check[0m[2m=[0m"llama-3.1-8b-q4_k_m"
+[2m2026-03-20T08:36:11.410622Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m checking if local model is cached [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mcache_dir[0m[2m=[0m"/Users/arksong/.clawmaster/models"
+[2m2026-03-20T08:36:11.410660Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_gateway::local_llm_setup[0m[2m:[0m found in unified registry [3mmodel_id[0m[2m=[0m"llama-3.1-8b-q4_k_m" [3mis_cached[0m[2m=[0mtrue
+[2m2026-03-20T08:36:11.414838Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/template-skill/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtemplate-skill
+[2m2026-03-20T08:36:11.414902Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_skills::discover[0m[2m:[0m loaded SKILL.md [3mpath[0m[2m=[0m/Users/arksong/.clawmaster/skills/tmux/SKILL.md [3msource[0m[2m=[0mPersonal [3mname[0m[2m=[0mtmux
+[2m2026-03-20T08:36:11.429382Z[0m [32m INFO[0m [1msend[0m[2m:[0m [2mclawmaster_chat[0m[2m:[0m chat.send [3mrun_id[0m[2m=[0m4b8f3fbd-4c52-4f29-8cc7-0b2296973a8d [3muser_message[0m[2m=[0m打开 https://www.rust-lang.org [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mstream_only[0m[2m=[0mfalse [3msession[0m[2m=[0mmain [3mreply_medium[0m[2m=[0mText [3mclient_seq[0m[2m=[0mNone
+[2m2026-03-20T08:36:11.431721Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m starting streaming agent loop [3mprovider[0m[2m=[0m"local-llm" [3mmodel[0m[2m=[0m"local-llm::llama-3.1-8b-q4_k_m" [3mnative_tools[0m[2m=[0mtrue [3mtools_count[0m[2m=[0m37 [3mis_multimodal[0m[2m=[0mfalse
+[2m2026-03-20T08:36:11.431845Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m schemas_for_api prepared for streaming [3mnative_tools[0m[2m=[0mtrue [3mschemas_for_api_count[0m[2m=[0m37 [3mtool_schemas_count[0m[2m=[0m37
+[2m2026-03-20T08:36:11.431858Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m calling LLM (streaming) [3miteration[0m[2m=[0m1 [3mmessages_count[0m[2m=[0m303
+llama_context: constructing llama_context
+llama_context: n_seq_max     = 1
+llama_context: n_ctx         = 128000
+llama_context: n_ctx_seq     = 128000
+llama_context: n_batch       = 512
+llama_context: n_ubatch      = 512
+llama_context: causal_attn   = 1
+llama_context: flash_attn    = auto
+llama_context: kv_unified    = false
+llama_context: freq_base     = 500000.0
+llama_context: freq_scale    = 1
+llama_context: n_ctx_seq (128000) < n_ctx_train (131072) -- the full capacity of the model will not be utilized
+ggml_metal_init: allocating
+ggml_metal_init: found device: Apple M3 Ultra
+ggml_metal_init: picking default device: Apple M3 Ultra
+ggml_metal_init: use fusion         = true
+ggml_metal_init: use concurrency    = true
+ggml_metal_init: use graph optimize = true
+set_abort_callback: call
+llama_context:        CPU  output buffer size =     0.49 MiB
+llama_kv_cache: layer   0: dev = Metal
+llama_kv_cache: layer   1: dev = Metal
+llama_kv_cache: layer   2: dev = Metal
+llama_kv_cache: layer   3: dev = Metal
+llama_kv_cache: layer   4: dev = Metal
+llama_kv_cache: layer   5: dev = Metal
+llama_kv_cache: layer   6: dev = Metal
+llama_kv_cache: layer   7: dev = Metal
+llama_kv_cache: layer   8: dev = Metal
+llama_kv_cache: layer   9: dev = Metal
+llama_kv_cache: layer  10: dev = Metal
+llama_kv_cache: layer  11: dev = Metal
+llama_kv_cache: layer  12: dev = Metal
+llama_kv_cache: layer  13: dev = Metal
+llama_kv_cache: layer  14: dev = Metal
+llama_kv_cache: layer  15: dev = Metal
+llama_kv_cache: layer  16: dev = Metal
+llama_kv_cache: layer  17: dev = Metal
+llama_kv_cache: layer  18: dev = Metal
+llama_kv_cache: layer  19: dev = Metal
+llama_kv_cache: layer  20: dev = Metal
+llama_kv_cache: layer  21: dev = Metal
+llama_kv_cache: layer  22: dev = Metal
+llama_kv_cache: layer  23: dev = Metal
+llama_kv_cache: layer  24: dev = Metal
+llama_kv_cache: layer  25: dev = Metal
+llama_kv_cache: layer  26: dev = Metal
+llama_kv_cache: layer  27: dev = Metal
+llama_kv_cache: layer  28: dev = Metal
+llama_kv_cache: layer  29: dev = Metal
+llama_kv_cache: layer  30: dev = Metal
+llama_kv_cache: layer  31: dev = Metal
+llama_kv_cache:      Metal KV buffer size = 16000.00 MiB
+llama_kv_cache: size = 16000.00 MiB (128000 cells,  32 layers,  1/1 seqs), K (f16): 8000.00 MiB, V (f16): 8000.00 MiB
+llama_context: enumerating backends
+llama_context: backend_ptrs.size() = 2
+llama_context: max_nodes = 2336
+llama_context: reserving full memory module
+llama_context: worst-case: n_tokens = 512, n_seqs = 1, n_outputs = 1
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+llama_context: Flash Attention was auto, set to enabled
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+graph_reserve: reserving a graph for ubatch with n_tokens =    1, n_seqs =  1, n_outputs =    1
+graph_reserve: reserving a graph for ubatch with n_tokens =  512, n_seqs =  1, n_outputs =  512
+llama_context:      Metal compute buffer size =   391.01 MiB
+llama_context:        CPU compute buffer size =   258.01 MiB
+llama_context: graph nodes  = 999
+llama_context: graph splits = 2
+check_double_bos_eos: Added a BOS token to the prompt as specified by the model but the prompt also starts with a BOS token. So now the final prompt starts with 2 BOS tokens. Are you sure this is what you want?
+~llama_context:      Metal compute buffer size is 391.0117 MiB, matches expectation of 391.0117 MiB
+~llama_context:        CPU compute buffer size is 258.0137 MiB, matches expectation of 258.0137 MiB
+ggml_metal_free: deallocating
+[2m2026-03-20T08:36:27.131155Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming LLM response complete [3miteration[0m[2m=[0m1 [3mhas_text[0m[2m=[0mtrue [3mtool_calls_count[0m[2m=[0m0 [3minput_tokens[0m[2m=[0m12178 [3moutput_tokens[0m[2m=[0m41
+[2m2026-03-20T08:36:27.131273Z[0m [32m INFO[0m [2mclawmaster_agents::runner[0m[2m:[0m streaming agent loop complete — returning text [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0
+[2m2026-03-20T08:36:27.131394Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m agent run complete [3mrun_id[0m[2m=[0m"4b8f3fbd-4c52-4f29-8cc7-0b2296973a8d" [3miterations[0m[2m=[0m1 [3mtool_calls[0m[2m=[0m0 [3mresponse[0m[2m=[0m你可以使用以下命令打开 https://www.rust-lang.org：
+
+`browser open https://www.rust-lang.org`
+
+这将在你的览器中打开 https://www.rust-lang.org。 [3msilent[0m[2m=[0mfalse
+[2m2026-03-20T08:36:27.131429Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push: checking push notification (agent mode)
+[2m2026-03-20T08:36:27.131452Z[0m [32m INFO[0m [2mclawmaster_chat[0m[2m:[0m push notification sent [3msent[0m[2m=[0m0
+[2m2026-03-20T08:36:27.131568Z[0m [32m INFO[0m [2mclawmaster_gateway::ws[0m[2m:[0m ws: connection closed [3mconn_id[0m[2m=[0m47618d45-cf1e-4c9f-b888-cea71b41b021 [3mduration_secs[0m[2m=[0m15

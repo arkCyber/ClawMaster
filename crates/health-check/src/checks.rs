@@ -2,11 +2,13 @@
 //!
 //! DO-178C Level A Compliant Health Checks
 
-use crate::{Criticality, HealthCheck, HealthStatus, ResourceMetrics};
-use async_trait::async_trait;
-use chrono::Utc;
-use std::sync::Arc;
-use sysinfo::{System, Disks};
+use {
+    crate::{Criticality, HealthCheck, HealthStatus, ResourceMetrics},
+    async_trait::async_trait,
+    chrono::Utc,
+    std::sync::Arc,
+    sysinfo::{Disks, System},
+};
 
 /// Database health check
 ///
@@ -33,7 +35,7 @@ impl HealthCheck for DatabaseHealthCheck {
                 // Check connection pool stats
                 let size = self.pool.size();
                 let idle = self.pool.num_idle();
-                
+
                 if idle == 0 && size > 0 {
                     HealthStatus::Degraded {
                         reason: "No idle database connections".to_string(),
@@ -41,7 +43,7 @@ impl HealthCheck for DatabaseHealthCheck {
                 } else {
                     HealthStatus::Healthy
                 }
-            }
+            },
             Err(e) => HealthStatus::Unhealthy {
                 reason: format!("Database query failed: {}", e),
             },
@@ -258,14 +260,17 @@ impl HealthCheck for DiskHealthCheck {
 
     fn metadata(&self) -> Option<serde_json::Value> {
         let disks = Disks::new_with_refreshed_list();
-        let disk_list: Vec<_> = disks.iter().map(|disk| {
-            serde_json::json!({
-                "name": disk.name().to_string_lossy(),
-                "mount_point": disk.mount_point().to_string_lossy(),
-                "total_bytes": disk.total_space(),
-                "available_bytes": disk.available_space(),
+        let disk_list: Vec<_> = disks
+            .iter()
+            .map(|disk| {
+                serde_json::json!({
+                    "name": disk.name().to_string_lossy(),
+                    "mount_point": disk.mount_point().to_string_lossy(),
+                    "total_bytes": disk.total_space(),
+                    "available_bytes": disk.available_space(),
+                })
             })
-        }).collect();
+            .collect();
 
         Some(serde_json::json!({ "disks": disk_list }))
     }
@@ -288,10 +293,10 @@ impl ResourceMonitor {
     /// Collect current resource metrics
     pub async fn collect(&self) -> ResourceMetrics {
         let mut sys = self.system.lock().await;
-        
+
         // Refresh all metrics
         sys.refresh_all();
-        
+
         // Wait for CPU measurement
         tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
         sys.refresh_cpu();
@@ -349,10 +354,10 @@ mod tests {
     async fn test_memory_health_check() {
         let check = MemoryHealthCheck::new();
         let status = check.check().await;
-        
+
         // Should return some status
         assert!(status.is_healthy() || status.is_degraded() || status.is_unhealthy());
-        
+
         // Should have metadata
         assert!(check.metadata().is_some());
     }
@@ -361,10 +366,10 @@ mod tests {
     async fn test_cpu_health_check() {
         let check = CpuHealthCheck::new();
         let status = check.check().await;
-        
+
         // Should return some status
         assert!(status.is_healthy() || status.is_degraded() || status.is_unhealthy());
-        
+
         // Should have metadata
         assert!(check.metadata().is_some());
     }
@@ -373,10 +378,10 @@ mod tests {
     async fn test_disk_health_check() {
         let check = DiskHealthCheck::new();
         let status = check.check().await;
-        
+
         // Should return some status
         assert!(status.is_healthy() || status.is_degraded() || status.is_unhealthy());
-        
+
         // Should have metadata
         assert!(check.metadata().is_some());
     }
@@ -385,7 +390,7 @@ mod tests {
     async fn test_resource_monitor() {
         let monitor = ResourceMonitor::new();
         let metrics = monitor.collect().await;
-        
+
         // Should have valid metrics
         assert!(metrics.memory_total_bytes > 0);
         assert!(metrics.disk_total_bytes > 0);

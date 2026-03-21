@@ -57,9 +57,9 @@ impl SearchFilesTool {
         };
 
         let mut results = Vec::new();
-        
-        for entry in glob(&search_pattern)
-            .with_context(|| format!("Invalid glob pattern: {}", pattern))?
+
+        for entry in
+            glob(&search_pattern).with_context(|| format!("Invalid glob pattern: {}", pattern))?
         {
             if results.len() >= self.config.max_results {
                 break;
@@ -79,10 +79,10 @@ impl SearchFilesTool {
                     } else {
                         results.push(path);
                     }
-                }
+                },
                 Err(e) => {
                     tracing::warn!("Glob error: {}", e);
-                }
+                },
             }
         }
 
@@ -128,13 +128,12 @@ impl AgentTool for SearchFilesTool {
             .and_then(Value::as_str)
             .ok_or_else(|| anyhow::anyhow!("Missing 'pattern' parameter"))?;
 
-        let base_path_str = params
-            .get("path")
-            .and_then(Value::as_str)
-            .unwrap_or(".");
+        let base_path_str = params.get("path").and_then(Value::as_str).unwrap_or(".");
 
         let base_path = if base_path_str == "." {
-            self.workspace_root.clone().unwrap_or_else(|| PathBuf::from("."))
+            self.workspace_root
+                .clone()
+                .unwrap_or_else(|| PathBuf::from("."))
         } else {
             PathBuf::from(base_path_str)
         };
@@ -162,9 +161,7 @@ impl AgentTool for SearchFilesTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::fs;
-    use tempfile::TempDir;
+    use {super::*, std::fs, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_search_by_extension() {
@@ -176,10 +173,7 @@ mod tests {
         let tool = SearchFilesTool::new(SearchFilesConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"pattern": "*.rs"}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"pattern": "*.rs"})).await.unwrap();
 
         assert_eq!(result["count"], 2);
     }
@@ -193,10 +187,7 @@ mod tests {
         let tool = SearchFilesTool::new(SearchFilesConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"pattern": "**/*.rs"}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"pattern": "**/*.rs"})).await.unwrap();
 
         assert!(result["count"].as_u64().unwrap() >= 1);
     }
@@ -207,11 +198,14 @@ mod tests {
         let tool = SearchFilesTool::new(SearchFilesConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"pattern": "/etc/passwd"}))
-            .await;
+        let result = tool.execute(json!({"pattern": "/etc/passwd"})).await;
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("Absolute patterns not allowed"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Absolute patterns not allowed")
+        );
     }
 }

@@ -1,0 +1,5 @@
+=== Test: sessions_create - 创建会话 ===
+Input: Create a new session named 'test'
+Time: Fri Mar 20 06:32:45 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

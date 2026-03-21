@@ -1,7 +1,9 @@
 //! Wizard state management
 
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use {
+    serde::{Deserialize, Serialize},
+    std::collections::HashMap,
+};
 
 /// Wizard state machine
 #[derive(Debug, Clone, PartialEq)]
@@ -69,11 +71,7 @@ impl ConfigTemplate {
             Self::Development => vec![Provider::OpenAI, Provider::Ollama],
             Self::Production => vec![Provider::OpenAI, Provider::Anthropic],
             Self::Minimal => vec![Provider::Ollama],
-            Self::Enterprise => vec![
-                Provider::OpenAI,
-                Provider::Anthropic,
-                Provider::OpenRouter,
-            ],
+            Self::Enterprise => vec![Provider::OpenAI, Provider::Anthropic, Provider::OpenRouter],
         }
     }
 

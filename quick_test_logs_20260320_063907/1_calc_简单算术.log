@@ -1,0 +1,31 @@
+=== Test: calc_简单算术 ===
+Input: 计算 123 + 456
+Time: Fri Mar 20 06:39:07 CST 2026
+
+   Compiling clawmaster-skills v0.10.18 (/Users/arksong/ClawMaster/crates/skills)
+   Compiling clawmaster-agents v0.10.18 (/Users/arksong/ClawMaster/crates/agents)
+   Compiling clawmaster-providers v0.10.18 (/Users/arksong/ClawMaster/crates/providers)
+   Compiling clawmaster-cron v0.10.18 (/Users/arksong/ClawMaster/crates/cron)
+   Compiling clawmaster-tools v0.10.18 (/Users/arksong/ClawMaster/crates/tools)
+error[E0560]: struct `PatchHunk` has no field named `old_count`
+   --> crates/tools/src/apply_patch.rs:118:21
+    |
+118 |                     old_count,
+    |                     ^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+118 |                     _old_count,
+    |                     +
+
+error[E0560]: struct `PatchHunk` has no field named `new_start`
+   --> crates/tools/src/apply_patch.rs:119:21
+    |
+119 |                     new_start,
+    |                     ^^^^^^^^^ unknown field
+    |
+help: a field with a similar name exists
+    |
+119 |                     _new_start,
+    |                     +
+

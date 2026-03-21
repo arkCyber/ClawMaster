@@ -14,12 +14,9 @@ pub mod checks;
 pub mod models;
 pub mod service;
 
-pub use checks::*;
-pub use models::*;
-pub use service::*;
+pub use {checks::*, models::*, service::*};
 
-use anyhow::Result;
-use async_trait::async_trait;
+use {anyhow::Result, async_trait::async_trait};
 
 /// Health check trait for components
 ///
@@ -59,12 +56,20 @@ mod tests {
     #[test]
     fn test_health_status_ordering() {
         // Unhealthy is worse than Degraded
-        assert!(HealthStatus::Unhealthy { reason: "test".to_string() } 
-            < HealthStatus::Degraded { reason: "test".to_string() });
-        
+        assert!(
+            HealthStatus::Unhealthy {
+                reason: "test".to_string()
+            } < HealthStatus::Degraded {
+                reason: "test".to_string()
+            }
+        );
+
         // Degraded is worse than Healthy
-        assert!(HealthStatus::Degraded { reason: "test".to_string() } 
-            < HealthStatus::Healthy);
+        assert!(
+            HealthStatus::Degraded {
+                reason: "test".to_string()
+            } < HealthStatus::Healthy
+        );
     }
 
     #[test]

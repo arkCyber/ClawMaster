@@ -2,25 +2,27 @@
 //!
 //! DO-178C Level A Compliant Verification System
 
-use crate::{BackupError, BackupMetadata, BackupResult};
-use sha2::{Digest, Sha256};
-use std::io::Read;
+use {
+    crate::{BackupError, BackupMetadata, BackupResult},
+    sha2::{Digest, Sha256},
+    std::io::Read,
+};
 
 /// Verification result
 #[derive(Debug, Clone)]
 pub struct VerificationResult {
     /// Whether verification passed
     pub passed: bool,
-    
+
     /// Checksum matches
     pub checksum_valid: bool,
-    
+
     /// File exists
     pub file_exists: bool,
-    
+
     /// Size matches
     pub size_matches: bool,
-    
+
     /// Error message if failed
     pub error: Option<String>,
 }
@@ -63,7 +65,7 @@ impl BackupVerifier {
                 result.passed = false;
                 result.error = Some(format!("Failed to read backup: {}", e));
                 return Ok(result);
-            }
+            },
         };
 
         // Verify size
@@ -85,7 +87,7 @@ impl BackupVerifier {
                 result.passed = false;
                 result.error = Some(format!("Decompression failed: {}", e));
                 return Ok(result);
-            }
+            },
         };
 
         let actual_checksum = self.calculate_checksum(&decompressed);
@@ -145,9 +147,7 @@ impl Default for BackupVerifier {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::BackupManager;
-    use tempfile::TempDir;
+    use {super::*, crate::BackupManager, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_verify_valid_backup() {

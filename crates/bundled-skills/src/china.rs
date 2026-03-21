@@ -1,10 +1,9 @@
 //! China-specific Skills
-//! 
+//!
 //! This module provides Skills for popular Chinese services and platforms.
 //! 中国大陆服务专用 Skills
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all China-specific skills (15 skills)
 pub fn china_skills() -> Vec<SkillContent> {
@@ -15,18 +14,15 @@ pub fn china_skills() -> Vec<SkillContent> {
         dingtalk_skill(),
         feishu_skill(),
         qq_skill(),
-        
         // Payment & Finance (3)
         alipay_skill(),
         wechat_pay_skill(),
         unionpay_skill(),
-        
         // Media & Entertainment (4)
         douyin_skill(),
         bilibili_skill(),
         weibo_skill(),
         netease_music_skill(),
-        
         // E-commerce & Delivery (3)
         taobao_skill(),
         jd_skill(),
@@ -669,23 +665,23 @@ mod tests {
     #[test]
     fn test_all_china_skills_have_metadata() {
         let skills = china_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_china_skill_names() {
         let skills = china_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"wechat"));
         assert!(names.contains(&"alipay"));
         assert!(names.contains(&"douyin"));

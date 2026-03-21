@@ -1,9 +1,10 @@
 //! Plugin registry for managing installed plugins
 
-use crate::plugin::PluginMetadata;
-use std::collections::HashMap;
-use std::path::PathBuf;
-use anyhow::Result;
+use {
+    crate::plugin::PluginMetadata,
+    anyhow::Result,
+    std::{collections::HashMap, path::PathBuf},
+};
 
 /// Plugin registry
 pub struct PluginRegistry {
@@ -35,10 +36,8 @@ impl PluginRegistry {
             anyhow::bail!("plugin already registered: {}", plugin_id);
         }
 
-        self.plugins.insert(
-            plugin_id.clone(),
-            PluginEntry { metadata, path },
-        );
+        self.plugins
+            .insert(plugin_id.clone(), PluginEntry { metadata, path });
 
         tracing::info!(plugin_id = %plugin_id, "plugin registered");
         Ok(())
@@ -110,12 +109,16 @@ impl PluginRegistry {
     /// Search plugins by name or description
     pub fn search(&self, query: &str) -> Vec<PluginMetadata> {
         let query_lower = query.to_lowercase();
-        
+
         self.plugins
             .values()
             .filter(|entry| {
                 entry.metadata.name.to_lowercase().contains(&query_lower)
-                    || entry.metadata.description.to_lowercase().contains(&query_lower)
+                    || entry
+                        .metadata
+                        .description
+                        .to_lowercase()
+                        .contains(&query_lower)
             })
             .map(|entry| entry.metadata.clone())
             .collect()
@@ -124,8 +127,7 @@ impl PluginRegistry {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::plugin::Permission;
+    use {super::*, crate::plugin::Permission};
 
     fn create_test_metadata(id: &str) -> PluginMetadata {
         PluginMetadata {
@@ -189,15 +191,19 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let mut registry = PluginRegistry::new(tmp.path().to_path_buf());
 
-        registry.register(
-            create_test_metadata("plugin-a"),
-            tmp.path().join("plugin-a"),
-        ).unwrap();
+        registry
+            .register(
+                create_test_metadata("plugin-a"),
+                tmp.path().join("plugin-a"),
+            )
+            .unwrap();
 
-        registry.register(
-            create_test_metadata("plugin-b"),
-            tmp.path().join("plugin-b"),
-        ).unwrap();
+        registry
+            .register(
+                create_test_metadata("plugin-b"),
+                tmp.path().join("plugin-b"),
+            )
+            .unwrap();
 
         let list = registry.list();
         assert_eq!(list.len(), 2);
@@ -210,7 +216,9 @@ mod tests {
 
         let mut metadata = create_test_metadata("plugin-a");
         metadata.tags = vec!["tag1".to_string(), "tag2".to_string()];
-        registry.register(metadata, tmp.path().join("plugin-a")).unwrap();
+        registry
+            .register(metadata, tmp.path().join("plugin-a"))
+            .unwrap();
 
         let results = registry.find_by_tag("tag1");
         assert_eq!(results.len(), 1);
@@ -224,7 +232,9 @@ mod tests {
 
         let mut metadata = create_test_metadata("plugin-a");
         metadata.description = "A plugin for testing search functionality".to_string();
-        registry.register(metadata, tmp.path().join("plugin-a")).unwrap();
+        registry
+            .register(metadata, tmp.path().join("plugin-a"))
+            .unwrap();
 
         let results = registry.search("search");
         assert_eq!(results.len(), 1);

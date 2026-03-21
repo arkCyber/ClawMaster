@@ -104,12 +104,14 @@ impl WriteFileTool {
             return Ok(());
         }
 
-        let extension = file_path
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("");
+        let extension = file_path.extension().and_then(|e| e.to_str()).unwrap_or("");
 
-        if !self.config.allowed_extensions.iter().any(|ext| ext == extension) {
+        if !self
+            .config
+            .allowed_extensions
+            .iter()
+            .any(|ext| ext == extension)
+        {
             bail!(
                 "File extension '{}' not allowed. Allowed: {:?}",
                 extension,
@@ -126,7 +128,8 @@ impl WriteFileTool {
         }
 
         let backup_path = if let Some(ext) = file_path.extension().and_then(|e| e.to_str()) {
-            let mut new_name = file_path.file_stem()
+            let mut new_name = file_path
+                .file_stem()
                 .and_then(|s| s.to_str())
                 .unwrap_or("file")
                 .to_string();
@@ -153,8 +156,9 @@ impl WriteFileTool {
 
         if self.config.create_directories {
             if let Some(parent) = file_path.parent() {
-                fs::create_dir_all(parent)
-                    .with_context(|| format!("Failed to create directories: {}", parent.display()))?;
+                fs::create_dir_all(parent).with_context(|| {
+                    format!("Failed to create directories: {}", parent.display())
+                })?;
             }
         }
 
@@ -224,8 +228,7 @@ impl AgentTool for WriteFileTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_write_new_file() {
@@ -239,7 +242,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(result["size"], 5);
-        
+
         let content = fs::read_to_string(temp_dir.path().join("test.txt")).unwrap();
         assert_eq!(content, "Hello");
     }
@@ -276,7 +279,7 @@ mod tests {
             .unwrap();
 
         assert!(result["backup"].is_string());
-        
+
         let backup_path = temp_dir.path().join("test.txt.backup");
         assert!(backup_path.exists());
         let backup_content = fs::read_to_string(&backup_path).unwrap();
@@ -292,7 +295,7 @@ mod tests {
         let result = tool
             .execute(json!({"path": "../evil.txt", "content": "bad"}))
             .await;
-        
+
         assert!(result.is_err());
         assert!(result.unwrap_err().to_string().contains("Path traversal"));
     }
@@ -303,13 +306,12 @@ mod tests {
         let mut config = WriteFileConfig::default();
         config.max_file_size = 10;
 
-        let tool = WriteFileTool::new(config)
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool = WriteFileTool::new(config).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool
             .execute(json!({"path": "test.txt", "content": "This is too long"}))
             .await;
-        
+
         assert!(result.is_err());
         assert!(result.unwrap_err().to_string().contains("exceeds maximum"));
     }

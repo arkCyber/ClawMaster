@@ -1,23 +1,26 @@
 //! Initialize new project command
 
-use anyhow::Result;
-use colored::Colorize;
-use std::fs;
-use std::path::Path;
+use {
+    anyhow::Result,
+    colored::Colorize,
+    std::{fs, path::Path},
+};
 
-use crate::templates;
-use crate::utils;
+use crate::{templates, utils};
 
 pub async fn execute(name: &str, project_type: &str) -> Result<()> {
-    println!("{} Initializing new {} project: {}", 
-        "✨".bright_green(), 
+    println!(
+        "{} Initializing new {} project: {}",
+        "✨".bright_green(),
         project_type.bright_yellow(),
         name.bright_cyan()
     );
 
     // Validate project name
     if !utils::is_valid_name(name) {
-        anyhow::bail!("Invalid project name. Use only alphanumeric characters, hyphens, and underscores.");
+        anyhow::bail!(
+            "Invalid project name. Use only alphanumeric characters, hyphens, and underscores."
+        );
     }
 
     // Check if directory already exists
@@ -37,7 +40,10 @@ pub async fn execute(name: &str, project_type: &str) -> Result<()> {
         _ => anyhow::bail!("Unknown project type: {}", project_type),
     }
 
-    println!("\n{} Project initialized successfully!", "🎉".bright_green());
+    println!(
+        "\n{} Project initialized successfully!",
+        "🎉".bright_green()
+    );
     println!("\nNext steps:");
     println!("  cd {}", name.bright_cyan());
     println!("  clawmaster-dev serve");

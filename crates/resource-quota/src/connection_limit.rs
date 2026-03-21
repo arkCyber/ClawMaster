@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A Compliant Connection Limiting
 
-use crate::{QuotaError, QuotaResult};
-use parking_lot::RwLock;
-use std::sync::Arc;
+use {
+    crate::{QuotaError, QuotaResult},
+    parking_lot::RwLock,
+    std::sync::Arc,
+};
 
 /// Connection limit configuration
 #[derive(Debug, Clone)]
@@ -77,7 +79,9 @@ impl ConnectionLimiter {
 
     /// Get available connections
     pub fn get_available(&self) -> usize {
-        self.config.max_connections.saturating_sub(*self.current.read())
+        self.config
+            .max_connections
+            .saturating_sub(*self.current.read())
     }
 
     /// Get connection limit
@@ -115,9 +119,7 @@ mod tests {
 
     #[test]
     fn test_connection_limiter_acquire() {
-        let config = ConnectionLimitConfig {
-            max_connections: 5,
-        };
+        let config = ConnectionLimitConfig { max_connections: 5 };
         let limiter = ConnectionLimiter::new(config);
 
         let _guard1 = limiter.acquire().unwrap();
@@ -129,9 +131,7 @@ mod tests {
 
     #[test]
     fn test_connection_limiter_exceeds() {
-        let config = ConnectionLimitConfig {
-            max_connections: 2,
-        };
+        let config = ConnectionLimitConfig { max_connections: 2 };
         let limiter = ConnectionLimiter::new(config);
 
         let _guard1 = limiter.acquire().unwrap();
@@ -139,14 +139,15 @@ mod tests {
 
         let result = limiter.acquire();
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::ConnectionLimitExceeded { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::ConnectionLimitExceeded { .. }
+        ));
     }
 
     #[test]
     fn test_connection_limiter_release() {
-        let config = ConnectionLimitConfig {
-            max_connections: 2,
-        };
+        let config = ConnectionLimitConfig { max_connections: 2 };
         let limiter = ConnectionLimiter::new(config);
 
         {
@@ -159,9 +160,7 @@ mod tests {
 
     #[test]
     fn test_connection_limiter_reuse() {
-        let config = ConnectionLimitConfig {
-            max_connections: 1,
-        };
+        let config = ConnectionLimitConfig { max_connections: 1 };
         let limiter = ConnectionLimiter::new(config);
 
         {

@@ -9,8 +9,7 @@ mod wizard;
 #[cfg(test)]
 mod tests;
 
-pub use state::ConfigTemplate;
-pub use wizard::SetupWizard;
+pub use {state::ConfigTemplate, wizard::SetupWizard};
 
 use anyhow::Result;
 

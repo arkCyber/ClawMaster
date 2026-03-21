@@ -1,0 +1,5 @@
+=== Test: process - 停止进程 ===
+Input: Stop process with ID 1234
+Time: Fri Mar 20 06:32:31 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

@@ -1,12 +1,14 @@
 //! UI rendering for the setup wizard
 
-use crate::state::{Channel, Provider, WizardConfig, WizardState, ConfigTemplate};
-use ratatui::{
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
-    Frame,
+use {
+    crate::state::{Channel, ConfigTemplate, Provider, WizardConfig, WizardState},
+    ratatui::{
+        Frame,
+        layout::{Alignment, Constraint, Direction, Layout, Rect},
+        style::{Color, Modifier, Style},
+        text::{Line, Span},
+        widgets::{Block, Borders, List, ListItem, Paragraph},
+    },
 };
 
 pub struct WizardUI {
@@ -45,7 +47,11 @@ impl WizardUI {
 
     fn render_header(&self, frame: &mut Frame, area: Rect) {
         let title = Paragraph::new("🦾 ClawMaster Setup Wizard")
-            .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+            .style(
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            )
             .alignment(Alignment::Center)
             .block(Block::default().borders(Borders::ALL));
         frame.render_widget(title, area);
@@ -55,9 +61,13 @@ impl WizardUI {
         let help_text = match state {
             WizardState::Welcome => "Press Enter to continue, q to quit",
             WizardState::TemplateSelection => "↑/↓: Navigate, Enter: Select template, q: Quit",
-            WizardState::ProviderSelection => "↑/↓: Navigate, Space: Select, Enter: Continue, q: Quit",
+            WizardState::ProviderSelection => {
+                "↑/↓: Navigate, Space: Select, Enter: Continue, q: Quit"
+            },
             WizardState::ProviderConfig(_) => "Type API key, Enter: Save, Esc: Back",
-            WizardState::ChannelSelection => "↑/↓: Navigate, Space: Select, Enter: Continue, q: Quit",
+            WizardState::ChannelSelection => {
+                "↑/↓: Navigate, Space: Select, Enter: Continue, q: Quit"
+            },
             WizardState::ChannelConfig(_) => "Type token, Enter: Save, Esc: Back",
             WizardState::TestConnection => "Testing connection... Please wait",
             WizardState::Summary => "Enter: Save and start, Esc: Back, q: Quit",
@@ -84,11 +94,11 @@ impl WizardUI {
             WizardState::ProviderSelection => self.render_provider_selection(frame, area, config),
             WizardState::ProviderConfig(provider) => {
                 self.render_provider_config(frame, area, *provider)
-            }
+            },
             WizardState::ChannelSelection => self.render_channel_selection(frame, area, config),
             WizardState::ChannelConfig(channel) => {
                 self.render_channel_config(frame, area, *channel)
-            }
+            },
             WizardState::TestConnection => self.render_test_connection(frame, area),
             WizardState::Summary => self.render_summary(frame, area, config),
             WizardState::Complete => self.render_complete(frame, area),
@@ -102,9 +112,13 @@ impl WizardUI {
             .enumerate()
             .map(|(i, template)| {
                 let is_selected = i == self.selected_template_index;
-                
+
                 let line = Line::from(vec![
-                    Span::raw(if is_selected { "→ " } else { "  " }),
+                    Span::raw(if is_selected {
+                        "→ "
+                    } else {
+                        "  "
+                    }),
                     Span::styled(
                         template.name(),
                         if is_selected {
@@ -116,18 +130,19 @@ impl WizardUI {
                         },
                     ),
                     Span::raw(" - "),
-                    Span::styled(
-                        template.description(),
-                        Style::default().fg(Color::Gray),
-                    ),
+                    Span::styled(template.description(), Style::default().fg(Color::Gray)),
                 ]);
-                
+
                 ListItem::new(line)
             })
             .collect();
 
         let list = List::new(items)
-            .block(Block::default().borders(Borders::ALL).title("Select Configuration Template"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Select Configuration Template"),
+            )
             .highlight_style(Style::default().bg(Color::DarkGray));
 
         frame.render_widget(list, area);
@@ -163,12 +178,7 @@ impl WizardUI {
         frame.render_widget(paragraph, area);
     }
 
-    fn render_provider_selection(
-        &self,
-        frame: &mut Frame,
-        area: Rect,
-        config: &WizardConfig,
-    ) {
+    fn render_provider_selection(&self, frame: &mut Frame, area: Rect, config: &WizardConfig) {
         let providers = Provider::all();
         let items: Vec<ListItem> = providers
             .iter()
@@ -183,10 +193,18 @@ impl WizardUI {
                     "[ ]"
                 };
 
-                let status = if is_configured { " ✓" } else { "" };
+                let status = if is_configured {
+                    " ✓"
+                } else {
+                    ""
+                };
 
                 let line = Line::from(vec![
-                    Span::raw(if is_selected { "→ " } else { "  " }),
+                    Span::raw(if is_selected {
+                        "→ "
+                    } else {
+                        "  "
+                    }),
                     Span::raw(checkbox),
                     Span::raw(" "),
                     Span::styled(
@@ -240,13 +258,11 @@ impl WizardUI {
             )),
         ];
 
-        let paragraph = Paragraph::new(text)
-            .alignment(Alignment::Left)
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title("API Key Configuration"),
-            );
+        let paragraph = Paragraph::new(text).alignment(Alignment::Left).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("API Key Configuration"),
+        );
         frame.render_widget(paragraph, area);
     }
 
@@ -265,10 +281,18 @@ impl WizardUI {
                     "[ ]"
                 };
 
-                let status = if is_configured { " ✓" } else { "" };
+                let status = if is_configured {
+                    " ✓"
+                } else {
+                    ""
+                };
 
                 let line = Line::from(vec![
-                    Span::raw(if is_selected { "→ " } else { "  " }),
+                    Span::raw(if is_selected {
+                        "→ "
+                    } else {
+                        "  "
+                    }),
                     Span::raw(checkbox),
                     Span::raw(" "),
                     Span::styled(
@@ -317,13 +341,11 @@ impl WizardUI {
             )),
         ];
 
-        let paragraph = Paragraph::new(text)
-            .alignment(Alignment::Left)
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title("Channel Configuration"),
-            );
+        let paragraph = Paragraph::new(text).alignment(Alignment::Left).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Channel Configuration"),
+        );
         frame.render_widget(paragraph, area);
     }
 
@@ -358,7 +380,10 @@ impl WizardUI {
                     .add_modifier(Modifier::BOLD),
             )),
             Line::from(""),
-            Line::from(Span::styled("Providers:", Style::default().add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled(
+                "Providers:",
+                Style::default().add_modifier(Modifier::BOLD),
+            )),
         ];
 
         for provider in &config.selected_providers {

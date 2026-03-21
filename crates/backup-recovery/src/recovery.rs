@@ -2,10 +2,11 @@
 //!
 //! DO-178C Level A Compliant Recovery System
 
-use crate::{BackupError, BackupMetadata, BackupResult, BackupType};
-use flate2::read::GzDecoder;
-use std::io::Read;
-use std::path::Path;
+use {
+    crate::{BackupError, BackupMetadata, BackupResult, BackupType},
+    flate2::read::GzDecoder,
+    std::{io::Read, path::Path},
+};
 
 /// Recovery manager
 ///
@@ -21,11 +22,7 @@ impl RecoveryManager {
     /// Recover data from backup
     ///
     /// DO-178C §11.11: Data recovery
-    pub async fn recover(
-        &self,
-        metadata: &BackupMetadata,
-        target_path: &Path,
-    ) -> BackupResult<()> {
+    pub async fn recover(&self, metadata: &BackupMetadata, target_path: &Path) -> BackupResult<()> {
         // Read compressed backup
         let compressed_data = tokio::fs::read(&metadata.backup_path)
             .await
@@ -54,7 +51,9 @@ impl RecoveryManager {
         target_path: &Path,
     ) -> BackupResult<()> {
         if backups.is_empty() {
-            return Err(BackupError::InvalidBackup("No backups provided".to_string()));
+            return Err(BackupError::InvalidBackup(
+                "No backups provided".to_string(),
+            ));
         }
 
         // Find full backup
@@ -118,9 +117,7 @@ impl Default for RecoveryManager {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::BackupManager;
-    use tempfile::TempDir;
+    use {super::*, crate::BackupManager, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_recover_full_backup() {
@@ -135,11 +132,17 @@ mod tests {
         tokio::fs::write(&source_file, test_data).await.unwrap();
 
         // Create backup
-        let metadata = backup_manager.create_full_backup(&source_file).await.unwrap();
+        let metadata = backup_manager
+            .create_full_backup(&source_file)
+            .await
+            .unwrap();
 
         // Recover to new location
         let target_file = temp_dir.path().join("recovered.txt");
-        recovery_manager.recover(&metadata, &target_file).await.unwrap();
+        recovery_manager
+            .recover(&metadata, &target_file)
+            .await
+            .unwrap();
 
         // Verify recovered data
         let recovered_data = tokio::fs::read(&target_file).await.unwrap();
@@ -158,7 +161,10 @@ mod tests {
         tokio::fs::write(&source_file, b"Version 1").await.unwrap();
 
         // Create full backup
-        let full_metadata = backup_manager.create_full_backup(&source_file).await.unwrap();
+        let full_metadata = backup_manager
+            .create_full_backup(&source_file)
+            .await
+            .unwrap();
 
         // Update file and create incremental
         tokio::fs::write(&source_file, b"Version 2").await.unwrap();

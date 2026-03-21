@@ -16,8 +16,16 @@ use {
 /// Image analysis provider trait.
 #[async_trait]
 pub trait ImageAnalysisProvider: Send + Sync {
-    async fn analyze_image(&self, image_data: &[u8], prompt: Option<&str>) -> Result<ImageAnalysisResult>;
-    async fn analyze_image_url(&self, url: &str, prompt: Option<&str>) -> Result<ImageAnalysisResult>;
+    async fn analyze_image(
+        &self,
+        image_data: &[u8],
+        prompt: Option<&str>,
+    ) -> Result<ImageAnalysisResult>;
+    async fn analyze_image_url(
+        &self,
+        url: &str,
+        prompt: Option<&str>,
+    ) -> Result<ImageAnalysisResult>;
     fn supported_formats(&self) -> Vec<String>;
 }
 
@@ -128,7 +136,8 @@ impl AgentTool for ImageTool {
             bail!("Image tool is disabled");
         }
 
-        let action = params.get("action")
+        let action = params
+            .get("action")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'action' parameter"))?;
 
@@ -143,13 +152,18 @@ impl AgentTool for ImageTool {
 
                     let result = self.provider.analyze_image_url(url, prompt).await?;
                     Ok(serde_json::to_value(result)?)
-                } else if let Some(base64_str) = params.get("image_base64").and_then(|v| v.as_str()) {
-                    let image_data = general_purpose::STANDARD.decode(base64_str)
+                } else if let Some(base64_str) = params.get("image_base64").and_then(|v| v.as_str())
+                {
+                    let image_data = general_purpose::STANDARD
+                        .decode(base64_str)
                         .map_err(|e| anyhow::anyhow!("Invalid base64 data: {}", e))?;
 
                     if image_data.len() > self.config.max_image_size {
-                        bail!("Image size {} exceeds maximum {}", 
-                            image_data.len(), self.config.max_image_size);
+                        bail!(
+                            "Image size {} exceeds maximum {}",
+                            image_data.len(),
+                            self.config.max_image_size
+                        );
                     }
 
                     let result = self.provider.analyze_image(&image_data, prompt).await?;
@@ -157,14 +171,14 @@ impl AgentTool for ImageTool {
                 } else {
                     bail!("Either 'image_url' or 'image_base64' must be provided");
                 }
-            }
+            },
             "formats" => {
                 let formats = self.provider.supported_formats();
                 Ok(json!({
                     "formats": formats,
                     "count": formats.len()
                 }))
-            }
+            },
             _ => bail!("Invalid action: {}", action),
         }
     }
@@ -178,22 +192,28 @@ mod tests {
 
     #[async_trait]
     impl ImageAnalysisProvider for MockImageProvider {
-        async fn analyze_image(&self, _image_data: &[u8], prompt: Option<&str>) -> Result<ImageAnalysisResult> {
+        async fn analyze_image(
+            &self,
+            _image_data: &[u8],
+            prompt: Option<&str>,
+        ) -> Result<ImageAnalysisResult> {
             Ok(ImageAnalysisResult {
-                description: format!("Mock analysis{}", 
-                    prompt.map(|p| format!(" with prompt: {}", p)).unwrap_or_default()),
-                objects: vec![
-                    DetectedObject {
-                        label: "cat".to_string(),
-                        confidence: 0.95,
-                        bounding_box: Some(BoundingBox {
-                            x: 10.0,
-                            y: 20.0,
-                            width: 100.0,
-                            height: 150.0,
-                        }),
-                    },
-                ],
+                description: format!(
+                    "Mock analysis{}",
+                    prompt
+                        .map(|p| format!(" with prompt: {}", p))
+                        .unwrap_or_default()
+                ),
+                objects: vec![DetectedObject {
+                    label: "cat".to_string(),
+                    confidence: 0.95,
+                    bounding_box: Some(BoundingBox {
+                        x: 10.0,
+                        y: 20.0,
+                        width: 100.0,
+                        height: 150.0,
+                    }),
+                }],
                 text: Some("Hello World".to_string()),
                 metadata: ImageMetadata {
                     width: 800,
@@ -204,7 +224,11 @@ mod tests {
             })
         }
 
-        async fn analyze_image_url(&self, _url: &str, prompt: Option<&str>) -> Result<ImageAnalysisResult> {
+        async fn analyze_image_url(
+            &self,
+            _url: &str,
+            prompt: Option<&str>,
+        ) -> Result<ImageAnalysisResult> {
             self.analyze_image(&[], prompt).await
         }
 
@@ -228,7 +252,12 @@ mod tests {
         });
 
         let result = tool.execute(params).await.unwrap();
-        assert!(result["description"].as_str().unwrap().contains("Mock analysis"));
+        assert!(
+            result["description"]
+                .as_str()
+                .unwrap()
+                .contains("Mock analysis")
+        );
         assert_eq!(result["objects"][0]["label"], "cat");
     }
 
@@ -248,7 +277,12 @@ mod tests {
         });
 
         let result = tool.execute(params).await.unwrap();
-        assert!(result["description"].as_str().unwrap().contains("What animals"));
+        assert!(
+            result["description"]
+                .as_str()
+                .unwrap()
+                .contains("What animals")
+        );
     }
 
     #[tokio::test]
@@ -276,7 +310,12 @@ mod tests {
         let result = tool.execute(params).await.unwrap();
 
         assert_eq!(result["count"], 3);
-        assert!(result["formats"].as_array().unwrap().contains(&json!("JPEG")));
+        assert!(
+            result["formats"]
+                .as_array()
+                .unwrap()
+                .contains(&json!("JPEG"))
+        );
     }
 
     #[tokio::test]
@@ -310,6 +349,11 @@ mod tests {
 
         let result = tool.execute(params).await;
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("URL fetching is disabled"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("URL fetching is disabled")
+        );
     }
 }

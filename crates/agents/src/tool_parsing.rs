@@ -40,23 +40,59 @@ struct ParsedBlock {
 ///
 /// Tries parsers in priority order: fenced, XML function, bare JSON.
 pub fn parse_tool_calls_from_text(text: &str) -> (Vec<ToolCall>, Option<String>) {
+    tracing::debug!(
+        "Parsing tool calls from text (length: {} chars)",
+        text.len()
+    );
+
     let mut blocks: Vec<ParsedBlock> = Vec::new();
 
     // 1. Find all fenced ```tool_call blocks.
     collect_fenced_blocks(text, &mut blocks);
+    if !blocks.is_empty() {
+        tracing::debug!("Found {} fenced tool_call blocks", blocks.len());
+    }
 
     // 2. Find all XML <function=...> blocks.
     collect_function_blocks(text, &mut blocks);
+    if !blocks.is_empty() {
+        tracing::debug!(
+            "Found {} XML function blocks (total: {})",
+            blocks.len(),
+            blocks.len()
+        );
+    }
 
     // 3. Find XML <invoke name="..."><arg name="...">value</arg></invoke> blocks.
     collect_invoke_blocks(text, &mut blocks);
+    if !blocks.is_empty() {
+        tracing::debug!(
+            "Found {} invoke blocks (total: {})",
+            blocks.len(),
+            blocks.len()
+        );
+    }
 
-    // 4. Find bare JSON {"tool": ...} blocks.
+    // 4. Find bare JSON {"tool": ...} blocks when the full text is a
+    // standalone JSON tool call response.
     collect_bare_json_blocks(text, &mut blocks);
+    if !blocks.is_empty() {
+        tracing::debug!(
+            "Found {} bare JSON blocks (total: {})",
+            blocks.len(),
+            blocks.len()
+        );
+    }
 
     if blocks.is_empty() {
-        return (vec![], Some(text.to_string()));
+        tracing::debug!("No tool calls found in text");
+        return (Vec::new(), Some(text.to_string()));
     }
+
+    tracing::info!(
+        "Successfully parsed {} tool call(s) from text",
+        blocks.len()
+    );
 
     // Sort by start position and de-overlap (keep first occurrence).
     blocks.sort_by_key(|b| b.start);

@@ -3812,13 +3812,20 @@ pub async fn prepare_gateway(
             &data_dir,
         )));
 
+        // Register news search tool for querying global news.
+        tool_registry.register(Box::new(clawmaster_tools::news_tool::NewsSearchTool::new()));
+
         // Register new P0 tools
-        tool_registry.register(Box::new(clawmaster_tools::loop_detection::LoopDetectionTool::new(
-            clawmaster_tools::loop_detection::LoopDetectionConfig::default(),
-        )));
-        tool_registry.register(Box::new(clawmaster_tools::apply_patch::ApplyPatchTool::new(
-            clawmaster_tools::apply_patch::ApplyPatchConfig::default(),
-        )));
+        tool_registry.register(Box::new(
+            clawmaster_tools::loop_detection::LoopDetectionTool::new(
+                clawmaster_tools::loop_detection::LoopDetectionConfig::default(),
+            ),
+        ));
+        tool_registry.register(Box::new(
+            clawmaster_tools::apply_patch::ApplyPatchTool::new(
+                clawmaster_tools::apply_patch::ApplyPatchConfig::default(),
+            ),
+        ));
 
         // Create simple agent registry for agents_list tool
         let mut agent_registry = clawmaster_tools::agents_list::SimpleAgentRegistry::new();
@@ -3827,13 +3834,19 @@ pub async fn prepare_gateway(
             name: "Default Agent".to_string(),
             description: Some("Default ClawMaster agent".to_string()),
             model: Some("claude-3-5-sonnet".to_string()),
-            capabilities: vec!["coding".to_string(), "analysis".to_string(), "execution".to_string()],
+            capabilities: vec![
+                "coding".to_string(),
+                "analysis".to_string(),
+                "execution".to_string(),
+            ],
             available_for_spawn: true,
         });
-        tool_registry.register(Box::new(clawmaster_tools::agents_list::AgentsListTool::new(
-            clawmaster_tools::agents_list::AgentsListConfig::default(),
-            Arc::new(agent_registry),
-        )));
+        tool_registry.register(Box::new(
+            clawmaster_tools::agents_list::AgentsListTool::new(
+                clawmaster_tools::agents_list::AgentsListConfig::default(),
+                Arc::new(agent_registry),
+            ),
+        ));
 
         // Register built-in voice tools for explicit TTS/STT calls in agents.
         tool_registry.register(Box::new(crate::voice_agent_tools::SpeakTool::new(

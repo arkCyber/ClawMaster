@@ -1,0 +1,289 @@
+warning: excluded package(s) `clawmaster-llama-cpp` not found in workspace `/Users/arksong/ClawMaster`
+    Blocking waiting for file lock on artifact directory
+   Compiling clawmaster-config v0.10.18 (/Users/arksong/ClawMaster/crates/config)
+   Compiling clawmaster-metrics v0.10.18 (/Users/arksong/ClawMaster/crates/metrics)
+   Compiling clawmaster-skills v0.10.18 (/Users/arksong/ClawMaster/crates/skills)
+   Compiling clawmaster-sessions v0.10.18 (/Users/arksong/ClawMaster/crates/sessions)
+   Compiling clawmaster-agentic-loop v0.10.18 (/Users/arksong/ClawMaster/crates/agentic-loop)
+   Compiling clawmaster-agents v0.10.18 (/Users/arksong/ClawMaster/crates/agents)
+   Compiling clawmaster-oauth v0.10.18 (/Users/arksong/ClawMaster/crates/oauth)
+   Compiling tungstenite v0.26.2
+   Compiling tokio-tungstenite v0.26.2
+   Compiling clawmaster-providers v0.10.18 (/Users/arksong/ClawMaster/crates/providers)
+   Compiling clawmaster-channels v0.10.18 (/Users/arksong/ClawMaster/crates/channels)
+   Compiling clawmaster-cron v0.10.18 (/Users/arksong/ClawMaster/crates/cron)
+   Compiling clawmaster-browser v0.10.18 (/Users/arksong/ClawMaster/crates/browser)
+   Compiling clawmaster-network-filter v0.10.18 (/Users/arksong/ClawMaster/crates/network-filter)
+   Compiling clawmaster-tools v0.10.18 (/Users/arksong/ClawMaster/crates/tools)
+   Compiling clawmaster-routing v0.10.18 (/Users/arksong/ClawMaster/crates/routing)
+   Compiling clawmaster-memory v0.10.18 (/Users/arksong/ClawMaster/crates/memory)
+   Compiling clawmaster-auto-reply v0.10.18 (/Users/arksong/ClawMaster/crates/auto-reply)
+   Compiling clawmaster-vault v0.10.18 (/Users/arksong/ClawMaster/crates/vault)
+   Compiling clawmaster-telegram v0.10.18 (/Users/arksong/ClawMaster/crates/telegram)
+   Compiling clawmaster-plugins v0.10.18 (/Users/arksong/ClawMaster/crates/plugins)
+   Compiling clawmaster-projects v0.10.18 (/Users/arksong/ClawMaster/crates/projects)
+   Compiling clawmaster-cosmic-client v0.1.0 (/Users/arksong/ClawMaster/crates/cosmic-client)
+warning: unused import: `tungstenite::Message`
+   --> crates/cosmic-client/src/rpc.rs:222:48
+    |
+222 |         use tokio_tungstenite::{connect_async, tungstenite::Message};
+    |                                                ^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-cosmic-client` (lib) generated 1 warning (run `cargo fix --lib -p clawmaster-cosmic-client` to apply 1 suggestion)
+   Compiling clawmaster-tls v0.10.18 (/Users/arksong/ClawMaster/crates/tls)
+   Compiling clawmaster-openclaw-import v0.10.18 (/Users/arksong/ClawMaster/crates/openclaw-import)
+   Compiling clawmaster-health-check v0.10.18 (/Users/arksong/ClawMaster/crates/health-check)
+   Compiling clawmaster-auth v0.10.18 (/Users/arksong/ClawMaster/crates/auth)
+   Compiling clawmaster-whatsapp v0.10.18 (/Users/arksong/ClawMaster/crates/whatsapp)
+   Compiling clawmaster-caldav v0.10.18 (/Users/arksong/ClawMaster/crates/caldav)
+   Compiling clawmaster-slack v0.10.18 (/Users/arksong/ClawMaster/crates/slack)
+   Compiling clawmaster-input-validator v0.10.18 (/Users/arksong/ClawMaster/crates/input-validator)
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+   Compiling clawmaster-discord v0.10.18 (/Users/arksong/ClawMaster/crates/discord)
+   Compiling clawmaster-chat v0.10.18 (/Users/arksong/ClawMaster/crates/chat)
+   Compiling clawmaster-qmd v0.10.18 (/Users/arksong/ClawMaster/crates/qmd)
+   Compiling clawmaster-provider-setup v0.10.18 (/Users/arksong/ClawMaster/crates/provider-setup)
+   Compiling clawmaster-msteams v0.10.18 (/Users/arksong/ClawMaster/crates/msteams)
+   Compiling clawmaster-audit-log v0.10.18 (/Users/arksong/ClawMaster/crates/audit-log)
+   Compiling clawmaster-resource-quota v0.10.18 (/Users/arksong/ClawMaster/crates/resource-quota)
+   Compiling clawmaster-mcp v0.10.18 (/Users/arksong/ClawMaster/crates/mcp)
+   Compiling clawmaster-fault-recovery v0.10.18 (/Users/arksong/ClawMaster/crates/fault-recovery)
+   Compiling clawmaster-backup-recovery v0.10.18 (/Users/arksong/ClawMaster/crates/backup-recovery)
+   Compiling clawmaster-onboarding v0.10.18 (/Users/arksong/ClawMaster/crates/onboarding)
+   Compiling clawmaster-config-validator v0.10.18 (/Users/arksong/ClawMaster/crates/config-validator)
+   Compiling clawmaster-bundled-skills v0.10.18 (/Users/arksong/ClawMaster/crates/bundled-skills)
+   Compiling clawmaster-gateway v0.10.18 (/Users/arksong/ClawMaster/crates/gateway)
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+   Compiling clawmaster-web v0.10.18 (/Users/arksong/ClawMaster/crates/web)
+   Compiling clawmaster-clawhub v0.10.18 (/Users/arksong/ClawMaster/crates/clawhub)
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/registry.rs:90:9
+    |
+ 90 | /         sqlx::query!(
+ 91 | |             r#"
+ 92 | |             INSERT INTO tools (
+ 93 | |                 name, version, description, readme, author, author_email,
+...   |
+125 | |             updated_at,
+126 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/registry.rs:137:22
+    |
+137 |           let result = sqlx::query!(
+    |  ______________________^
+138 | |             "SELECT COUNT(*) as count FROM tools WHERE name = ?1 AND version = ?2",
+139 | |             name,
+140 | |             version
+141 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/registry.rs:157:19
+    |
+157 |           let row = sqlx::query!(
+    |  ___________________^
+158 | |             r#"
+159 | |             SELECT
+160 | |                 name, version, description, readme, author, author_email,
+...   |
+168 | |             version
+169 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/registry.rs:296:9
+    |
+296 | /         sqlx::query!(
+297 | |             "UPDATE tools SET downloads = downloads + 1 WHERE name = ?1 AND version = ?2",
+298 | |             name,
+299 | |             version
+300 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/skills.rs:90:9
+    |
+ 90 | /         sqlx::query!(
+ 91 | |             r#"
+ 92 | |             INSERT INTO skills (
+ 93 | |                 name, version, description, readme, author, author_email,
+...   |
+120 | |             updated_at,
+121 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/skills.rs:132:22
+    |
+132 |           let result = sqlx::query!(
+    |  ______________________^
+133 | |             "SELECT COUNT(*) as count FROM skills WHERE name = ?1 AND version = ?2",
+134 | |             name,
+135 | |             version
+136 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/skills.rs:152:19
+    |
+152 |           let row = sqlx::query_as!(
+    |  ___________________^
+153 | |             SkillRow,
+154 | |             r#"
+155 | |             SELECT
+...   |
+164 | |             version
+165 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query_as` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/skills.rs:308:9
+    |
+308 | /         sqlx::query!(
+309 | |             "UPDATE skills SET downloads = downloads + 1 WHERE name = ?1 AND version = ?2",
+310 | |             name,
+311 | |             version
+312 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: set `DATABASE_URL` to use query macros online, or run `cargo sqlx prepare` to update the query cache
+   --> crates/clawhub/src/skills.rs:321:9
+    |
+321 | /         sqlx::query!(
+322 | |             "UPDATE skills SET stars = stars + 1 WHERE name = ?1 AND version = ?2",
+323 | |             name,
+324 | |             version
+325 | |         )
+    | |_________^
+    |
+    = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unused import: `post`
+  --> crates/clawhub/src/api.rs:20:24
+   |
+20 |         routing::{get, post},
+   |                        ^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `SecurityStatus`, `SortOrder`, `ToolType`, and `ToolVersion`
+ --> crates/clawhub/src/registry.rs:8:30
+  |
+8 |         types::{SearchQuery, SecurityStatus, SortOrder, ToolMetadata, ToolType, ToolVersion},
+  |                              ^^^^^^^^^^^^^^  ^^^^^^^^^                ^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `Error`
+ --> crates/clawhub/src/storage.rs:7:20
+  |
+7 |     crate::error::{Error, Result},
+  |                    ^^^^^
+
+error[E0277]: `?` couldn't convert the error to `error::Error`
+  --> crates/clawhub/src/registry.rs:50:56
+   |
+50 |         sqlx::migrate!("./migrations").run(&pool).await?;
+   |         -----------------------------------------------^ the trait `From<MigrateError>` is not implemented for `error::Error`
+   |         |
+   |         this can't be annotated with `?` because it has type `Result<_, MigrateError>`
+   |
+note: `error::Error` needs to implement `From<MigrateError>`
+  --> crates/clawhub/src/error.rs:7:1
+   |
+ 7 | pub enum Error {
+   | ^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the following other types implement trait `From<T>`
+  --> crates/clawhub/src/error.rs:10:14
+   |
+10 |     Database(#[from] sqlx::Error),
+   |              ^^^^^^^ `error::Error` implements `From<sqlx::Error>`
+...
+34 |     Io(#[from] std::io::Error),
+   |        ^^^^^^^ `error::Error` implements `From<std::io::Error>`
+...
+38 |     Serialization(#[from] serde_json::Error),
+   |                   ^^^^^^^ `error::Error` implements `From<serde_json::Error>`
+
+error[E0282]: type annotations needed
+   --> crates/clawhub/src/registry.rs:157:19
+    |
+157 |           let row = sqlx::query!(
+    |  ___________________^
+158 | |             r#"
+159 | |             SELECT
+160 | |                 name, version, description, readme, author, author_email,
+...   |
+170 | |         .fetch_optional(&self.pool)
+171 | |         .await?
+    | |_______________^ cannot infer type
+
+error[E0282]: type annotations needed
+   --> crates/clawhub/src/skills.rs:152:19
+    |
+152 |           let row = sqlx::query_as!(
+    |  ___________________^
+153 | |             SkillRow,
+154 | |             r#"
+155 | |             SELECT
+...   |
+166 | |         .fetch_optional(&self.pool)
+167 | |         .await?
+    | |_______________^ cannot infer type
+
+warning: unused variable: `state`
+   --> crates/clawhub/src/api.rs:103:11
+    |
+103 |     State(state): State<ApiState>,
+    |           ^^^^^ help: if this is intentional, prefix it with an underscore: `_state`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+Some errors have detailed explanations: E0277, E0282.
+For more information about an error, try `rustc --explain E0277`.
+warning: `clawmaster-clawhub` (lib) generated 4 warnings
+error: could not compile `clawmaster-clawhub` (lib) due to 12 previous errors; 4 warnings emitted

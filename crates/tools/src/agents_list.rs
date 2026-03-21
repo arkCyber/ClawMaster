@@ -125,12 +125,15 @@ impl AgentsListTool {
     /// List agents available to the current agent.
     pub fn list_available_agents(&self) -> Vec<AgentInfo> {
         let all_agents = self.registry.list_agents();
-        
+
         // Filter by allowlist
-        all_agents.into_iter()
+        all_agents
+            .into_iter()
             .filter(|agent| {
-                agent.available_for_spawn && 
-                self.registry.is_agent_allowed(&self.current_agent_id, &agent.id)
+                agent.available_for_spawn
+                    && self
+                        .registry
+                        .is_agent_allowed(&self.current_agent_id, &agent.id)
             })
             .collect()
     }
@@ -138,7 +141,10 @@ impl AgentsListTool {
     /// Get detailed information about a specific agent.
     pub fn get_agent_info(&self, agent_id: &str) -> Option<AgentInfo> {
         // Check if agent is allowed
-        if !self.registry.is_agent_allowed(&self.current_agent_id, agent_id) {
+        if !self
+            .registry
+            .is_agent_allowed(&self.current_agent_id, agent_id)
+        {
             return None;
         }
 
@@ -179,18 +185,20 @@ impl AgentTool for AgentsListTool {
             bail!("agents_list tool is disabled");
         }
 
-        let action = params.get("action")
+        let action = params
+            .get("action")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'action' parameter"))?;
 
         match action {
             "list" => {
                 let agents = self.list_available_agents();
-                
+
                 // Check if all agents are allowed (wildcard)
                 let allow_any = self.registry.is_agent_allowed(&self.current_agent_id, "*");
 
-                let agents_json: Vec<Value> = agents.into_iter()
+                let agents_json: Vec<Value> = agents
+                    .into_iter()
                     .map(|agent| {
                         let mut obj = json!({
                             "id": agent.id,
@@ -218,9 +226,10 @@ impl AgentTool for AgentsListTool {
                     "count": agents_json.len(),
                     "allowAny": allow_any,
                 }))
-            }
+            },
             "get" => {
-                let agent_id = params.get("agent_id")
+                let agent_id = params
+                    .get("agent_id")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'agent_id' parameter"))?;
 
@@ -247,7 +256,7 @@ impl AgentTool for AgentsListTool {
                 } else {
                     bail!("Agent '{}' not found or not allowed", agent_id);
                 }
-            }
+            },
             _ => bail!("Invalid action: {}", action),
         }
     }
@@ -293,7 +302,7 @@ mod tests {
     #[test]
     fn test_simple_registry() {
         let registry = create_test_registry();
-        
+
         let agents = registry.list_agents();
         assert_eq!(agents.len(), 3);
 
@@ -308,7 +317,7 @@ mod tests {
     #[test]
     fn test_allowlist() {
         let mut registry = create_test_registry();
-        
+
         // Set allowlist for default agent
         registry.set_allowlist("default".to_string(), vec!["agent1".to_string()]);
 
@@ -319,7 +328,7 @@ mod tests {
     #[test]
     fn test_wildcard_allowlist() {
         let mut registry = create_test_registry();
-        
+
         // Set wildcard allowlist
         registry.set_allowlist("default".to_string(), vec!["*".to_string()]);
 
@@ -361,7 +370,7 @@ mod tests {
     async fn test_tool_with_allowlist() {
         let mut registry = create_test_registry();
         registry.set_allowlist("default".to_string(), vec!["agent1".to_string()]);
-        
+
         let config = AgentsListConfig::default();
         let tool = AgentsListTool::new(config, Arc::new(registry));
 
@@ -377,7 +386,7 @@ mod tests {
     async fn test_tool_get_not_allowed() {
         let mut registry = create_test_registry();
         registry.set_allowlist("default".to_string(), vec!["agent1".to_string()]);
-        
+
         let config = AgentsListConfig::default();
         let tool = AgentsListTool::new(config, Arc::new(registry));
 
@@ -385,6 +394,11 @@ mod tests {
         let result = tool.execute(params).await;
 
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("not found or not allowed"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("not found or not allowed")
+        );
     }
 }

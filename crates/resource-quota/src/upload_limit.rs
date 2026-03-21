@@ -9,7 +9,7 @@ use crate::{QuotaError, QuotaResult};
 pub struct UploadLimitConfig {
     /// Maximum file size in bytes
     pub max_file_size: usize,
-    
+
     /// Maximum total upload size per request
     pub max_total_size: usize,
 }
@@ -17,8 +17,8 @@ pub struct UploadLimitConfig {
 impl Default for UploadLimitConfig {
     fn default() -> Self {
         Self {
-            max_file_size: 100 * 1024 * 1024,      // 100MB per file
-            max_total_size: 500 * 1024 * 1024,     // 500MB total
+            max_file_size: 100 * 1024 * 1024,  // 100MB per file
+            max_total_size: 500 * 1024 * 1024, // 500MB total
         }
     }
 }
@@ -118,7 +118,10 @@ mod tests {
 
         let result = limiter.check_file_size(1500);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::UploadSizeExceeded { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::UploadSizeExceeded { .. }
+        ));
     }
 
     #[test]
@@ -143,7 +146,10 @@ mod tests {
 
         let result = limiter.check_total_size(6000);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::UploadSizeExceeded { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::UploadSizeExceeded { .. }
+        ));
     }
 
     #[test]

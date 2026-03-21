@@ -97,7 +97,12 @@ impl ListDirectoryTool {
         Ok(absolute_path)
     }
 
-    fn list_entries(&self, dir_path: &Path, recursive: bool, current_depth: usize) -> Result<Vec<Value>> {
+    fn list_entries(
+        &self,
+        dir_path: &Path,
+        recursive: bool,
+        current_depth: usize,
+    ) -> Result<Vec<Value>> {
         if current_depth > self.config.max_depth {
             return Ok(vec![]);
         }
@@ -121,7 +126,11 @@ impl ListDirectoryTool {
 
             let metadata = entry.metadata()?;
             let is_dir = metadata.is_dir();
-            let size = if is_dir { None } else { Some(metadata.len()) };
+            let size = if is_dir {
+                None
+            } else {
+                Some(metadata.len())
+            };
 
             entries.push(json!({
                 "name": file_name,
@@ -198,8 +207,7 @@ impl AgentTool for ListDirectoryTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_list_simple_directory() {
@@ -210,10 +218,7 @@ mod tests {
         let tool = ListDirectoryTool::new(ListDirectoryConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"path": "."}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"path": "."})).await.unwrap();
 
         assert_eq!(result["count"], 2);
         let entries = result["entries"].as_array().unwrap();
@@ -246,10 +251,7 @@ mod tests {
         let tool = ListDirectoryTool::new(ListDirectoryConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"path": "."}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"path": "."})).await.unwrap();
 
         assert_eq!(result["count"], 1);
     }

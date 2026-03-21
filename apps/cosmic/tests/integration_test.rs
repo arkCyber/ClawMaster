@@ -1,5 +1,5 @@
 //! ClawMaster Cosmic UI - 集成测试
-//! 
+//!
 //! DO-178C Level A 测试要求：
 //! - 100% 分支覆盖率
 //! - 所有边界条件测试
@@ -11,7 +11,7 @@ mod tests {
     use super::*;
 
     /// 测试应用初始化
-    /// 
+    ///
     /// DO-178C 要求：
     /// - 验证所有必需字段正确初始化
     /// - 验证默认状态符合规范
@@ -23,7 +23,7 @@ mod tests {
     }
 
     /// 测试页面导航
-    /// 
+    ///
     /// DO-178C 要求：
     /// - 验证所有页面都可访问
     /// - 验证导航状态转换正确
@@ -31,7 +31,7 @@ mod tests {
     fn test_page_navigation() {
         // 测试页面枚举的完整性
         use std::mem::discriminant;
-        
+
         // 确保所有页面变体都存在（编译时检查）
         let pages = [
             discriminant(&Page::Dashboard),
@@ -54,7 +54,7 @@ mod tests {
             discriminant(&Page::Notifications),
             discriminant(&Page::Heartbeat),
         ];
-        
+
         assert_eq!(pages.len(), 19, "All pages should be enumerated");
     }
 
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn test_language_enum() {
         use Language;
-        
+
         // 测试所有语言变体存在
         let langs = [
             Language::English,
@@ -70,7 +70,7 @@ mod tests {
             Language::Japanese,
             Language::Korean,
         ];
-        
+
         assert_eq!(langs.len(), 4, "Should have 4 language options");
     }
 
@@ -86,36 +86,38 @@ mod tests {
     #[test]
     fn test_mock_data_generation() {
         // 这些函数应该始终返回有效数据
-        assert!(!create_mock_sessions().is_empty(), "Mock sessions not empty");
-        assert!(!create_mock_messages("test").is_empty(), "Mock messages not empty");
+        assert!(
+            !create_mock_sessions().is_empty(),
+            "Mock sessions not empty"
+        );
+        assert!(
+            !create_mock_messages("test").is_empty(),
+            "Mock messages not empty"
+        );
     }
 }
 
 // 需要导入的类型（根据实际情况调整）
-use clawmaster_cosmic::app_new::{Page, Language};
+use clawmaster_cosmic::app_new::{Language, Page};
 
 // 模拟函数（实际应从主模块导入）
 fn create_mock_sessions() -> Vec<SessionInfo> {
-    vec![
-        SessionInfo {
-            id: "session_1".to_string(),
-            title: "Test Session".to_string(),
-            created_at: "2024-03-14".to_string(),
-            message_count: 0,
-            is_active: true,
-        },
-    ]
+    vec![SessionInfo {
+        id: "session_1".to_string(),
+        title: "Test Session".to_string(),
+        created_at: "2024-03-14".to_string(),
+        message_count: 0,
+        is_active: true,
+    }]
 }
 
 fn create_mock_messages(_session_id: &str) -> Vec<ChatMessage> {
-    vec![
-        ChatMessage {
-            role: MessageRole::System,
-            content: "Test message".to_string(),
-            timestamp: "now".to_string(),
-            duration: None,
-        },
-    ]
+    vec![ChatMessage {
+        role: MessageRole::System,
+        content: "Test message".to_string(),
+        timestamp: "now".to_string(),
+        duration: None,
+    }]
 }
 
 #[derive(Debug, Clone)]

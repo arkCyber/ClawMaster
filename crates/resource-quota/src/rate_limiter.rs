@@ -2,18 +2,22 @@
 //!
 //! DO-178C Level A Compliant Rate Limiting
 
-use crate::{QuotaError, QuotaResult};
-use dashmap::DashMap;
-use parking_lot::RwLock;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use {
+    crate::{QuotaError, QuotaResult},
+    dashmap::DashMap,
+    parking_lot::RwLock,
+    std::{
+        sync::Arc,
+        time::{Duration, Instant},
+    },
+};
 
 /// Rate limit configuration
 #[derive(Debug, Clone)]
 pub struct RateLimitConfig {
     /// Maximum requests per window
     pub max_requests: usize,
-    
+
     /// Time window duration
     pub window_duration: Duration,
 }
@@ -83,9 +87,10 @@ impl RateLimiter {
         let now = Instant::now();
 
         // Get or create record
-        let record_ref = self.records.entry(key.to_string()).or_insert_with(|| {
-            RwLock::new(RequestRecord::new())
-        });
+        let record_ref = self
+            .records
+            .entry(key.to_string())
+            .or_insert_with(|| RwLock::new(RequestRecord::new()));
 
         let mut record = record_ref.write();
 
@@ -94,9 +99,11 @@ impl RateLimiter {
 
         // Check limit
         if record.count() >= self.config.max_requests {
-            return Err(QuotaError::RateLimitExceeded(
-                format!("{} requests in {:?}", record.count(), self.config.window_duration)
-            ));
+            return Err(QuotaError::RateLimitExceeded(format!(
+                "{} requests in {:?}",
+                record.count(),
+                self.config.window_duration
+            )));
         }
 
         // Add new request
@@ -131,8 +138,7 @@ impl RateLimiter {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::thread;
+    use {super::*, std::thread};
 
     #[test]
     fn test_rate_limiter_allows_requests() {
@@ -164,7 +170,10 @@ mod tests {
         // 4th request should fail
         let result = limiter.check_rate_limit("user1");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::RateLimitExceeded(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::RateLimitExceeded(_)
+        ));
     }
 
     #[test]

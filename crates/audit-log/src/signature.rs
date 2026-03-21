@@ -2,10 +2,12 @@
 //!
 //! DO-178C Level A Compliant Log Signing and Verification
 
-use crate::{AuditError, AuditEvent, AuditResult};
-use async_trait::async_trait;
-use hmac::{Hmac, Mac};
-use sha2::Sha256;
+use {
+    crate::{AuditError, AuditEvent, AuditResult},
+    async_trait::async_trait,
+    hmac::{Hmac, Mac},
+    sha2::Sha256,
+};
 
 type HmacSha256 = Hmac<Sha256>;
 
@@ -86,23 +88,22 @@ impl crate::LogSigner for HmacSigner {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{AuthEvent, EventSeverity, LogSigner};
+    use {
+        super::*,
+        crate::{AuthEvent, EventSeverity, LogSigner},
+    };
 
     #[tokio::test]
     async fn test_hmac_signer_sign() {
         let key = HmacSigner::generate_key();
         let signer = HmacSigner::new(key);
 
-        let event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         let signature = signer.sign(&event).await.unwrap();
         assert!(!signature.is_empty());
@@ -114,19 +115,18 @@ mod tests {
         let key = HmacSigner::generate_key();
         let signer = HmacSigner::new(key);
 
-        let mut event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let mut event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         // Sign event
         let signature = signer.sign(&event).await.unwrap();
-        event.metadata.as_object_mut()
+        event
+            .metadata
+            .as_object_mut()
             .unwrap()
             .insert("signature".to_string(), serde_json::json!(signature));
 
@@ -140,18 +140,17 @@ mod tests {
         let key = HmacSigner::generate_key();
         let signer = HmacSigner::new(key);
 
-        let mut event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let mut event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         // Add invalid signature
-        event.metadata.as_object_mut()
+        event
+            .metadata
+            .as_object_mut()
             .unwrap()
             .insert("signature".to_string(), serde_json::json!("invalid"));
 
@@ -165,24 +164,26 @@ mod tests {
         let key = HmacSigner::generate_key();
         let signer = HmacSigner::new(key);
 
-        let mut event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let mut event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         // Sign event
         let signature = signer.sign(&event).await.unwrap();
-        event.metadata.as_object_mut()
+        event
+            .metadata
+            .as_object_mut()
             .unwrap()
             .insert("signature".to_string(), serde_json::json!(signature));
 
         // Tamper with event
-        if let crate::EventDetails::Auth(crate::AuthEvent::LoginAttempt { ref mut username, .. }) = event.details {
+        if let crate::EventDetails::Auth(crate::AuthEvent::LoginAttempt {
+            ref mut username, ..
+        }) = event.details
+        {
             *username = "hacker".to_string();
         }
 
@@ -196,15 +197,12 @@ mod tests {
         let key = HmacSigner::generate_key();
         let signer = HmacSigner::new(key);
 
-        let event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         let sig1 = signer.sign(&event).await.unwrap();
         let sig2 = signer.sign(&event).await.unwrap();

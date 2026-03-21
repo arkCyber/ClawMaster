@@ -143,6 +143,16 @@ pub static MODEL_REGISTRY: &[GgufModelDef] = &[
         backend: ModelBackend::Gguf,
     },
     GgufModelDef {
+        id: "qwen3.5:9b",
+        display_name: "Qwen 3.5 9B",
+        hf_repo: "",
+        hf_filename: "",
+        min_ram_gb: 16,
+        context_window: 32_768,
+        chat_template: ChatTemplateHint::ChatML,
+        backend: ModelBackend::Gguf,
+    },
+    GgufModelDef {
         id: "codestral-22b-q4_k_m",
         display_name: "Codestral 22B (Q4_K_M)",
         hf_repo: "bartowski/Codestral-22B-v0.1-GGUF",

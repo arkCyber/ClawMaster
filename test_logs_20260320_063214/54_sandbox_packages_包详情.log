@@ -1,0 +1,5 @@
+=== Test: sandbox_packages - 包详情 ===
+Input: Show details of package 'rust'
+Time: Fri Mar 20 06:33:09 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

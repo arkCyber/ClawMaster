@@ -2,22 +2,24 @@
 //!
 //! DO-178C Level A Compliant Graceful Degradation
 
-use crate::{FaultError, FaultResult};
-use parking_lot::RwLock;
-use std::sync::Arc;
+use {
+    crate::{FaultError, FaultResult},
+    parking_lot::RwLock,
+    std::sync::Arc,
+};
 
 /// Service level
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ServiceLevel {
     /// Emergency mode
     Emergency,
-    
+
     /// Minimal functionality
     Minimal,
-    
+
     /// Reduced functionality
     Reduced,
-    
+
     /// Full functionality
     Full,
 }
@@ -95,7 +97,7 @@ impl DegradationManager {
                 } else {
                     Err(e)
                 }
-            }
+            },
         }
     }
 }
@@ -126,7 +128,7 @@ mod tests {
 
         manager.degrade(ServiceLevel::Minimal);
         assert_eq!(manager.get_level(), ServiceLevel::Minimal);
-        
+
         // Trying to degrade to higher level should not work
         manager.degrade(ServiceLevel::Reduced);
         assert_eq!(manager.get_level(), ServiceLevel::Minimal);
@@ -170,7 +172,10 @@ mod tests {
         let manager = DegradationManager::new();
 
         let result = manager
-            .execute_with_fallback(|| async { Ok::<_, FaultError>("primary") }, Some("fallback"))
+            .execute_with_fallback(
+                || async { Ok::<_, FaultError>("primary") },
+                Some("fallback"),
+            )
             .await;
 
         assert!(result.is_ok());

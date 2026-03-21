@@ -5,7 +5,13 @@
 use crate::{ValidationError, ValidationResult};
 
 /// Maximum parameter value length
+/// DO-178C §6.3.1: Default maximum parameter length
 const MAX_PARAM_LENGTH: usize = 10_000;
+
+/// Validate parameter with default max length
+pub fn validate_param_default(value: &str) -> ValidationResult<String> {
+    validate_string_param(value, MAX_PARAM_LENGTH)
+}
 
 /// Validate string parameter
 ///
@@ -31,14 +37,15 @@ pub fn validate_string_param(value: &str, max_length: usize) -> ValidationResult
 ///
 /// DO-178C §6.3.1: Integer validation
 pub fn validate_int_param(value: &str, min: i64, max: i64) -> ValidationResult<i64> {
-    let parsed = value.parse::<i64>().map_err(|_| {
-        ValidationError::InvalidFormat(format!("Invalid integer: {}", value))
-    })?;
+    let parsed = value
+        .parse::<i64>()
+        .map_err(|_| ValidationError::InvalidFormat(format!("Invalid integer: {}", value)))?;
 
     if parsed < min || parsed > max {
-        return Err(ValidationError::Invalid(
-            format!("Value {} out of range [{}, {}]", parsed, min, max)
-        ));
+        return Err(ValidationError::Invalid(format!(
+            "Value {} out of range [{}, {}]",
+            parsed, min, max
+        )));
     }
 
     Ok(parsed)
@@ -51,9 +58,10 @@ pub fn validate_bool_param(value: &str) -> ValidationResult<bool> {
     match value.to_lowercase().as_str() {
         "true" | "1" | "yes" | "on" => Ok(true),
         "false" | "0" | "no" | "off" => Ok(false),
-        _ => Err(ValidationError::InvalidFormat(
-            format!("Invalid boolean: {}", value)
-        )),
+        _ => Err(ValidationError::InvalidFormat(format!(
+            "Invalid boolean: {}",
+            value
+        ))),
     }
 }
 
@@ -64,9 +72,10 @@ pub fn validate_enum_param(value: &str, allowed_values: &[&str]) -> ValidationRe
     if allowed_values.contains(&value) {
         Ok(value.to_string())
     } else {
-        Err(ValidationError::Invalid(
-            format!("Invalid value: {}. Allowed: {:?}", value, allowed_values)
-        ))
+        Err(ValidationError::Invalid(format!(
+            "Invalid value: {}. Allowed: {:?}",
+            value, allowed_values
+        )))
     }
 }
 
@@ -77,26 +86,26 @@ pub fn validate_email_param(value: &str) -> ValidationResult<String> {
     // Basic email validation
     if !value.contains('@') {
         return Err(ValidationError::InvalidFormat(
-            "Email must contain @".to_string()
+            "Email must contain @".to_string(),
         ));
     }
 
     let parts: Vec<&str> = value.split('@').collect();
     if parts.len() != 2 {
         return Err(ValidationError::InvalidFormat(
-            "Email must have exactly one @".to_string()
+            "Email must have exactly one @".to_string(),
         ));
     }
 
     if parts[0].is_empty() || parts[1].is_empty() {
         return Err(ValidationError::InvalidFormat(
-            "Email parts cannot be empty".to_string()
+            "Email parts cannot be empty".to_string(),
         ));
     }
 
     if !parts[1].contains('.') {
         return Err(ValidationError::InvalidFormat(
-            "Email domain must contain a dot".to_string()
+            "Email domain must contain a dot".to_string(),
         ));
     }
 
@@ -110,7 +119,7 @@ pub fn validate_url_param(value: &str) -> ValidationResult<String> {
     // Basic URL validation
     if !value.starts_with("http://") && !value.starts_with("https://") {
         return Err(ValidationError::InvalidFormat(
-            "URL must start with http:// or https://".to_string()
+            "URL must start with http:// or https://".to_string(),
         ));
     }
 
@@ -123,17 +132,21 @@ pub fn validate_url_param(value: &str) -> ValidationResult<String> {
 pub fn validate_uuid_param(value: &str) -> ValidationResult<String> {
     // Basic UUID format: 8-4-4-4-12 hex digits
     let parts: Vec<&str> = value.split('-').collect();
-    
+
     if parts.len() != 5 {
         return Err(ValidationError::InvalidFormat(
-            "UUID must have 5 parts separated by hyphens".to_string()
+            "UUID must have 5 parts separated by hyphens".to_string(),
         ));
     }
 
-    if parts[0].len() != 8 || parts[1].len() != 4 || parts[2].len() != 4 
-        || parts[3].len() != 4 || parts[4].len() != 12 {
+    if parts[0].len() != 8
+        || parts[1].len() != 4
+        || parts[2].len() != 4
+        || parts[3].len() != 4
+        || parts[4].len() != 12
+    {
         return Err(ValidationError::InvalidFormat(
-            "UUID parts have incorrect lengths".to_string()
+            "UUID parts have incorrect lengths".to_string(),
         ));
     }
 
@@ -141,7 +154,7 @@ pub fn validate_uuid_param(value: &str) -> ValidationResult<String> {
     for part in &parts {
         if !part.chars().all(|c| c.is_ascii_hexdigit()) {
             return Err(ValidationError::InvalidFormat(
-                "UUID must contain only hex digits".to_string()
+                "UUID must contain only hex digits".to_string(),
             ));
         }
     }
@@ -162,7 +175,10 @@ mod tests {
     fn test_validate_string_param_too_long() {
         let result = validate_string_param("hello", 3);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::TooLong { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::TooLong { .. }
+        ));
     }
 
     #[test]
@@ -181,7 +197,10 @@ mod tests {
     fn test_validate_int_param_invalid_format() {
         let result = validate_int_param("abc", 0, 100);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 
     #[test]
@@ -203,7 +222,10 @@ mod tests {
     fn test_validate_bool_param_invalid() {
         let result = validate_bool_param("maybe");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 
     #[test]
@@ -229,14 +251,20 @@ mod tests {
     fn test_validate_email_param_no_at() {
         let result = validate_email_param("userexample.com");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 
     #[test]
     fn test_validate_email_param_no_domain() {
         let result = validate_email_param("user@");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 
     #[test]
@@ -249,7 +277,10 @@ mod tests {
     fn test_validate_url_param_invalid_scheme() {
         let result = validate_url_param("ftp://example.com");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 
     #[test]
@@ -261,6 +292,9 @@ mod tests {
     fn test_validate_uuid_param_invalid_format() {
         let result = validate_uuid_param("not-a-uuid");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::InvalidFormat(_)));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::InvalidFormat(_)
+        ));
     }
 }

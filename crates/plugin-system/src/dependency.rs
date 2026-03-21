@@ -1,8 +1,6 @@
 //! Plugin dependency resolution
 
-use crate::plugin::PluginDependency;
-use std::collections::HashMap;
-use anyhow::Result;
+use {crate::plugin::PluginDependency, anyhow::Result, std::collections::HashMap};
 
 /// Dependency resolver
 pub struct DependencyResolver {
@@ -48,12 +46,9 @@ impl DependencyResolver {
         }
 
         // Check if dependency is installed
-        let installed_version = self.installed_plugins
-            .get(&dep.plugin_id)
-            .ok_or_else(|| anyhow::anyhow!(
-                "required dependency not installed: {}",
-                dep.plugin_id
-            ))?;
+        let installed_version = self.installed_plugins.get(&dep.plugin_id).ok_or_else(|| {
+            anyhow::anyhow!("required dependency not installed: {}", dep.plugin_id)
+        })?;
 
         // Parse version requirement
         let version_req = semver::VersionReq::parse(&dep.version)?;
@@ -89,14 +84,14 @@ impl DependencyResolver {
         // Build dependency graph
         for (plugin_id, dependencies) in plugins {
             in_degree.entry(plugin_id.clone()).or_insert(0);
-            
+
             for dep in dependencies {
                 if !dep.optional {
                     graph
                         .entry(dep.plugin_id.clone())
                         .or_insert_with(Vec::new)
                         .push(plugin_id.clone());
-                    
+
                     *in_degree.entry(plugin_id.clone()).or_insert(0) += 1;
                 }
             }
@@ -135,10 +130,7 @@ impl DependencyResolver {
     }
 
     /// Detect circular dependencies
-    pub fn has_circular_dependency(
-        &self,
-        plugins: &[(String, Vec<PluginDependency>)],
-    ) -> bool {
+    pub fn has_circular_dependency(&self, plugins: &[(String, Vec<PluginDependency>)]) -> bool {
         self.topological_sort(plugins).is_err()
     }
 }
@@ -158,13 +150,11 @@ mod tests {
         let mut resolver = DependencyResolver::new();
         resolver.register_plugin("plugin-a".to_string(), "1.0.0".to_string());
 
-        let dependencies = vec![
-            PluginDependency {
-                plugin_id: "plugin-a".to_string(),
-                version: "^1.0.0".to_string(),
-                optional: false,
-            },
-        ];
+        let dependencies = vec![PluginDependency {
+            plugin_id: "plugin-a".to_string(),
+            version: "^1.0.0".to_string(),
+            optional: false,
+        }];
 
         assert!(resolver.resolve(&dependencies).await.is_ok());
     }
@@ -173,13 +163,11 @@ mod tests {
     async fn test_dependency_resolution_missing() {
         let resolver = DependencyResolver::new();
 
-        let dependencies = vec![
-            PluginDependency {
-                plugin_id: "plugin-a".to_string(),
-                version: "^1.0.0".to_string(),
-                optional: false,
-            },
-        ];
+        let dependencies = vec![PluginDependency {
+            plugin_id: "plugin-a".to_string(),
+            version: "^1.0.0".to_string(),
+            optional: false,
+        }];
 
         assert!(resolver.resolve(&dependencies).await.is_err());
     }
@@ -189,13 +177,11 @@ mod tests {
         let mut resolver = DependencyResolver::new();
         resolver.register_plugin("plugin-a".to_string(), "2.0.0".to_string());
 
-        let dependencies = vec![
-            PluginDependency {
-                plugin_id: "plugin-a".to_string(),
-                version: "^1.0.0".to_string(),
-                optional: false,
-            },
-        ];
+        let dependencies = vec![PluginDependency {
+            plugin_id: "plugin-a".to_string(),
+            version: "^1.0.0".to_string(),
+            optional: false,
+        }];
 
         assert!(resolver.resolve(&dependencies).await.is_err());
     }
@@ -204,13 +190,11 @@ mod tests {
     async fn test_optional_dependency() {
         let resolver = DependencyResolver::new();
 
-        let dependencies = vec![
-            PluginDependency {
-                plugin_id: "plugin-a".to_string(),
-                version: "^1.0.0".to_string(),
-                optional: true,
-            },
-        ];
+        let dependencies = vec![PluginDependency {
+            plugin_id: "plugin-a".to_string(),
+            version: "^1.0.0".to_string(),
+            optional: true,
+        }];
 
         assert!(resolver.resolve(&dependencies).await.is_ok());
     }
@@ -221,26 +205,20 @@ mod tests {
 
         let plugins = vec![
             ("plugin-a".to_string(), vec![]),
-            (
-                "plugin-b".to_string(),
-                vec![PluginDependency {
-                    plugin_id: "plugin-a".to_string(),
-                    version: "1.0.0".to_string(),
-                    optional: false,
-                }],
-            ),
-            (
-                "plugin-c".to_string(),
-                vec![PluginDependency {
-                    plugin_id: "plugin-b".to_string(),
-                    version: "1.0.0".to_string(),
-                    optional: false,
-                }],
-            ),
+            ("plugin-b".to_string(), vec![PluginDependency {
+                plugin_id: "plugin-a".to_string(),
+                version: "1.0.0".to_string(),
+                optional: false,
+            }]),
+            ("plugin-c".to_string(), vec![PluginDependency {
+                plugin_id: "plugin-b".to_string(),
+                version: "1.0.0".to_string(),
+                optional: false,
+            }]),
         ];
 
         let result = resolver.topological_sort(&plugins).unwrap();
-        
+
         // plugin-a should come before plugin-b
         let a_pos = result.iter().position(|x| x == "plugin-a").unwrap();
         let b_pos = result.iter().position(|x| x == "plugin-b").unwrap();
@@ -255,22 +233,16 @@ mod tests {
         let resolver = DependencyResolver::new();
 
         let plugins = vec![
-            (
-                "plugin-a".to_string(),
-                vec![PluginDependency {
-                    plugin_id: "plugin-b".to_string(),
-                    version: "1.0.0".to_string(),
-                    optional: false,
-                }],
-            ),
-            (
-                "plugin-b".to_string(),
-                vec![PluginDependency {
-                    plugin_id: "plugin-a".to_string(),
-                    version: "1.0.0".to_string(),
-                    optional: false,
-                }],
-            ),
+            ("plugin-a".to_string(), vec![PluginDependency {
+                plugin_id: "plugin-b".to_string(),
+                version: "1.0.0".to_string(),
+                optional: false,
+            }]),
+            ("plugin-b".to_string(), vec![PluginDependency {
+                plugin_id: "plugin-a".to_string(),
+                version: "1.0.0".to_string(),
+                optional: false,
+            }]),
         ];
 
         assert!(resolver.has_circular_dependency(&plugins));

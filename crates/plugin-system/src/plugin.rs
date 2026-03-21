@@ -1,9 +1,11 @@
 //! Plugin trait and metadata definitions
 
-use async_trait::async_trait;
-use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
-use anyhow::Result;
+use {
+    anyhow::Result,
+    async_trait::async_trait,
+    serde::{Deserialize, Serialize},
+    std::path::{Path, PathBuf},
+};
 
 /// Plugin metadata
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -116,13 +118,22 @@ pub trait Plugin: Send + Sync {
     }
 
     /// Called when configuration changes
-    async fn on_config_change(&mut self, context: &PluginContext, new_config: serde_json::Value) -> Result<()> {
+    async fn on_config_change(
+        &mut self,
+        context: &PluginContext,
+        new_config: serde_json::Value,
+    ) -> Result<()> {
         let _ = (context, new_config);
         Ok(())
     }
 
     /// Execute plugin action
-    async fn execute(&self, context: &PluginContext, action: &str, params: serde_json::Value) -> Result<serde_json::Value> {
+    async fn execute(
+        &self,
+        context: &PluginContext,
+        action: &str,
+        params: serde_json::Value,
+    ) -> Result<serde_json::Value> {
         let _ = (context, action, params);
         anyhow::bail!("action not implemented: {}", action)
     }
@@ -131,7 +142,7 @@ pub trait Plugin: Send + Sync {
 /// Read plugin metadata from plugin.toml
 pub fn read_metadata(plugin_path: &Path) -> Result<PluginMetadata> {
     let manifest_path = plugin_path.join("plugin.toml");
-    
+
     if !manifest_path.exists() {
         anyhow::bail!("plugin.toml not found in {:?}", plugin_path);
     }
@@ -149,8 +160,14 @@ pub fn validate_metadata(metadata: &PluginMetadata) -> Result<()> {
         anyhow::bail!("plugin ID cannot be empty");
     }
 
-    if !metadata.id.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_') {
-        anyhow::bail!("plugin ID can only contain alphanumeric characters, hyphens, and underscores");
+    if !metadata
+        .id
+        .chars()
+        .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+    {
+        anyhow::bail!(
+            "plugin ID can only contain alphanumeric characters, hyphens, and underscores"
+        );
     }
 
     // Validate version

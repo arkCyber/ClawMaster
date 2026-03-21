@@ -1,0 +1,10 @@
+[2m2026-03-20T08:08:54.284278Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 统计节点数量
+
+✅ 响应:
+你可以使用以下命令统计节点数量：
+
+`nodes count`
+
+这将返回当前的节点数量。

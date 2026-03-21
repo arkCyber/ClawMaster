@@ -22,17 +22,17 @@ use {
 pub struct ReadFileConfig {
     /// Enable/disable the tool
     pub enabled: bool,
-    
+
     /// Restrict file access to workspace only
     pub workspace_only: bool,
-    
+
     /// Maximum file size to read (bytes)
     /// DO-178C §6.3.2: Resource limits prevent DoS attacks
     pub max_file_size: usize,
-    
+
     /// Maximum line length before truncation
     pub max_line_length: usize,
-    
+
     /// Allowed file extensions (empty = all allowed)
     pub allowed_extensions: Vec<String>,
 }
@@ -103,13 +103,13 @@ impl ReadFileTool {
                 .as_ref()
                 .ok_or_else(|| anyhow::anyhow!("Workspace root not set"))?;
 
-            let canonical_path = absolute_path
-                .canonicalize()
-                .with_context(|| format!("Failed to canonicalize path: {}", absolute_path.display()))?;
-            
-            let canonical_workspace = workspace
-                .canonicalize()
-                .with_context(|| format!("Failed to canonicalize workspace: {}", workspace.display()))?;
+            let canonical_path = absolute_path.canonicalize().with_context(|| {
+                format!("Failed to canonicalize path: {}", absolute_path.display())
+            })?;
+
+            let canonical_workspace = workspace.canonicalize().with_context(|| {
+                format!("Failed to canonicalize workspace: {}", workspace.display())
+            })?;
 
             if !canonical_path.starts_with(&canonical_workspace) {
                 bail!(
@@ -135,12 +135,14 @@ impl ReadFileTool {
             return Ok(());
         }
 
-        let extension = file_path
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("");
+        let extension = file_path.extension().and_then(|e| e.to_str()).unwrap_or("");
 
-        if !self.config.allowed_extensions.iter().any(|ext| ext == extension) {
+        if !self
+            .config
+            .allowed_extensions
+            .iter()
+            .any(|ext| ext == extension)
+        {
             bail!(
                 "File extension '{}' not allowed. Allowed: {:?}",
                 extension,
@@ -278,9 +280,7 @@ impl AgentTool for ReadFileTool {
 // DO-178C §6.4: Comprehensive unit tests
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::fs;
-    use tempfile::TempDir;
+    use {super::*, std::fs, tempfile::TempDir};
 
     fn create_test_file(dir: &TempDir, name: &str, content: &str) -> PathBuf {
         let path = dir.path().join(name);
@@ -296,10 +296,7 @@ mod tests {
         let tool = ReadFileTool::new(ReadFileConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"path": "test.txt"}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"path": "test.txt"})).await.unwrap();
 
         assert_eq!(result["content"], "Hello, World!");
         assert_eq!(result["size"], 13);
@@ -315,10 +312,7 @@ mod tests {
         let tool = ReadFileTool::new(ReadFileConfig::default())
             .with_workspace_root(temp_dir.path().to_path_buf());
 
-        let result = tool
-            .execute(json!({"path": "multi.txt"}))
-            .await
-            .unwrap();
+        let result = tool.execute(json!({"path": "multi.txt"})).await.unwrap();
 
         assert_eq!(result["content"], content);
         assert_eq!(result["lines"], 3);
@@ -345,11 +339,12 @@ mod tests {
         assert!(result.is_err());
         let err_msg = result.unwrap_err().to_string().to_lowercase();
         assert!(
-            err_msg.contains("does not exist") 
-            || err_msg.contains("no such file") 
-            || err_msg.contains("not found")
-            || err_msg.contains("cannot find"),
-            "Error message was: {}", err_msg
+            err_msg.contains("does not exist")
+                || err_msg.contains("no such file")
+                || err_msg.contains("not found")
+                || err_msg.contains("cannot find"),
+            "Error message was: {}",
+            err_msg
         );
     }
 
@@ -376,8 +371,7 @@ mod tests {
         let mut config = ReadFileConfig::default();
         config.max_file_size = 500;
 
-        let tool = ReadFileTool::new(config)
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool = ReadFileTool::new(config).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool.execute(json!({"path": "large.txt"})).await;
         assert!(result.is_err());
@@ -393,8 +387,7 @@ mod tests {
         let mut config = ReadFileConfig::default();
         config.max_line_length = 100;
 
-        let tool = ReadFileTool::new(config)
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool = ReadFileTool::new(config).with_workspace_root(temp_dir.path().to_path_buf());
 
         let result = tool
             .execute(json!({"path": "long.txt", "truncate_lines": true}))
@@ -415,8 +408,7 @@ mod tests {
         let mut config = ReadFileConfig::default();
         config.allowed_extensions = vec!["rs".to_string()];
 
-        let tool = ReadFileTool::new(config)
-            .with_workspace_root(temp_dir.path().to_path_buf());
+        let tool = ReadFileTool::new(config).with_workspace_root(temp_dir.path().to_path_buf());
 
         // Should succeed for .rs file
         let result = tool.execute(json!({"path": "test.rs"})).await;
@@ -444,13 +436,18 @@ mod tests {
     #[tokio::test]
     async fn test_tool_name_and_schema() {
         let tool = ReadFileTool::new(ReadFileConfig::default());
-        
+
         assert_eq!(tool.name(), "read_file");
         assert!(tool.description().contains("Read the contents"));
-        
+
         let schema = tool.parameters_schema();
         assert_eq!(schema["type"], "object");
         assert!(schema["properties"]["path"].is_object());
-        assert!(schema["required"].as_array().unwrap().contains(&json!("path")));
+        assert!(
+            schema["required"]
+                .as_array()
+                .unwrap()
+                .contains(&json!("path"))
+        );
     }
 }

@@ -2,7 +2,10 @@
 
 /// Check if a name is valid (alphanumeric, hyphens, underscores)
 pub fn is_valid_name(name: &str) -> bool {
-    !name.is_empty() && name.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+    !name.is_empty()
+        && name
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
 }
 
 #[cfg(test)]

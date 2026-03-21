@@ -1,0 +1,2574 @@
+=== Test #1: calc ===
+Description: 基础加法
+Command: echo '2 + 2' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.67s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #2: calc ===
+Description: 基础减法
+Command: echo '100 - 37' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #3: calc ===
+Description: 基础乘法
+Command: echo '12 * 8' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #4: calc ===
+Description: 基础除法
+Command: echo '144 / 12' | cargo run --bin clawmaster -- tools exec calc
+Duration: 4s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #5: calc ===
+Description: 复杂表达式
+Command: echo '(10 + 5) * 2 - 8' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #6: calc ===
+Description: 幂运算
+Command: echo '2^10' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #7: calc ===
+Description: 取模运算
+Command: echo '17 % 5' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.62s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #8: calc ===
+Description: 嵌套括号
+Command: echo '((3 + 5) * 2) + ((10 - 2) / 2)' | cargo run --bin clawmaster -- tools exec calc
+Duration: 9s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #9: calc ===
+Description: 浮点数运算
+Command: echo '3.14 * 2' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.56s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #10: calc ===
+Description: 负数运算
+Command: echo '-5 + 10' | cargo run --bin clawmaster -- tools exec calc
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.65s
+     Running `target/debug/clawmaster tools exec calc`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #11: exec ===
+Description: 显示当前目录
+Command: cargo run --bin clawmaster -- tools exec bash 'pwd'
+Duration: 10s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running `target/debug/clawmaster tools exec bash pwd`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #12: exec ===
+Description: 列出文件（简单）
+Command: cargo run --bin clawmaster -- tools exec bash 'ls'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running `target/debug/clawmaster tools exec bash ls`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #13: exec ===
+Description: 列出文件（详细）
+Command: cargo run --bin clawmaster -- tools exec bash 'ls -lh | head -5'
+Duration: 4s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'ls -lh | head -5'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #14: exec ===
+Description: 统计文件数量
+Command: cargo run --bin clawmaster -- tools exec bash 'ls -1 | wc -l'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'ls -1 | wc -l'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #15: exec ===
+Description: 查找 Rust 文件
+Command: cargo run --bin clawmaster -- tools exec bash 'find . -name "*.rs" -type f | head -3'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running `target/debug/clawmaster tools exec bash 'find . -name "*.rs" -type f | head -3'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #16: exec ===
+Description: 显示环境变量
+Command: cargo run --bin clawmaster -- tools exec bash 'echo $HOME'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running `target/debug/clawmaster tools exec bash 'echo $HOME'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #17: exec ===
+Description: 显示系统信息
+Command: cargo run --bin clawmaster -- tools exec bash 'uname -s'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running `target/debug/clawmaster tools exec bash 'uname -s'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #18: exec ===
+Description: 显示日期
+Command: cargo run --bin clawmaster -- tools exec bash 'date +%Y'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec bash 'date +%Y'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #19: exec ===
+Description: 创建临时文件
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "test" > /tmp/clawmaster_test.txt && cat /tmp/clawmaster_test.txt'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.63s
+     Running `target/debug/clawmaster tools exec bash 'echo "test" > /tmp/clawmaster_test.txt && cat /tmp/clawmaster_test.txt'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #20: exec ===
+Description: 文本处理 - grep
+Command: cargo run --bin clawmaster -- tools exec bash 'echo -e "apple\nbanana\ncherry" | grep banana'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec bash 'echo -e "apple\nbanana\ncherry" | grep banana'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #21: exec ===
+Description: 文本处理 - sed
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "hello world" | sed "s/world/ClawMaster/"'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'echo "hello world" | sed "s/world/ClawMaster/"'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #22: exec ===
+Description: 文本处理 - awk
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "1 2 3" | awk "{print \}"'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'echo "1 2 3" | awk "{print \}"'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #23: exec ===
+Description: 管道组合
+Command: cargo run --bin clawmaster -- tools exec bash 'ls -1 | head -3 | wc -l'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'ls -1 | head -3 | wc -l'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #24: exec ===
+Description: 条件判断
+Command: cargo run --bin clawmaster -- tools exec bash 'if [ -f Cargo.toml ]; then echo "found"; fi'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'if [ -f Cargo.toml ]; then echo "found"; fi'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #25: exec ===
+Description: 循环处理
+Command: cargo run --bin clawmaster -- tools exec bash 'for i in 1 2 3; do echo $i; done'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec bash 'for i in 1 2 3; do echo $i; done'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #26: web_fetch ===
+Description: 获取 JSON API
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/get'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/get'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #27: web_fetch ===
+Description: 获取用户代理信息
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/user-agent'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/user-agent'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #28: web_fetch ===
+Description: 获取 IP 信息
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/ip'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/ip'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #29: web_fetch ===
+Description: 获取 headers
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/headers'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/headers'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #30: web_fetch ===
+Description: 测试 UTF-8 编码
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/encoding/utf8'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/encoding/utf8'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #31: web_fetch ===
+Description: 测试 gzip 压缩
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/gzip'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/gzip'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #32: web_fetch ===
+Description: 获取 UUID
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/uuid'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.62s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/uuid'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #33: web_fetch ===
+Description: 测试延迟响应
+Command: cargo run --bin clawmaster -- tools exec web_fetch 'https://httpbin.org/delay/1'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec web_fetch 'https://httpbin.org/delay/1'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #34: sessions ===
+Description: 列出所有会话
+Command: cargo run --bin clawmaster -- sessions list
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster sessions list`
+[2m2026-03-21T02:45:32.190605Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+command not yet implemented
+
+=== Test #35: sessions ===
+Description: 显示会话统计
+Command: cargo run --bin clawmaster -- sessions list --format json
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster sessions list --format json`
+error: unexpected argument '--format' found
+
+  tip: a similar argument exists: '--port'
+
+Usage: clawmaster sessions list --port <PORT>
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #39: config ===
+Description: 验证配置文件
+Command: cargo run --bin clawmaster -- config validate
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster config validate`
+error: unrecognized subcommand 'validate'
+
+Usage: clawmaster config [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #40: config ===
+Description: 显示配置路径
+Command: cargo run --bin clawmaster -- config path
+Duration: 4s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster config path`
+error: unrecognized subcommand 'path'
+
+Usage: clawmaster config [OPTIONS] <COMMAND>
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #41: config ===
+Description: 检查配置版本
+Command: cargo run --bin clawmaster -- --version
+Duration: 4s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster --version`
+clawmaster 0.10.18
+
+=== Test #44: sandbox ===
+Description: 列出沙箱包
+Command: cargo run --bin clawmaster -- sandbox list
+Duration: 6s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running `target/debug/clawmaster sandbox list`
+[2m2026-03-21T02:45:56.862202Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+No sandbox images found.
+
+=== Test #49: 综合 ===
+Description: 计算并格式化输出
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "Result: $(echo "2 + 2" | bc)"'
+Duration: 4s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.57s
+     Running `target/debug/clawmaster tools exec bash 'echo "Result: $(echo "2 + 2" | bc)"'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #50: 综合 ===
+Description: 文件统计分析
+Command: cargo run --bin clawmaster -- tools exec bash 'find . -name "*.rs" | wc -l'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'find . -name "*.rs" | wc -l'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #51: 综合 ===
+Description: JSON 数据处理
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "{\"name\":\"test\"}" | grep name'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.62s
+     Running `target/debug/clawmaster tools exec bash 'echo "{\"name\":\"test\"}" | grep name'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #52: 综合 ===
+Description: 多步骤处理
+Command: cargo run --bin clawmaster -- tools exec bash 'ls | head -5 | tail -3'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'ls | head -5 | tail -3'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #53: 综合 ===
+Description: 条件过滤
+Command: cargo run --bin clawmaster -- tools exec bash 'ls -la | grep "^d"'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'ls -la | grep "^d"'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #54: 综合 ===
+Description: 数据转换
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "HELLO" | tr "[:upper:]" "[:lower:]"'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.62s
+     Running `target/debug/clawmaster tools exec bash 'echo "HELLO" | tr "[:upper:]" "[:lower:]"'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #55: 综合 ===
+Description: 字符串操作
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "ClawMaster" | cut -c1-4'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'echo "ClawMaster" | cut -c1-4'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #56: 综合 ===
+Description: 排序操作
+Command: cargo run --bin clawmaster -- tools exec bash 'echo -e "3\n1\n2" | sort'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running `target/debug/clawmaster tools exec bash 'echo -e "3\n1\n2" | sort'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #57: 综合 ===
+Description: 去重操作
+Command: cargo run --bin clawmaster -- tools exec bash 'echo -e "a\na\nb" | uniq'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running `target/debug/clawmaster tools exec bash 'echo -e "a\na\nb" | uniq'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+
+=== Test #58: 综合 ===
+Description: 统计分析
+Command: cargo run --bin clawmaster -- tools exec bash 'echo "hello world" | wc -w'
+Duration: 5s
+Exit Code: 0
+Output:
+warning: constant `DANGEROUS_COMPONENTS` is never used
+  --> crates/input-validator/src/file.rs:14:7
+   |
+14 | const DANGEROUS_COMPONENTS: &[&str] = &[
+   |       ^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `MAX_PARAM_LENGTH` is never used
+ --> crates/input-validator/src/parameter.rs:8:7
+  |
+8 | const MAX_PARAM_LENGTH: usize = 10_000;
+  |       ^^^^^^^^^^^^^^^^
+
+warning: `clawmaster-input-validator` (lib) generated 2 warnings
+warning: method `tts_service` is never used
+   --> crates/gateway/src/state.rs:560:8
+    |
+430 | impl GatewayState {
+    | ----------------- method in this implementation
+...
+560 |     fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    |        ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster-gateway` (lib) generated 1 warning
+warning: function `send_agent_message_http` is never used
+   --> crates/cli/src/agent_client.rs:192:14
+    |
+192 | pub async fn send_agent_message_http(gateway_url: &str, message: &str) -> Result<String> {
+    |              ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `clawmaster` (bin "clawmaster") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.63s
+     Running `target/debug/clawmaster tools exec bash 'echo "hello world" | wc -w'`
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+COMMAND_ERROR
+

@@ -88,9 +88,11 @@ impl ToolCallRecord {
 
 /// Hash a JSON value for comparison.
 fn hash_value(value: &Value) -> u64 {
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
-    
+    use std::{
+        collections::hash_map::DefaultHasher,
+        hash::{Hash, Hasher},
+    };
+
     let mut hasher = DefaultHasher::new();
     value.to_string().hash(&mut hasher);
     hasher.finish()
@@ -150,10 +152,9 @@ impl LoopDetectionTool {
 
         // Check if last 3+ calls are identical
         let first = &recent[0];
-        let identical_count = recent.iter()
-            .take_while(|r| {
-                r.tool_name == first.tool_name && r.params_hash == first.params_hash
-            })
+        let identical_count = recent
+            .iter()
+            .take_while(|r| r.tool_name == first.tool_name && r.params_hash == first.params_hash)
             .count();
 
         if identical_count >= 3 {
@@ -174,16 +175,15 @@ impl LoopDetectionTool {
 
         let poll_tools = ["process", "session_status", "cron"];
         let recent = history.iter().rev().take(5).collect::<Vec<_>>();
-        
+
         for tool in &poll_tools {
-            let poll_calls: Vec<_> = recent.iter()
-                .filter(|r| r.tool_name == *tool)
-                .collect();
+            let poll_calls: Vec<_> = recent.iter().filter(|r| r.tool_name == *tool).collect();
 
             if poll_calls.len() >= 3 {
                 // Check if results are identical
                 let first_result = poll_calls[0].result_hash;
-                let identical_results = poll_calls.iter()
+                let identical_results = poll_calls
+                    .iter()
                     .take_while(|r| r.result_hash == first_result)
                     .count();
 
@@ -217,11 +217,12 @@ impl LoopDetectionTool {
             let a2 = &recent[i + 2];
             let b2 = &recent[i + 3];
 
-            if a1.tool_name == a2.tool_name 
+            if a1.tool_name == a2.tool_name
                 && b1.tool_name == b2.tool_name
                 && a1.tool_name != b1.tool_name
                 && a1.params_hash == a2.params_hash
-                && b1.params_hash == b2.params_hash {
+                && b1.params_hash == b2.params_hash
+            {
                 return Some(format!(
                     "Ping-pong detected: alternating between '{}' and '{}'",
                     a1.tool_name, b1.tool_name
@@ -246,7 +247,9 @@ impl LoopDetectionTool {
 
         // Increment global counter
         {
-            let mut count = self.global_call_count.write()
+            let mut count = self
+                .global_call_count
+                .write()
                 .map_err(|e| anyhow::anyhow!("Failed to acquire global count lock: {}", e))?;
             *count += 1;
 
@@ -261,10 +264,13 @@ impl LoopDetectionTool {
         }
 
         // Get or create session state
-        let mut sessions = self.sessions.write()
+        let mut sessions = self
+            .sessions
+            .write()
             .map_err(|e| anyhow::anyhow!("Failed to acquire sessions lock: {}", e))?;
-        
-        let state = sessions.entry(session_id.to_string())
+
+        let state = sessions
+            .entry(session_id.to_string())
             .or_insert_with(|| SessionState::new(self.config.history_size));
 
         // Add record
@@ -298,7 +304,7 @@ impl LoopDetectionTool {
 
         // Increment warning/critical counters
         state.warning_count += 1;
-        
+
         if state.warning_count >= self.config.critical_threshold {
             state.critical_count += 1;
             return Ok(LoopDetectionResult::Critical {
@@ -319,7 +325,9 @@ impl LoopDetectionTool {
 
     /// Reset session state.
     pub fn reset_session(&self, session_id: &str) -> Result<()> {
-        let mut sessions = self.sessions.write()
+        let mut sessions = self
+            .sessions
+            .write()
             .map_err(|e| anyhow::anyhow!("Failed to acquire sessions lock: {}", e))?;
         sessions.remove(session_id);
         Ok(())
@@ -327,10 +335,14 @@ impl LoopDetectionTool {
 
     /// Get session statistics.
     pub fn get_stats(&self, session_id: &str) -> Result<LoopDetectionStats> {
-        let sessions = self.sessions.read()
+        let sessions = self
+            .sessions
+            .read()
             .map_err(|e| anyhow::anyhow!("Failed to acquire sessions lock: {}", e))?;
-        
-        let global_count = *self.global_call_count.read()
+
+        let global_count = *self
+            .global_call_count
+            .read()
             .map_err(|e| anyhow::anyhow!("Failed to acquire global count lock: {}", e))?;
 
         if let Some(state) = sessions.get(session_id) {
@@ -358,19 +370,11 @@ pub enum LoopDetectionResult {
     #[serde(rename = "ok")]
     Ok,
     #[serde(rename = "warning")]
-    Warning {
-        warnings: Vec<String>,
-        count: usize,
-    },
+    Warning { warnings: Vec<String>, count: usize },
     #[serde(rename = "critical")]
-    Critical {
-        warnings: Vec<String>,
-        count: usize,
-    },
+    Critical { warnings: Vec<String>, count: usize },
     #[serde(rename = "circuit_breaker")]
-    CircuitBreaker {
-        message: String,
-    },
+    CircuitBreaker { message: String },
 }
 
 /// Loop detection statistics.
@@ -411,11 +415,13 @@ impl AgentTool for LoopDetectionTool {
     }
 
     async fn execute(&self, params: Value) -> Result<Value> {
-        let action = params.get("action")
+        let action = params
+            .get("action")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'action' parameter"))?;
 
-        let session_id = params.get("session_id")
+        let session_id = params
+            .get("session_id")
             .and_then(|v| v.as_str())
             .unwrap_or("default");
 
@@ -432,14 +438,14 @@ impl AgentTool for LoopDetectionTool {
                         "global_circuit_breaker_threshold": self.config.global_circuit_breaker_threshold,
                     }
                 }))
-            }
+            },
             "reset" => {
                 self.reset_session(session_id)?;
                 Ok(json!({
                     "status": "ok",
                     "message": format!("Session '{}' reset successfully", session_id)
                 }))
-            }
+            },
             "stats" => {
                 let stats = self.get_stats(session_id)?;
                 Ok(json!({
@@ -447,7 +453,7 @@ impl AgentTool for LoopDetectionTool {
                     "session_id": session_id,
                     "stats": stats
                 }))
-            }
+            },
             _ => bail!("Invalid action: {}", action),
         }
     }
@@ -492,8 +498,9 @@ mod tests {
         let params = json!({"command": "echo test"});
         let result = json!({"output": "test"});
 
-        tool.record_and_check("test_session", "exec", &params, &result).unwrap();
-        
+        tool.record_and_check("test_session", "exec", &params, &result)
+            .unwrap();
+
         let stats_before = tool.get_stats("test_session").unwrap();
         assert_eq!(stats_before.history_size, 1);
 
@@ -524,7 +531,12 @@ mod tests {
         let result = tool.execute(params).await.unwrap();
 
         assert_eq!(result["status"], "ok");
-        assert!(result["message"].as_str().unwrap().contains("reset successfully"));
+        assert!(
+            result["message"]
+                .as_str()
+                .unwrap()
+                .contains("reset successfully")
+        );
     }
 
     #[tokio::test]

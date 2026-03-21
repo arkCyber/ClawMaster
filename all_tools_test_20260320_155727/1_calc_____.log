@@ -1,0 +1,6 @@
+[2m2026-03-20T07:57:27.416936Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 计算 123 + 456
+
+✅ 响应:
+结果是 579。

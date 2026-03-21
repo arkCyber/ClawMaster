@@ -1,0 +1,5 @@
+=== Test: sandbox_packages - 搜索包 ===
+Input: Find packages related to Python
+Time: Fri Mar 20 06:33:08 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

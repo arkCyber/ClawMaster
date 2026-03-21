@@ -1,0 +1,5 @@
+=== Test: gateway - 检查状态 ===
+Input: Check gateway status
+Time: Fri Mar 20 06:33:46 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

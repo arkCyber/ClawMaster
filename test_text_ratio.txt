@@ -1,0 +1,14 @@
+分析截图中的文本比例：
+
+用户第二次提问后，模型回答：
+"Based on your query, I will call the news\_search tool to retrieve the latest American news for you. Here's the tool call: news_search(query="news", location="USA") ."
+
+这段文本大约 150 字符，工具调用块（```tool_call ... ```）大约 80 字符。
+
+比例：80 / 150 = 53%，超过了 40% 阈值，所以还是被执行了。
+
+问题：40% 阈值太宽松，需要更严格的判断。
+
+解决方案：
+1. 提高阈值到 70-80%
+2. 或者检查是否有明显的解释性前缀（如 "I will call", "Here's the tool call"）

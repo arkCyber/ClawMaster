@@ -1,0 +1,5 @@
+=== Test: web_fetch - 获取网页 ===
+Input: Fetch content from https://www.rust-lang.org
+Time: Fri Mar 20 06:32:20 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

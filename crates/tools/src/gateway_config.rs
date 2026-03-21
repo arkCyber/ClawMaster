@@ -92,13 +92,15 @@ impl AgentTool for GatewayConfigTool {
     }
 
     async fn execute(&self, params: Value) -> Result<Value> {
-        let action = params.get("action")
+        let action = params
+            .get("action")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'action' parameter"))?;
 
         match action {
             "get" => {
-                let key = params.get("key")
+                let key = params
+                    .get("key")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'key' parameter"))?;
 
@@ -107,17 +109,19 @@ impl AgentTool for GatewayConfigTool {
                     "key": key,
                     "value": value
                 }))
-            }
+            },
             "set" => {
                 if !self.allow_config_write {
                     bail!("Configuration write is not enabled for this tool");
                 }
 
-                let key = params.get("key")
+                let key = params
+                    .get("key")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'key' parameter"))?;
 
-                let value = params.get("value")
+                let value = params
+                    .get("value")
                     .ok_or_else(|| anyhow::anyhow!("Missing 'value' parameter"))?
                     .clone();
 
@@ -127,18 +131,18 @@ impl AgentTool for GatewayConfigTool {
                     "value": value,
                     "status": "updated"
                 }))
-            }
+            },
             "list" => {
                 let keys = self.provider.list_config_keys();
                 Ok(json!({
                     "keys": keys,
                     "count": keys.len()
                 }))
-            }
+            },
             "status" => {
                 let status = self.provider.get_status();
                 Ok(serde_json::to_value(status)?)
-            }
+            },
             "restart" => {
                 if !self.allow_restart {
                     bail!("Gateway restart is not enabled for this tool");
@@ -149,13 +153,13 @@ impl AgentTool for GatewayConfigTool {
                     "status": "restarting",
                     "message": "Gateway restart initiated"
                 }))
-            }
+            },
             "version" => {
                 let version = self.provider.get_version();
                 Ok(json!({
                     "version": version
                 }))
-            }
+            },
             _ => bail!("Invalid action: {}", action),
         }
     }
@@ -163,9 +167,10 @@ impl AgentTool for GatewayConfigTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::collections::HashMap;
-    use std::sync::RwLock;
+    use {
+        super::*,
+        std::{collections::HashMap, sync::RwLock},
+    };
 
     struct MockConfigProvider {
         config: RwLock<HashMap<String, Value>>,
@@ -189,7 +194,8 @@ mod tests {
     impl GatewayConfigProvider for MockConfigProvider {
         fn get_config(&self, key: &str) -> Result<Value> {
             let config = self.config.read().unwrap();
-            config.get(key)
+            config
+                .get(key)
                 .cloned()
                 .ok_or_else(|| anyhow::anyhow!("Key not found: {}", key))
         }
@@ -241,8 +247,7 @@ mod tests {
     #[tokio::test]
     async fn test_set_config() {
         let provider = Arc::new(MockConfigProvider::new());
-        let tool = GatewayConfigTool::new(provider)
-            .with_config_write_enabled(true);
+        let tool = GatewayConfigTool::new(provider).with_config_write_enabled(true);
 
         let params = json!({
             "action": "set",
@@ -310,9 +315,9 @@ mod tests {
     #[tokio::test]
     async fn test_restart() {
         let mock_provider = Arc::new(MockConfigProvider::new());
-        let provider: Arc<dyn GatewayConfigProvider> = Arc::clone(&mock_provider) as Arc<dyn GatewayConfigProvider>;
-        let tool = GatewayConfigTool::new(provider)
-            .with_restart_enabled(true);
+        let provider: Arc<dyn GatewayConfigProvider> =
+            Arc::clone(&mock_provider) as Arc<dyn GatewayConfigProvider>;
+        let tool = GatewayConfigTool::new(provider).with_restart_enabled(true);
 
         let params = json!({"action": "restart"});
         let result = tool.execute(params).await.unwrap();

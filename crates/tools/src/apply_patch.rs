@@ -4,7 +4,7 @@
 //! Supports both workspace-only mode and full filesystem access.
 
 use {
-    anyhow::{Result, bail, Context},
+    anyhow::{Context, Result, bail},
     async_trait::async_trait,
     clawmaster_agents::tool_registry::AgentTool,
     serde::{Deserialize, Serialize},
@@ -60,23 +60,32 @@ impl ApplyPatchTool {
         let absolute_path = if file_path.is_absolute() {
             file_path.to_path_buf()
         } else {
-            let workspace = self.workspace_root.as_ref()
+            let workspace = self
+                .workspace_root
+                .as_ref()
                 .ok_or_else(|| anyhow::anyhow!("Workspace root not set"))?;
             workspace.join(file_path)
         };
 
         if self.config.workspace_only {
-            let workspace = self.workspace_root.as_ref()
+            let workspace = self
+                .workspace_root
+                .as_ref()
                 .ok_or_else(|| anyhow::anyhow!("Workspace root not set"))?;
-            
-            let canonical_path = absolute_path.canonicalize()
-                .with_context(|| format!("Failed to canonicalize path: {}", absolute_path.display()))?;
-            let canonical_workspace = workspace.canonicalize()
-                .with_context(|| format!("Failed to canonicalize workspace: {}", workspace.display()))?;
+
+            let canonical_path = absolute_path.canonicalize().with_context(|| {
+                format!("Failed to canonicalize path: {}", absolute_path.display())
+            })?;
+            let canonical_workspace = workspace.canonicalize().with_context(|| {
+                format!("Failed to canonicalize workspace: {}", workspace.display())
+            })?;
 
             if !canonical_path.starts_with(&canonical_workspace) {
-                bail!("Path '{}' is outside workspace '{}'", 
-                    canonical_path.display(), canonical_workspace.display());
+                bail!(
+                    "Path '{}' is outside workspace '{}'",
+                    canonical_path.display(),
+                    canonical_workspace.display()
+                );
             }
         }
 
@@ -86,8 +95,11 @@ impl ApplyPatchTool {
     /// Parse a unified diff patch.
     fn parse_patch(&self, patch_content: &str) -> Result<Vec<PatchHunk>> {
         if patch_content.len() > self.config.max_patch_size {
-            bail!("Patch size {} exceeds maximum {}", 
-                patch_content.len(), self.config.max_patch_size);
+            bail!(
+                "Patch size {} exceeds maximum {}",
+                patch_content.len(),
+                self.config.max_patch_size
+            );
         }
 
         let mut hunks = Vec::new();
@@ -110,22 +122,21 @@ impl ApplyPatchTool {
                 let old_range = parts[1].trim_start_matches('-');
                 let new_range = parts[2].trim_start_matches('+');
 
-                let (old_start, old_count) = parse_range(old_range)?;
-                let (new_start, _new_count) = parse_range(new_range)?;
+                let (old_start, _old_count) = parse_range(old_range)?;
+                let (_new_start, _new_count) = parse_range(new_range)?;
 
                 current_hunk = Some(PatchHunk {
                     old_start,
-                    old_count,
-                    new_start,
+                    _old_count,
+                    _new_start,
                     lines: Vec::new(),
                 });
                 in_hunk = true;
-            } else if in_hunk {
-                if let Some(ref mut hunk) = current_hunk {
-                    if line.starts_with('+') || line.starts_with('-') || line.starts_with(' ') {
-                        hunk.lines.push(line.to_string());
-                    }
-                }
+            } else if in_hunk
+                && let Some(ref mut hunk) = current_hunk
+                && (line.starts_with('+') || line.starts_with('-') || line.starts_with(' '))
+            {
+                hunk.lines.push(line.to_string());
             }
         }
 
@@ -148,10 +159,13 @@ impl ApplyPatchTool {
         // Apply hunks in reverse order to maintain line numbers
         for hunk in hunks.iter().rev() {
             let start_idx = (hunk.old_start - 1) as usize;
-            
+
             if start_idx > lines.len() {
-                bail!("Hunk start line {} is beyond file length {}", 
-                    hunk.old_start, lines.len());
+                bail!(
+                    "Hunk start line {} is beyond file length {}",
+                    hunk.old_start,
+                    lines.len()
+                );
             }
 
             // Verify context lines match
@@ -159,15 +173,18 @@ impl ApplyPatchTool {
             let mut new_lines = Vec::new();
 
             for patch_line in &hunk.lines {
-                if patch_line.starts_with(' ') {
-                    // Context line - verify it matches
-                    let expected = &patch_line[1..];
+                if let Some(expected) = patch_line.strip_prefix(' ') {
+                    // Context line - must match
                     if original_idx >= lines.len() {
                         bail!("Context line beyond file end");
                     }
                     if lines[original_idx] != expected {
-                        bail!("Context mismatch at line {}: expected '{}', found '{}'",
-                            original_idx + 1, expected, lines[original_idx]);
+                        bail!(
+                            "Context mismatch at line {}: expected '{}', found '{}'",
+                            original_idx + 1,
+                            expected,
+                            lines[original_idx]
+                        );
                     }
                     new_lines.push(expected.to_string());
                     original_idx += 1;
@@ -178,8 +195,12 @@ impl ApplyPatchTool {
                         bail!("Deletion line beyond file end");
                     }
                     if lines[original_idx] != expected {
-                        bail!("Deletion mismatch at line {}: expected '{}', found '{}'",
-                            original_idx + 1, expected, lines[original_idx]);
+                        bail!(
+                            "Deletion mismatch at line {}: expected '{}', found '{}'",
+                            original_idx + 1,
+                            expected,
+                            lines[original_idx]
+                        );
                     }
                     original_idx += 1;
                 } else if patch_line.starts_with('+') {
@@ -197,7 +218,11 @@ impl ApplyPatchTool {
     }
 
     /// Apply patch to a file.
-    pub fn apply_patch_to_file(&self, file_path: &Path, patch_content: &str) -> Result<ApplyPatchResult> {
+    pub fn apply_patch_to_file(
+        &self,
+        file_path: &Path,
+        patch_content: &str,
+    ) -> Result<ApplyPatchResult> {
         let validated_path = self.validate_path(file_path)?;
 
         // Read original file
@@ -219,16 +244,25 @@ impl ApplyPatchTool {
         let patched_content = self.apply_hunks(&original_content, &hunks)?;
 
         // Write patched content
-        fs::write(&validated_path, &patched_content)
-            .with_context(|| format!("Failed to write patched file: {}", validated_path.display()))?;
+        fs::write(&validated_path, &patched_content).with_context(|| {
+            format!("Failed to write patched file: {}", validated_path.display())
+        })?;
 
         Ok(ApplyPatchResult {
             success: true,
             file_path: validated_path.display().to_string(),
             backup_path: backup_path.map(|p| p.display().to_string()),
             hunks_applied: hunks.len(),
-            lines_added: hunks.iter().flat_map(|h| &h.lines).filter(|l| l.starts_with('+')).count(),
-            lines_removed: hunks.iter().flat_map(|h| &h.lines).filter(|l| l.starts_with('-')).count(),
+            lines_added: hunks
+                .iter()
+                .flat_map(|h| &h.lines)
+                .filter(|l| l.starts_with('+'))
+                .count(),
+            lines_removed: hunks
+                .iter()
+                .flat_map(|h| &h.lines)
+                .filter(|l| l.starts_with('-'))
+                .count(),
         })
     }
 }
@@ -236,10 +270,12 @@ impl ApplyPatchTool {
 /// Parse a range string like "10,5" into (start, count).
 fn parse_range(range: &str) -> Result<(u32, u32)> {
     let parts: Vec<&str> = range.split(',').collect();
-    let start = parts[0].parse::<u32>()
+    let start = parts[0]
+        .parse::<u32>()
         .with_context(|| format!("Invalid range start: {}", parts[0]))?;
     let count = if parts.len() > 1 {
-        parts[1].parse::<u32>()
+        parts[1]
+            .parse::<u32>()
             .with_context(|| format!("Invalid range count: {}", parts[1]))?
     } else {
         1
@@ -251,8 +287,8 @@ fn parse_range(range: &str) -> Result<(u32, u32)> {
 #[derive(Debug, Clone)]
 struct PatchHunk {
     old_start: u32,
-    old_count: u32,
-    new_start: u32,
+    _old_count: u32,
+    _new_start: u32,
     lines: Vec<String>,
 }
 
@@ -299,11 +335,13 @@ impl AgentTool for ApplyPatchTool {
             bail!("apply_patch tool is disabled");
         }
 
-        let file_path = params.get("file_path")
+        let file_path = params
+            .get("file_path")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'file_path' parameter"))?;
 
-        let patch = params.get("patch")
+        let patch = params
+            .get("patch")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'patch' parameter"))?;
 
@@ -315,9 +353,7 @@ impl AgentTool for ApplyPatchTool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::fs;
-    use tempfile::TempDir;
+    use {super::*, std::fs, tempfile::TempDir};
 
     #[test]
     fn test_parse_range() {
@@ -341,8 +377,8 @@ mod tests {
         let hunks = tool.parse_patch(patch).unwrap();
         assert_eq!(hunks.len(), 1);
         assert_eq!(hunks[0].old_start, 1);
-        assert_eq!(hunks[0].old_count, 3);
-        assert_eq!(hunks[0].new_start, 1);
+        assert_eq!(hunks[0]._old_count, 3);
+        assert_eq!(hunks[0]._new_start, 1);
         assert_eq!(hunks[0].lines.len(), 4); // 包含空格前缀的上下文行
     }
 

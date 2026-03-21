@@ -5,7 +5,7 @@ use std::{
     time::Duration,
 };
 
-use tracing::warn;
+use tracing::{info, warn};
 
 use {
     clawmaster_config::VoiceSttProvider,
@@ -4412,6 +4412,56 @@ pub(super) fn register(reg: &mut MethodRegistry) {
             Box::pin(async move {
                 reload_hooks(&ctx.state).await;
                 Ok(serde_json::json!({ "ok": true }))
+            })
+        }),
+    );
+
+    // Models hot-swap
+    reg.register(
+        "models.reload",
+        Box::new(|ctx| {
+            Box::pin(async move {
+                let model_id = ctx
+                    .params
+                    .get("model_id")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| {
+                        ErrorShape::new(error_codes::INVALID_REQUEST, "model_id required")
+                    })?
+                    .to_string();
+
+                info!(model_id = %model_id, "Received model reload request");
+
+                // Check if this is a local-llm model
+                if !model_id.starts_with("local-llm::") {
+                    return Ok(serde_json::json!({
+                        "success": false,
+                        "message": "Hot-swap only supported for local-llm models"
+                    }));
+                }
+
+                // Extract the actual model name
+                let model_name = model_id.strip_prefix("local-llm::").unwrap_or(&model_id);
+
+                // Trigger model reload via broadcast
+                // This will notify the local-llm provider to reload
+                broadcast(
+                    &ctx.state,
+                    "model.reload",
+                    serde_json::json!({
+                        "model_id": model_id,
+                        "model_name": model_name
+                    }),
+                    BroadcastOpts::default(),
+                )
+                .await;
+
+                info!(model_id = %model_id, "Model reload initiated");
+
+                Ok(serde_json::json!({
+                    "success": true,
+                    "message": format!("Model reload initiated for {}", model_name)
+                }))
             })
         }),
     );

@@ -17,6 +17,7 @@ pub enum ChannelType {
     MsTeams,
     Discord,
     Slack,
+    Signal,
 }
 
 impl ChannelType {
@@ -28,6 +29,7 @@ impl ChannelType {
             Self::MsTeams => "msteams",
             Self::Discord => "discord",
             Self::Slack => "slack",
+            Self::Signal => "signal",
         }
     }
 
@@ -39,6 +41,7 @@ impl ChannelType {
             Self::MsTeams => "Microsoft Teams",
             Self::Discord => "Discord",
             Self::Slack => "Slack",
+            Self::Signal => "Signal",
         }
     }
 }
@@ -59,6 +62,7 @@ impl std::str::FromStr for ChannelType {
             "msteams" | "microsoft_teams" | "microsoft-teams" | "teams" => Ok(Self::MsTeams),
             "discord" => Ok(Self::Discord),
             "slack" => Ok(Self::Slack),
+            "signal" => Ok(Self::Signal),
             other => Err(Error::invalid_input(format!(
                 "unknown channel type: {other}"
             ))),
@@ -74,6 +78,7 @@ impl ChannelType {
         Self::MsTeams,
         Self::Discord,
         Self::Slack,
+        Self::Signal,
     ];
 
     /// Returns the static descriptor for this channel type.
@@ -153,6 +158,22 @@ impl ChannelType {
                     supports_streaming: true,
                     supports_interactive: true,
                     supports_threads: true,
+                    supports_voice_ingest: false,
+                    supports_pairing: false,
+                    supports_otp: false,
+                    supports_reactions: true,
+                    supports_location: false,
+                },
+            },
+            Self::Signal => ChannelDescriptor {
+                channel_type: *self,
+                display_name: "Signal",
+                capabilities: ChannelCapabilities {
+                    inbound_mode: InboundMode::Polling,
+                    supports_outbound: true,
+                    supports_streaming: false,
+                    supports_interactive: false,
+                    supports_threads: false,
                     supports_voice_ingest: false,
                     supports_pairing: false,
                     supports_otp: false,

@@ -1,0 +1,22 @@
+[2m2026-03-20T07:57:55.618581Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 添加一个任务：完成项目文档
+
+✅ 响应:
+你可以使用以下命令添加任务：
+
+`task_list create task1`
+
+或者：
+
+`task_list add task1`
+
+这将创建或添加一个任务名为task1的新任务。
+
+如果你想要添加某个具体的项目文档任务，你可以这样写：
+
+`task_list create task1 project_tasks project_name=project1 task_name=project_document`
+
+或者：
+
+`task_list add task1 project_tasks project_name=project1 task_name=project_document`

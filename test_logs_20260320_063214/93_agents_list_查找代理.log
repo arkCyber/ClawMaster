@@ -1,0 +1,5 @@
+=== Test: agents_list - 查找代理 ===
+Input: Find agent named 'monitor'
+Time: Fri Mar 20 06:33:49 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

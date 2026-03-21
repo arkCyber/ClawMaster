@@ -1,0 +1,14 @@
+[2m2026-03-20T08:11:26.621781Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 修改技能配置
+
+✅ 响应:
+你可以使用以下命令修改技能配置：
+
+`skill config <技能名称> <新配置>`
+
+这将修改现有的技能配置。
+
+例如，如果你想修改名为"code_analyzer"的技能的配置，请使用以下命令：
+
+`skill config code_analyzer <新配置>`

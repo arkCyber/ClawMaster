@@ -1,0 +1,439 @@
+=== WASM Test #1: wasm_engine ===
+Description: WASM 组件编译和缓存
+Function: wasm_engine::tests::compile_component_round_trip_and_cache_hit
+Duration: 4s
+Output:
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.26s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test wasm_engine::tests::compile_component_round_trip_and_cache_hit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #2: wasm_engine ===
+Description: WASM 并发访问
+Function: wasm_engine::tests::compile_component_concurrent_access
+Duration: 2s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.74s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test wasm_engine::tests::compile_component_concurrent_access ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #3: wasm_engine ===
+Description: WASM 核心模块编译
+Function: wasm_engine::tests::compile_module_core_wasm
+Duration: 39s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 38.47s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test wasm_engine::tests::compile_module_core_wasm ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #4: wasm_limits ===
+Description: WASM 燃料耗尽检测
+Function: wasm_limits::wasm_tests::fuel_exhaustion_returns_error
+Duration: 45s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.95s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test wasm_limits::wasm_tests::fuel_exhaustion_returns_error ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #5: wasm_component ===
+Description: WASM HTTP 超时处理
+Function: wasm_component::tests::http_host_maps_timeout_errors
+Duration: 7s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.87s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test wasm_component::tests::http_host_maps_timeout_errors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.23s
+
+=== WASM Test #6: calc ===
+Description: 基础加法运算
+Function: calc::tests
+Duration: 5s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.11s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 10 tests
+test calc::tests::evaluates_operator_precedence ... ok
+test calc::tests::evaluates_parentheses_and_unary_minus ... ok
+test calc::tests::execute_returns_structured_result ... ok
+test calc::tests::execute_supports_expr_alias ... ok
+test calc::tests::power_is_right_associative ... ok
+test calc::tests::rejects_division_by_zero ... ok
+test calc::tests::rejects_expressions_that_are_too_long ... ok
+test calc::tests::rejects_invalid_characters ... ok
+test calc::tests::rejects_too_large_exponent ... ok
+test calc::tests::supports_floating_point_results ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 568 filtered out; finished in 0.00s
+
+=== WASM Test #7: web_fetch ===
+Description: SSRF 防护 - 阻止 localhost
+Function: web_fetch::tests::test_ssrf_blocks_localhost_url
+Duration: 31s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.32s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_fetch::tests::test_ssrf_blocks_localhost_url ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #8: web_fetch ===
+Description: SSRF 防护 - 阻止私有 IP
+Function: web_fetch::tests::test_ssrf_blocks_private_ip
+Duration: 28s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 28.20s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_fetch::tests::test_ssrf_blocks_private_ip ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #9: web_fetch ===
+Description: SSRF 防护 - 阻止链路本地
+Function: web_fetch::tests::test_ssrf_blocks_link_local
+Duration: 29s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 28.65s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_fetch::tests::test_ssrf_blocks_link_local ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #10: web_fetch ===
+Description: 白名单功能
+Function: web_fetch::tests::test_ssrf_check_allowlist_permits_private_ip
+Duration: 5s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.16s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_fetch::tests::test_ssrf_check_allowlist_permits_private_ip ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #11: web_fetch ===
+Description: 内容截断
+Function: web_fetch::tests::test_truncation
+Duration: 15s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.09s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 2 tests
+test web_fetch::tests::test_truncation ... ok
+test web_fetch::tests::test_truncation_utf8_boundary ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 576 filtered out; finished in 0.00s
+
+=== WASM Test #12: web_fetch ===
+Description: UTF-8 边界处理
+Function: web_fetch::tests::test_truncation_utf8_boundary
+Duration: 11s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.22s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_fetch::tests::test_truncation_utf8_boundary ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #13: web_search ===
+Description: Brave 搜索响应解析
+Function: web_search::tests::test_brave_response_parsing
+Duration: 4s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.30s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 2 tests
+test web_search::tests::test_brave_response_parsing ... ok
+test web_search::tests::test_brave_response_parsing_tolerates_nulls ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 576 filtered out; finished in 0.00s
+
+=== WASM Test #14: web_search ===
+Description: DuckDuckGo HTML 解析
+Function: web_search::tests::test_parse_duckduckgo_html_basic
+Duration: 13s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.35s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_search::tests::test_parse_duckduckgo_html_basic ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #15: web_search ===
+Description: Perplexity 响应解析
+Function: web_search::tests::test_perplexity_response_parsing
+Duration: 5s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.63s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_search::tests::test_perplexity_response_parsing ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #16: web_search ===
+Description: 缓存命中和未命中
+Function: web_search::tests::test_cache_hit_and_miss
+Duration: 7s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.41s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test web_search::tests::test_cache_hit_and_miss ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+
+=== WASM Test #17: map ===
+Description: 地图缩放限制
+Function: map::tests::execute_clamps_zoom
+Duration: 19s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.92s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test map::tests::execute_clamps_zoom ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.90s
+
+=== WASM Test #18: map ===
+Description: 地图标签功能
+Function: map::tests::execute_includes_label_in_result
+Duration: 9s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.67s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test map::tests::execute_includes_label_in_result ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.04s
+
+=== WASM Test #19: map ===
+Description: 地图点位输入
+Function: map::tests::execute_supports_points_input
+Duration: 2s
+Output:
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.61s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test map::tests::execute_supports_points_input ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.99s
+
+=== WASM Test #20: location ===
+Description: 精确位置模式
+Function: location::tests::precision_defaults_to_precise
+Duration: 6s
+Output:
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.38s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test location::tests::precision_defaults_to_precise ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.74s
+
+=== WASM Test #21: location ===
+Description: 粗略位置模式
+Function: location::tests::precision_coarse_is_forwarded
+Duration: 3s
+Output:
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.73s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test location::tests::precision_coarse_is_forwarded ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.78s
+
+=== WASM Test #22: location ===
+Description: 浏览器位置获取
+Function: location::tests::browser_location_success
+Duration: 4s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test location::tests::browser_location_success ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.73s
+
+=== WASM Test #23: location ===
+Description: 通道位置获取
+Function: location::tests::channel_location_success
+Duration: 6s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.07s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test location::tests::channel_location_success ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.74s
+
+=== WASM Test #24: process ===
+Description: 进程列表（无沙箱）
+Function: process::tests::test_process_tool_list_no_sandbox
+Duration: 5s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.73s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test process::tests::test_process_tool_list_no_sandbox ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.38s
+
+=== WASM Test #25: contract ===
+Description: 合约超时强制执行
+Function: contract::tests::contract_timeout_is_enforced
+Duration: 2s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.42s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test contract::tests::contract_timeout_is_enforced ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.01s
+
+=== WASM Test #26: spawn_agent ===
+Description: 超时取消长时间运行的 Agent
+Function: spawn_agent::tests::test_timeout_cancels_long_running_agent
+Duration: 122s
+Output:
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on artifact directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 00s
+     Running unittests src/lib.rs (target/debug/deps/clawmaster_tools-362a15df718e5068)
+
+running 1 test
+test spawn_agent::tests::test_timeout_cancels_long_running_agent ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.00s
+

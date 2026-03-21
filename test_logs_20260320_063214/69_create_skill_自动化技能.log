@@ -1,0 +1,5 @@
+=== Test: create_skill - 自动化技能 ===
+Input: Create an automation skill
+Time: Fri Mar 20 06:33:24 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

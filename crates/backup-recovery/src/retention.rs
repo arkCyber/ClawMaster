@@ -2,19 +2,21 @@
 //!
 //! DO-178C Level A Compliant Retention Management
 
-use crate::{BackupManager, BackupMetadata, BackupResult, BackupType};
-use std::sync::Arc;
-use time::{Duration, OffsetDateTime};
+use {
+    crate::{BackupManager, BackupMetadata, BackupResult, BackupType},
+    std::sync::Arc,
+    time::{Duration, OffsetDateTime},
+};
 
 /// Retention policy configuration
 #[derive(Debug, Clone)]
 pub struct RetentionPolicy {
     /// Maximum number of full backups to keep
     pub max_full_backups: usize,
-    
+
     /// Maximum number of incremental backups per full backup
     pub max_incremental_per_full: usize,
-    
+
     /// Maximum age of backups
     pub max_age: Duration,
 }
@@ -22,9 +24,9 @@ pub struct RetentionPolicy {
 impl Default for RetentionPolicy {
     fn default() -> Self {
         Self {
-            max_full_backups: 7,                    // Keep 7 full backups
-            max_incremental_per_full: 24,           // Keep 24 incrementals per full
-            max_age: Duration::days(30),            // Keep backups for 30 days
+            max_full_backups: 7,          // Keep 7 full backups
+            max_incremental_per_full: 24, // Keep 24 incrementals per full
+            max_age: Duration::days(30),  // Keep backups for 30 days
         }
     }
 }
@@ -165,8 +167,14 @@ impl RetentionManager {
     pub async fn get_statistics(&self) -> BackupResult<RetentionStatistics> {
         let backups = self.backup_manager.list_backups().await?;
 
-        let full_count = backups.iter().filter(|b| b.backup_type == BackupType::Full).count();
-        let incremental_count = backups.iter().filter(|b| b.backup_type == BackupType::Incremental).count();
+        let full_count = backups
+            .iter()
+            .filter(|b| b.backup_type == BackupType::Full)
+            .count();
+        let incremental_count = backups
+            .iter()
+            .filter(|b| b.backup_type == BackupType::Incremental)
+            .count();
 
         let total_size: u64 = backups.iter().map(|b| b.compressed_size).sum();
 
@@ -197,8 +205,7 @@ pub struct RetentionStatistics {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_retention_policy_creation() {
@@ -251,7 +258,10 @@ mod tests {
 
         // Create backups
         let full = manager.create_full_backup(&source_file).await.unwrap();
-        manager.create_incremental_backup(&source_file, full.id).await.unwrap();
+        manager
+            .create_incremental_backup(&source_file, full.id)
+            .await
+            .unwrap();
 
         let stats = retention.get_statistics().await.unwrap();
         assert_eq!(stats.total_backups, 2);

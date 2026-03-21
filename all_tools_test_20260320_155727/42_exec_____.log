@@ -1,0 +1,21 @@
+[2m2026-03-20T08:04:58.325025Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 显示系统信息
+
+✅ 响应:
+以下是系统信息：
+
+* 主机名：host=arksong-Mac-Studio.local
+* �系统：os=macos
+* 构：arch=aarch64
+* Shell：shell=zsh
+* 当前日期和时间：2026-03-20 16:04:46
+* 服务提供商：provider=local-llm
+* 型：model=local-llm::llama-3.1-8b-q4_k_m
+* 会话类型：session=main
+* 数据目录：data_dir=/Users/arksong/.clawmaster
+* Sudo 式：sudo_non_interactive=false
+* Sudo �：sudo_status=requires_password
+* 时区：timezone=Asia/Shanghai
+
+这些信息是关于你机器的系统配置。

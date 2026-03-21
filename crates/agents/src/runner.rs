@@ -659,6 +659,12 @@ pub async fn run_agent_loop_with_context(
 
     loop {
         iterations += 1;
+
+        // Monitor iteration count and warn if approaching limit
+        if iterations > 5 && iterations % 5 == 0 {
+            warn!("High iteration count: {}/{}", iterations, max_iterations);
+        }
+
         if iterations > max_iterations {
             warn!("agent loop exceeded max iterations ({})", max_iterations);
             return Err(AgentRunError::Other(anyhow::anyhow!(
@@ -1195,6 +1201,12 @@ pub async fn run_agent_loop_streaming(
 
     loop {
         iterations += 1;
+
+        // Monitor iteration count and warn if approaching limit
+        if iterations > 5 && iterations % 5 == 0 {
+            warn!("High iteration count: {}/{}", iterations, max_iterations);
+        }
+
         if iterations > max_iterations {
             warn!(
                 "streaming agent loop exceeded max iterations ({})",

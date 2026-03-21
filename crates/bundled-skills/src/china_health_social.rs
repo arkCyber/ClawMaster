@@ -1,10 +1,9 @@
 //! China Health & Social Skills
-//! 
+//!
 //! This module provides Skills for Chinese healthcare and social platform services.
 //! 中国医疗健康和社交平台服务专用 Skills
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all China health and social skills (8 skills)
 pub fn china_health_social_skills() -> Vec<SkillContent> {
@@ -15,7 +14,6 @@ pub fn china_health_social_skills() -> Vec<SkillContent> {
         alipay_health_skill(),
         jd_health_skill(),
         meituan_doctor_skill(),
-        
         // Social Platforms (3)
         douban_skill(),
         tieba_skill(),
@@ -1085,23 +1083,23 @@ mod tests {
     #[test]
     fn test_all_health_social_skills_have_metadata() {
         let skills = china_health_social_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_health_social_skill_names() {
         let skills = china_health_social_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"china-hospital"));
         assert!(names.contains(&"wechat-doctor"));
         assert!(names.contains(&"alipay-health"));
@@ -1115,18 +1113,25 @@ mod tests {
     #[test]
     fn test_health_social_categories() {
         let skills = china_health_social_skills();
-        
+
         // Healthcare: 5
-        let healthcare = vec!["china-hospital", "wechat-doctor", "alipay-health", 
-                             "jd-health", "meituan-doctor"];
-        let healthcare_count = skills.iter()
+        let healthcare = vec![
+            "china-hospital",
+            "wechat-doctor",
+            "alipay-health",
+            "jd-health",
+            "meituan-doctor",
+        ];
+        let healthcare_count = skills
+            .iter()
             .filter(|s| healthcare.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(healthcare_count, 5);
-        
+
         // Social: 3
         let social = vec!["douban", "tieba", "momo"];
-        let social_count = skills.iter()
+        let social_count = skills
+            .iter()
             .filter(|s| social.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(social_count, 3);

@@ -20,10 +20,10 @@ pub async fn compact_session(
     let mut compacted = Vec::new();
 
     // Keep system message if present
-    if let Some(first) = messages.first() {
-        if first.get("role").and_then(|v| v.as_str()) == Some("system") {
-            compacted.push(first.clone());
-        }
+    if let Some(first) = messages.first()
+        && first.get("role").and_then(|v| v.as_str()) == Some("system")
+    {
+        compacted.push(first.clone());
     }
 
     // Messages to summarize (middle section)

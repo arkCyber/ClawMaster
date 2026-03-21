@@ -3,9 +3,11 @@
 //! DO-178C Level A compliant developer tool for creating and managing
 //! ClawMaster plugins, skills, and tools.
 
-use anyhow::Result;
-use clap::{Parser, Subcommand};
-use colored::Colorize;
+use {
+    anyhow::Result,
+    clap::{Parser, Subcommand},
+    colored::Colorize,
+};
 
 mod commands;
 mod templates;
@@ -32,7 +34,7 @@ enum Commands {
     Init {
         /// Project name
         name: String,
-        
+
         /// Project type (plugin, skill, tool)
         #[arg(short, long, default_value = "plugin")]
         r#type: String,
@@ -42,7 +44,7 @@ enum Commands {
     New {
         /// Component type (skill, tool, plugin)
         component_type: String,
-        
+
         /// Component name
         name: String,
     },
@@ -52,7 +54,7 @@ enum Commands {
         /// Port to listen on
         #[arg(short, long, default_value = "3000")]
         port: u16,
-        
+
         /// Enable hot reload
         #[arg(long, default_value = "true")]
         hot_reload: bool,
@@ -84,7 +86,7 @@ enum Commands {
         /// Follow log output
         #[arg(short, long)]
         follow: bool,
-        
+
         /// Number of lines to show
         #[arg(short, long, default_value = "100")]
         lines: usize,
@@ -115,31 +117,34 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Init { name, r#type } => {
             init::execute(&name, &r#type).await?;
-        }
-        Commands::New { component_type, name } => {
+        },
+        Commands::New {
+            component_type,
+            name,
+        } => {
             new::execute(&component_type, &name).await?;
-        }
+        },
         Commands::Serve { port, hot_reload } => {
             serve::execute(port, hot_reload).await?;
-        }
+        },
         Commands::Build { release } => {
             build::execute(release).await?;
-        }
+        },
         Commands::Test { test } => {
             test::execute(test.as_deref()).await?;
-        }
+        },
         Commands::Publish { dry_run } => {
             publish::execute(dry_run).await?;
-        }
+        },
         Commands::Logs { follow, lines } => {
             logs::execute(follow, lines).await?;
-        }
+        },
         Commands::Validate => {
             validate::execute().await?;
-        }
+        },
         Commands::Docs { open } => {
             docs::execute(open).await?;
-        }
+        },
     }
 
     Ok(())
@@ -161,7 +166,9 @@ fn init_logging(verbose: bool) {
 }
 
 fn print_banner() {
-    println!("{}", r#"
+    println!(
+        "{}",
+        r#"
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║   ██████╗██╗      █████╗ ██╗    ██╗███╗   ███╗ █████╗    ║
@@ -174,5 +181,7 @@ fn print_banner() {
 ║              Developer CLI Tool v0.1.0                    ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
-"#.bright_cyan());
+"#
+        .bright_cyan()
+    );
 }

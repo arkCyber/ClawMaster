@@ -1,0 +1,6 @@
+[2m2026-03-20T08:34:51.732010Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 我喜欢什么编程语言
+
+✅ 响应:
+你喜欢使用 Rust 编程语言。

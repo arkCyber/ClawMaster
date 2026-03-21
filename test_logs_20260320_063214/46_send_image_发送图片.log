@@ -1,0 +1,5 @@
+=== Test: send_image - 发送图片 ===
+Input: Send image.png to the chat
+Time: Fri Mar 20 06:33:00 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

@@ -1,0 +1,5 @@
+=== Test: send_image - 发送图表 ===
+Input: Send the chart as an image
+Time: Fri Mar 20 06:33:02 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

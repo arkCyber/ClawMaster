@@ -2,16 +2,13 @@
 //!
 //! DO-178C Level A Compliant Output Encoding
 
-use html_escape::{encode_text, encode_quoted_attribute};
-use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+use {
+    html_escape::{encode_quoted_attribute, encode_text},
+    percent_encoding::{AsciiSet, CONTROLS, utf8_percent_encode},
+};
 
 /// Characters to percent-encode in URLs
-const FRAGMENT: &AsciiSet = &CONTROLS
-    .add(b' ')
-    .add(b'"')
-    .add(b'<')
-    .add(b'>')
-    .add(b'`');
+const FRAGMENT: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'`');
 
 /// Encode HTML text content
 ///
@@ -39,7 +36,7 @@ pub fn encode_url(text: &str) -> String {
 /// DO-178C §6.3.1: JavaScript encoding
 pub fn encode_javascript(text: &str) -> String {
     let mut result = String::new();
-    
+
     for ch in text.chars() {
         match ch {
             '\'' => result.push_str(r"\'"),
@@ -54,7 +51,7 @@ pub fn encode_javascript(text: &str) -> String {
             _ => result.push(ch),
         }
     }
-    
+
     result
 }
 
@@ -71,16 +68,16 @@ pub fn encode_json(text: &str) -> String {
 pub fn strip_html_tags(text: &str) -> String {
     let mut result = String::new();
     let mut in_tag = false;
-    
+
     for ch in text.chars() {
         match ch {
             '<' => in_tag = true,
             '>' => in_tag = false,
             _ if !in_tag => result.push(ch),
-            _ => {}
+            _ => {},
         }
     }
-    
+
     result
 }
 
@@ -90,7 +87,7 @@ pub fn strip_html_tags(text: &str) -> String {
 pub fn sanitize_for_display(text: &str) -> String {
     // First strip any HTML tags
     let stripped = strip_html_tags(text);
-    
+
     // Then encode remaining HTML entities
     encode_html(&stripped)
 }
@@ -161,7 +158,10 @@ mod tests {
     #[test]
     fn test_strip_html_tags() {
         assert_eq!(strip_html_tags("Hello <b>world</b>"), "Hello world");
-        assert_eq!(strip_html_tags("<script>alert('xss')</script>"), "alert('xss')");
+        assert_eq!(
+            strip_html_tags("<script>alert('xss')</script>"),
+            "alert('xss')"
+        );
     }
 
     #[test]

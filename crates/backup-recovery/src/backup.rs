@@ -2,20 +2,24 @@
 //!
 //! DO-178C Level A Compliant Backup System
 
-use crate::{BackupError, BackupResult};
-use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
-use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
-use time::OffsetDateTime;
-use uuid::Uuid;
+use {
+    crate::{BackupError, BackupResult},
+    serde::{Deserialize, Serialize},
+    sha2::{Digest, Sha256},
+    std::{
+        io::Write,
+        path::{Path, PathBuf},
+    },
+    time::OffsetDateTime,
+    uuid::Uuid,
+};
 
 /// Backup type
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum BackupType {
     /// Full backup
     Full,
-    
+
     /// Incremental backup
     Incremental,
 }
@@ -25,29 +29,29 @@ pub enum BackupType {
 pub struct BackupMetadata {
     /// Unique backup ID
     pub id: Uuid,
-    
+
     /// Backup type
     pub backup_type: BackupType,
-    
+
     /// Creation timestamp
     #[serde(with = "time::serde::rfc3339")]
     pub created_at: OffsetDateTime,
-    
+
     /// Source path
     pub source_path: PathBuf,
-    
+
     /// Backup file path
     pub backup_path: PathBuf,
-    
+
     /// Uncompressed size in bytes
     pub original_size: u64,
-    
+
     /// Compressed size in bytes
     pub compressed_size: u64,
-    
+
     /// SHA256 checksum
     pub checksum: String,
-    
+
     /// Parent backup ID (for incremental)
     pub parent_id: Option<Uuid>,
 }
@@ -62,9 +66,8 @@ pub struct BackupManager {
 impl BackupManager {
     /// Create new backup manager
     pub fn new(backup_dir: PathBuf) -> BackupResult<Self> {
-        std::fs::create_dir_all(&backup_dir)
-            .map_err(|e| BackupError::IoError(e.to_string()))?;
-        
+        std::fs::create_dir_all(&backup_dir).map_err(|e| BackupError::IoError(e.to_string()))?;
+
         Ok(Self { backup_dir })
     }
 
@@ -216,8 +219,7 @@ impl BackupManager {
 
     /// Compress data using gzip
     fn compress_data(&self, data: &[u8]) -> BackupResult<Vec<u8>> {
-        use flate2::write::GzEncoder;
-        use flate2::Compression;
+        use flate2::{Compression, write::GzEncoder};
 
         let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
         encoder
@@ -260,8 +262,7 @@ impl BackupManager {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use tempfile::TempDir;
+    use {super::*, tempfile::TempDir};
 
     #[tokio::test]
     async fn test_create_full_backup() {

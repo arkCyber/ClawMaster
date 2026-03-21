@@ -15,13 +15,10 @@
 
 pub mod events;
 pub mod logger;
-pub mod storage;
 pub mod signature;
+pub mod storage;
 
-pub use events::*;
-pub use logger::*;
-pub use storage::*;
-pub use signature::*;
+pub use {events::*, logger::*, signature::*, storage::*};
 
 use thiserror::Error;
 
@@ -32,16 +29,16 @@ use thiserror::Error;
 pub enum AuditError {
     #[error("Database error: {0}")]
     DatabaseError(String),
-    
+
     #[error("Serialization error: {0}")]
     SerializationError(String),
-    
+
     #[error("Signature error: {0}")]
     SignatureError(String),
-    
+
     #[error("Invalid event: {0}")]
     InvalidEvent(String),
-    
+
     #[error("Storage error: {0}")]
     StorageError(String),
 }

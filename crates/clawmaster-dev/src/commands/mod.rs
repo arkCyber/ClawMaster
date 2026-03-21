@@ -1,11 +1,11 @@
 //! CLI commands
 
-pub mod init;
-pub mod new;
-pub mod serve;
 pub mod build;
-pub mod test;
-pub mod publish;
-pub mod logs;
-pub mod validate;
 pub mod docs;
+pub mod init;
+pub mod logs;
+pub mod new;
+pub mod publish;
+pub mod serve;
+pub mod test;
+pub mod validate;

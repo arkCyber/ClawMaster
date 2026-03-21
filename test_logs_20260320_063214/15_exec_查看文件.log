@@ -1,0 +1,5 @@
+=== Test: exec - 查看文件 ===
+Input: Show me the contents of README.md
+Time: Fri Mar 20 06:32:28 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

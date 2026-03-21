@@ -1,0 +1,5 @@
+    Blocking waiting for file lock on artifact directory
+   Compiling clawmaster-slack v0.10.18 (/Users/arksong/ClawMaster/crates/slack)
+error: failed to build archive at `/Users/arksong/ClawMaster/target/debug/deps/libclawmaster_slack-d6bae0f6599f5980.rlib`: No space left on device (os error 28)
+
+error: could not compile `clawmaster-slack` (lib) due to 1 previous error

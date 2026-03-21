@@ -94,6 +94,16 @@ pub struct LocalGgufProvider {
     temperature: f32,
 }
 
+impl Drop for LocalGgufProvider {
+    fn drop(&mut self) {
+        info!(
+            model = %self.model_id,
+            "Unloading GGUF model and releasing backend"
+        );
+        // Arc will automatically clean up when all references are dropped
+    }
+}
+
 impl LocalGgufProvider {
     /// Create a new provider with an already-loaded model.
     fn new_with_model(
@@ -123,18 +133,43 @@ impl LocalGgufProvider {
     ///
     /// This will download the model if needed.
     pub async fn from_config(config: LocalGgufConfig) -> Result<Self> {
+        info!(
+            model_id = %config.model_id,
+            model_path = ?config.model_path,
+            "from_config called with configuration"
+        );
+
+        info!(
+            model_id = %config.model_id,
+            model_path = ?config.model_path,
+            "from_config called with configuration"
+        );
+
         let load_start = Instant::now();
 
         // Resolve model path
-        let (model_path, model_def) = if let Some(path) = config.model_path {
+        let (model_path, model_def) = if let Some(path) = &config.model_path {
             // User provided direct path
+            info!(
+                model_id = %config.model_id,
+                path = %path.display(),
+                "Using custom model_path"
+            );
             if !path.exists() {
                 bail!("model file not found: {}", path.display());
             }
-            (path, find_model(&config.model_id))
+            (path.clone(), find_model(&config.model_id))
         } else {
             // Look up in registry and download if needed
+            info!(
+                model_id = %config.model_id,
+                "Looking up model in registry"
+            );
             let Some(def) = find_model(&config.model_id) else {
+                warn!(
+                    model_id = %config.model_id,
+                    "Model not found in registry"
+                );
                 bail!(
                     "unknown model '{}'. Use model_path for custom GGUF files.",
                     config.model_id
@@ -216,6 +251,40 @@ impl LocalGgufProvider {
             context_size,
             config.temperature,
         ))
+    }
+
+    /// Hot-swap to a new model by unloading the old one first.
+    ///
+    /// This allows switching models at runtime without restarting the entire system.
+    /// The old provider is dropped, releasing the LlamaBackend, then a new one is loaded.
+    pub async fn reload(old_provider: Option<Self>, config: LocalGgufConfig) -> Result<Self> {
+        info!(
+            old_model = old_provider.as_ref().map(|p| p.model_id.as_str()),
+            new_model = %config.model_id,
+            "Starting model hot-swap"
+        );
+
+        // 1. Drop old provider to release backend
+        if let Some(old) = old_provider {
+            info!(model = %old.model_id, "Dropping old model");
+            drop(old);
+
+            // 2. Wait for resources to be fully released
+            // This is critical - llama.cpp needs time to clean up
+            tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+            info!("Old model resources released");
+        }
+
+        // 3. Load new model
+        info!(model = %config.model_id, "Loading new model");
+        let new_provider = Self::from_config(config).await?;
+
+        info!(
+            model = %new_provider.model_id,
+            "Model hot-swap completed successfully"
+        );
+
+        Ok(new_provider)
     }
 
     /// Get the chat template hint for this model.
@@ -397,7 +466,7 @@ impl LlmProvider for LocalGgufProvider {
     }
 
     fn supports_tools(&self) -> bool {
-        true
+        false // 禁用原生工具调用，强制使用文本模式
     }
 
     fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {
@@ -739,7 +808,7 @@ impl LlmProvider for LazyLocalGgufProvider {
     }
 
     fn supports_tools(&self) -> bool {
-        true
+        false // 禁用原生工具调用，强制使用文本模式
     }
 
     fn tool_mode(&self) -> Option<clawmaster_config::ToolMode> {

@@ -9,7 +9,7 @@ use {
     serde::{Deserialize, Serialize},
     sqlx::SqlitePool,
     std::time::{SystemTime, UNIX_EPOCH},
-    tracing::{debug, error, info, warn},
+    tracing::{debug, info, warn},
 };
 
 /// A single conversation turn (question + answer pair).

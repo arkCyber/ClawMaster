@@ -1,0 +1,24 @@
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.

@@ -1,0 +1,10 @@
+[2m2026-03-20T09:30:28.805842Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 显示所有任务
+
+✅ 响应:
+你可以使用以下命令列出当前目录的文件：
+
+`sandobox ls`
+
+这将列出当前目录中的文件和子目录。

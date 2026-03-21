@@ -1,17 +1,20 @@
-use anyhow::Result;
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::time::timeout;
-use tracing::{debug, info, warn};
+use {
+    anyhow::Result,
+    serde::{Deserialize, Serialize},
+    std::{sync::Arc, time::Duration},
+    tokio::time::timeout,
+    tracing::{debug, info, warn},
+};
 
+mod context;
 mod executor;
 mod registry;
-mod context;
 
-pub use executor::ToolExecutor;
-pub use registry::{Tool, ToolRegistry};
-pub use context::ExecutionContext;
+pub use {
+    context::ExecutionContext,
+    executor::ToolExecutor,
+    registry::{Tool, ToolRegistry},
+};
 
 /// Configuration for the agentic loop
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -67,7 +70,7 @@ impl AgenticLoop {
     pub fn new(config: AgenticLoopConfig) -> Self {
         let registry = Arc::new(ToolRegistry::new());
         let executor = Arc::new(ToolExecutor::new(registry.clone()));
-        
+
         Self {
             config,
             registry,
@@ -96,10 +99,7 @@ impl AgenticLoop {
         )
         .await??;
 
-        info!(
-            "Agentic loop completed after {} iterations",
-            iteration
-        );
+        info!("Agentic loop completed after {} iterations", iteration);
 
         Ok(result)
     }
@@ -111,7 +111,11 @@ impl AgenticLoop {
         iteration: &mut usize,
     ) -> Result<String> {
         while *iteration < self.config.max_iterations {
-            debug!("Iteration {}/{}", *iteration + 1, self.config.max_iterations);
+            debug!(
+                "Iteration {}/{}",
+                *iteration + 1,
+                self.config.max_iterations
+            );
 
             // Step 1: Reasoning
             let reasoning = reasoning_fn(context)?;
@@ -133,7 +137,7 @@ impl AgenticLoop {
             // Step 3: Execute tool if requested
             if let Some(tool_call) = reasoning.tool_call {
                 debug!("Executing tool: {}", tool_call.tool_name);
-                
+
                 let result = self.executor.execute(&tool_call).await?;
                 context.add_tool_result(result.clone());
 
@@ -145,7 +149,10 @@ impl AgenticLoop {
             *iteration += 1;
         }
 
-        warn!("Max iterations ({}) reached without completion", self.config.max_iterations);
+        warn!(
+            "Max iterations ({}) reached without completion",
+            self.config.max_iterations
+        );
         Ok(context.get_summary())
     }
 
@@ -179,7 +186,7 @@ mod tests {
     async fn test_agentic_loop_creation() {
         let config = AgenticLoopConfig::default();
         let loop_instance = AgenticLoop::new(config);
-        
+
         assert_eq!(loop_instance.config.max_iterations, 10);
         assert_eq!(loop_instance.config.timeout_seconds, 300);
     }
@@ -199,7 +206,9 @@ mod tests {
             })
         };
 
-        let result = loop_instance.run_iteration(&mut context, reasoning_fn).await;
+        let result = loop_instance
+            .run_iteration(&mut context, reasoning_fn)
+            .await;
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), Some("Done".to_string()));
     }

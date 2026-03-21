@@ -1,0 +1,5 @@
+=== Test: update_skill - 升级技能 ===
+Input: Upgrade skill to latest version
+Time: Fri Mar 20 06:33:27 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

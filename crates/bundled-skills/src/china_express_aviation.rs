@@ -1,10 +1,9 @@
 //! China Express & Aviation Skills
-//! 
+//!
 //! This module provides Skills for Chinese express delivery and enhanced aviation services.
 //! 中国快递物流和航空服务专用 Skills
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all China express and aviation skills (6 skills)
 pub fn china_express_aviation_skills() -> Vec<SkillContent> {
@@ -739,23 +738,23 @@ mod tests {
     #[test]
     fn test_all_express_aviation_skills_have_metadata() {
         let skills = china_express_aviation_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_express_aviation_skill_names() {
         let skills = china_express_aviation_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"sf-express"));
         assert!(names.contains(&"jd-logistics"));
         assert!(names.contains(&"cainiao"));
@@ -767,11 +766,18 @@ mod tests {
     #[test]
     fn test_express_categories() {
         let skills = china_express_aviation_skills();
-        
+
         // Express: 6
-        let express = vec!["sf-express", "jd-logistics", "cainiao", 
-                          "yto-express", "zto-express", "yunda-express"];
-        let express_count = skills.iter()
+        let express = vec![
+            "sf-express",
+            "jd-logistics",
+            "cainiao",
+            "yto-express",
+            "zto-express",
+            "yunda-express",
+        ];
+        let express_count = skills
+            .iter()
             .filter(|s| express.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(express_count, 6);

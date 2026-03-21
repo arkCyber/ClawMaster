@@ -130,11 +130,11 @@ function makeThinkingStopBtn(sessionKey) {
 	var btn = document.createElement("button");
 	btn.className = "thinking-stop-btn";
 	btn.type = "button";
-	btn.title = "Stop generation";
-	btn.textContent = "Stop";
+	btn.title = "Stop generation (or press Esc)";
+	btn.textContent = "■ 停止";
 	btn.addEventListener("click", () => {
 		btn.disabled = true;
-		btn.textContent = "Stopping…";
+		btn.textContent = "⏸ 停止中…";
 		sendRpc("chat.abort", { sessionKey }).catch(() => {});
 	});
 	return btn;

@@ -1,0 +1,5 @@
+=== Test: web_search - 中文搜索 ===
+Input: 搜索 Rust 编程教程
+Time: Fri Mar 20 06:32:18 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

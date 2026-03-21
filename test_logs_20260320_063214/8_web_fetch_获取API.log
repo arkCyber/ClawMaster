@@ -1,0 +1,5 @@
+=== Test: web_fetch - 获取API ===
+Input: Get data from https://api.github.com/repos/rust-lang/rust
+Time: Fri Mar 20 06:32:21 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

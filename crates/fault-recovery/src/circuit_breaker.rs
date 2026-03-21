@@ -2,20 +2,24 @@
 //!
 //! DO-178C Level A Compliant Circuit Breaker
 
-use crate::{FaultError, FaultResult};
-use parking_lot::RwLock;
-use std::sync::Arc;
-use std::time::{Duration, Instant};
+use {
+    crate::{FaultError, FaultResult},
+    parking_lot::RwLock,
+    std::{
+        sync::Arc,
+        time::{Duration, Instant},
+    },
+};
 
 /// Circuit breaker state
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CircuitState {
     /// Circuit is closed, requests pass through
     Closed,
-    
+
     /// Circuit is open, requests are blocked
     Open,
-    
+
     /// Circuit is half-open, testing if service recovered
     HalfOpen,
 }
@@ -25,13 +29,13 @@ pub enum CircuitState {
 pub struct CircuitBreakerConfig {
     /// Failure threshold to open circuit
     pub failure_threshold: usize,
-    
+
     /// Success threshold to close circuit from half-open
     pub success_threshold: usize,
-    
+
     /// Timeout before attempting to close circuit
     pub timeout: Duration,
-    
+
     /// Time window for counting failures
     pub window: Duration,
 }
@@ -97,11 +101,11 @@ impl CircuitBreaker {
             Ok(result) => {
                 self.on_success();
                 Ok(result)
-            }
+            },
             Err(e) => {
                 self.on_failure();
                 Err(FaultError::OperationFailed(e.to_string()))
-            }
+            },
         }
     }
 
@@ -124,7 +128,7 @@ impl CircuitBreaker {
                         "Circuit is open, requests blocked".to_string(),
                     ))
                 }
-            }
+            },
             CircuitState::HalfOpen => Ok(()),
         }
     }
@@ -138,7 +142,7 @@ impl CircuitBreaker {
                 // Reset failure count on success
                 state.failure_count = 0;
                 state.failure_times.clear();
-            }
+            },
             CircuitState::HalfOpen => {
                 state.success_count += 1;
                 if state.success_count >= self.config.success_threshold {
@@ -149,8 +153,8 @@ impl CircuitBreaker {
                     state.last_state_change = Instant::now();
                     tracing::info!("Circuit breaker: HalfOpen -> Closed");
                 }
-            }
-            CircuitState::Open => {}
+            },
+            CircuitState::Open => {},
         }
     }
 
@@ -175,14 +179,14 @@ impl CircuitBreaker {
                     state.last_state_change = Instant::now();
                     tracing::warn!("Circuit breaker: Closed -> Open");
                 }
-            }
+            },
             CircuitState::HalfOpen => {
                 state.current_state = CircuitState::Open;
                 state.success_count = 0;
                 state.last_state_change = Instant::now();
                 tracing::warn!("Circuit breaker: HalfOpen -> Open");
-            }
-            CircuitState::Open => {}
+            },
+            CircuitState::Open => {},
         }
     }
 

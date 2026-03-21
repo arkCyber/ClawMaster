@@ -1,0 +1,45 @@
+=== Test #1: calc ===
+Description: 基础加法
+Command: echo '2 + 2' | cargo run --bin clawmaster -- tools exec calc
+Duration: 148s
+Exit Code: 0
+Output:
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+
+=== Test #2: calc ===
+Description: 基础减法
+Command: echo '100 - 37' | cargo run --bin clawmaster -- tools exec calc
+Duration: 26s
+Exit Code: 0
+Output:
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+
+=== Test #3: calc ===
+Description: 基础乘法
+Command: echo '12 * 8' | cargo run --bin clawmaster -- tools exec calc
+Duration: 16s
+Exit Code: 0
+Output:
+    Blocking waiting for file lock on artifact directory
+error: unrecognized subcommand 'tools'
+
+  tip: some similar subcommands exist: 'models', 'hooks'
+
+Usage: clawmaster [OPTIONS] [COMMAND]
+
+For more information, try '--help'.
+

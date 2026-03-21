@@ -24,6 +24,7 @@ static GLOBAL: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
 #[unsafe(export_name = "malloc_conf")]
 static malloc_conf: &[u8] = b"dirty_decay_ms:1000,muzzy_decay_ms:1000,background_thread:true\0";
 
+mod agent_client;
 mod auth_commands;
 mod browser_commands;
 mod channel_commands;
@@ -438,9 +439,32 @@ async fn main() -> anyhow::Result<()> {
             .await
         },
         Some(Commands::Agent { message, .. }) => {
-            let result = clawmaster_agents::runner::run_agent("default", "main", &message).await?;
-            println!("{result}");
-            Ok(())
+            // 连接到运行中的后端服务器
+            let gateway_url = std::env::var("CLAWMASTER_GATEWAY_URL")
+                .unwrap_or_else(|_| "http://localhost:3000".to_string());
+
+            println!("🔗 连接到后端服务器: {}", gateway_url);
+            println!("📤 发送消息: {}", message);
+            println!();
+
+            match agent_client::send_agent_message(&gateway_url, &message).await {
+                Ok(response) => {
+                    println!("✅ 响应:");
+                    println!("{}", response);
+                    Ok(())
+                },
+                Err(e) => {
+                    eprintln!("❌ 错误: {}", e);
+                    eprintln!();
+                    eprintln!("💡 提示:");
+                    eprintln!("  1. 确保后端服务器正在运行: clawmaster gateway");
+                    eprintln!(
+                        "  2. 检查服务器地址: export CLAWMASTER_GATEWAY_URL=http://localhost:3000"
+                    );
+                    eprintln!("  3. 检查服务器日志查看详细错误信息");
+                    Err(e)
+                },
+            }
         },
         Some(Commands::Onboard) => {
             clawmaster_onboarding::wizard::run_onboarding().await?;

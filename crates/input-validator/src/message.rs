@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A Compliant Message Validation
 
-use crate::{ValidationError, ValidationResult};
-use once_cell::sync::Lazy;
-use regex::Regex;
+use {
+    crate::{ValidationError, ValidationResult},
+    once_cell::sync::Lazy,
+    regex::Regex,
+};
 
 /// Maximum message length (1MB)
 const MAX_MESSAGE_LENGTH: usize = 1_048_576;
@@ -125,7 +127,10 @@ mod tests {
         let long_message = "a".repeat(MAX_MESSAGE_LENGTH + 1);
         let result = validate_message(&long_message);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::TooLong { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::TooLong { .. }
+        ));
     }
 
     #[test]

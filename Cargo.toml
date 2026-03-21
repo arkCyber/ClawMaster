@@ -115,6 +115,7 @@ members = [
   "crates/schema-export",
   "crates/service-traits",
   "crates/sessions",
+  "crates/signal",
   "crates/skills",
   "crates/slack",
   "crates/swift-bridge",
@@ -369,8 +370,8 @@ clawmaster-routing         = { path = "crates/routing" }
 clawmaster-schema-export   = { path = "crates/schema-export" }
 clawmaster-service-traits  = { path = "crates/service-traits" }
 clawmaster-sessions        = { path = "crates/sessions" }
+clawmaster-signal          = { path = "crates/signal" }
 clawmaster-skills          = { path = "crates/skills" }
-clawmaster-bundled-skills  = { path = "crates/bundled-skills" }
 clawmaster-slack           = { path = "crates/slack" }
 clawmaster-swift-bridge    = { path = "crates/swift-bridge" }
 clawmaster-tailscale       = { path = "crates/tailscale" }
@@ -381,7 +382,6 @@ clawmaster-vault           = { path = "crates/vault" }
 clawmaster-voice           = { path = "crates/voice" }
 clawmaster-web             = { default-features = false, path = "crates/web" }
 clawmaster-whatsapp        = { path = "crates/whatsapp" }
-clawmaster-setup-wizard    = { path = "crates/setup-wizard" }
 clawmaster-agents-memory   = { path = "crates/agents-memory" }
 clawmaster-user-errors     = { path = "crates/user-errors" }
 clawmaster-soul            = { path = "crates/soul" }

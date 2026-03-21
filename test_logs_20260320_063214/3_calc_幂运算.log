@@ -1,0 +1,5 @@
+=== Test: calc - 幂运算 ===
+Input: What is 2 to the power of 10?
+Time: Fri Mar 20 06:32:16 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

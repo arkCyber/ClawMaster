@@ -1,9 +1,10 @@
 //! Plugin configuration management
 
-use std::collections::HashMap;
-use std::path::PathBuf;
-use anyhow::Result;
-use serde_json::Value;
+use {
+    anyhow::Result,
+    serde_json::Value,
+    std::{collections::HashMap, path::PathBuf},
+};
 
 /// Plugin configuration manager
 pub struct PluginConfigManager {
@@ -49,35 +50,29 @@ impl PluginConfigManager {
         // Try to load from file
         if let Some(config_dir) = &self.config_dir {
             let config_path = config_dir.join(format!("{}.json", plugin_id));
-            
+
             if config_path.exists() {
                 let content = std::fs::read_to_string(&config_path)?;
                 let config: Value = serde_json::from_str(&content)?;
-                
-                self.configs.insert(
-                    plugin_id.to_string(),
-                    PluginConfig {
-                        plugin_id: plugin_id.to_string(),
-                        config: config.clone(),
-                        config_path: Some(config_path),
-                    },
-                );
-                
+
+                self.configs.insert(plugin_id.to_string(), PluginConfig {
+                    plugin_id: plugin_id.to_string(),
+                    config: config.clone(),
+                    config_path: Some(config_path),
+                });
+
                 return Ok(config);
             }
         }
 
         // Return empty config if not found
         let empty_config = serde_json::json!({});
-        self.configs.insert(
-            plugin_id.to_string(),
-            PluginConfig {
-                plugin_id: plugin_id.to_string(),
-                config: empty_config.clone(),
-                config_path: None,
-            },
-        );
-        
+        self.configs.insert(plugin_id.to_string(), PluginConfig {
+            plugin_id: plugin_id.to_string(),
+            config: empty_config.clone(),
+            config_path: None,
+        });
+
         Ok(empty_config)
     }
 
@@ -89,14 +84,11 @@ impl PluginConfigManager {
             None
         };
 
-        self.configs.insert(
-            plugin_id.to_string(),
-            PluginConfig {
-                plugin_id: plugin_id.to_string(),
-                config: config.clone(),
-                config_path: config_path.clone(),
-            },
-        );
+        self.configs.insert(plugin_id.to_string(), PluginConfig {
+            plugin_id: plugin_id.to_string(),
+            config: config.clone(),
+            config_path: config_path.clone(),
+        });
 
         // Save to file if config directory is set
         if let Some(path) = config_path {
@@ -196,7 +188,7 @@ mod tests {
         });
 
         manager.update("test-plugin", config.clone()).unwrap();
-        
+
         let retrieved = manager.get("test-plugin").unwrap();
         assert_eq!(retrieved, &config);
     }
@@ -205,14 +197,14 @@ mod tests {
     fn test_config_manager_load_default() {
         let mut manager = PluginConfigManager::new();
         let config = manager.load("non-existent").unwrap();
-        
+
         assert_eq!(config, serde_json::json!({}));
     }
 
     #[test]
     fn test_config_validation_required_fields() {
         let manager = PluginConfigManager::new();
-        
+
         let schema = serde_json::json!({
             "required": ["name", "version"]
         });
@@ -233,7 +225,7 @@ mod tests {
     #[test]
     fn test_config_validation_types() {
         let manager = PluginConfigManager::new();
-        
+
         let schema = serde_json::json!({
             "properties": {
                 "name": { "type": "string" },
@@ -270,7 +262,7 @@ mod tests {
     #[test]
     fn test_config_manager_list() {
         let mut manager = PluginConfigManager::new();
-        
+
         manager.update("plugin-a", serde_json::json!({})).unwrap();
         manager.update("plugin-b", serde_json::json!({})).unwrap();
 

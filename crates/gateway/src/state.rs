@@ -557,7 +557,7 @@ impl GatewayState {
         Arc::clone(&self.services.chat)
     }
 
-    fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+    pub fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
         Arc::clone(&self.services.tts)
     }
 

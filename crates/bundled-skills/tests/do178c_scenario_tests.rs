@@ -1,5 +1,5 @@
 //! DO-178C Level A Scenario-Based Integration Tests
-//! 
+//!
 //! This module provides comprehensive scenario-based testing for all bundled skills
 //! following DO-178C Level A standards (highest aerospace safety level).
 //!
@@ -439,13 +439,17 @@ fn test_scenario_edge_cases() {
 #[test]
 fn test_performance_benchmarks() {
     let skills = all_bundled_skills();
-    
+
     // Requirement: Skill lookup should be < 1ms
     let start = std::time::Instant::now();
     let _skill = skills.iter().find(|s| s.metadata.name == "wechat");
     let duration = start.elapsed();
-    assert!(duration.as_millis() < 1, "Skill lookup took {:?}, expected < 1ms", duration);
-    
+    assert!(
+        duration.as_millis() < 1,
+        "Skill lookup took {:?}, expected < 1ms",
+        duration
+    );
+
     // Requirement: All skills metadata should be accessible < 10ms
     let start = std::time::Instant::now();
     for skill in &skills {
@@ -453,7 +457,11 @@ fn test_performance_benchmarks() {
         let _ = &skill.metadata.description;
     }
     let duration = start.elapsed();
-    assert!(duration.as_millis() < 10, "Metadata access took {:?}, expected < 10ms", duration);
+    assert!(
+        duration.as_millis() < 10,
+        "Metadata access took {:?}, expected < 10ms",
+        duration
+    );
 }
 
 // ============================================================================
@@ -463,34 +471,49 @@ fn test_performance_benchmarks() {
 #[test]
 fn test_safety_security() {
     let skills = all_bundled_skills();
-    
+
     // All skills must have non-empty names
     for skill in &skills {
         assert!(!skill.metadata.name.is_empty(), "Skill has empty name");
-        assert!(!skill.metadata.description.is_empty(), "Skill {} has empty description", skill.metadata.name);
+        assert!(
+            !skill.metadata.description.is_empty(),
+            "Skill {} has empty description",
+            skill.metadata.name
+        );
     }
-    
+
     // No duplicate skill names (safety requirement)
     let mut names = std::collections::HashSet::new();
     for skill in &skills {
-        assert!(names.insert(&skill.metadata.name), "Duplicate skill name: {}", skill.metadata.name);
+        assert!(
+            names.insert(&skill.metadata.name),
+            "Duplicate skill name: {}",
+            skill.metadata.name
+        );
     }
-    
+
     // All China skills must be properly categorized
-    let china_skills: Vec<_> = skills.iter()
-        .filter(|s| s.metadata.name.contains("china") || 
-                    s.metadata.name.contains("wechat") ||
-                    s.metadata.name.contains("alipay") ||
-                    s.metadata.name.contains("douyin") ||
-                    s.metadata.name.contains("sf-") ||
-                    s.metadata.name.contains("jd-") ||
-                    s.metadata.name.contains("meituan") ||
-                    s.metadata.name.contains("douban") ||
-                    s.metadata.name.contains("tieba") ||
-                    s.metadata.name.contains("momo"))
+    let china_skills: Vec<_> = skills
+        .iter()
+        .filter(|s| {
+            s.metadata.name.contains("china")
+                || s.metadata.name.contains("wechat")
+                || s.metadata.name.contains("alipay")
+                || s.metadata.name.contains("douyin")
+                || s.metadata.name.contains("sf-")
+                || s.metadata.name.contains("jd-")
+                || s.metadata.name.contains("meituan")
+                || s.metadata.name.contains("douban")
+                || s.metadata.name.contains("tieba")
+                || s.metadata.name.contains("momo")
+        })
         .collect();
-    
-    assert!(china_skills.len() >= 30, "Expected at least 30 China skills, found {}", china_skills.len());
+
+    assert!(
+        china_skills.len() >= 30,
+        "Expected at least 30 China skills, found {}",
+        china_skills.len()
+    );
 }
 
 // ============================================================================
@@ -500,33 +523,37 @@ fn test_safety_security() {
 fn run_scenarios(scenarios: &[ConversationScenario]) -> Vec<TestResult> {
     let skills = all_bundled_skills();
     let mut results = Vec::new();
-    
+
     for scenario in scenarios {
         let start = std::time::Instant::now();
-        
+
         // Simulate skill matching based on user intent
-        let found_skills: Vec<String> = skills.iter()
+        let found_skills: Vec<String> = skills
+            .iter()
             .filter(|skill| {
-                scenario.expected_skills.iter().any(|expected| {
-                    skill.metadata.name == *expected
-                })
+                scenario
+                    .expected_skills
+                    .iter()
+                    .any(|expected| skill.metadata.name == *expected)
             })
             .map(|s| s.metadata.name.clone())
             .collect();
-        
+
         let duration = start.elapsed();
-        
-        let expected: Vec<String> = scenario.expected_skills.iter()
+
+        let expected: Vec<String> = scenario
+            .expected_skills
+            .iter()
             .map(|s| s.to_string())
             .collect();
-        
+
         let passed = if expected.is_empty() {
             // Edge case scenarios
             true
         } else {
             found_skills.iter().any(|f| expected.contains(f))
         };
-        
+
         results.push(TestResult {
             scenario: scenario.name.to_string(),
             passed,
@@ -536,13 +563,13 @@ fn run_scenarios(scenarios: &[ConversationScenario]) -> Vec<TestResult> {
             errors: Vec::new(),
         });
     }
-    
+
     results
 }
 
 fn assert_all_scenarios_passed(results: &[TestResult]) {
     let failed: Vec<_> = results.iter().filter(|r| !r.passed).collect();
-    
+
     if !failed.is_empty() {
         eprintln!("\n❌ Failed Scenarios:");
         for result in &failed {
@@ -552,7 +579,7 @@ fn assert_all_scenarios_passed(results: &[TestResult]) {
         }
         panic!("{} out of {} scenarios failed", failed.len(), results.len());
     }
-    
+
     println!("\n✅ All {} scenarios passed!", results.len());
     for result in results {
         println!("  ✓ {} ({} ms)", result.scenario, result.execution_time_ms);
@@ -566,35 +593,38 @@ fn assert_all_scenarios_passed(results: &[TestResult]) {
 #[test]
 fn test_comprehensive_summary() {
     let skills = all_bundled_skills();
-    
+
     println!("\n╔══════════════════════════════════════════════════════════════╗");
     println!("║  DO-178C Level A Comprehensive Test Summary                 ║");
     println!("╚══════════════════════════════════════════════════════════════╝");
     println!();
     println!("Total Skills: {}", skills.len());
     println!();
-    
+
     // Count by category
-    let china_count = skills.iter().filter(|s| {
-        s.metadata.name.starts_with("china-") ||
-        s.metadata.name.contains("wechat") ||
-        s.metadata.name.contains("alipay") ||
-        s.metadata.name.contains("douyin") ||
-        s.metadata.name.contains("sf-") ||
-        s.metadata.name.contains("jd-") ||
-        s.metadata.name.contains("meituan") ||
-        s.metadata.name.contains("douban") ||
-        s.metadata.name.contains("tieba") ||
-        s.metadata.name.contains("momo") ||
-        s.metadata.name.contains("vat-") ||
-        s.metadata.name.contains("tax-") ||
-        s.metadata.name.contains("yto-") ||
-        s.metadata.name.contains("zto-") ||
-        s.metadata.name.contains("yunda-") ||
-        s.metadata.name.contains("cainiao") ||
-        s.metadata.name.contains("shanghai-")
-    }).count();
-    
+    let china_count = skills
+        .iter()
+        .filter(|s| {
+            s.metadata.name.starts_with("china-")
+                || s.metadata.name.contains("wechat")
+                || s.metadata.name.contains("alipay")
+                || s.metadata.name.contains("douyin")
+                || s.metadata.name.contains("sf-")
+                || s.metadata.name.contains("jd-")
+                || s.metadata.name.contains("meituan")
+                || s.metadata.name.contains("douban")
+                || s.metadata.name.contains("tieba")
+                || s.metadata.name.contains("momo")
+                || s.metadata.name.contains("vat-")
+                || s.metadata.name.contains("tax-")
+                || s.metadata.name.contains("yto-")
+                || s.metadata.name.contains("zto-")
+                || s.metadata.name.contains("yunda-")
+                || s.metadata.name.contains("cainiao")
+                || s.metadata.name.contains("shanghai-")
+        })
+        .count();
+
     println!("China-specific Skills: {}", china_count);
     println!("International Skills: {}", skills.len() - china_count);
     println!();

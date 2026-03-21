@@ -1,0 +1,5 @@
+=== Test: send_image - 发送截图 ===
+Input: Send a screenshot of the current screen
+Time: Fri Mar 20 06:33:01 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

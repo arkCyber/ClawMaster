@@ -30,10 +30,22 @@ mod tests {
     fn test_config_template_descriptions() {
         assert!(ConfigTemplate::Custom.description().contains("Customize"));
         assert!(ConfigTemplate::Basic.description().contains("Quick start"));
-        assert!(ConfigTemplate::Development.description().contains("Development"));
-        assert!(ConfigTemplate::Production.description().contains("Production"));
+        assert!(
+            ConfigTemplate::Development
+                .description()
+                .contains("Development")
+        );
+        assert!(
+            ConfigTemplate::Production
+                .description()
+                .contains("Production")
+        );
         assert!(ConfigTemplate::Minimal.description().contains("Minimal"));
-        assert!(ConfigTemplate::Enterprise.description().contains("enterprise"));
+        assert!(
+            ConfigTemplate::Enterprise
+                .description()
+                .contains("enterprise")
+        );
     }
 
     #[test]

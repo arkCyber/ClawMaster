@@ -1,0 +1,5 @@
+=== Test: exec - 执行命令 ===
+Input: Run 'echo Hello World' command
+Time: Fri Mar 20 06:32:26 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

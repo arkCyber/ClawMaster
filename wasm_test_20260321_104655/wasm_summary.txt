@@ -1,0 +1,3 @@
+SKIP: calc_wasm - WASM 工具运行器开发中
+SKIP: file_wasm - WASM 文件系统隔离测试
+SKIP: network_wasm - WASM 网络隔离测试

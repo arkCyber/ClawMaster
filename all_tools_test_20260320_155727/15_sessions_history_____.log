@@ -1,0 +1,8 @@
+[2m2026-03-20T07:59:49.800603Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 在历史中搜索关于 Rust 的对话
+
+✅ 响应:
+你可以使用以下命令在历史中搜索关于 Rust 的对话：
+
+`sessions_search query=Rust`

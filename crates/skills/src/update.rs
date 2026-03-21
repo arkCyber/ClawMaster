@@ -8,13 +8,14 @@
 
 use std::path::Path;
 
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
+use {
+    anyhow::{Context, Result},
+    serde::{Deserialize, Serialize},
+};
 
 use crate::{
     install::{install_skill, remove_repo},
     manifest::ManifestStore,
-    types::SkillsManifest,
 };
 
 /// Update information for a skill repository
@@ -37,7 +38,7 @@ pub struct SkillUpdate {
 }
 
 /// Check for updates for all installed skills
-pub async fn check_updates(install_dir: &Path) -> Result<Vec<SkillUpdate>> {
+pub async fn check_updates(_install_dir: &Path) -> Result<Vec<SkillUpdate>> {
     let manifest_path = ManifestStore::default_path()?;
     let store = ManifestStore::new(manifest_path);
     let manifest = store.load()?;
@@ -50,10 +51,10 @@ pub async fn check_updates(install_dir: &Path) -> Result<Vec<SkillUpdate>> {
                 if update.update_available {
                     updates.push(update);
                 }
-            }
+            },
             Err(e) => {
                 tracing::warn!(source = %repo.source, error = %e, "failed to check update");
-            }
+            },
         }
     }
 
@@ -65,7 +66,10 @@ async fn check_repo_update(source: &str, current_sha: Option<&str>) -> Result<Sk
     let (owner, repo) = parse_source(source)?;
 
     let client = reqwest::Client::new();
-    let url = format!("https://api.github.com/repos/{}/{}/commits?per_page=1", owner, repo);
+    let url = format!(
+        "https://api.github.com/repos/{}/{}/commits?per_page=1",
+        owner, repo
+    );
 
     let response = client
         .get(&url)
@@ -85,11 +89,15 @@ async fn check_repo_update(source: &str, current_sha: Option<&str>) -> Result<Sk
         .ok_or_else(|| anyhow::anyhow!("no commits found"))?;
 
     let latest_sha = latest_commit.sha.clone();
-    let update_available = current_sha.map_or(true, |sha| sha != latest_sha);
+    let update_available = current_sha.is_none_or(|sha| sha != latest_sha);
 
-    // If update available, get commit count
-    let commits_behind = if update_available && current_sha.is_some() {
-        count_commits_behind(&client, &owner, &repo, current_sha.unwrap(), &latest_sha).await?
+    // Count commits behind if update available and current_sha is known
+    let commits_behind = if let Some(current) = current_sha {
+        if update_available {
+            count_commits_behind(&client, &owner, &repo, current, &latest_sha).await?
+        } else {
+            0
+        }
     } else {
         0
     };
@@ -133,7 +141,10 @@ async fn count_commits_behind(
 }
 
 /// Update a specific skill repository
-pub async fn update_skill(source: &str, install_dir: &Path) -> Result<Vec<crate::types::SkillMetadata>> {
+pub async fn update_skill(
+    source: &str,
+    install_dir: &Path,
+) -> Result<Vec<crate::types::SkillMetadata>> {
     tracing::info!(source = %source, "updating skill");
 
     // Backup current installation
@@ -149,13 +160,13 @@ pub async fn update_skill(source: &str, install_dir: &Path) -> Result<Vec<crate:
         Ok(skills) => {
             tracing::info!(source = %source, count = skills.len(), "skill updated successfully");
             Ok(skills)
-        }
+        },
         Err(e) => {
             // Rollback on failure
             tracing::error!(source = %source, error = %e, "update failed, rolling back");
             store.save(&manifest_backup)?;
             Err(e)
-        }
+        },
     }
 }
 
@@ -170,10 +181,10 @@ pub async fn update_all_skills(install_dir: &Path) -> Result<Vec<String>> {
             Ok(_) => {
                 updated.push(update.source.clone());
                 tracing::info!(source = %update.source, "updated successfully");
-            }
+            },
             Err(e) => {
                 tracing::error!(source = %update.source, error = %e, "update failed");
-            }
+            },
         }
     }
 
@@ -233,7 +244,7 @@ mod tests {
     async fn test_check_repo_update() {
         // Test with a real public repo
         let result = check_repo_update("vercel-labs/ai-sdk", None).await;
-        
+
         // Should succeed for a valid repo
         if let Ok(update) = result {
             assert!(!update.latest_sha.is_empty());

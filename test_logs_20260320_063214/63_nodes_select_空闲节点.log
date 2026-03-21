@@ -1,0 +1,5 @@
+=== Test: nodes_select - 空闲节点 ===
+Input: Select an idle node
+Time: Fri Mar 20 06:33:18 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

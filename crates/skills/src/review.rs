@@ -8,8 +8,11 @@
 
 use std::path::Path;
 
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
+use {
+    anyhow::Result,
+    chrono::Utc,
+    serde::{Deserialize, Serialize},
+};
 
 use crate::types::SkillMetadata;
 
@@ -108,7 +111,10 @@ pub struct SkillReview {
 }
 
 /// Perform automated security scan on a skill
-pub async fn scan_security(skill_path: &Path, metadata: &SkillMetadata) -> Result<SecurityScanResult> {
+pub async fn scan_security(
+    skill_path: &Path,
+    metadata: &SkillMetadata,
+) -> Result<SecurityScanResult> {
     let mut issues = Vec::new();
     let mut score = 100u8;
 
@@ -201,12 +207,15 @@ pub async fn scan_security(skill_path: &Path, metadata: &SkillMetadata) -> Resul
     Ok(SecurityScanResult {
         score,
         issues,
-        scanned_at: chrono::Utc::now().to_rfc3339(),
+        scanned_at: Utc::now().to_rfc3339(),
     })
 }
 
 /// Perform code quality analysis on a skill
-pub async fn analyze_quality(skill_path: &Path, metadata: &SkillMetadata) -> Result<CodeQualityResult> {
+pub async fn analyze_quality(
+    skill_path: &Path,
+    metadata: &SkillMetadata,
+) -> Result<CodeQualityResult> {
     let mut issues = Vec::new();
     let mut score = 100u8;
 
@@ -302,7 +311,7 @@ pub async fn analyze_quality(skill_path: &Path, metadata: &SkillMetadata) -> Res
     Ok(CodeQualityResult {
         score,
         issues,
-        analyzed_at: chrono::Utc::now().to_rfc3339(),
+        analyzed_at: Utc::now().to_rfc3339(),
     })
 }
 
@@ -312,7 +321,8 @@ pub async fn review_skill(skill_path: &Path, metadata: &SkillMetadata) -> Result
     let code_quality = analyze_quality(skill_path, metadata).await?;
 
     // Calculate overall score (weighted average)
-    let overall_score = ((security_scan.score as u32 * 60 + code_quality.score as u32 * 40) / 100) as u8;
+    let overall_score =
+        ((security_scan.score as u32 * 60 + code_quality.score as u32 * 40) / 100) as u8;
 
     // Determine review status
     let status = if overall_score >= 80 && security_scan.score >= 70 {
@@ -331,7 +341,7 @@ pub async fn review_skill(skill_path: &Path, metadata: &SkillMetadata) -> Result
         code_quality,
         overall_score,
         notes: None,
-        reviewed_at: chrono::Utc::now().to_rfc3339(),
+        reviewed_at: Utc::now().to_rfc3339(),
     })
 }
 
@@ -342,13 +352,19 @@ pub fn generate_review_report(review: &SkillReview) -> String {
     report.push_str(&format!("# Skill Review Report: {}\n\n", review.skill_name));
     report.push_str(&format!("**Version**: {}\n", review.version));
     report.push_str(&format!("**Status**: {:?}\n", review.status));
-    report.push_str(&format!("**Overall Score**: {}/100\n", review.overall_score));
+    report.push_str(&format!(
+        "**Overall Score**: {}/100\n",
+        review.overall_score
+    ));
     report.push_str(&format!("**Reviewed At**: {}\n\n", review.reviewed_at));
 
     // Security scan
     report.push_str("## Security Scan\n\n");
-    report.push_str(&format!("**Score**: {}/100\n\n", review.security_scan.score));
-    
+    report.push_str(&format!(
+        "**Score**: {}/100\n\n",
+        review.security_scan.score
+    ));
+
     if review.security_scan.issues.is_empty() {
         report.push_str("✅ No security issues found.\n\n");
     } else {
@@ -365,7 +381,7 @@ pub fn generate_review_report(review: &SkillReview) -> String {
     // Code quality
     report.push_str("## Code Quality\n\n");
     report.push_str(&format!("**Score**: {}/100\n\n", review.code_quality.score));
-    
+
     if review.code_quality.issues.is_empty() {
         report.push_str("✅ No quality issues found.\n\n");
     } else {
@@ -384,16 +400,18 @@ pub fn generate_review_report(review: &SkillReview) -> String {
     match review.status {
         ReviewStatus::Approved => {
             report.push_str("✅ **APPROVED** - This skill meets quality and security standards.\n");
-        }
+        },
         ReviewStatus::Rejected => {
-            report.push_str("❌ **REJECTED** - This skill has significant issues that must be addressed.\n");
-        }
+            report.push_str(
+                "❌ **REJECTED** - This skill has significant issues that must be addressed.\n",
+            );
+        },
         ReviewStatus::ManualReview => {
             report.push_str("⚠️ **MANUAL REVIEW REQUIRED** - This skill requires human review before approval.\n");
-        }
+        },
         ReviewStatus::Pending => {
             report.push_str("⏳ **PENDING** - Review in progress.\n");
-        }
+        },
     }
 
     if let Some(notes) = &review.notes {
@@ -407,8 +425,7 @@ pub fn generate_review_report(review: &SkillReview) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::path::PathBuf;
+    use {super::*, std::path::PathBuf};
 
     #[test]
     fn test_review_status_serialization() {
@@ -442,8 +459,10 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         tokio::fs::write(
             tmp.path().join("SKILL.md"),
-            "---\nname: test\n---\n# Test\n\nContent here."
-        ).await.unwrap();
+            "---\nname: test\n---\n# Test\n\nContent here.",
+        )
+        .await
+        .unwrap();
 
         let result = scan_security(tmp.path(), &metadata).await.unwrap();
         assert!(result.score > 0);
@@ -465,10 +484,17 @@ mod tests {
         };
 
         let tmp = tempfile::tempdir().unwrap();
-        let content = "---\nname: test\n---\n# Test\n\n## Example\n\nThis is an example.\n\n".repeat(10);
-        tokio::fs::write(tmp.path().join("SKILL.md"), content).await.unwrap();
-        tokio::fs::write(tmp.path().join("README.md"), "# README").await.unwrap();
-        tokio::fs::write(tmp.path().join("LICENSE"), "MIT License").await.unwrap();
+        let content =
+            "---\nname: test\n---\n# Test\n\n## Example\n\nThis is an example.\n\n".repeat(10);
+        tokio::fs::write(tmp.path().join("SKILL.md"), content)
+            .await
+            .unwrap();
+        tokio::fs::write(tmp.path().join("README.md"), "# README")
+            .await
+            .unwrap();
+        tokio::fs::write(tmp.path().join("LICENSE"), "MIT License")
+            .await
+            .unwrap();
 
         let result = analyze_quality(tmp.path(), &metadata).await.unwrap();
         assert!(result.score >= 80);

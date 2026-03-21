@@ -2,20 +2,22 @@
 //!
 //! DO-178C Level A Compliant Audit Logger
 
-use crate::{AuditEvent, AuditResult, EventSeverity};
-use async_trait::async_trait;
-use std::sync::Arc;
-use tokio::sync::RwLock;
+use {
+    crate::{AuditEvent, AuditResult, EventSeverity},
+    async_trait::async_trait,
+    std::sync::Arc,
+    tokio::sync::RwLock,
+};
 
 /// Audit logger configuration
 #[derive(Debug, Clone)]
 pub struct AuditLoggerConfig {
     /// Minimum severity to log
     pub min_severity: EventSeverity,
-    
+
     /// Enable log signing
     pub enable_signing: bool,
-    
+
     /// Buffer size before flush
     pub buffer_size: usize,
 }
@@ -69,7 +71,9 @@ impl AuditLogger {
             if let Some(signer) = &self.signer {
                 let signature = signer.sign(&event).await?;
                 let mut event = event;
-                event.metadata.as_object_mut()
+                event
+                    .metadata
+                    .as_object_mut()
                     .unwrap()
                     .insert("signature".to_string(), serde_json::json!(signature));
                 event
@@ -149,19 +153,19 @@ impl AuditLogger {
 pub struct EventFilter {
     /// Filter by severity
     pub severity: Option<EventSeverity>,
-    
+
     /// Filter by category
     pub category: Option<crate::EventCategory>,
-    
+
     /// Filter by username
     pub username: Option<String>,
-    
+
     /// Start time
     pub start_time: Option<time::OffsetDateTime>,
-    
+
     /// End time
     pub end_time: Option<time::OffsetDateTime>,
-    
+
     /// Maximum results
     pub limit: Option<usize>,
 }
@@ -171,7 +175,7 @@ pub struct EventFilter {
 pub trait LogStorage: Send + Sync {
     /// Store a batch of events
     async fn store_batch(&self, events: &[AuditEvent]) -> AuditResult<()>;
-    
+
     /// Query events
     async fn query(&self, filter: EventFilter) -> AuditResult<Vec<AuditEvent>>;
 }
@@ -181,15 +185,17 @@ pub trait LogStorage: Send + Sync {
 pub trait LogSigner: Send + Sync {
     /// Sign an event
     async fn sign(&self, event: &AuditEvent) -> AuditResult<String>;
-    
+
     /// Verify event signature
     async fn verify(&self, event: &AuditEvent) -> AuditResult<bool>;
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::{AuthEvent, EventCategory};
+    use {
+        super::*,
+        crate::{AuthEvent, EventCategory},
+    };
 
     struct MockStorage {
         events: Arc<RwLock<Vec<AuditEvent>>>,
@@ -226,15 +232,12 @@ mod tests {
         };
         let logger = AuditLogger::new(config, storage.clone(), None);
 
-        let event = AuditEvent::auth(
-            EventSeverity::High,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event = AuditEvent::auth(EventSeverity::High, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         logger.log(event).await.unwrap();
         logger.flush().await.unwrap();
@@ -254,24 +257,18 @@ mod tests {
         let logger = AuditLogger::new(config, storage.clone(), None);
 
         // This should be logged
-        let event1 = AuditEvent::auth(
-            EventSeverity::Critical,
-            AuthEvent::LoginAttempt {
-                username: "user1".to_string(),
-                success: true,
-                ip_address: None,
-                user_agent: None,
-            },
-        );
+        let event1 = AuditEvent::auth(EventSeverity::Critical, AuthEvent::LoginAttempt {
+            username: "user1".to_string(),
+            success: true,
+            ip_address: None,
+            user_agent: None,
+        });
 
         // This should be filtered out
-        let event2 = AuditEvent::auth(
-            EventSeverity::Info,
-            AuthEvent::Logout {
-                username: "user1".to_string(),
-                session_id: "session1".to_string(),
-            },
-        );
+        let event2 = AuditEvent::auth(EventSeverity::Info, AuthEvent::Logout {
+            username: "user1".to_string(),
+            session_id: "session1".to_string(),
+        });
 
         logger.log(event1).await.unwrap();
         logger.log(event2).await.unwrap();
@@ -294,15 +291,12 @@ mod tests {
 
         // Add 3 events, should auto-flush after 2
         for i in 0..3 {
-            let event = AuditEvent::auth(
-                EventSeverity::Info,
-                AuthEvent::LoginAttempt {
-                    username: format!("user{}", i),
-                    success: true,
-                    ip_address: None,
-                    user_agent: None,
-                },
-            );
+            let event = AuditEvent::auth(EventSeverity::Info, AuthEvent::LoginAttempt {
+                username: format!("user{}", i),
+                success: true,
+                ip_address: None,
+                user_agent: None,
+            });
             logger.log(event).await.unwrap();
         }
 

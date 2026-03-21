@@ -1,0 +1,5 @@
+=== Test: create_skill - 创建技能 ===
+Input: Create a new skill called 'weather_checker'
+Time: Fri Mar 20 06:33:22 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

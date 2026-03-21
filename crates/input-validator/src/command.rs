@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A Compliant Command Validation
 
-use crate::{ValidationError, ValidationResult};
-use once_cell::sync::Lazy;
-use regex::Regex;
+use {
+    crate::{ValidationError, ValidationResult},
+    once_cell::sync::Lazy,
+    regex::Regex,
+};
 
 /// Maximum command length
 const MAX_COMMAND_LENGTH: usize = 10_000;
@@ -12,16 +14,16 @@ const MAX_COMMAND_LENGTH: usize = 10_000;
 /// Shell injection patterns to detect
 static SHELL_INJECTION_PATTERNS: Lazy<Vec<Regex>> = Lazy::new(|| {
     vec![
-        Regex::new(r"[;&|`$]").unwrap(),           // Command separators and substitution
-        Regex::new(r"\$\(").unwrap(),              // Command substitution
-        Regex::new(r"\$\{").unwrap(),              // Variable expansion
-        Regex::new(r">\s*/dev/").unwrap(),         // Redirect to device
-        Regex::new(r"\|\s*sh").unwrap(),           // Pipe to shell
-        Regex::new(r"\|\s*bash").unwrap(),         // Pipe to bash
-        Regex::new(r"&&").unwrap(),                // Command chaining
-        Regex::new(r"\|\|").unwrap(),              // Command chaining
-        Regex::new(r">\s*&").unwrap(),             // Redirect stderr
-        Regex::new(r"<\s*&").unwrap(),             // Redirect stdin
+        Regex::new(r"[;&|`$]").unwrap(), // Command separators and substitution
+        Regex::new(r"\$\(").unwrap(),    // Command substitution
+        Regex::new(r"\$\{").unwrap(),    // Variable expansion
+        Regex::new(r">\s*/dev/").unwrap(), // Redirect to device
+        Regex::new(r"\|\s*sh").unwrap(), // Pipe to shell
+        Regex::new(r"\|\s*bash").unwrap(), // Pipe to bash
+        Regex::new(r"&&").unwrap(),      // Command chaining
+        Regex::new(r"\|\|").unwrap(),    // Command chaining
+        Regex::new(r">\s*&").unwrap(),   // Redirect stderr
+        Regex::new(r"<\s*&").unwrap(),   // Redirect stdin
     ]
 });
 
@@ -30,7 +32,7 @@ const DANGEROUS_COMMANDS: &[&str] = &[
     "rm -rf /",
     "mkfs",
     "dd if=/dev/zero",
-    ":(){ :|:& };:",  // Fork bomb
+    ":(){ :|:& };:", // Fork bomb
     "chmod -R 777 /",
     "chown -R",
 ];
@@ -62,9 +64,10 @@ pub fn validate_command(command: &str) -> ValidationResult<()> {
     // Check for dangerous commands
     for dangerous in DANGEROUS_COMMANDS {
         if command.contains(dangerous) {
-            return Err(ValidationError::Dangerous(
-                format!("Dangerous command detected: {}", dangerous)
-            ));
+            return Err(ValidationError::Dangerous(format!(
+                "Dangerous command detected: {}",
+                dangerous
+            )));
         }
     }
 
@@ -166,7 +169,10 @@ mod tests {
         let long_command = "a".repeat(MAX_COMMAND_LENGTH + 1);
         let result = validate_command(&long_command);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::TooLong { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::TooLong { .. }
+        ));
     }
 
     #[test]
@@ -180,21 +186,30 @@ mod tests {
     fn test_validate_command_shell_injection_semicolon() {
         let result = validate_command("ls; rm -rf /");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::ShellInjection));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::ShellInjection
+        ));
     }
 
     #[test]
     fn test_validate_command_shell_injection_pipe() {
         let result = validate_command("cat file | sh");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::ShellInjection));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::ShellInjection
+        ));
     }
 
     #[test]
     fn test_validate_command_shell_injection_substitution() {
         let result = validate_command("echo $(whoami)");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::ShellInjection));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::ShellInjection
+        ));
     }
 
     #[test]
@@ -215,7 +230,10 @@ mod tests {
         let args = vec!["status".to_string(), "$(whoami)".to_string()];
         let result = validate_command_args(&args);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), ValidationError::ShellInjection));
+        assert!(matches!(
+            result.unwrap_err(),
+            ValidationError::ShellInjection
+        ));
     }
 
     #[test]
@@ -234,7 +252,10 @@ mod tests {
     #[test]
     fn test_extract_command_binary() {
         assert_eq!(extract_command_binary("ls -la"), Some("ls".to_string()));
-        assert_eq!(extract_command_binary("git status"), Some("git".to_string()));
+        assert_eq!(
+            extract_command_binary("git status"),
+            Some("git".to_string())
+        );
         assert_eq!(extract_command_binary(""), None);
     }
 }

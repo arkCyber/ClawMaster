@@ -113,7 +113,8 @@ impl AgentTool for PdfTool {
             bail!("PDF tool is disabled");
         }
 
-        let action = params.get("action")
+        let action = params
+            .get("action")
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'action' parameter"))?;
 
@@ -125,12 +126,16 @@ impl AgentTool for PdfTool {
             // For URL, we'll use the provider's URL method
             return self.execute_url_action(action, url, &params).await;
         } else if let Some(base64_str) = params.get("pdf_base64").and_then(|v| v.as_str()) {
-            let data = general_purpose::STANDARD.decode(base64_str)
+            let data = general_purpose::STANDARD
+                .decode(base64_str)
                 .map_err(|e| anyhow::anyhow!("Invalid base64 data: {}", e))?;
 
             if data.len() > self.config.max_file_size {
-                bail!("PDF size {} exceeds maximum {}", 
-                    data.len(), self.config.max_file_size);
+                bail!(
+                    "PDF size {} exceeds maximum {}",
+                    data.len(),
+                    self.config.max_file_size
+                );
             }
             data
         } else {
@@ -144,21 +149,23 @@ impl AgentTool for PdfTool {
                     "text": text,
                     "length": text.len()
                 }))
-            }
+            },
             "metadata" => {
                 let metadata = self.provider.get_metadata(&pdf_data).await?;
                 Ok(serde_json::to_value(metadata)?)
-            }
+            },
             "page_count" => {
                 let count = self.provider.get_page_count(&pdf_data).await?;
                 Ok(json!({
                     "page_count": count
                 }))
-            }
+            },
             "extract_page" => {
-                let page = params.get("page")
+                let page = params
+                    .get("page")
                     .and_then(|v| v.as_u64())
-                    .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'page' parameter"))? as usize;
+                    .ok_or_else(|| anyhow::anyhow!("Missing or invalid 'page' parameter"))?
+                    as usize;
 
                 if page == 0 {
                     bail!("Page number must be >= 1");
@@ -170,7 +177,7 @@ impl AgentTool for PdfTool {
                     "text": text,
                     "length": text.len()
                 }))
-            }
+            },
             _ => bail!("Invalid action: {}", action),
         }
     }
@@ -186,11 +193,11 @@ impl PdfTool {
                     "length": text.len(),
                     "source": "url"
                 }))
-            }
+            },
             _ => {
                 // For other actions, we need to fetch the PDF first
                 bail!("Action '{}' with URL requires pdf_base64 instead", action);
-            }
+            },
         }
     }
 }
@@ -359,7 +366,12 @@ mod tests {
 
         let result = tool.execute(params).await;
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("URL fetching is disabled"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("URL fetching is disabled")
+        );
     }
 
     #[tokio::test]

@@ -2,11 +2,15 @@
 //!
 //! DO-178C Level A Compliant Deadlock Detection
 
-use crate::{FaultError, FaultResult};
-use parking_lot::RwLock;
-use std::collections::{HashMap, HashSet};
-use std::sync::Arc;
-use time::OffsetDateTime;
+use {
+    crate::{FaultError, FaultResult},
+    parking_lot::RwLock,
+    std::{
+        collections::{HashMap, HashSet},
+        sync::Arc,
+    },
+    time::OffsetDateTime,
+};
 
 /// Lock acquisition record
 #[derive(Debug, Clone)]
@@ -198,7 +202,7 @@ mod tests {
     fn test_deadlock_detector_creation() {
         let detector = DeadlockDetector::new();
         let stats = detector.get_statistics();
-        
+
         assert_eq!(stats.total_threads, 0);
         assert_eq!(stats.total_resources, 0);
         assert_eq!(stats.waiting_threads, 0);

@@ -1,0 +1,5 @@
+=== Test: update_skill - 更新技能 ===
+Input: Update skill 'weather_checker'
+Time: Fri Mar 20 06:33:25 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

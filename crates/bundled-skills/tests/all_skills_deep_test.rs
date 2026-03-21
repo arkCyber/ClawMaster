@@ -1,11 +1,10 @@
 //! Comprehensive Deep Conversation Test for All 53 Skills
-//! 
+//!
 //! This module tests EVERY skill with detailed conversation scenarios,
 //! showing the complete test process and response quality.
 //! DO-178C Level A compliant.
 
-use clawmaster_bundled_skills::all_bundled_skills;
-use std::collections::HashMap;
+use {clawmaster_bundled_skills::all_bundled_skills, std::collections::HashMap};
 
 /// Detailed test result for a single skill
 #[derive(Debug, Clone)]
@@ -23,9 +22,13 @@ struct SkillTestResult {
 
 impl SkillTestResult {
     fn display(&self) -> String {
-        let status_icon = if self.test_passed { "✅" } else { "❌" };
+        let status_icon = if self.test_passed {
+            "✅"
+        } else {
+            "❌"
+        };
         let quality_stars = "⭐".repeat((self.response_quality * 5.0) as usize);
-        
+
         format!(
             r#"
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -58,11 +61,19 @@ impl SkillTestResult {
             self.test_scenario,
             self.user_question,
             self.ai_response,
-            if self.skill_activated { "✅ 是" } else { "❌ 否" },
+            if self.skill_activated {
+                "✅ 是"
+            } else {
+                "❌ 否"
+            },
             quality_stars,
             self.response_quality * 100.0,
             status_icon,
-            if self.test_passed { "通过" } else { "失败" },
+            if self.test_passed {
+                "通过"
+            } else {
+                "失败"
+            },
             if self.additional_notes.is_empty() {
                 "   无".to_string()
             } else {
@@ -87,7 +98,7 @@ impl ComprehensiveSkillsTester {
             skills_passed: 0,
         }
     }
-    
+
     /// Test a single skill with a conversation scenario
     fn test_skill(
         &mut self,
@@ -97,15 +108,15 @@ impl ComprehensiveSkillsTester {
         question: &str,
     ) -> SkillTestResult {
         self.skills_tested += 1;
-        
+
         // Simulate AI response based on skill
-        let (response, activated, quality, passed, notes) = 
+        let (response, activated, quality, passed, notes) =
             self.simulate_ai_response(skill_name, question);
-        
+
         if passed {
             self.skills_passed += 1;
         }
-        
+
         let result = SkillTestResult {
             skill_name: skill_name.to_string(),
             skill_description: skill_description.to_string(),
@@ -117,11 +128,11 @@ impl ComprehensiveSkillsTester {
             test_passed: passed,
             additional_notes: notes,
         };
-        
+
         self.test_results.push(result.clone());
         result
     }
-    
+
     /// Simulate AI response for a skill
     fn simulate_ai_response(
         &self,
@@ -163,7 +174,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 跨设备同步\n\n\
                 准备好开始记录了吗？"
             ),
-            
+
             // Productivity
             "gog" => format!(
                 "我将使用 Google Workspace (gog) Skill。\n\n\
@@ -213,7 +224,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 跨平台同步\n\n\
                 需要安排什么会议或活动？"
             ),
-            
+
             // Messaging
             "wacli" => format!(
                 "我将使用 WhatsApp CLI Skill。\n\n\
@@ -255,7 +266,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 社区互动平台\n\n\
                 您想要在哪个服务器发消息？"
             ),
-            
+
             // Developer
             "github" => format!(
                 "我将使用 GitHub Skill。\n\n\
@@ -289,7 +300,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 智能代码建议\n\n\
                 需要我帮您写什么代码？"
             ),
-            
+
             // Password
             "1password" => format!(
                 "我将使用 1Password Skill。\n\n\
@@ -299,7 +310,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 端到端加密\n\n\
                 需要查找哪个账户的密码？（我会安全处理）"
             ),
-            
+
             // Media
             "spotify" => format!(
                 "我将使用 Spotify Skill。\n\n\
@@ -365,7 +376,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 自然发音\n\n\
                 需要我朗读什么内容？"
             ),
-            
+
             // Smart Home
             "homekit" => format!(
                 "我将使用 HomeKit Skill (macOS/iOS)。\n\n\
@@ -415,7 +426,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 开源智能家居平台\n\n\
                 需要执行什么自动化？"
             ),
-            
+
             // Food
             "ubereats" => format!(
                 "我将使用 Uber Eats Skill。\n\n\
@@ -449,7 +460,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 多种支付方式\n\n\
                 您想要点什么？"
             ),
-            
+
             // Finance
             "mint" => format!(
                 "我将使用 Mint Skill。\n\n\
@@ -475,7 +486,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 金融数据聚合\n\n\
                 需要连接哪个银行账户？"
             ),
-            
+
             // Health
             "apple-health" => format!(
                 "我将使用 Apple Health Skill。\n\n\
@@ -509,7 +520,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 营养分析\n\n\
                 需要记录什么食物？"
             ),
-            
+
             // Travel
             "maps" => format!(
                 "我将使用 Maps Skill。\n\n\
@@ -535,7 +546,7 @@ impl ComprehensiveSkillsTester {
                 ✓ 全球房源\n\n\
                 您想要在哪里找住宿？"
             ),
-            
+
             // Utilities
             "weather" => format!(
                 "我将使用 Weather Skill。\n\n\
@@ -577,10 +588,10 @@ impl ComprehensiveSkillsTester {
                 ✓ 高准确率\n\n\
                 需要翻译什么内容？"
             ),
-            
+
             _ => format!("我将使用 {} Skill 来帮助您。", skill_name),
         };
-        
+
         let activated = true;
         let quality = 0.95; // High quality response
         let passed = true;
@@ -589,17 +600,20 @@ impl ComprehensiveSkillsTester {
             format!("回答内容详细且相关"),
             format!("用户体验良好"),
         ];
-        
+
         (response, activated, quality, passed, notes)
     }
-    
+
     /// Generate final summary
     fn generate_summary(&self) -> String {
         let pass_rate = (self.skills_passed as f32 / self.skills_tested as f32) * 100.0;
-        let avg_quality = self.test_results.iter()
+        let avg_quality = self
+            .test_results
+            .iter()
             .map(|r| r.response_quality)
-            .sum::<f32>() / self.test_results.len() as f32;
-        
+            .sum::<f32>()
+            / self.test_results.len() as f32;
+
         format!(
             r#"
 ╔══════════════════════════════════════════════════════════════════════╗
@@ -639,18 +653,20 @@ fn test_all_53_skills_comprehensive() {
     println!("\n╔══════════════════════════════════════════════════════════════════════╗");
     println!("║        全面深度对话测试: 53 个 Skills 完整验证                        ║");
     println!("╚══════════════════════════════════════════════════════════════════════╝\n");
-    
+
     let mut tester = ComprehensiveSkillsTester::new();
     let all_skills = all_bundled_skills();
-    
+
     // Test each skill with a specific scenario
     let test_scenarios: HashMap<&str, (&str, &str)> = [
         // Notes
         ("obsidian", ("知识管理", "我想创建一个关于 Rust 编程的笔记")),
-        ("notion", ("项目管理", "帮我在 Notion 中创建一个新的项目页面")),
+        (
+            "notion",
+            ("项目管理", "帮我在 Notion 中创建一个新的项目页面"),
+        ),
         ("apple-notes", ("快速记录", "我需要快速记录一个想法")),
         ("bear-notes", ("写作", "我想用 Bear 写一篇博客文章")),
-        
         // Productivity
         ("gog", ("邮件处理", "检查我的 Gmail 收件箱")),
         ("himalaya", ("邮件管理", "发送一封邮件给团队")),
@@ -658,23 +674,19 @@ fn test_all_53_skills_comprehensive() {
         ("apple-reminders", ("提醒设置", "提醒我明天下午开会")),
         ("trello", ("看板管理", "在 Trello 中移动一个卡片")),
         ("calendar", ("日程安排", "安排下周一的会议")),
-        
         // Messaging
         ("wacli", ("即时通讯", "发送 WhatsApp 消息给朋友")),
         ("imsg", ("消息发送", "用 iMessage 发送一条消息")),
         ("bird", ("社交媒体", "在 Twitter 上发布一条推文")),
         ("slack", ("团队协作", "在 Slack 频道发送更新")),
         ("discord", ("社区互动", "在 Discord 服务器发消息")),
-        
         // Developer
         ("github", ("代码管理", "创建一个新的 GitHub Issue")),
         ("tmux", ("终端管理", "创建一个新的 tmux 会话")),
         ("session-logs", ("历史查询", "查找上周关于 API 的讨论")),
         ("coding-agent", ("编程辅助", "帮我写一个 Rust 函数")),
-        
         // Password
         ("1password", ("密码管理", "获取我的 GitHub 账户密码")),
-        
         // Media
         ("spotify", ("音乐播放", "播放一些轻松的音乐")),
         ("apple-music", ("音乐管理", "播放我的收藏歌单")),
@@ -684,7 +696,6 @@ fn test_all_53_skills_comprehensive() {
         ("video-gen", ("视频制作", "创建一个产品介绍视频")),
         ("speech-to-text", ("语音转录", "转录这段会议录音")),
         ("text-to-speech", ("语音合成", "朗读这篇文章")),
-        
         // Smart Home
         ("homekit", ("智能家居", "打开客厅的灯")),
         ("hue", ("灯光控制", "把卧室的灯调成暖色")),
@@ -692,53 +703,54 @@ fn test_all_53_skills_comprehensive() {
         ("alexa", ("语音助手", "让 Alexa 播放音乐")),
         ("ifttt", ("自动化", "触发回家模式")),
         ("homeassistant", ("家居自动化", "执行晚安场景")),
-        
         // Food
         ("ubereats", ("外卖订餐", "点一份披萨外卖")),
         ("doordash", ("送餐服务", "搜索附近的中餐厅")),
         ("instacart", ("生鲜购物", "购买新鲜蔬菜和水果")),
         ("grubhub", ("餐饮配送", "订购午餐")),
-        
         // Finance
         ("mint", ("财务管理", "查看本月的支出情况")),
         ("ynab", ("预算规划", "调整本月的预算分配")),
         ("plaid", ("银行连接", "连接我的银行账户")),
-        
         // Health
         ("apple-health", ("健康追踪", "查看今天的步数")),
         ("strava", ("运动记录", "记录今天的跑步活动")),
         ("fitbit", ("健身监测", "同步我的 Fitbit 数据")),
         ("myfitnesspal", ("饮食记录", "记录今天的午餐")),
-        
         // Travel
         ("maps", ("导航规划", "规划去机场的路线")),
         ("uber", ("打车服务", "叫一辆车去市中心")),
         ("airbnb", ("住宿预订", "在巴黎找一个住处")),
-        
         // Utilities
         ("weather", ("天气查询", "今天天气怎么样？")),
         ("calculator", ("数学计算", "计算 1234 * 5678")),
         ("timer", ("定时提醒", "设置一个 25 分钟的番茄钟")),
         ("alarm", ("闹钟设置", "设置明天早上 7 点的闹钟")),
         ("translator", ("翻译服务", "把这段文字翻译成英文")),
-    ].iter().cloned().collect();
-    
+    ]
+    .iter()
+    .cloned()
+    .collect();
+
     // Test each skill
     for skill in &all_skills {
         let skill_name = &skill.metadata.name;
         let skill_desc = &skill.metadata.description;
-        
+
         if let Some((scenario, question)) = test_scenarios.get(skill_name.as_str()) {
             let result = tester.test_skill(skill_name, skill_desc, scenario, question);
             println!("{}", result.display());
         }
     }
-    
+
     // Print summary
     println!("{}", tester.generate_summary());
-    
+
     // Assertions
     assert_eq!(tester.skills_tested, 53, "Should test all 53 skills");
     assert_eq!(tester.skills_passed, 53, "All skills should pass");
-    assert!(tester.test_results.iter().all(|r| r.test_passed), "All tests should pass");
+    assert!(
+        tester.test_results.iter().all(|r| r.test_passed),
+        "All tests should pass"
+    );
 }

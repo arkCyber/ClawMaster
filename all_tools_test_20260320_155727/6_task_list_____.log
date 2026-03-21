@@ -1,0 +1,14 @@
+[2m2026-03-20T07:58:16.779601Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 标记第一个任务为已完成
+
+✅ 响应:
+你可以使用以下命令标记第一个任务为已完成：
+
+`task_list mark 1 as done`
+
+或者：
+
+`task_list mark task1 as done`
+
+这将标记第一个任务为已完成。

@@ -407,49 +407,43 @@ impl Application for ClawMasterApp {
                 self.messages = Self::create_mock_messages(&session_id);
                 Task::none()
             }
-                Task::none()
             Message::SessionSearchChanged(query) => {
                 self.session_search_query = query;
-            }
                 Task::none()
+            }
             Message::NavigateTo(page) => {
                 self.current_page = page;
                 info!("Navigated to: {:?}", page);
-                Task::none()
                 // 关闭所有菜单
                 self.file_menu_open = false;
                 self.edit_menu_open = false;
                 self.view_menu_open = false;
                 self.help_menu_open = false;
-            }
                 Task::none()
+            }
             Message::RefreshStatus => {
-            Task::none()
                 info!("Refreshing system status");
                 self.system_status.uptime = "15m".to_string();
                 self.system_status.sessions = 3;
                 self.system_status.active_sessions = 1;
                 self.system_status.memory_mb = 256;
                 self.system_status.events_count += 1;
-            }
                 Task::none()
+            }
             Message::EmergencyStop => {
-            Task::none()
                 info!("Emergency stop triggered");
                 self.messages.push(ChatMessage {
                     role: MessageRole::System,
-                    Task::none()
                     content: "⚠️ Emergency stop activated - all operations halted".to_string(),
                     timestamp: "just now".to_string(),
                     duration: None,
-                }
-                Task::none());
-            }
+                });
                 Task::none()
+            }
             Message::ChatInputChanged(value) => {
                 self.chat_input = value;
-            }
                 Task::none()
+            }
             Message::SendMessage => {
                 if !self.chat_input.trim().is_empty() {
                     let message_content = self.chat_input.clone();
@@ -460,9 +454,7 @@ impl Application for ClawMasterApp {
                         content: message_content.clone(),
                         timestamp: "just now".to_string(),
                         duration: None,
-                        Task::none()
-                    }
-                Task::none());
+                    });
                     
                     // 模拟 AI 响应
                     self.messages.push(ChatMessage {
@@ -470,43 +462,35 @@ impl Application for ClawMasterApp {
                         content: format!("Received: '{}'. This is a demo response. Backend integration coming soon.", message_content),
                         timestamp: "0.5s".to_string(),
                         duration: Some("0.5s".to_string()),
-                    }
-                Task::none());
+                    });
                 }
                 Task::none()
             }
-            Task::none()
-                Task::none()
             Message::ClearChat => {
                 self.messages.clear();
                 self.messages.push(ChatMessage {
-                Task::none()
                     role: MessageRole::System,
                     content: "Chat cleared".to_string(),
                     timestamp: "just now".to_string(),
                     duration: None,
-                    Task::none()
-                }
-                Task::none());
+                });
                 // 关闭所有菜单
                 self.file_menu_open = false;
                 self.edit_menu_open = false;
                 self.view_menu_open = false;
                 self.help_menu_open = false;
-            }
                 Task::none()
+            }
             Message::ToggleTheme(dark) => {
-            Task::none()
                 self.dark_mode = dark;
                 info!("Theme toggled to: {}", if dark { "dark" } else { "light" });
+                Task::none()
             }
-                Task::none()
-                Task::none()
             Message::CycleLanguage => {
                 self.current_language = self.current_language.next();
                 info!("Language changed to: {:?}", self.current_language);
-            }
                 Task::none()
+            }
             Message::TripBreaker => {
                 self.breaker_status = BreakerStatus::Tripped;
                 Task::none()
@@ -1863,36 +1847,31 @@ impl ClawMasterApp {
                 content: format!("Session {} loaded", session_id),
                 timestamp: "10:30:00".to_string(),
                 duration: None,
-            }
-                Task::none(),
+            },
             ChatMessage {
                 role: MessageRole::User,
                 content: "Hello! Can you help me with this task?".to_string(),
                 timestamp: "10:30:15".to_string(),
                 duration: None,
-            }
-                Task::none(),
+            },
             ChatMessage {
                 role: MessageRole::Assistant,
                 content: "Of course! I'd be happy to help. What would you like to work on?".to_string(),
                 timestamp: "10:30:18".to_string(),
                 duration: Some("2.5s".to_string()),
-            }
-                Task::none(),
+            },
             ChatMessage {
                 role: MessageRole::User,
                 content: "I need to analyze the codebase structure.".to_string(),
                 timestamp: "10:31:00".to_string(),
                 duration: None,
-            }
-                Task::none(),
+            },
             ChatMessage {
                 role: MessageRole::Tool,
                 content: "Executed: find . -name '*.rs' | head -20\nFound 127 Rust files".to_string(),
                 timestamp: "10:31:05".to_string(),
                 duration: Some("1.2s".to_string()),
-            }
-                Task::none(),
+            },
         ]
     }
 }

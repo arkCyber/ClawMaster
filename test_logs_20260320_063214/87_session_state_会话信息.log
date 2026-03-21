@@ -1,0 +1,5 @@
+=== Test: session_state - 会话信息 ===
+Input: Get current session information
+Time: Fri Mar 20 06:33:43 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

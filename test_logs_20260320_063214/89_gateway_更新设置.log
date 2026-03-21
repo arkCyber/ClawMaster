@@ -1,0 +1,5 @@
+=== Test: gateway - 更新设置 ===
+Input: Update gateway settings
+Time: Fri Mar 20 06:33:45 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

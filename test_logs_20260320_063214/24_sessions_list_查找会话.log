@@ -1,0 +1,5 @@
+=== Test: sessions_list - 查找会话 ===
+Input: Find session named 'main'
+Time: Fri Mar 20 06:32:38 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

@@ -6,6 +6,7 @@ version.workspace = true
 [dependencies]
 anyhow                = { workspace = true }
 async-trait           = { workspace = true }
+chrono                = { workspace = true }
 flate2                = { workspace = true }
 clawmaster-config         = { workspace = true }
 clawmaster-metrics        = { optional = true, workspace = true }

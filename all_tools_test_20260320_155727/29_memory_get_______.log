@@ -1,0 +1,11 @@
+[2m2026-03-20T08:02:23.099169Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 显示最近保存的记忆
+
+✅ 响应:
+以下是最近保存的记忆：
+
+* default_theme：dark
+* project_deadline：2026-04-01
+
+这些信息是最近被保存的记忆。

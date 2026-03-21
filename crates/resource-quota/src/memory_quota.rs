@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A Compliant Memory Quota
 
-use crate::{QuotaError, QuotaResult};
-use parking_lot::RwLock;
-use std::sync::Arc;
+use {
+    crate::{QuotaError, QuotaResult},
+    parking_lot::RwLock,
+    std::sync::Arc,
+};
 
 /// Memory quota configuration
 #[derive(Debug, Clone)]
@@ -95,9 +97,7 @@ mod tests {
 
     #[test]
     fn test_memory_quota_allocate() {
-        let config = MemoryQuotaConfig {
-            max_memory: 1000,
-        };
+        let config = MemoryQuotaConfig { max_memory: 1000 };
         let quota = MemoryQuota::new(config);
 
         assert!(quota.allocate(500).is_ok());
@@ -107,23 +107,22 @@ mod tests {
 
     #[test]
     fn test_memory_quota_exceeds() {
-        let config = MemoryQuotaConfig {
-            max_memory: 1000,
-        };
+        let config = MemoryQuotaConfig { max_memory: 1000 };
         let quota = MemoryQuota::new(config);
 
         quota.allocate(800).unwrap();
 
         let result = quota.allocate(300);
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::MemoryQuotaExceeded { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::MemoryQuotaExceeded { .. }
+        ));
     }
 
     #[test]
     fn test_memory_quota_deallocate() {
-        let config = MemoryQuotaConfig {
-            max_memory: 1000,
-        };
+        let config = MemoryQuotaConfig { max_memory: 1000 };
         let quota = MemoryQuota::new(config);
 
         quota.allocate(500).unwrap();

@@ -1,18 +1,20 @@
 //! Test command
 
-use anyhow::Result;
-use colored::Colorize;
-use std::process::Command;
+use {anyhow::Result, colored::Colorize, std::process::Command};
 
 pub async fn execute(test_name: Option<&str>) -> Result<()> {
     println!("{} Running tests", "🧪".bright_green());
 
     let mut cmd = Command::new("cargo");
     cmd.arg("test");
-    
+
     if let Some(name) = test_name {
         cmd.arg(name);
-        println!("  {} Test filter: {}", "🔍".bright_yellow(), name.bright_cyan());
+        println!(
+            "  {} Test filter: {}",
+            "🔍".bright_yellow(),
+            name.bright_cyan()
+        );
     }
 
     let output = cmd.output()?;

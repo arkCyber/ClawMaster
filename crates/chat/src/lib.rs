@@ -308,6 +308,56 @@ fn session_token_usage_from_messages(messages: &[Value]) -> SessionTokenUsage {
     }
 }
 
+fn estimated_message_tokens(msg: &Value) -> u64 {
+    extract_preview_from_value(msg)
+        .map(|text| estimate_text_tokens(&text).saturating_add(16))
+        .unwrap_or(16)
+}
+
+fn select_compaction_history_slice<'a>(history: &'a [Value], context_window: u32) -> &'a [Value] {
+    if history.is_empty() {
+        return history;
+    }
+
+    let context_window = u64::from(context_window.max(512));
+    let history_budget = ((context_window * 60) / 100).max(256);
+    let mut total = 0u64;
+    let mut start_idx = history.len().saturating_sub(1);
+
+    for idx in (0..history.len()).rev() {
+        let next = total.saturating_add(estimated_message_tokens(&history[idx]));
+        if next > history_budget && idx < history.len().saturating_sub(1) {
+            break;
+        }
+        total = next;
+        start_idx = idx;
+    }
+
+    &history[start_idx..]
+}
+
+fn fallback_compaction_summary(history: &[Value]) -> String {
+    let lines: Vec<String> = history
+        .iter()
+        .filter_map(|msg| {
+            let role = msg.get("role").and_then(Value::as_str)?;
+            let text = extract_preview_from_value(msg)?;
+            Some(format!("{role}: {text}"))
+        })
+        .take(12)
+        .collect();
+
+    if lines.is_empty() {
+        format!("Conversation condensed from {} messages.", history.len())
+    } else {
+        format!(
+            "Conversation condensed from {} messages. Recent key turns:\n\n{}",
+            history.len(),
+            lines.join("\n")
+        )
+    }
+}
+
 #[must_use]
 fn estimate_text_tokens(text: &str) -> u64 {
     let trimmed = text.trim();
@@ -6466,24 +6516,25 @@ async fn compact_session(
     // Use structured ChatMessage objects so role boundaries are maintained via
     // the API's message structure, preventing prompt injection where user content
     // could mimic role prefixes in concatenated text.
+    let history_slice = select_compaction_history_slice(&history, provider.context_window());
     let mut summary_messages = vec![ChatMessage::system(
         "You are a conversation summarizer. The messages that follow are a conversation you must summarize. Preserve all key facts, decisions, and context. After the conversation, you will receive a final instruction.",
     )];
-    summary_messages.extend(values_to_chat_messages(&history));
+    summary_messages.extend(values_to_chat_messages(history_slice));
     summary_messages.push(ChatMessage::user(
         "Summarize the conversation above into a concise form. Output only the summary, no preamble.",
     ));
 
     let mut stream = provider.stream(summary_messages);
     let mut summary = String::new();
+    let mut stream_error = None;
     while let Some(event) = stream.next().await {
         match event {
             StreamEvent::Delta(delta) => summary.push_str(&delta),
             StreamEvent::Done(_) => break,
             StreamEvent::Error(e) => {
-                return Err(error::Error::message(format!(
-                    "compact summarization failed: {e}"
-                )));
+                stream_error = Some(e);
+                break;
             },
             // Tool events not expected in summarization stream.
             StreamEvent::ToolCallStart { .. }
@@ -6497,9 +6548,16 @@ async fn compact_session(
         }
     }
 
-    if summary.is_empty() {
-        return Err(error::Error::message("compact produced empty summary"));
-    }
+    let summary = if summary.trim().is_empty() {
+        if let Some(e) = stream_error {
+            warn!(session = %session_key, error = %e, "compact summarization failed, using fallback summary");
+        } else {
+            warn!(session = %session_key, "compact produced empty summary, using fallback summary");
+        }
+        fallback_compaction_summary(history_slice)
+    } else {
+        summary
+    };
 
     let compacted_msg = PersistedMessage::Assistant {
         content: format!("[Conversation Summary]\n\n{summary}"),
@@ -8006,6 +8064,7 @@ mod tests {
         anyhow::Result,
         clawmaster_agents::{model::LlmProvider, tool_registry::AgentTool},
         clawmaster_common::types::ReplyPayload,
+        clawmaster_service_traits::{NoopMcpService, NoopProjectService, NoopTtsService},
         std::{
             pin::Pin,
             sync::{
@@ -8024,6 +8083,10 @@ mod tests {
     struct StaticProvider {
         name: String,
         id: String,
+    }
+
+    struct ErrorStreamProvider {
+        context_window: u32,
     }
 
     #[async_trait]
@@ -8049,6 +8112,38 @@ mod tests {
             _messages: Vec<ChatMessage>,
         ) -> Pin<Box<dyn Stream<Item = StreamEvent> + Send + '_>> {
             Box::pin(tokio_stream::empty())
+        }
+    }
+
+    #[async_trait]
+    impl LlmProvider for ErrorStreamProvider {
+        fn name(&self) -> &str {
+            "error-stream"
+        }
+
+        fn id(&self) -> &str {
+            "error-stream"
+        }
+
+        fn context_window(&self) -> u32 {
+            self.context_window
+        }
+
+        async fn complete(
+            &self,
+            _messages: &[ChatMessage],
+            _tools: &[Value],
+        ) -> Result<clawmaster_agents::model::CompletionResponse> {
+            anyhow::bail!("not implemented for test")
+        }
+
+        fn stream(
+            &self,
+            _messages: Vec<ChatMessage>,
+        ) -> Pin<Box<dyn Stream<Item = StreamEvent> + Send + '_>> {
+            Box::pin(tokio_stream::iter(vec![StreamEvent::Error(
+                "context overflow during summary".to_string(),
+            )]))
         }
     }
 
@@ -8131,9 +8226,9 @@ mod tests {
         channel_status_log: Mutex<HashMap<String, Vec<String>>>,
         channel_outbound: Option<Arc<dyn clawmaster_channels::ChannelOutbound>>,
         channel_stream_outbound: Option<Arc<dyn clawmaster_channels::ChannelStreamOutbound>>,
-        tts: clawmaster_service_traits::NoopTtsService,
-        project: clawmaster_service_traits::NoopProjectService,
-        mcp: clawmaster_service_traits::NoopMcpService,
+        tts: NoopTtsService,
+        project: NoopProjectService,
+        mcp: NoopMcpService,
     }
 
     impl MockChatRuntime {
@@ -8143,9 +8238,9 @@ mod tests {
                 channel_status_log: Mutex::new(HashMap::new()),
                 channel_outbound: None,
                 channel_stream_outbound: None,
-                tts: clawmaster_service_traits::NoopTtsService,
-                project: clawmaster_service_traits::NoopProjectService,
-                mcp: clawmaster_service_traits::NoopMcpService,
+                tts: NoopTtsService,
+                project: NoopProjectService,
+                mcp: NoopMcpService,
             }
         }
 
@@ -8267,8 +8362,8 @@ mod tests {
             self.channel_stream_outbound.clone()
         }
 
-        fn tts_service(&self) -> &dyn clawmaster_service_traits::TtsService {
-            &self.tts
+        fn tts_service(&self) -> Arc<dyn clawmaster_service_traits::TtsService> {
+            Arc::new(NoopTtsService)
         }
 
         fn project_service(&self) -> &dyn clawmaster_service_traits::ProjectService {
@@ -8358,6 +8453,65 @@ mod tests {
         let usage = session_token_usage_from_messages(&messages);
         assert_eq!(usage.current_request_input_tokens, 33);
         assert_eq!(usage.current_request_output_tokens, 11);
+    }
+
+    #[test]
+    fn select_compaction_history_slice_respects_small_context_budget() {
+        let history: Vec<Value> = (0..40)
+            .map(|i| {
+                serde_json::json!({
+                    "role": if i % 2 == 0 { "user" } else { "assistant" },
+                    "content": format!("message-{i}-{}", "x".repeat(120)),
+                })
+            })
+            .collect();
+
+        let slice = select_compaction_history_slice(&history, 512);
+
+        assert!(!slice.is_empty());
+        assert!(slice.len() < history.len());
+        assert_eq!(slice.last(), history.last());
+    }
+
+    #[tokio::test]
+    async fn compact_session_falls_back_when_summary_stream_errors() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let store = Arc::new(SessionStore::new(dir.path().to_path_buf()));
+        let session_key = "compact-fallback";
+
+        for i in 0..8 {
+            store
+                .append(
+                    session_key,
+                    &serde_json::json!({
+                        "role": if i % 2 == 0 { "user" } else { "assistant" },
+                        "content": format!("turn-{i} {}", "hello ".repeat(20)),
+                    }),
+                )
+                .await
+                .expect("append history");
+        }
+
+        let provider: Arc<dyn LlmProvider> = Arc::new(ErrorStreamProvider {
+            context_window: 512,
+        });
+
+        compact_session(&store, session_key, &provider)
+            .await
+            .expect("fallback compaction should succeed");
+
+        let compacted = store
+            .read(session_key)
+            .await
+            .expect("read compacted history");
+        assert_eq!(compacted.len(), 1);
+        let content = compacted[0]
+            .get("content")
+            .and_then(Value::as_str)
+            .expect("assistant summary content");
+        assert!(content.starts_with("[Conversation Summary]\n\nConversation condensed from "));
+        assert!(content.contains("Recent key turns:"));
+        assert!(content.contains("turn-"));
     }
 
     #[test]

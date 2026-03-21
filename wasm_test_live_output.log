@@ -1,0 +1,482 @@
+[1m[0;36m╔════════════════════════════════════════════════════════════════════╗[0m
+[1m[0;36m║  🧪 ClawMaster WASM 工具综合测试[0m
+[1m[0;36m║  实时显示命令和结果[0m
+[1m[0;36m╚════════════════════════════════════════════════════════════════════╝[0m
+
+[1m测试时间:[0m Sat Mar 21 11:15:39 CST 2026
+[1m结果目录:[0m wasm_comprehensive_test_20260321_111539
+[1m测试模式:[0m WASM 工具直接测试
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  1️⃣  WASM 引擎测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #1: wasm_engine ━━━[0m
+[0;36m📋 场景: WASM 组件编译和缓存[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib wasm_engine::tests::compile_component_round_trip_and_cache_hit -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test wasm_engine::tests::compile_component_round_trip_and_cache_hit ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 4s[0m
+[0;32m[1m✅ PASS[0m: wasm_engine - WASM 组件编译和缓存 (4s)
+
+[1m[0;34m━━━ 测试 #2: wasm_engine ━━━[0m
+[0;36m📋 场景: WASM 并发访问[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib wasm_engine::tests::compile_component_concurrent_access -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test wasm_engine::tests::compile_component_concurrent_access ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 2s[0m
+[0;32m[1m✅ PASS[0m: wasm_engine - WASM 并发访问 (2s)
+
+[1m[0;34m━━━ 测试 #3: wasm_engine ━━━[0m
+[0;36m📋 场景: WASM 核心模块编译[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib wasm_engine::tests::compile_module_core_wasm -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test wasm_engine::tests::compile_module_core_wasm ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 39s[0m
+[0;32m[1m✅ PASS[0m: wasm_engine - WASM 核心模块编译 (39s)
+
+[1m[0;34m━━━ 测试 #4: wasm_limits ━━━[0m
+[0;36m📋 场景: WASM 燃料耗尽检测[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib wasm_limits::wasm_tests::fuel_exhaustion_returns_error -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test wasm_limits::wasm_tests::fuel_exhaustion_returns_error ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 45s[0m
+[0;32m[1m✅ PASS[0m: wasm_limits - WASM 燃料耗尽检测 (45s)
+
+[1m[0;34m━━━ 测试 #5: wasm_component ━━━[0m
+[0;36m📋 场景: WASM HTTP 超时处理[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib wasm_component::tests::http_host_maps_timeout_errors -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test wasm_component::tests::http_host_maps_timeout_errors ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.23s
+⏱  执行时间: 7s[0m
+[0;32m[1m✅ PASS[0m: wasm_component - WASM HTTP 超时处理 (7s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  2️⃣  calc 计算器工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #6: calc ━━━[0m
+[0;36m📋 场景: 基础加法运算[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib calc::tests -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 10 tests
+  │ test calc::tests::evaluates_operator_precedence ... ok
+  │ test calc::tests::evaluates_parentheses_and_unary_minus ... ok
+  │ test calc::tests::execute_returns_structured_result ... ok
+  │ test calc::tests::execute_supports_expr_alias ... ok
+  │ test calc::tests::power_is_right_associative ... ok
+  │ test calc::tests::rejects_division_by_zero ... ok
+  │ test calc::tests::rejects_expressions_that_are_too_long ... ok
+  │ test calc::tests::rejects_invalid_characters ... ok
+  │ test calc::tests::rejects_too_large_exponent ... ok
+  │ test calc::tests::supports_floating_point_results ... ok
+  │ 
+  │ test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 568 filtered out; finished in 0.00s
+⏱  执行时间: 5s[0m
+[0;32m[1m✅ PASS[0m: calc - 基础加法运算 (5s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  3️⃣  web_fetch 网页获取工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #7: web_fetch ━━━[0m
+[0;36m📋 场景: SSRF 防护 - 阻止 localhost[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_ssrf_blocks_localhost_url -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_fetch::tests::test_ssrf_blocks_localhost_url ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 31s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - SSRF 防护 - 阻止 localhost (31s)
+
+[1m[0;34m━━━ 测试 #8: web_fetch ━━━[0m
+[0;36m📋 场景: SSRF 防护 - 阻止私有 IP[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_ssrf_blocks_private_ip -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_fetch::tests::test_ssrf_blocks_private_ip ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 28s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - SSRF 防护 - 阻止私有 IP (28s)
+
+[1m[0;34m━━━ 测试 #9: web_fetch ━━━[0m
+[0;36m📋 场景: SSRF 防护 - 阻止链路本地[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_ssrf_blocks_link_local -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_fetch::tests::test_ssrf_blocks_link_local ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 29s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - SSRF 防护 - 阻止链路本地 (29s)
+
+[1m[0;34m━━━ 测试 #10: web_fetch ━━━[0m
+[0;36m📋 场景: 白名单功能[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_ssrf_check_allowlist_permits_private_ip -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_fetch::tests::test_ssrf_check_allowlist_permits_private_ip ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 5s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - 白名单功能 (5s)
+
+[1m[0;34m━━━ 测试 #11: web_fetch ━━━[0m
+[0;36m📋 场景: 内容截断[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_truncation -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 2 tests
+  │ test web_fetch::tests::test_truncation ... ok
+  │ test web_fetch::tests::test_truncation_utf8_boundary ... ok
+  │ 
+  │ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 576 filtered out; finished in 0.00s
+⏱  执行时间: 15s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - 内容截断 (15s)
+
+[1m[0;34m━━━ 测试 #12: web_fetch ━━━[0m
+[0;36m📋 场景: UTF-8 边界处理[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_fetch::tests::test_truncation_utf8_boundary -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_fetch::tests::test_truncation_utf8_boundary ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 11s[0m
+[0;32m[1m✅ PASS[0m: web_fetch - UTF-8 边界处理 (11s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  4️⃣  web_search 网页搜索工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #13: web_search ━━━[0m
+[0;36m📋 场景: Brave 搜索响应解析[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_search::tests::test_brave_response_parsing -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 2 tests
+  │ test web_search::tests::test_brave_response_parsing ... ok
+  │ test web_search::tests::test_brave_response_parsing_tolerates_nulls ... ok
+  │ 
+  │ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 576 filtered out; finished in 0.00s
+⏱  执行时间: 4s[0m
+[0;32m[1m✅ PASS[0m: web_search - Brave 搜索响应解析 (4s)
+
+[1m[0;34m━━━ 测试 #14: web_search ━━━[0m
+[0;36m📋 场景: DuckDuckGo HTML 解析[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_search::tests::test_parse_duckduckgo_html_basic -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_search::tests::test_parse_duckduckgo_html_basic ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 13s[0m
+[0;32m[1m✅ PASS[0m: web_search - DuckDuckGo HTML 解析 (13s)
+
+[1m[0;34m━━━ 测试 #15: web_search ━━━[0m
+[0;36m📋 场景: Perplexity 响应解析[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_search::tests::test_perplexity_response_parsing -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_search::tests::test_perplexity_response_parsing ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 5s[0m
+[0;32m[1m✅ PASS[0m: web_search - Perplexity 响应解析 (5s)
+
+[1m[0;34m━━━ 测试 #16: web_search ━━━[0m
+[0;36m📋 场景: 缓存命中和未命中[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib web_search::tests::test_cache_hit_and_miss -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test web_search::tests::test_cache_hit_and_miss ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.00s
+⏱  执行时间: 7s[0m
+[0;32m[1m✅ PASS[0m: web_search - 缓存命中和未命中 (7s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  5️⃣  map 地图工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #17: map ━━━[0m
+[0;36m📋 场景: 地图缩放限制[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib map::tests::execute_clamps_zoom -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test map::tests::execute_clamps_zoom ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.90s
+⏱  执行时间: 19s[0m
+[0;32m[1m✅ PASS[0m: map - 地图缩放限制 (19s)
+
+[1m[0;34m━━━ 测试 #18: map ━━━[0m
+[0;36m📋 场景: 地图标签功能[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib map::tests::execute_includes_label_in_result -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test map::tests::execute_includes_label_in_result ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.04s
+⏱  执行时间: 9s[0m
+[0;32m[1m✅ PASS[0m: map - 地图标签功能 (9s)
+
+[1m[0;34m━━━ 测试 #19: map ━━━[0m
+[0;36m📋 场景: 地图点位输入[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib map::tests::execute_supports_points_input -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test map::tests::execute_supports_points_input ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.99s
+⏱  执行时间: 2s[0m
+[0;32m[1m✅ PASS[0m: map - 地图点位输入 (2s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  6️⃣  location 位置工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #20: location ━━━[0m
+[0;36m📋 场景: 精确位置模式[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib location::tests::precision_defaults_to_precise -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test location::tests::precision_defaults_to_precise ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.74s
+⏱  执行时间: 6s[0m
+[0;32m[1m✅ PASS[0m: location - 精确位置模式 (6s)
+
+[1m[0;34m━━━ 测试 #21: location ━━━[0m
+[0;36m📋 场景: 粗略位置模式[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib location::tests::precision_coarse_is_forwarded -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test location::tests::precision_coarse_is_forwarded ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.78s
+⏱  执行时间: 3s[0m
+[0;32m[1m✅ PASS[0m: location - 粗略位置模式 (3s)
+
+[1m[0;34m━━━ 测试 #22: location ━━━[0m
+[0;36m📋 场景: 浏览器位置获取[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib location::tests::browser_location_success -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test location::tests::browser_location_success ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.73s
+⏱  执行时间: 4s[0m
+[0;32m[1m✅ PASS[0m: location - 浏览器位置获取 (4s)
+
+[1m[0;34m━━━ 测试 #23: location ━━━[0m
+[0;36m📋 场景: 通道位置获取[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib location::tests::channel_location_success -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test location::tests::channel_location_success ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.74s
+⏱  执行时间: 6s[0m
+[0;32m[1m✅ PASS[0m: location - 通道位置获取 (6s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  7️⃣  process 和 contract 工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #24: process ━━━[0m
+[0;36m📋 场景: 进程列表（无沙箱）[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib process::tests::test_process_tool_list_no_sandbox -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test process::tests::test_process_tool_list_no_sandbox ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 0.38s
+⏱  执行时间: 5s[0m
+[0;32m[1m✅ PASS[0m: process - 进程列表（无沙箱） (5s)
+
+[1m[0;34m━━━ 测试 #25: contract ━━━[0m
+[0;36m📋 场景: 合约超时强制执行[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib contract::tests::contract_timeout_is_enforced -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test contract::tests::contract_timeout_is_enforced ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.01s
+⏱  执行时间: 2s[0m
+[0;32m[1m✅ PASS[0m: contract - 合约超时强制执行 (2s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  8️⃣  spawn_agent Agent 生成工具测试[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[0;34m━━━ 测试 #26: spawn_agent ━━━[0m
+[0;36m📋 场景: 超时取消长时间运行的 Agent[0m
+[1;33m➤ 命令:[0m cargo test --package clawmaster-tools --lib spawn_agent::tests::test_timeout_cancels_long_running_agent -- --nocapture --test-threads=1
+[0;32m✓ 输出:[0m
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on package cache
+  │     Blocking waiting for file lock on artifact directory
+  │ 
+  │ running 1 test
+  │ test spawn_agent::tests::test_timeout_cancels_long_running_agent ... ok
+  │ 
+  │ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 577 filtered out; finished in 1.00s
+⏱  执行时间: 122s[0m
+[0;32m[1m✅ PASS[0m: spawn_agent - 超时取消长时间运行的 Agent (122s)
+
+
+[1m[0;35m┌────────────────────────────────────────────────────────────────────┐[0m
+[1m[0;35m│  📊 WASM 工具测试总结[0m
+[1m[0;35m└────────────────────────────────────────────────────────────────────┘[0m
+
+[1m[1;37m╔════════════════════════════════════════════════════════════════════╗[0m
+[1m[1;37m║                       测试结果统计                                 ║[0m
+[1m[1;37m╠════════════════════════════════════════════════════════════════════╣[0m
+[1m[1;37m║  总测试数: [0;36m26[1;37m                                                    ║[0m
+[1m[1;37m║  通过:     [0;32m26[1;37m                                                    ║[0m
+[1m[1;37m║  失败:     [0;31m0[1;37m                                                    ║[0m
+[1m[1;37m║  通过率:   [0;36m100%[1;37m                                                  ║[0m
+[1m[1;37m╚════════════════════════════════════════════════════════════════════╝[0m
+
+[1m📁 生成的文件:[0m
+  • [0;36mwasm_comprehensive_test_20260321_111539/summary.txt[0m - 测试摘要
+  • [0;36mwasm_comprehensive_test_20260321_111539/detailed.log[0m - 详细日志
+  • [0;36mwasm_comprehensive_test_20260321_111539/WASM_TEST_REPORT.md[0m - Markdown 报告
+
+[0;32m[1m🎉 所有 WASM 工具测试通过！[0m

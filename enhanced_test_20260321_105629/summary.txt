@@ -1,0 +1,3 @@
+FAIL: calc - 基础加法
+FAIL: calc - 基础减法
+FAIL: calc - 基础乘法

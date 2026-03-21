@@ -1,23 +1,19 @@
 //! China Transport & Tax Skills
-//! 
+//!
 //! This module provides Skills for Chinese transportation and tax services.
 //! 中国交通和税务服务专用 Skills
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all China transport and tax skills (5 skills)
 pub fn china_transport_tax_skills() -> Vec<SkillContent> {
     vec![
         // Aviation (1)
         china_airlines_skill(),
-        
         // Railway (1)
         china_railway_skill(),
-        
         // Highway (1)
         china_highway_skill(),
-        
         // Shanghai Tax (2)
         shanghai_tax_skill(),
         shanghai_etax_skill(),
@@ -676,23 +672,23 @@ mod tests {
     #[test]
     fn test_all_transport_tax_skills_have_metadata() {
         let skills = china_transport_tax_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_transport_tax_skill_names() {
         let skills = china_transport_tax_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"china-airlines"));
         assert!(names.contains(&"china-railway"));
         assert!(names.contains(&"china-highway"));
@@ -703,31 +699,35 @@ mod tests {
     #[test]
     fn test_transport_tax_categories() {
         let skills = china_transport_tax_skills();
-        
+
         // Aviation: 1
         let aviation = vec!["china-airlines"];
-        let aviation_count = skills.iter()
+        let aviation_count = skills
+            .iter()
             .filter(|s| aviation.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(aviation_count, 1);
-        
+
         // Railway: 1
         let railway = vec!["china-railway"];
-        let railway_count = skills.iter()
+        let railway_count = skills
+            .iter()
             .filter(|s| railway.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(railway_count, 1);
-        
+
         // Highway: 1
         let highway = vec!["china-highway"];
-        let highway_count = skills.iter()
+        let highway_count = skills
+            .iter()
             .filter(|s| highway.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(highway_count, 1);
-        
+
         // Tax: 2
         let tax = vec!["shanghai-tax", "shanghai-etax"];
-        let tax_count = skills.iter()
+        let tax_count = skills
+            .iter()
             .filter(|s| tax.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(tax_count, 2);

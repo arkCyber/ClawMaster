@@ -1,0 +1,8 @@
+[2m2026-03-20T08:01:27.595553Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 记住：默认使用深色主题
+
+✅ 响应:
+我会记住默认使用深色主题。为了记住你的偏好，用 `memory_save` 令可以将信息保存到你的长期记忆中：
+
+`memory_save key="default_theme" value="dark"`

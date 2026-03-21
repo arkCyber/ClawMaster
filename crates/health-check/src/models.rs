@@ -2,9 +2,11 @@
 //!
 //! DO-178C Level A Compliant Data Models
 
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
+use {
+    chrono::{DateTime, Utc},
+    serde::{Deserialize, Serialize},
+    std::cmp::Ordering,
+};
 
 /// Health status of a component
 ///
@@ -14,16 +16,12 @@ use std::cmp::Ordering;
 pub enum HealthStatus {
     /// Component is fully operational
     Healthy,
-    
+
     /// Component is operational but with reduced functionality
-    Degraded {
-        reason: String,
-    },
-    
+    Degraded { reason: String },
+
     /// Component is not operational
-    Unhealthy {
-        reason: String,
-    },
+    Unhealthy { reason: String },
 }
 
 impl HealthStatus {
@@ -89,10 +87,10 @@ impl Ord for HealthStatus {
 pub enum Criticality {
     /// Component failure causes system failure
     Critical = 3,
-    
+
     /// Component failure causes degraded functionality
     Important = 2,
-    
+
     /// Component failure has minimal impact
     Optional = 1,
 }
@@ -111,19 +109,19 @@ impl Criticality {
 pub struct HealthCheckResult {
     /// Name of the component
     pub name: String,
-    
+
     /// Health status
     pub status: HealthStatus,
-    
+
     /// Criticality level
     pub criticality: Criticality,
-    
+
     /// Timestamp of the check
     pub timestamp: DateTime<Utc>,
-    
+
     /// Duration of the check in milliseconds
     pub duration_ms: u64,
-    
+
     /// Optional metadata
     #[serde(skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
@@ -161,13 +159,13 @@ impl HealthCheckResult {
 pub struct SystemHealth {
     /// Overall system status
     pub status: HealthStatus,
-    
+
     /// Individual component results
     pub checks: Vec<HealthCheckResult>,
-    
+
     /// Timestamp of the health check
     pub timestamp: DateTime<Utc>,
-    
+
     /// Total duration in milliseconds
     pub total_duration_ms: u64,
 }
@@ -176,7 +174,7 @@ impl SystemHealth {
     /// Create a new system health from check results
     pub fn from_checks(checks: Vec<HealthCheckResult>, total_duration_ms: u64) -> Self {
         let status = Self::aggregate_status(&checks);
-        
+
         Self {
             status,
             checks,
@@ -190,23 +188,30 @@ impl SystemHealth {
     /// DO-178C §11.10: Critical components determine overall status
     fn aggregate_status(checks: &[HealthCheckResult]) -> HealthStatus {
         // If any critical component is unhealthy, system is unhealthy
-        if checks.iter().any(|c| c.criticality.is_critical() && c.status.is_unhealthy()) {
+        if checks
+            .iter()
+            .any(|c| c.criticality.is_critical() && c.status.is_unhealthy())
+        {
             return HealthStatus::Unhealthy {
                 reason: "Critical component failure".to_string(),
             };
         }
 
         // If any critical component is degraded, system is degraded
-        if checks.iter().any(|c| c.criticality.is_critical() && c.status.is_degraded()) {
+        if checks
+            .iter()
+            .any(|c| c.criticality.is_critical() && c.status.is_degraded())
+        {
             return HealthStatus::Degraded {
                 reason: "Critical component degraded".to_string(),
             };
         }
 
         // If any important component is unhealthy, system is degraded
-        if checks.iter().any(|c| {
-            c.criticality == Criticality::Important && c.status.is_unhealthy()
-        }) {
+        if checks
+            .iter()
+            .any(|c| c.criticality == Criticality::Important && c.status.is_unhealthy())
+        {
             return HealthStatus::Degraded {
                 reason: "Important component failure".to_string(),
             };
@@ -221,9 +226,9 @@ impl SystemHealth {
     /// DO-178C §11.10: Readiness verification
     pub fn is_ready(&self) -> bool {
         // System is ready if all critical components are healthy
-        self.checks.iter().all(|c| {
-            !c.criticality.is_critical() || c.status.is_healthy()
-        })
+        self.checks
+            .iter()
+            .all(|c| !c.criticality.is_critical() || c.status.is_healthy())
     }
 
     /// Get HTTP status code for this health
@@ -239,28 +244,28 @@ impl SystemHealth {
 pub struct ResourceMetrics {
     /// CPU usage percentage (0-100)
     pub cpu_usage_percent: f32,
-    
+
     /// Memory usage in bytes
     pub memory_used_bytes: u64,
-    
+
     /// Total memory in bytes
     pub memory_total_bytes: u64,
-    
+
     /// Memory usage percentage (0-100)
     pub memory_usage_percent: f32,
-    
+
     /// Disk usage in bytes
     pub disk_used_bytes: u64,
-    
+
     /// Total disk space in bytes
     pub disk_total_bytes: u64,
-    
+
     /// Disk usage percentage (0-100)
     pub disk_usage_percent: f32,
-    
+
     /// Number of active connections
     pub active_connections: usize,
-    
+
     /// Timestamp of metrics collection
     pub timestamp: DateTime<Utc>,
 }
@@ -377,16 +382,14 @@ mod tests {
 
     #[test]
     fn test_system_health_critical_failure() {
-        let checks = vec![
-            HealthCheckResult::new(
-                "db".to_string(),
-                HealthStatus::Unhealthy {
-                    reason: "connection failed".to_string(),
-                },
-                Criticality::Critical,
-                10,
-            ),
-        ];
+        let checks = vec![HealthCheckResult::new(
+            "db".to_string(),
+            HealthStatus::Unhealthy {
+                reason: "connection failed".to_string(),
+            },
+            Criticality::Critical,
+            10,
+        )];
 
         let health = SystemHealth::from_checks(checks, 10);
         assert!(health.status.is_unhealthy());

@@ -1,0 +1,8 @@
+[2m2026-03-20T08:01:16.432970Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 记住：项目截止日期是 2026年4月1日
+
+✅ 响应:
+我会记住项目截止日期是 2026年4月1日。为了记住你的信息，用 `memory_save` 令可以将信息保存到你的长期记忆中：
+
+`memory_save key="project_deadline" value="2026-04-01"`

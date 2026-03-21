@@ -1,10 +1,9 @@
 //! Enterprise Automatic Tax Filing System
-//! 
+//!
 //! DO-178C Level A certified enterprise tax automation system
 //! 企业自动报税系统 - 航空航天级标准
 
-use crate::create_bundled_skill;
-use clawmaster_skills::types::SkillContent;
+use {crate::create_bundled_skill, clawmaster_skills::types::SkillContent};
 
 /// Get all enterprise auto tax skills (8 skills)
 pub fn enterprise_auto_tax_skills() -> Vec<SkillContent> {
@@ -12,15 +11,12 @@ pub fn enterprise_auto_tax_skills() -> Vec<SkillContent> {
         // Tax Calculation Engine (2)
         vat_auto_calculator_skill(),
         corporate_tax_calculator_skill(),
-        
         // Auto Filing System (2)
         auto_tax_filing_skill(),
         tax_declaration_automation_skill(),
-        
         // Risk Control (2)
         tax_risk_monitor_skill(),
         tax_compliance_checker_skill(),
-        
         // Intelligence & Optimization (2)
         tax_planning_ai_skill(),
         tax_optimization_engine_skill(),
@@ -988,23 +984,23 @@ mod tests {
     #[test]
     fn test_all_auto_tax_skills_have_metadata() {
         let skills = enterprise_auto_tax_skills();
-        
+
         for skill in &skills {
             assert!(!skill.metadata.name.is_empty());
             assert!(!skill.metadata.description.is_empty());
             assert!(!skill.body.is_empty());
-            assert!(skill.metadata.description.contains("(") || 
-                    skill.metadata.description.contains("（"));
+            assert!(
+                skill.metadata.description.contains("(")
+                    || skill.metadata.description.contains("（")
+            );
         }
     }
 
     #[test]
     fn test_auto_tax_skill_names() {
         let skills = enterprise_auto_tax_skills();
-        let names: Vec<&str> = skills.iter()
-            .map(|s| s.metadata.name.as_str())
-            .collect();
-        
+        let names: Vec<&str> = skills.iter().map(|s| s.metadata.name.as_str()).collect();
+
         assert!(names.contains(&"vat-auto-calculator"));
         assert!(names.contains(&"corporate-tax-calculator"));
         assert!(names.contains(&"auto-tax-filing"));
@@ -1014,31 +1010,35 @@ mod tests {
     #[test]
     fn test_auto_tax_categories() {
         let skills = enterprise_auto_tax_skills();
-        
+
         // Tax Calculation: 2
         let calculation = vec!["vat-auto-calculator", "corporate-tax-calculator"];
-        let calc_count = skills.iter()
+        let calc_count = skills
+            .iter()
             .filter(|s| calculation.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(calc_count, 2);
-        
+
         // Auto Filing: 2
         let filing = vec!["auto-tax-filing", "tax-declaration-automation"];
-        let filing_count = skills.iter()
+        let filing_count = skills
+            .iter()
             .filter(|s| filing.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(filing_count, 2);
-        
+
         // Risk Control: 2
         let risk = vec!["tax-risk-monitor", "tax-compliance-checker"];
-        let risk_count = skills.iter()
+        let risk_count = skills
+            .iter()
             .filter(|s| risk.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(risk_count, 2);
-        
+
         // Intelligence: 2
         let ai = vec!["tax-planning-ai", "tax-optimization-engine"];
-        let ai_count = skills.iter()
+        let ai_count = skills
+            .iter()
             .filter(|s| ai.contains(&s.metadata.name.as_str()))
             .count();
         assert_eq!(ai_count, 2);

@@ -14,7 +14,7 @@ pub fn init_app() -> tauri::Builder<tauri::Wry> {
                 let window = _app.get_webview_window("main").unwrap();
                 window.open_devtools();
             }
-            
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -40,13 +40,13 @@ fn build_client() -> Result<reqwest::Client, String> {
     let mut builder = reqwest::Client::builder()
         .no_proxy()
         .timeout(std::time::Duration::from_secs(30));
-    
+
     // Only accept invalid certs in debug mode (DO-178C Level A security)
     #[cfg(debug_assertions)]
     {
         builder = builder.danger_accept_invalid_certs(true);
     }
-    
+
     builder.build().map_err(|e| e.to_string())
 }
 
@@ -57,10 +57,10 @@ async fn fetch_backend(path: String) -> Result<String, String> {
     if !path.starts_with('/') || path.contains("..") {
         return Err("Invalid path format".to_string());
     }
-    
+
     let url = format!("{}{}", BACKEND_URL, path);
     let client = build_client()?;
-    
+
     let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
     response.text().await.map_err(|e| e.to_string())
 }
@@ -72,12 +72,17 @@ async fn post_backend(path: String, body: serde_json::Value) -> Result<serde_jso
     if !path.starts_with('/') || path.contains("..") {
         return Err("Invalid path format".to_string());
     }
-    
+
     let url = format!("{}{}", BACKEND_URL, path);
     let client = build_client()?;
-    
-    let response = client.post(&url).json(&body).send().await.map_err(|e| e.to_string())?;
-    
+
+    let response = client
+        .post(&url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -90,10 +95,11 @@ async fn post_backend(path: String, body: serde_json::Value) -> Result<serde_jso
 #[tauri::command]
 async fn connect_websocket(url: String) -> Result<String, String> {
     // Validate WebSocket URL (DO-178C Level A security)
-    if url.starts_with("ws://localhost:8080/") || 
-       url.starts_with("wss://localhost:8080/") ||
-       url.starts_with("ws://127.0.0.1:8080/") ||
-       url.starts_with("wss://127.0.0.1:8080/") {
+    if url.starts_with("ws://localhost:8080/")
+        || url.starts_with("wss://localhost:8080/")
+        || url.starts_with("ws://127.0.0.1:8080/")
+        || url.starts_with("wss://127.0.0.1:8080/")
+    {
         Ok("WebSocket connection allowed".to_string())
     } else {
         Err(format!("Invalid WebSocket URL: {}", url))
@@ -114,18 +120,21 @@ async fn get_app_info() -> Result<serde_json::Value, String> {
 
 /// Send a chat message to the backend
 #[tauri::command]
-async fn send_message(message: String, session_id: Option<String>) -> Result<serde_json::Value, String> {
+async fn send_message(
+    message: String,
+    session_id: Option<String>,
+) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let session = session_id.unwrap_or_else(|| "main".to_string());
     let url = format!("{}/api/sessions/{}/message", BACKEND_URL, session);
-    
+
     let response = client
         .post(&url)
         .json(&serde_json::json!({ "content": message }))
         .send()
         .await
         .map_err(|e| e.to_string())?;
-    
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -138,7 +147,7 @@ async fn send_message(message: String, session_id: Option<String>) -> Result<ser
 async fn get_sessions() -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions", BACKEND_URL);
-    
+
     let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
     response.json().await.map_err(|e| e.to_string())
 }
@@ -148,13 +157,18 @@ async fn get_sessions() -> Result<serde_json::Value, String> {
 async fn create_session(name: Option<String>) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions", BACKEND_URL);
-    
+
     let body = serde_json::json!({
         "label": name.unwrap_or_else(|| "New Session".to_string())
     });
-    
-    let response = client.post(&url).json(&body).send().await.map_err(|e| e.to_string())?;
-    
+
+    let response = client
+        .post(&url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -167,9 +181,13 @@ async fn create_session(name: Option<String>) -> Result<serde_json::Value, Strin
 async fn delete_session(session_id: String) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions/{}", BACKEND_URL, session_id);
-    
-    let response = client.delete(&url).send().await.map_err(|e| e.to_string())?;
-    
+
+    let response = client
+        .delete(&url)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
     if response.status().is_success() {
         Ok(serde_json::json!({ "success": true }))
     } else {
@@ -182,9 +200,9 @@ async fn delete_session(session_id: String) -> Result<serde_json::Value, String>
 async fn get_models() -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/models", BACKEND_URL);
-    
+
     let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
-    
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -197,10 +215,15 @@ async fn get_models() -> Result<serde_json::Value, String> {
 async fn set_model(session_id: String, model: String) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions/{}", BACKEND_URL, session_id);
-    
+
     let body = serde_json::json!({ "model": model });
-    let response = client.patch(&url).json(&body).send().await.map_err(|e| e.to_string())?;
-    
+    let response = client
+        .patch(&url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -213,9 +236,9 @@ async fn set_model(session_id: String, model: String) -> Result<serde_json::Valu
 async fn get_providers() -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/providers", BACKEND_URL);
-    
+
     let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
-    
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -228,9 +251,9 @@ async fn get_providers() -> Result<serde_json::Value, String> {
 async fn emergency_stop() -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/emergency-stop", BACKEND_URL);
-    
+
     let response = client.post(&url).send().await.map_err(|e| e.to_string())?;
-    
+
     Ok(serde_json::json!({
         "success": response.status().is_success(),
         "message": "Emergency stop executed"
@@ -242,9 +265,9 @@ async fn emergency_stop() -> Result<serde_json::Value, String> {
 async fn clear_chat(session_id: String) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions/{}/clear", BACKEND_URL, session_id);
-    
+
     let response = client.post(&url).send().await.map_err(|e| e.to_string())?;
-    
+
     if response.status().is_success() {
         Ok(serde_json::json!({ "success": true }))
     } else {
@@ -257,9 +280,9 @@ async fn clear_chat(session_id: String) -> Result<serde_json::Value, String> {
 async fn export_chat(session_id: String) -> Result<serde_json::Value, String> {
     let client = build_client()?;
     let url = format!("{}/api/sessions/{}/messages", BACKEND_URL, session_id);
-    
+
     let response = client.get(&url).send().await.map_err(|e| e.to_string())?;
-    
+
     if response.status().is_success() {
         response.json().await.map_err(|e| e.to_string())
     } else {
@@ -286,7 +309,7 @@ mod tests {
     // ------------------------------------------------------------------------
     // Test: build_client()
     // ------------------------------------------------------------------------
-    
+
     #[test]
     fn test_build_client_success() {
         // Test that HTTP client builds successfully
@@ -317,13 +340,7 @@ mod tests {
     #[test]
     fn test_path_validation_valid_paths() {
         // Test valid paths that should pass validation
-        let valid_paths = vec![
-            "/api/test",
-            "/api/sessions",
-            "/api/models",
-            "/",
-            "/a",
-        ];
+        let valid_paths = vec!["/api/test", "/api/sessions", "/api/models", "/", "/a"];
 
         for path in valid_paths {
             assert!(path.starts_with('/'), "Path {} should start with /", path);
@@ -385,15 +402,15 @@ mod tests {
     async fn test_connect_websocket_invalid_urls() {
         // Test invalid WebSocket URLs that should be rejected
         let invalid_urls = vec![
-            "ws://evil.com:8080/ws",           // Wrong host
-            "ws://localhost:9999/ws",          // Wrong port
-            "ws://192.168.1.1:8080/ws",        // Non-localhost IP
-            "wss://example.com:8080/ws",       // External domain
-            "http://localhost:8080/ws",        // Wrong protocol
-            "ws://localhost/ws",               // Missing port
-            "ws://localhost:8080",             // Missing path
-            "",                                // Empty string
-            "invalid",                         // Invalid format
+            "ws://evil.com:8080/ws",     // Wrong host
+            "ws://localhost:9999/ws",    // Wrong port
+            "ws://192.168.1.1:8080/ws",  // Non-localhost IP
+            "wss://example.com:8080/ws", // External domain
+            "http://localhost:8080/ws",  // Wrong protocol
+            "ws://localhost/ws",         // Missing port
+            "ws://localhost:8080",       // Missing path
+            "",                          // Empty string
+            "invalid",                   // Invalid format
         ];
 
         for url in invalid_urls {
@@ -405,11 +422,11 @@ mod tests {
     #[tokio::test]
     async fn test_connect_websocket_boundary_cases() {
         // Test boundary cases for WebSocket validation
-        
+
         // Just before valid path
         let result = connect_websocket("ws://localhost:8080".to_string()).await;
         assert!(result.is_err(), "Missing path should be invalid");
-        
+
         // Case sensitivity
         let result = connect_websocket("WS://LOCALHOST:8080/ws".to_string()).await;
         assert!(result.is_err(), "Uppercase protocol should be invalid");
@@ -423,7 +440,7 @@ mod tests {
     async fn test_get_app_info_success() {
         let result = get_app_info().await;
         assert!(result.is_ok(), "get_app_info should succeed");
-        
+
         let info = result.unwrap();
         assert!(info.is_object(), "Result should be JSON object");
         assert_eq!(info["name"], "ClawMaster");
@@ -434,14 +451,14 @@ mod tests {
     #[tokio::test]
     async fn test_get_app_info_platform_fields() {
         let result = get_app_info().await.unwrap();
-        
+
         // Verify platform and arch are present
         assert!(result["platform"].is_string(), "Platform should be string");
         assert!(result["arch"].is_string(), "Arch should be string");
-        
+
         let platform = result["platform"].as_str().unwrap();
         let arch = result["arch"].as_str().unwrap();
-        
+
         assert!(!platform.is_empty(), "Platform should not be empty");
         assert!(!arch.is_empty(), "Arch should not be empty");
     }
@@ -451,7 +468,7 @@ mod tests {
         // Test that multiple calls return consistent data
         let result1 = get_app_info().await.unwrap();
         let result2 = get_app_info().await.unwrap();
-        
+
         assert_eq!(result1, result2, "App info should be consistent");
     }
 
@@ -465,7 +482,7 @@ mod tests {
         let base = BACKEND_URL;
         let path = "/api/test";
         let url = format!("{}{}", base, path);
-        
+
         assert_eq!(url, "http://localhost:8080/api/test");
         assert!(url.starts_with("http://"));
         assert!(url.contains("localhost"));
@@ -475,15 +492,15 @@ mod tests {
     fn test_url_construction_edge_cases() {
         // Test edge cases in URL construction
         let base = BACKEND_URL;
-        
+
         // Single slash path
         let url1 = format!("{}{}", base, "/");
         assert_eq!(url1, "http://localhost:8080/");
-        
+
         // Long path
         let url2 = format!("{}{}", base, "/api/v1/sessions/123/messages");
         assert!(url2.len() > base.len());
-        
+
         // Path with query params
         let url3 = format!("{}{}", base, "/api/test?param=value");
         assert!(url3.contains("?param=value"));
@@ -498,7 +515,7 @@ mod tests {
         // Test default session ID behavior
         let session_id: Option<String> = None;
         let session = session_id.unwrap_or_else(|| "main".to_string());
-        
+
         assert_eq!(session, "main", "Default session should be 'main'");
     }
 
@@ -507,7 +524,7 @@ mod tests {
         // Test custom session ID
         let session_id = Some("custom-session-123".to_string());
         let session = session_id.unwrap_or_else(|| "main".to_string());
-        
+
         assert_eq!(session, "custom-session-123");
     }
 
@@ -516,10 +533,10 @@ mod tests {
         // Test edge cases for session IDs
         let empty = Some("".to_string());
         assert_eq!(empty.unwrap(), "");
-        
+
         let long_id = Some("a".repeat(1000));
         assert_eq!(long_id.unwrap().len(), 1000);
-        
+
         let special_chars = Some("session-123_test!@#".to_string());
         assert!(special_chars.unwrap().contains("!@#"));
     }
@@ -536,7 +553,7 @@ mod tests {
             "value": 123,
             "active": true
         });
-        
+
         assert!(json.is_object());
         assert_eq!(json["name"], "test");
         assert_eq!(json["value"], 123);
@@ -546,12 +563,12 @@ mod tests {
     #[test]
     fn test_json_serialization_edge_cases() {
         // Test edge cases in JSON serialization
-        
+
         // Empty object
         let empty = serde_json::json!({});
         assert!(empty.is_object());
         assert_eq!(empty.as_object().unwrap().len(), 0);
-        
+
         // Nested objects
         let nested = serde_json::json!({
             "outer": {
@@ -561,7 +578,7 @@ mod tests {
             }
         });
         assert_eq!(nested["outer"]["inner"]["value"], 42);
-        
+
         // Arrays
         let array = serde_json::json!({
             "items": [1, 2, 3]
@@ -578,12 +595,12 @@ mod tests {
     fn test_error_message_sanitization() {
         // Test that error messages don't leak sensitive information
         let error_msg = "Backend request failed";
-        
+
         // Should not contain status codes
         assert!(!error_msg.contains("404"));
         assert!(!error_msg.contains("500"));
         assert!(!error_msg.contains("401"));
-        
+
         // Should not contain internal paths
         assert!(!error_msg.contains("/internal/"));
         assert!(!error_msg.contains("localhost"));
@@ -616,7 +633,7 @@ mod tests {
         // Test string formatting used in error messages
         let session_id = "test-123";
         let msg = format!("Failed to delete session: {}", session_id);
-        
+
         assert!(msg.contains("test-123"));
         assert!(msg.starts_with("Failed to delete session"));
     }
@@ -624,15 +641,15 @@ mod tests {
     #[test]
     fn test_string_formatting_edge_cases() {
         // Test edge cases in string formatting
-        
+
         // Empty string
         let msg1 = format!("Session: {}", "");
         assert_eq!(msg1, "Session: ");
-        
+
         // Special characters
         let msg2 = format!("URL: {}", "http://test.com?a=1&b=2");
         assert!(msg2.contains("&"));
-        
+
         // Unicode
         let msg3 = format!("Name: {}", "测试");
         assert!(msg3.contains("测试"));
@@ -647,9 +664,12 @@ mod tests {
         // Test Option::unwrap_or_else behavior
         let some_value: Option<String> = Some("value".to_string());
         let none_value: Option<String> = None;
-        
+
         assert_eq!(some_value.unwrap_or_else(|| "default".to_string()), "value");
-        assert_eq!(none_value.unwrap_or_else(|| "default".to_string()), "default");
+        assert_eq!(
+            none_value.unwrap_or_else(|| "default".to_string()),
+            "default"
+        );
     }
 
     #[test]
@@ -657,7 +677,7 @@ mod tests {
         // Test Option::unwrap_or behavior
         let name: Option<String> = None;
         let result = name.unwrap_or_else(|| "New Session".to_string());
-        
+
         assert_eq!(result, "New Session");
     }
 
@@ -681,10 +701,10 @@ mod tests {
         // Test platform detection
         let platform = std::env::consts::OS;
         let arch = std::env::consts::ARCH;
-        
+
         assert!(!platform.is_empty(), "Platform should be detected");
         assert!(!arch.is_empty(), "Architecture should be detected");
-        
+
         // Platform should be one of known values
         let known_platforms = vec!["linux", "macos", "windows", "ios", "android"];
         assert!(
@@ -702,7 +722,7 @@ mod tests {
         // Test HTTP status code success detection logic
         // Status codes 200-299 are considered success
         let success_codes = vec![200, 201, 204, 299];
-        
+
         for code in success_codes {
             assert!(code >= 200 && code < 300, "Code {} should be success", code);
         }
@@ -712,7 +732,7 @@ mod tests {
     fn test_http_status_error_range() {
         // Test HTTP status code error detection logic
         let error_codes = vec![400, 401, 403, 404, 500, 502, 503];
-        
+
         for code in error_codes {
             assert!(code >= 400, "Code {} should be error", code);
         }
@@ -727,9 +747,13 @@ mod tests {
         // Test string ownership and borrowing
         let s1 = String::from("test");
         let s2 = s1.clone();
-        
+
         assert_eq!(s1, s2);
-        assert_ne!(s1.as_ptr(), s2.as_ptr(), "Strings should have different pointers");
+        assert_ne!(
+            s1.as_ptr(),
+            s2.as_ptr(),
+            "Strings should have different pointers"
+        );
     }
 
     #[test]
@@ -737,7 +761,7 @@ mod tests {
         // Test Result error conversion with map_err
         let result: Result<i32, String> = Err("error".to_string());
         let mapped = result.map_err(|e| format!("Wrapped: {}", e));
-        
+
         assert!(mapped.is_err());
         assert_eq!(mapped.unwrap_err(), "Wrapped: error");
     }
@@ -763,9 +787,13 @@ mod tests {
         let scenarios = vec![
             (BACKEND_URL, "/api/test", "http://localhost:8080/api/test"),
             (BACKEND_URL, "/", "http://localhost:8080/"),
-            (BACKEND_URL, "/api/sessions/123", "http://localhost:8080/api/sessions/123"),
+            (
+                BACKEND_URL,
+                "/api/sessions/123",
+                "http://localhost:8080/api/sessions/123",
+            ),
         ];
-        
+
         for (base, path, expected) in scenarios {
             let result = format!("{}{}", base, path);
             assert_eq!(result, expected, "URL combination failed for {}", path);
@@ -779,15 +807,21 @@ mod tests {
     #[test]
     fn test_security_validations_present() {
         // Verify all security validations are in place
-        
+
         // Path validation
         let invalid_path = "../etc/passwd";
-        assert!(invalid_path.contains(".."), "Path traversal detection works");
-        
+        assert!(
+            invalid_path.contains(".."),
+            "Path traversal detection works"
+        );
+
         // WebSocket URL validation
         let invalid_ws = "ws://evil.com/ws";
-        assert!(!invalid_ws.starts_with("ws://localhost:8080/"), "WS validation works");
-        
+        assert!(
+            !invalid_ws.starts_with("ws://localhost:8080/"),
+            "WS validation works"
+        );
+
         // All security checks verified
         assert!(true, "All security validations are present");
     }
@@ -808,7 +842,7 @@ mod tests {
     // ✅ Boundary conditions
     // ✅ Edge cases
     // ✅ Integration scenarios
-    // 
+    //
     // Total Tests: 40+
     // Coverage: All functions and critical paths
     // Security: All validation logic tested

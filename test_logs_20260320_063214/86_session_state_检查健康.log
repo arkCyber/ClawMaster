@@ -1,0 +1,5 @@
+=== Test: session_state - 检查健康 ===
+Input: Check session health
+Time: Fri Mar 20 06:33:42 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

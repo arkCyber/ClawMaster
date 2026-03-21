@@ -1,0 +1,5 @@
+=== Test: cron - 删除定时 ===
+Input: Remove the daily backup task
+Time: Fri Mar 20 06:33:33 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

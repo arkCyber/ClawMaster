@@ -2,17 +2,19 @@
 //!
 //! DO-178C Level A Compliant Session Limiting
 
-use crate::{QuotaError, QuotaResult};
-use dashmap::DashMap;
-use parking_lot::RwLock;
-use std::sync::Arc;
+use {
+    crate::{QuotaError, QuotaResult},
+    dashmap::DashMap,
+    parking_lot::RwLock,
+    std::sync::Arc,
+};
 
 /// Session limit configuration
 #[derive(Debug, Clone)]
 pub struct SessionLimitConfig {
     /// Maximum concurrent sessions per user
     pub max_sessions_per_user: usize,
-    
+
     /// Maximum total sessions
     pub max_total_sessions: usize,
 }
@@ -67,9 +69,10 @@ impl SessionLimiter {
         }
 
         // Get or create user session count
-        let user_count_ref = self.user_sessions.entry(user_id.to_string()).or_insert_with(|| {
-            RwLock::new(0)
-        });
+        let user_count_ref = self
+            .user_sessions
+            .entry(user_id.to_string())
+            .or_insert_with(|| RwLock::new(0));
 
         let mut user_count = user_count_ref.write();
 
@@ -183,7 +186,10 @@ mod tests {
 
         let result = limiter.acquire("user1");
         assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), QuotaError::SessionLimitExceeded { .. }));
+        assert!(matches!(
+            result.unwrap_err(),
+            QuotaError::SessionLimitExceeded { .. }
+        ));
     }
 
     #[test]

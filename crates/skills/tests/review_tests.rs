@@ -1,9 +1,13 @@
 //! Tests for skill review and security scanning
 //! DO-178C Level A compliant test suite
 
-use clawmaster_skills::review::*;
-use clawmaster_skills::types::{SkillMetadata, SkillRequirements};
-use std::path::PathBuf;
+use {
+    clawmaster_skills::{
+        review::*,
+        types::{SkillMetadata, SkillRequirements},
+    },
+    std::path::PathBuf,
+};
 
 #[tokio::test]
 async fn test_security_scan_clean_skill() {
@@ -23,8 +27,10 @@ async fn test_security_scan_clean_skill() {
     let tmp = tempfile::tempdir().unwrap();
     tokio::fs::write(
         tmp.path().join("SKILL.md"),
-        "---\nname: clean\n---\n# Clean Skill\n\nThis is a safe skill."
-    ).await.unwrap();
+        "---\nname: clean\n---\n# Clean Skill\n\nThis is a safe skill.",
+    )
+    .await
+    .unwrap();
 
     let result = scan_security(tmp.path(), &metadata).await.unwrap();
     assert!(result.score >= 80);
@@ -49,8 +55,10 @@ async fn test_security_scan_dangerous_tools() {
     let tmp = tempfile::tempdir().unwrap();
     tokio::fs::write(
         tmp.path().join("SKILL.md"),
-        "---\nname: dangerous\n---\n# Dangerous Skill\n\nUses bash."
-    ).await.unwrap();
+        "---\nname: dangerous\n---\n# Dangerous Skill\n\nUses bash.",
+    )
+    .await
+    .unwrap();
 
     let result = scan_security(tmp.path(), &metadata).await.unwrap();
     assert!(result.score < 100);
@@ -75,13 +83,14 @@ async fn test_security_scan_path_traversal() {
     let tmp = tempfile::tempdir().unwrap();
     tokio::fs::write(
         tmp.path().join("SKILL.md"),
-        "---\nname: traversal\n---\n# Skill\n\nAccess ../../../etc/passwd"
-    ).await.unwrap();
+        "---\nname: traversal\n---\n# Skill\n\nAccess ../../../etc/passwd",
+    )
+    .await
+    .unwrap();
 
     let result = scan_security(tmp.path(), &metadata).await.unwrap();
     assert!(result.score < 90);
-    let has_traversal_issue = result.issues.iter()
-        .any(|i| i.category == "path_traversal");
+    let has_traversal_issue = result.issues.iter().any(|i| i.category == "path_traversal");
     assert!(has_traversal_issue);
 }
 
@@ -101,12 +110,20 @@ async fn test_quality_analysis_complete_skill() {
     };
 
     let tmp = tempfile::tempdir().unwrap();
-    
+
     // Create complete documentation
-    let content = "---\nname: complete\n---\n# Complete Skill\n\n## Example\n\nThis is an example.\n\n".repeat(10);
-    tokio::fs::write(tmp.path().join("SKILL.md"), content).await.unwrap();
-    tokio::fs::write(tmp.path().join("README.md"), "# README").await.unwrap();
-    tokio::fs::write(tmp.path().join("LICENSE"), "MIT License").await.unwrap();
+    let content =
+        "---\nname: complete\n---\n# Complete Skill\n\n## Example\n\nThis is an example.\n\n"
+            .repeat(10);
+    tokio::fs::write(tmp.path().join("SKILL.md"), content)
+        .await
+        .unwrap();
+    tokio::fs::write(tmp.path().join("README.md"), "# README")
+        .await
+        .unwrap();
+    tokio::fs::write(tmp.path().join("LICENSE"), "MIT License")
+        .await
+        .unwrap();
 
     let result = analyze_quality(tmp.path(), &metadata).await.unwrap();
     assert!(result.score >= 80);
@@ -130,8 +147,10 @@ async fn test_quality_analysis_incomplete_skill() {
     let tmp = tempfile::tempdir().unwrap();
     tokio::fs::write(
         tmp.path().join("SKILL.md"),
-        "---\nname: incomplete\n---\n# Skill\n\nShort content."
-    ).await.unwrap();
+        "---\nname: incomplete\n---\n# Skill\n\nShort content.",
+    )
+    .await
+    .unwrap();
 
     let result = analyze_quality(tmp.path(), &metadata).await.unwrap();
     assert!(result.score < 80);
@@ -154,11 +173,17 @@ async fn test_complete_review_approved() {
     };
 
     let tmp = tempfile::tempdir().unwrap();
-    
+
     let content = "---\nname: approved\n---\n# Approved Skill\n\n## Example 1\n\nExample content.\n\n## Example 2\n\nMore examples.\n\n".repeat(5);
-    tokio::fs::write(tmp.path().join("SKILL.md"), content).await.unwrap();
-    tokio::fs::write(tmp.path().join("README.md"), "# README").await.unwrap();
-    tokio::fs::write(tmp.path().join("LICENSE"), "MIT License").await.unwrap();
+    tokio::fs::write(tmp.path().join("SKILL.md"), content)
+        .await
+        .unwrap();
+    tokio::fs::write(tmp.path().join("README.md"), "# README")
+        .await
+        .unwrap();
+    tokio::fs::write(tmp.path().join("LICENSE"), "MIT License")
+        .await
+        .unwrap();
 
     let review = review_skill(tmp.path(), &metadata).await.unwrap();
     assert_eq!(review.status, ReviewStatus::Approved);
@@ -183,8 +208,10 @@ async fn test_complete_review_rejected() {
     let tmp = tempfile::tempdir().unwrap();
     tokio::fs::write(
         tmp.path().join("SKILL.md"),
-        "---\nname: bad\n---\n# Bad\n\neval(dangerous_code)"
-    ).await.unwrap();
+        "---\nname: bad\n---\n# Bad\n\neval(dangerous_code)",
+    )
+    .await
+    .unwrap();
 
     let review = review_skill(tmp.path(), &metadata).await.unwrap();
     assert_eq!(review.status, ReviewStatus::Rejected);
@@ -213,7 +240,7 @@ fn test_generate_review_report() {
     };
 
     let report = generate_review_report(&review);
-    
+
     assert!(report.contains("test-skill"));
     assert!(report.contains("APPROVED"));
     assert!(report.contains("93/100"));

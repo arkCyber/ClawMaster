@@ -1,10 +1,11 @@
 //! Event bus for plugin communication
 
-use std::collections::HashMap;
-use std::sync::Arc;
-use tokio::sync::RwLock;
-use anyhow::Result;
-use serde::{Deserialize, Serialize};
+use {
+    anyhow::Result,
+    serde::{Deserialize, Serialize},
+    std::{collections::HashMap, sync::Arc},
+    tokio::sync::RwLock,
+};
 
 /// Event types
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -19,9 +20,15 @@ pub enum Event {
     /// Plugin unloaded
     PluginUnloaded { plugin_id: String },
     /// Configuration changed
-    ConfigChanged { plugin_id: String, config: serde_json::Value },
+    ConfigChanged {
+        plugin_id: String,
+        config: serde_json::Value,
+    },
     /// Custom event
-    Custom { event_type: String, data: serde_json::Value },
+    Custom {
+        event_type: String,
+        data: serde_json::Value,
+    },
 }
 
 impl Event {
@@ -57,7 +64,7 @@ impl EventBus {
     /// Subscribe to an event type
     pub async fn subscribe(&self, event_type: &str, handler: EventHandler) -> Result<()> {
         let mut subscribers = self.subscribers.write().await;
-        
+
         subscribers
             .entry(event_type.to_string())
             .or_insert_with(Vec::new)
@@ -125,8 +132,10 @@ impl Default for EventBus {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use {
+        super::*,
+        std::sync::atomic::{AtomicUsize, Ordering},
+    };
 
     #[tokio::test]
     async fn test_event_bus_subscribe_and_emit() {
@@ -134,14 +143,21 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = counter.clone();
 
-        bus.subscribe("plugin_loaded", Box::new(move |_event| {
-            counter_clone.fetch_add(1, Ordering::SeqCst);
-            Ok(())
-        })).await.unwrap();
+        bus.subscribe(
+            "plugin_loaded",
+            Box::new(move |_event| {
+                counter_clone.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            }),
+        )
+        .await
+        .unwrap();
 
         bus.emit(Event::PluginLoaded {
             plugin_id: "test-plugin".to_string(),
-        }).await.unwrap();
+        })
+        .await
+        .unwrap();
 
         assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
@@ -153,15 +169,22 @@ mod tests {
 
         for _ in 0..3 {
             let counter_clone = counter.clone();
-            bus.subscribe("plugin_enabled", Box::new(move |_event| {
-                counter_clone.fetch_add(1, Ordering::SeqCst);
-                Ok(())
-            })).await.unwrap();
+            bus.subscribe(
+                "plugin_enabled",
+                Box::new(move |_event| {
+                    counter_clone.fetch_add(1, Ordering::SeqCst);
+                    Ok(())
+                }),
+            )
+            .await
+            .unwrap();
         }
 
         bus.emit(Event::PluginEnabled {
             plugin_id: "test-plugin".to_string(),
-        }).await.unwrap();
+        })
+        .await
+        .unwrap();
 
         assert_eq!(counter.load(Ordering::SeqCst), 3);
     }
@@ -172,18 +195,27 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = counter.clone();
 
-        bus.subscribe("*", Box::new(move |_event| {
-            counter_clone.fetch_add(1, Ordering::SeqCst);
-            Ok(())
-        })).await.unwrap();
+        bus.subscribe(
+            "*",
+            Box::new(move |_event| {
+                counter_clone.fetch_add(1, Ordering::SeqCst);
+                Ok(())
+            }),
+        )
+        .await
+        .unwrap();
 
         bus.emit(Event::PluginLoaded {
             plugin_id: "test1".to_string(),
-        }).await.unwrap();
+        })
+        .await
+        .unwrap();
 
         bus.emit(Event::PluginEnabled {
             plugin_id: "test2".to_string(),
-        }).await.unwrap();
+        })
+        .await
+        .unwrap();
 
         assert_eq!(counter.load(Ordering::SeqCst), 2);
     }
@@ -192,7 +224,9 @@ mod tests {
     async fn test_event_bus_clear() {
         let bus = EventBus::new();
 
-        bus.subscribe("plugin_loaded", Box::new(|_| Ok(()))).await.unwrap();
+        bus.subscribe("plugin_loaded", Box::new(|_| Ok(())))
+            .await
+            .unwrap();
         assert_eq!(bus.subscriber_count("plugin_loaded").await, 1);
 
         bus.clear().await;

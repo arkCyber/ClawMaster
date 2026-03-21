@@ -1,0 +1,14 @@
+[2m2026-03-20T08:14:07.790776Z[0m [32m INFO[0m [2mclawmaster[0m[2m:[0m clawmaster starting [3mversion[0m[2m=[0m"0.10.18"
+🔗 连接到后端服务器: https://localhost:59233
+📤 发送消息: 转录音频文件
+
+✅ 响应:
+你可以使用以下命令转录音频文件：
+
+`transcribe audio=<音频文件名>`
+
+这将将音频文件转换为文本。
+
+例如，如果你想转录名为"录音.mp3"的音频文件，请使用以下命令：
+
+`transcribe audio=录音.mp3`

@@ -1,0 +1,5 @@
+=== Test: sessions_history - 查看历史 ===
+Input: Show history of session main
+Time: Fri Mar 20 06:32:39 CST 2026
+
+./test_all_tools_cli.sh: line 242: timeout: command not found

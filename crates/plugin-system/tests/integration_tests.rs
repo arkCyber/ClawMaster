@@ -1,9 +1,7 @@
 //! Integration tests for plugin system
 //! DO-178C Level A compliant test suite
 
-use clawmaster_plugin_system::*;
-use std::path::PathBuf;
-use tempfile::TempDir;
+use {clawmaster_plugin_system::*, std::path::PathBuf, tempfile::TempDir};
 
 /// Helper to create a test plugin directory
 fn create_test_plugin(dir: &TempDir, plugin_id: &str) -> PathBuf {
@@ -76,7 +74,10 @@ async fn test_plugin_system_config_update() {
         "setting2": 42
     });
 
-    system.update_config(&plugin_id, config.clone()).await.unwrap();
+    system
+        .update_config(&plugin_id, config.clone())
+        .await
+        .unwrap();
 
     // Verify configuration was updated
     let plugin = system.get_plugin(&plugin_id).await.unwrap();
@@ -85,8 +86,10 @@ async fn test_plugin_system_config_update() {
 
 #[tokio::test]
 async fn test_plugin_system_event_subscription() {
-    use std::sync::atomic::{AtomicUsize, Ordering};
-    use std::sync::Arc;
+    use std::sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    };
 
     let tmp = tempfile::tempdir().unwrap();
     let system = PluginSystem::new(tmp.path().to_path_buf()).unwrap();
@@ -95,10 +98,13 @@ async fn test_plugin_system_event_subscription() {
     let counter_clone = counter.clone();
 
     // Subscribe to plugin_enabled events
-    system.subscribe("plugin_enabled", move |_event| {
-        counter_clone.fetch_add(1, Ordering::SeqCst);
-        Ok(())
-    }).await.unwrap();
+    system
+        .subscribe("plugin_enabled", move |_event| {
+            counter_clone.fetch_add(1, Ordering::SeqCst);
+            Ok(())
+        })
+        .await
+        .unwrap();
 
     let plugin_path = create_test_plugin(&tmp, "event-test");
     let plugin_id = system.load_plugin(plugin_path).await.unwrap();
@@ -238,17 +244,26 @@ async fn test_plugin_system_multiple_plugins() {
 
     // Enable all
     for i in 0..5 {
-        system.enable_plugin(&format!("plugin-{}", i)).await.unwrap();
+        system
+            .enable_plugin(&format!("plugin-{}", i))
+            .await
+            .unwrap();
     }
 
     // Disable all
     for i in 0..5 {
-        system.disable_plugin(&format!("plugin-{}", i)).await.unwrap();
+        system
+            .disable_plugin(&format!("plugin-{}", i))
+            .await
+            .unwrap();
     }
 
     // Unload all
     for i in 0..5 {
-        system.unload_plugin(&format!("plugin-{}", i)).await.unwrap();
+        system
+            .unload_plugin(&format!("plugin-{}", i))
+            .await
+            .unwrap();
     }
 
     // Verify all unloaded
