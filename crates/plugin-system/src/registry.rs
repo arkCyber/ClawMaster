@@ -9,6 +9,7 @@ use {
 /// Plugin registry
 pub struct PluginRegistry {
     plugins: HashMap<String, PluginEntry>,
+    #[allow(dead_code)]
     plugin_dir: PathBuf,
 }
 
