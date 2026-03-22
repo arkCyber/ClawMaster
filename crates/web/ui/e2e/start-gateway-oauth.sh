@@ -107,5 +107,6 @@ fi
 if [ -n "${BINARY}" ]; then
 	exec "${BINARY}" --no-tls --bind 127.0.0.1 --port "${PORT}"
 else
-	exec cargo run --bin clawmaster -- --no-tls --bind 127.0.0.1 --port "${PORT}"
+	echo "No local clawmaster binary found for E2E startup." >&2
+	exit 1
 fi

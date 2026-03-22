@@ -25,6 +25,12 @@ pub enum EventStream {
 /// Tool execution event
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolEvent {
+    #[serde(rename = "sessionKey", skip_serializing_if = "Option::is_none")]
+    pub session_key: Option<String>,
+    #[serde(rename = "runId", skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
+    #[serde(rename = "toolCallId", skip_serializing_if = "Option::is_none")]
+    pub tool_call_id: Option<String>,
     /// Tool name
     pub tool_name: String,
     /// Execution status
@@ -60,6 +66,12 @@ pub enum ToolStatus {
 /// LLM output event
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LlmEvent {
+    #[serde(rename = "sessionKey", skip_serializing_if = "Option::is_none")]
+    pub session_key: Option<String>,
+    #[serde(rename = "runId", skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
+    #[serde(rename = "messageIndex", skip_serializing_if = "Option::is_none")]
+    pub message_index: Option<u64>,
     /// Content chunk
     pub content: String,
     /// Whether this is the final chunk
@@ -86,6 +98,10 @@ pub struct TokenUsage {
 /// System event
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemEvent {
+    #[serde(rename = "sessionKey", skip_serializing_if = "Option::is_none")]
+    pub session_key: Option<String>,
+    #[serde(rename = "runId", skip_serializing_if = "Option::is_none")]
+    pub run_id: Option<String>,
     /// Log level
     pub level: LogLevel,
     /// Message
@@ -162,6 +178,9 @@ impl EventRouter {
     /// Emit a tool started event
     pub fn emit_tool_started(&self, tool_name: String, arguments: Option<Value>) {
         self.emit_tool(ToolEvent {
+            session_key: None,
+            run_id: None,
+            tool_call_id: None,
             tool_name,
             status: ToolStatus::Started,
             arguments,
@@ -180,6 +199,9 @@ impl EventRouter {
         duration_ms: Option<u64>,
     ) {
         self.emit_tool(ToolEvent {
+            session_key: None,
+            run_id: None,
+            tool_call_id: None,
             tool_name,
             status: ToolStatus::Completed,
             arguments: None,
@@ -193,6 +215,9 @@ impl EventRouter {
     /// Emit a tool failed event
     pub fn emit_tool_failed(&self, tool_name: String, error: String, duration_ms: Option<u64>) {
         self.emit_tool(ToolEvent {
+            session_key: None,
+            run_id: None,
+            tool_call_id: None,
             tool_name,
             status: ToolStatus::Failed,
             arguments: None,
@@ -206,6 +231,9 @@ impl EventRouter {
     /// Emit an LLM content chunk
     pub fn emit_llm_chunk(&self, content: String) {
         self.emit_llm(LlmEvent {
+            session_key: None,
+            run_id: None,
+            message_index: None,
             content,
             is_final: false,
             finish_reason: None,
@@ -222,6 +250,9 @@ impl EventRouter {
         token_usage: Option<TokenUsage>,
     ) {
         self.emit_llm(LlmEvent {
+            session_key: None,
+            run_id: None,
+            message_index: None,
             content,
             is_final: true,
             finish_reason,
@@ -233,6 +264,8 @@ impl EventRouter {
     /// Emit a system debug message
     pub fn emit_debug(&self, message: String, context: Option<Value>) {
         self.emit_system(SystemEvent {
+            session_key: None,
+            run_id: None,
             level: LogLevel::Debug,
             message,
             context,
@@ -243,6 +276,8 @@ impl EventRouter {
     /// Emit a system info message
     pub fn emit_info(&self, message: String, context: Option<Value>) {
         self.emit_system(SystemEvent {
+            session_key: None,
+            run_id: None,
             level: LogLevel::Info,
             message,
             context,
@@ -253,6 +288,8 @@ impl EventRouter {
     /// Emit a system warning message
     pub fn emit_warning(&self, message: String, context: Option<Value>) {
         self.emit_system(SystemEvent {
+            session_key: None,
+            run_id: None,
             level: LogLevel::Warning,
             message,
             context,
@@ -263,6 +300,8 @@ impl EventRouter {
     /// Emit a system error message
     pub fn emit_error(&self, message: String, context: Option<Value>) {
         self.emit_system(SystemEvent {
+            session_key: None,
+            run_id: None,
             level: LogLevel::Error,
             message,
             context,
@@ -383,6 +422,9 @@ mod tests {
     #[test]
     fn test_event_serialization() {
         let tool_event = ToolEvent {
+            session_key: Some("main".to_string()),
+            run_id: Some("run-1".to_string()),
+            tool_call_id: Some("tool-1".to_string()),
             tool_name: "test".to_string(),
             status: ToolStatus::Completed,
             arguments: None,

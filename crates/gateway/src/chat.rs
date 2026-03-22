@@ -39,6 +39,18 @@ fn structured_stream_events(
     match chat_state {
         "tool_call_start" => {
             let event = ToolEvent {
+                session_key: payload
+                    .get("sessionKey")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                run_id: payload
+                    .get("runId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                tool_call_id: payload
+                    .get("toolCallId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
                 tool_name: payload
                     .get("toolName")
                     .and_then(Value::as_str)
@@ -63,6 +75,18 @@ fn structured_stream_events(
                 .and_then(Value::as_bool)
                 .unwrap_or(false);
             let event = ToolEvent {
+                session_key: payload
+                    .get("sessionKey")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                run_id: payload
+                    .get("runId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                tool_call_id: payload
+                    .get("toolCallId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
                 tool_name: payload
                     .get("toolName")
                     .and_then(Value::as_str)
@@ -87,6 +111,15 @@ fn structured_stream_events(
         },
         "delta" => {
             let event = LlmEvent {
+                session_key: payload
+                    .get("sessionKey")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                run_id: payload
+                    .get("runId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                message_index: payload.get("messageIndex").and_then(Value::as_u64),
                 content: payload
                     .get("text")
                     .and_then(Value::as_str)
@@ -116,6 +149,15 @@ fn structured_stream_events(
                 _ => None,
             };
             let event = LlmEvent {
+                session_key: payload
+                    .get("sessionKey")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                run_id: payload
+                    .get("runId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                message_index: payload.get("messageIndex").and_then(Value::as_u64),
                 content: payload
                     .get("text")
                     .and_then(Value::as_str)
@@ -134,6 +176,14 @@ fn structured_stream_events(
         },
         "thinking" | "retrying" | "error" => {
             let event = SystemEvent {
+                session_key: payload
+                    .get("sessionKey")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
+                run_id: payload
+                    .get("runId")
+                    .and_then(Value::as_str)
+                    .map(str::to_string),
                 level: match chat_state {
                     "thinking" => LogLevel::Debug,
                     "retrying" => LogLevel::Warning,
@@ -430,13 +480,19 @@ mod tests {
             &state,
             "chat",
             &serde_json::json!({
+                "sessionKey": "main",
+                "runId": "run-1",
                 "state": "tool_call_start",
+                "toolCallId": "tool-1",
                 "toolName": "exec",
                 "arguments": { "command": "pwd" }
             }),
         );
         assert_eq!(events.len(), 1);
         assert_eq!(events[0].0, "stream.tool");
+        assert_eq!(events[0].1["sessionKey"], "main");
+        assert_eq!(events[0].1["runId"], "run-1");
+        assert_eq!(events[0].1["toolCallId"], "tool-1");
         assert_eq!(events[0].1["tool_name"], "exec");
         assert_eq!(events[0].1["status"], "started");
     }
@@ -448,13 +504,44 @@ mod tests {
             &state,
             "chat",
             &serde_json::json!({
+                "sessionKey": "main",
+                "runId": "run-2",
                 "state": "delta",
+                "messageIndex": 42,
                 "text": "hello"
             }),
         );
         assert_eq!(events.len(), 1);
         assert_eq!(events[0].0, "stream.llm");
+        assert_eq!(events[0].1["sessionKey"], "main");
+        assert_eq!(events[0].1["runId"], "run-2");
+        assert_eq!(events[0].1["messageIndex"], 42);
         assert_eq!(events[0].1["content"], "hello");
         assert_eq!(events[0].1["is_final"], false);
+    }
+
+    #[test]
+    fn structured_stream_events_maps_final_with_identifiers() {
+        let state = test_state();
+        let events = structured_stream_events(
+            &state,
+            "chat",
+            &serde_json::json!({
+                "sessionKey": "main",
+                "runId": "run-3",
+                "state": "final",
+                "messageIndex": 77,
+                "text": "done",
+                "inputTokens": 12,
+                "outputTokens": 5
+            }),
+        );
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0].0, "stream.llm");
+        assert_eq!(events[0].1["sessionKey"], "main");
+        assert_eq!(events[0].1["runId"], "run-3");
+        assert_eq!(events[0].1["messageIndex"], 77);
+        assert_eq!(events[0].1["content"], "done");
+        assert_eq!(events[0].1["is_final"], true);
     }
 }

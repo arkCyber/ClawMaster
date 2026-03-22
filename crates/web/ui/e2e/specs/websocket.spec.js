@@ -104,10 +104,51 @@ test.describe("WebSocket connection lifecycle", () => {
 		await page.goto("/");
 		await waitForWsConnected(page);
 
-		// tick events carry memory stats; wait for memoryInfo to populate
-		await expect(page.locator("#memoryInfo")).not.toHaveText("", {
-			timeout: 15_000,
+		await page.evaluate(async () => {
+			const appScript = document.querySelector('script[type="module"][src*="js/app.js"]');
+			if (!appScript) throw new Error("app module script not found");
+			const appUrl = new URL(appScript.src, window.location.origin);
+			const prefix = appUrl.href.slice(0, appUrl.href.length - "js/app.js".length);
+			const events = await import(`${prefix}js/events.js`);
+
+			window.__tickEvents = [];
+			if (window.__tickEventsOff) {
+				window.__tickEventsOff();
+			}
+			window.__tickEventsOff = events.onEvent("tick", (payload) => {
+				window.__tickEvents.push(payload);
+			});
 		});
+
+		await expectRpcOk(page, "system-event", {
+			event: "tick",
+			payload: {
+				mem: {
+					process: 512 * 1024 * 1024,
+					available: 2 * 1024 * 1024 * 1024,
+					total: 4 * 1024 * 1024 * 1024,
+					local_llama_cpp: 128 * 1024 * 1024,
+				},
+			},
+		});
+
+		await expect
+			.poll(
+				() =>
+					page.evaluate(
+						() =>
+							window.__tickEvents.filter(
+								(payload) =>
+									payload &&
+									payload.mem &&
+									typeof payload.mem.process === "number" &&
+									typeof payload.mem.available === "number" &&
+									typeof payload.mem.total === "number",
+							).length,
+					),
+				{ timeout: 15_000 },
+			)
+			.toBeGreaterThan(0);
 	});
 
 	test("connection persists across SPA navigation", async ({ page }) => {
@@ -439,6 +480,45 @@ test.describe("WebSocket connection lifecycle", () => {
 		await expect(card).toHaveClass(/exec-ok/);
 		await expect(page.locator(`#tool-${toolCallId} .exec-status`)).toHaveCount(0);
 		await expect(page.locator(`#tool-${toolCallId} .exec-output`)).toContainText("ok");
+		expect(pageErrors).toEqual([]);
+	});
+
+	test("stream.tool events are rendered through chat compatibility layer", async ({ page }) => {
+		const pageErrors = watchPageErrors(page);
+		await page.goto("/chats/main");
+		await waitForWsConnected(page);
+
+		await expectRpcOk(page, "chat.clear", {});
+
+		const toolCallId = "stream-exec-1";
+		await expectRpcOk(page, "system-event", {
+			event: "stream.tool",
+			payload: {
+				sessionKey: "main",
+				toolCallId,
+				tool_name: "exec",
+				status: "started",
+				arguments: { command: "pwd" },
+			},
+		});
+
+		const card = page.locator(`#tool-${toolCallId}`);
+		await expect(card).toBeVisible();
+		await expect(card.locator("[data-cmd]")).toContainText("pwd");
+
+		await expectRpcOk(page, "system-event", {
+			event: "stream.tool",
+			payload: {
+				sessionKey: "main",
+				toolCallId,
+				tool_name: "exec",
+				status: "completed",
+				result: { stdout: "ok", stderr: "", exit_code: 0 },
+			},
+		});
+
+		await expect(card).toHaveClass(/exec-ok/);
+		await expect(card.locator(".exec-output")).toContainText("ok");
 		expect(pageErrors).toEqual([]);
 	});
 

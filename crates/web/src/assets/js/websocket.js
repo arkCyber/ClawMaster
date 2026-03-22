@@ -184,7 +184,7 @@ function handleChatThinkingText(p, isActive, isChatPage, eventSession) {
 		label.setAttribute("data-i18n", "chat.status.thinking");
 		
 		var text = document.createElement("span");
-		text.className = "inline-status-text";
+		text.className = "inline-status-text thinking-text";
 		text.textContent = p.text;
 		
 		mainLine.appendChild(label);
@@ -1297,8 +1297,72 @@ function handleAuthCredentialsChanged(payload) {
 	window.location.href = "/login";
 }
 
+function mapStructuredStreamToChatPayload(eventName, payload) {
+	if (!payload) return null;
+	if (eventName === "stream.tool") {
+		return {
+			sessionKey: payload.sessionKey || sessionStore.activeSessionKey.value,
+			runId: payload.runId,
+			toolCallId: payload.toolCallId,
+			toolName: payload.tool_name,
+			arguments: payload.arguments,
+			result: payload.result,
+			error: payload.error,
+			durationMs: payload.duration_ms,
+			success: payload.status === "completed",
+			state: payload.status === "started" ? "tool_call_start" : "tool_call_end",
+		};
+	}
+	if (eventName === "stream.llm") {
+		return {
+			sessionKey: payload.sessionKey || sessionStore.activeSessionKey.value,
+			runId: payload.runId,
+			messageIndex: payload.messageIndex,
+			text: payload.content,
+			finishReason: payload.finish_reason,
+			inputTokens: payload.token_usage?.prompt_tokens,
+			outputTokens: payload.token_usage?.completion_tokens,
+			state: payload.is_final ? "final" : "delta",
+			replyMedium: payload.is_final ? "text" : undefined,
+			model: payload.is_final ? "stream" : undefined,
+			provider: payload.is_final ? "stream" : undefined,
+		};
+	}
+	if (eventName === "stream.system") {
+		return {
+			sessionKey: payload.sessionKey || sessionStore.activeSessionKey.value,
+			runId: payload.runId,
+			error: payload.message,
+			context: payload.context,
+			state:
+				payload.level === "debug"
+					? "thinking"
+					: payload.level === "warning"
+						? "retrying"
+						: payload.level === "error"
+							? "error"
+							: "notice",
+			message: payload.message,
+			title: payload.level,
+		};
+	}
+	return null;
+}
+
 var eventHandlers = {
 	chat: handleChatEvent,
+	"stream.tool": (payload) => {
+		var mapped = mapStructuredStreamToChatPayload("stream.tool", payload);
+		if (mapped) handleChatEvent(mapped);
+	},
+	"stream.llm": (payload) => {
+		var mapped = mapStructuredStreamToChatPayload("stream.llm", payload);
+		if (mapped) handleChatEvent(mapped);
+	},
+	"stream.system": (payload) => {
+		var mapped = mapStructuredStreamToChatPayload("stream.system", payload);
+		if (mapped) handleChatEvent(mapped);
+	},
 	error: handleWsError,
 	"auth.credentials_changed": handleAuthCredentialsChanged,
 	"exec.approval.requested": handleApprovalEvent,
@@ -1349,6 +1413,9 @@ var connectOpts = {
 			Object.keys(eventHandlers).concat([
 				"tick",
 				"shutdown",
+				"stream.tool",
+				"stream.llm",
+				"stream.system",
 				"auth.credentials_changed",
 				"exec.approval.requested",
 				"exec.approval.resolved",

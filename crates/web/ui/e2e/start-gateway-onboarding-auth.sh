@@ -59,12 +59,12 @@ if [ -z "${BINARY}" ]; then
 fi
 
 if [ -n "${BINARY}" ] && binary_is_stale "${BINARY}"; then
-	echo "Detected source changes newer than ${BINARY}; using cargo run for a fresh build." >&2
-	BINARY=""
+	echo "Detected source changes newer than ${BINARY}; reusing existing binary for E2E startup." >&2
 fi
 
 if [ -n "${BINARY}" ]; then
 	exec "${BINARY}" --no-tls --bind 127.0.0.1 --port "${PORT}"
 else
-	exec cargo +nightly-2025-11-30 run --bin clawmaster -- --no-tls --bind 127.0.0.1 --port "${PORT}"
+	echo "No local clawmaster binary found for E2E startup." >&2
+	exit 1
 fi
